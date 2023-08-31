@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import Logo from '../images/logo/logo-icon.svg';
+import Logo from '../images/logo/logo.png';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import DropdownMessage from './DropdownMessage';
 import DropdownNotification from './DropdownNotification';
@@ -57,12 +57,12 @@ const Header = (props: {
           {/* <!-- Hamburger Toggle BTN --> */}
 
           <Link className="block flex-shrink-0 lg:hidden" to="/">
-            <img src={Logo} alt="Logo" />
+            <img src={Logo} alt="Logo" className="w-10" />
           </Link>
         </div>
 
         <div className="hidden sm:block">
-          <form action="https://formbold.com/s/unique_form_id" method="POST">
+          {/* <form action="https://formbold.com/s/unique_form_id" method="POST">
             <div className="relative">
               <button className="absolute top-1/2 left-0 -translate-y-1/2">
                 <svg
@@ -94,7 +94,7 @@ const Header = (props: {
                 className="w-full bg-transparent pr-4 pl-9 focus:outline-none"
               />
             </div>
-          </form>
+          </form> */}
         </div>
 
         <div className="flex items-center gap-3 2xsm:gap-7">

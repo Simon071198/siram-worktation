@@ -7,8 +7,8 @@ import './satoshi.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Router>
+    <Router basename="siram-workstation">
       <App />
     </Router>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
