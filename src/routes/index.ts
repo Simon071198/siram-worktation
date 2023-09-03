@@ -10,11 +10,18 @@ const Tables = lazy(() => import('../pages/Tables'));
 const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 
+const Dashboard = lazy(() => import('../pages/Dashboard'));
+const Home = lazy(() => import('../pages/Home'));
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/dashboard',
+    title: 'Dashboard',
+    component: Dashboard,
   },
   {
     path: '/profile',
