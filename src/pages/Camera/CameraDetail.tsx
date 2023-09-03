@@ -43,7 +43,6 @@ export default function CameraDetail() {
   // }, [id]);
   return (
     <>
-     <h1> Detail Kamera</h1>
       <DataCamera id={id}  />
     </>
   );
