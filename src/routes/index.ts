@@ -14,11 +14,19 @@ const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
 const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const Map = lazy(() => import('../pages/Map/Map'));
+const DatabaseSearch = lazy(() => import('../pages/DatabaseSearch/DatabaseSearch'));
+
+
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/database-search',
+    title: 'DatabaseSearch',
+    component: DatabaseSearch,
   },
   {
     path: '/map',
