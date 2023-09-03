@@ -107,10 +107,11 @@ const CameraList = () => {
                         </span>
                     </summary>
                     {locationDevice.devices.map((device) => (
-
+<NavLink to={`/camera/${device.deviceId}`}>
                     <p className="text-neutral-600 mt-3 group-open:animate-fadeIn ml-[20px]">
                         {device.deviceName}
                     </p>
+</NavLink>
                     ))}
                     </details>
                 </div>
