@@ -45,8 +45,8 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-Rizki Programmer          </span>
-          <span className="block text-xs">UX Designer</span>
+Rizki Irwansyah          </span>
+          <span className="block text-xs">Petugas Lemasmil</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -107,7 +107,7 @@ Rizki Programmer          </span>
               My Profile
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="#"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
@@ -127,7 +127,7 @@ Rizki Programmer          </span>
               </svg>
               My Contacts
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/settings"
