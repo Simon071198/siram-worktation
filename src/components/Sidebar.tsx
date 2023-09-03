@@ -121,6 +121,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     'bg-graydark dark:bg-meta-4'
                   }`}
                 >
+        <svg fill="none"   width="18"
+                          height="18" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path>
+</svg>
+                  Home
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/dashboard"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('calendar') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
                 <svg
                           className="fill-current"
                           width="18"
@@ -146,7 +161,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             fill=""
                           />
                         </svg>
-                  Home
+                  Dashboard
                 </NavLink>
               </li>
 
@@ -177,7 +192,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
 
               {/* <!-- Menu Item Forms --> */}
-              <SidebarLinkGroup
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === '/forms' || pathname.includes('forms')
                 }
@@ -247,7 +262,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           />
                         </svg>
                       </NavLink>
-                      {/* <!-- Dropdown Menu Start --> */}
                       <div
                         className={`translate transform overflow-hidden ${
                           !open && 'hidden'
@@ -278,11 +292,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           </li>
                         </ul>
                       </div>
-                      {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
               {/* <!-- Menu Item Forms --> */}
 
               {/* <!-- Menu Item Tables --> */}
@@ -323,8 +336,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
               {/* <!-- Menu Item Tables --> */}
 
-              {/* <!-- Menu Item Settings --> */}
-              <li>
+              {/* <li>
                 <NavLink
                   to="/settings"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -363,8 +375,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Settings
                 </NavLink>
-              </li>
-              {/* <!-- Menu Item Settings --> */}
+              </li> */}
             </ul>
           </div>
 
