@@ -12,11 +12,17 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 
 const Dashboard = lazy(() => import('../pages/Dashboard'));
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
+const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/camera/:id',
+    title: 'CameraDetail',
+    component: CameraDetail,
   },
   {
     path: '/camera-list',
