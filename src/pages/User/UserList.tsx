@@ -1,13 +1,13 @@
 import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { apiDeviceList } from '../../services/api';
-const GatewayList = () => {
+import { apiUserList } from '../../services/api';
+const CameraList = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     let params = {
       filter: ' ',
     };
-    apiDeviceList(params).then((res) => {
+    apiUserList(params).then((res) => {
       console.log(res, 'res');
 
       setData(res);
@@ -17,14 +17,14 @@ const GatewayList = () => {
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-        Data Perangkat Gateway
+        Data Pengguna Aplikasi
       </h4>
 
       <div className="flex flex-col">
         <div className="grid grid-cols-8 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8">
           <div className="p-2.5 xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama Kamera
+              Nama Pengguna
             </h5>
           </div>
           {/* <div className="p-2.5 text-center xl:p-5 hidden xl:block">
@@ -34,32 +34,13 @@ const GatewayList = () => {
           </div> */}
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Alamat IP
-            </h5>
+ID Pengguna            </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Status
-            </h5>
+Aksi            </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Model
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">SN</h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Lokasi
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Aksi
-            </h5>
-          </div>
+        
         </div>
 
         {data.map((item) => {
@@ -100,4 +81,4 @@ const GatewayList = () => {
   );
 };
 
-export default GatewayList;
+export default CameraList;

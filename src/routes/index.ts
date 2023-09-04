@@ -11,20 +11,27 @@ const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 
 const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
+import CameraDetail from '../pages/Camera/CameraDetail';
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
-const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
+// const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const Map = lazy(() => import('../pages/Map/Map'));
 const DatabaseSearch = lazy(() => import('../pages/DatabaseSearch/DatabaseSearch'));
 const DeviceList = lazy(() => import('../pages/Device/DeviceList'));
 const DeviceBraceletList = lazy(() => import('../pages/Device/BraceletList'));
 const DeviceCameraList = lazy(() => import('../pages/Device/CameraList'));
 const DeviceGatewayList = lazy(() => import('../pages/Device/GatewayList'));
+const UserList = lazy(() => import('../pages/User/UserList'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/user-list',
+    title: 'UserList',
+    component: UserList,
   },
   {
     path: '/device-gateway-list',
