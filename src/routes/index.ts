@@ -24,12 +24,18 @@ const UserList = lazy(() => import('../pages/User/UserList'));
 const LocationList = lazy(() => import('../pages/Location/LocationList'));
 const DatabaseSearchList = lazy(() => import('../pages/DatabaseSearch/DatabaseSearchList'));
 const InmateDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/InmateDatabaseSearchByName'));
+const EmployeeDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/EmployeeDatabaseSearchByName'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/db-employee-search-by-name',
+    title: 'EmployeeDatabaseSearchByName',
+    component: EmployeeDatabaseSearchByName,
   },
   {
     path: '/db-inmate-search-by-name',
