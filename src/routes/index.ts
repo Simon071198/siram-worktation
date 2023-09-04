@@ -23,12 +23,18 @@ const DeviceGatewayList = lazy(() => import('../pages/Device/GatewayList'));
 const UserList = lazy(() => import('../pages/User/UserList'));
 const LocationList = lazy(() => import('../pages/Location/LocationList'));
 const DatabaseSearchList = lazy(() => import('../pages/DatabaseSearch/DatabaseSearchList'));
+const InmateDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/InmateDatabaseSearchByName'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/db-inmate-search-by-name',
+    title: 'InmateDatabaseSearchByName',
+    component: InmateDatabaseSearchByName,
   },
   {
     path: '/db-search-list',
