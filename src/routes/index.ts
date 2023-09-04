@@ -22,12 +22,18 @@ const DeviceCameraList = lazy(() => import('../pages/Device/CameraList'));
 const DeviceGatewayList = lazy(() => import('../pages/Device/GatewayList'));
 const UserList = lazy(() => import('../pages/User/UserList'));
 const LocationList = lazy(() => import('../pages/Location/LocationList'));
+const DatabaseSearchList = lazy(() => import('../pages/DatabaseSearch/DatabaseSearchList'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/db-search-list',
+    title: 'DatabaseSearchList',
+    component: DatabaseSearchList,
   },
   {
     path: '/location-list',

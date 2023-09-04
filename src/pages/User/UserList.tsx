@@ -30,7 +30,7 @@ const CameraList = () => {
       
           <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              ID Pengguna{' '}
+              ID Pengguna
             </h5>
           </div>
           <div className="p-2.5 text-center xl:p-5">
@@ -39,7 +39,7 @@ Tanggal Dibuat            </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Aksi{' '}
+              Aksi
             </h5>
           </div>
         </div>
