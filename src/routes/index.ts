@@ -15,13 +15,36 @@ const CameraList = lazy(() => import('../pages/Camera/CameraList'));
 const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const Map = lazy(() => import('../pages/Map/Map'));
 const DatabaseSearch = lazy(() => import('../pages/DatabaseSearch/DatabaseSearch'));
-
+const DeviceList = lazy(() => import('../pages/Device/DeviceList'));
+const DeviceBraceletList = lazy(() => import('../pages/Device/BraceletList'));
+const DeviceCameraList = lazy(() => import('../pages/Device/CameraList'));
+const DeviceGatewayList = lazy(() => import('../pages/Device/GatewayList'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/device-gateway-list',
+    title: 'DeviceGatewayList',
+    component: DeviceGatewayList,
+  },
+  {
+    path: '/device-camera-list',
+    title: 'DeviceCameraList',
+    component: DeviceCameraList,
+  },
+  {
+    path: '/device-bracelet-list',
+    title: 'DeviceBraceletList',
+    component: DeviceBraceletList,
+  },
+  {
+    path: '/device-list',
+    title: 'DeviceList',
+    component: DeviceList,
   },
   {
     path: '/database-search',
