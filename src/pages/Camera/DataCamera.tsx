@@ -279,8 +279,11 @@ class DataCamera extends Component {
 
     return (
       <>
-           <h1 className="font-semibold ">     {deviceDetail && deviceDetail.device_name} -{' '}
-                      {deviceDetail && deviceDetail.location}</h1>
+        <h1 className="font-semibold ">
+          {' '}
+          {deviceDetail && deviceDetail.device_name} -{' '}
+          {deviceDetail && deviceDetail.location}
+        </h1>
 
         <div className="flex gap-4 h-[52vh] justify-between">
           <div className="w-[65%] h-full">
@@ -375,28 +378,32 @@ class DataCamera extends Component {
             </div>
           </div>
         </div>
-        <div className="flex gap-5 justify-between">
-          <div className="w-[65vw] h-[20vh] overflow-x-auto">
-            <table className="w-full">
-              <p className="font-semibold pl-5 pt-10">
-                Kemiripan Terdeteksi: {faceDetectionRows.length}
-              </p>
-              <div className="overflow-y-auto pt-4">
-                <tbody className="flex flex-row h-[15vh]">
-                  {faceDetectionRows?.map((row, index) => (
-                    <td key={index} className="w-1/4">
-                      <img
-                        src={`https://dev.transforme.co.id/gema_admin_api${row.image}`}
-                        alt="Person"
-                        className="w-20 h-20 rounded-5 flex-wrap"
-                      />
-                    </td>
-                  ))}
-                </tbody>
-              </div>
-            </table>
-          </div>
-          <div className="w-[35vw] h-[20vh]">
+        <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
+        <div className="w-[65%] h-full">
+  <div className="w-full">
+    <p className="font-semibold pl-5 pt-10">
+      Kemiripan Terdeteksi: {faceDetectionRows.length}
+    </p>
+    <div className="pt-1">
+      <div className="flex overflow-x-auto">
+        <div className="flex space-x-4">
+          {faceDetectionRows?.map((row, index) => (
+            <div key={index} className="flex-shrink-0">
+              <img
+                src={`https://dev.transforme.co.id/gema_admin_api${row.image}`}
+                alt="Person"
+                className="w-20 h-20 rounded-5 flex-wrap"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+          <div className="w-[35%] h-full">
             <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
             <table className="w-full">
               <tbody>
@@ -423,9 +430,7 @@ class DataCamera extends Component {
                 </tr>
                 <tr className="flex justify-between">
                   <td>
-                    <span className="text-xs">
-                      Total Deteksi Hari Ini
-                    </span>
+                    <span className="text-xs">Total Deteksi Hari Ini</span>
                   </td>
                   <td>
                     <span className="text-xs">20266</span>
@@ -451,9 +456,7 @@ class DataCamera extends Component {
                 </tr>
                 <tr className="flex justify-between">
                   <td>
-                    <span className="text-xs">
-                      AI SNAP Record SIMILAR TO
-                    </span>
+                    <span className="text-xs">AI SNAP Record SIMILAR TO</span>
                   </td>
                   <td>
                     <span className="text-xs">122</span>
