@@ -13,10 +13,10 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 // porp-types is a library for typechecking of props
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 // react-chartjs-2 components
 
@@ -31,34 +31,34 @@ import PropTypes from "prop-types";
 //   Divider,
 //   Avatar,
 // } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 // import { Router, Person, Close, Search, ArrowBack } from "@mui/icons-material";
 // Material Dashboard 2 React components
 // import MDBox from "../../components/MDBox";
 // import div from "../../components/div";
-import { apiWatchlistHistory, webserviceurl } from "../../services/api";
+import { apiWatchlistHistory, webserviceurl } from '../../services/api';
 // IndoorMap configurations
-import configs from "./configs";
+import configs from './configs';
 
 const getPositionStyles = (position) => {
   switch (position) {
-    case "A":
+    case 'A':
       return { top: 0, left: 0 };
-    case "B":
+    case 'B':
       return { top: 0, right: 0 };
-    case "C":
+    case 'C':
       return { bottom: 0, left: 0 };
-    case "D":
+    case 'D':
       return { bottom: 0, right: 0 };
-    case "E":
-      return { top: "40%", left: 0 };
-    case "F":
-      return { top: 0, left: "40%" };
-    case "G":
-      return { top: "40%", right: 0 };
-    case "H":
-      return { bottom: 0, left: "40%" };
+    case 'E':
+      return { top: '40%', left: 0 };
+    case 'F':
+      return { top: 0, left: '40%' };
+    case 'G':
+      return { top: '40%', right: 0 };
+    case 'H':
+      return { bottom: 0, left: '40%' };
     default:
       return { top: 0, left: 0 };
   }
@@ -68,13 +68,13 @@ function countDistance(cornerX, cornerY, lengthXY) {
   return Math.sqrt(
     Math.pow(lengthXY, 2) +
       Math.pow(lengthXY, 2) -
-      2 * lengthXY * lengthXY * Math.cos(((cornerY - cornerX) * Math.PI) / 180)
+      2 * lengthXY * lengthXY * Math.cos(((cornerY - cornerX) * Math.PI) / 180),
   );
 }
 
 function getDistanceFromRssi(rssi, maxDistance) {
   console.log(parseInt(rssi, 10) / 99);
-  console.log("max distance", maxDistance);
+  console.log('max distance', maxDistance);
   return (parseInt(rssi, 10) / 99) * maxDistance;
 }
 
@@ -121,7 +121,7 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
   const positionGateway1Styles = getPositionStyles(gateway1.position);
   const positionGateway2Styles = getPositionStyles(gateway2.position);
   const openModal = async (visitorId, wbp, position) => {
-    console.log("WBP Detail", wbp);
+    console.log('WBP Detail', wbp);
 
     try {
       let params = {
@@ -130,15 +130,15 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       };
 
       let result = await apiWatchlistHistory(params);
-      console.log("res history", result);
+      console.log('res history', result);
 
       setDetailWBP(result.records);
       setSelectedWBP(wbp);
       setModalPosition(position);
       setModalOpen(true);
     } catch (error) {
-      console.error("Error fetching watchlist history:", error);
-      alert("Connection error: tidak dapat mengambil data Prajurit Binaan");
+      console.error('Error fetching watchlist history:', error);
+      alert('Connection error: tidak dapat mengambil data Prajurit Binaan');
     }
   };
 
@@ -162,28 +162,28 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       sx={{
         width: BoxWidth,
         height: BoxHeight,
-        position: "relative",
+        position: 'relative',
       }}
       // my={3}
-      bgColor={"#ebebeb"}
+      bgColor={'#ebebeb'}
     >
       {WBPList
         ? WBPList.map((row, i) => (
             <Box
               key={i}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 left: row.position.x,
                 top: row.position.y,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                cursor: "pointer",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                cursor: 'pointer',
               }}
             >
               <Person
                 onClick={(e) =>
-                  openModal("ac1da4fd218f13ffd8f915b18894dac4", row, {
+                  openModal('ac1da4fd218f13ffd8f915b18894dac4', row, {
                     left: row.position.x,
                     top: row.position.y,
                     // top: e.currentTarget.offsetTop + e.currentTarget.clientHeight,
@@ -193,10 +193,10 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                 sx={{
                   color:
                     parseInt(row.batt) > 3000
-                      ? "#8ed31e"
+                      ? '#8ed31e'
                       : parseInt(row.batt) > 1000
-                      ? "#eea620"
-                      : "#ef4646",
+                      ? '#eea620'
+                      : '#ef4646',
                 }}
                 fontSize="large"
               />
@@ -219,14 +219,14 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       >
         <Box
           sx={{
-            position: "absolute",
+            position: 'absolute',
             top: modalPosition.top,
             left: modalPosition.left,
-            minWidth: "400px",
-            minHeight: "200px",
-            bgcolor: "background.paper",
-            border: "2px",
-            borderRadius: "15px",
+            minWidth: '400px',
+            minHeight: '200px',
+            bgcolor: 'background.paper',
+            border: '2px',
+            borderRadius: '15px',
             boxShadow: 24,
             p: 2,
           }}
@@ -235,20 +235,20 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
             <>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
                 <Typography variant="h6">
                   {tabIndex === 0
-                    ? "Detail Prajurit Binaan"
+                    ? 'Detail Prajurit Binaan'
                     : tabIndex === 1
-                    ? "Aktivitas"
+                    ? 'Aktivitas'
                     : tabIndex === 2
-                    ? "Riwayat Kesehatan"
+                    ? 'Riwayat Kesehatan'
                     : tabIndex === 3
-                    ? "Riwayat Perkara"
+                    ? 'Riwayat Perkara'
                     : null}
                 </Typography>
                 <IconButton
@@ -262,33 +262,33 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
               </Box>
 
               {tabIndex === 0 ? (
-                <Box style={{ display: "flex", gap: 10 }}>
+                <Box style={{ display: 'flex', gap: 10 }}>
                   <Box style={{ flex: 1 }}>
                     <Avatar
                       alt={selectedWBP.name}
                       src={
-                        "https://dev.transforme.co.id/gema_admin_api/images_visitor_data/e3996463ee010b4ccbbd5b96d7f5582b.jpg"
+                        'https://dev.transforme.co.id/gema_admin_api/images_visitor_data/e3996463ee010b4ccbbd5b96d7f5582b.jpg'
                       }
                       sx={{
-                        width: "100%",
+                        width: '100%',
                         height: 250,
-                        borderRadius: "5px",
+                        borderRadius: '5px',
                       }}
                     />
                   </Box>
                   <Box
                     style={{
                       flex: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box>
                       <Box
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
+                          display: 'flex',
+                          justifyContent: 'space-between',
                         }}
                       >
                         <Box style={{ flex: 2 }}>
@@ -302,8 +302,8 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                       </Box>
                       <Box
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
+                          display: 'flex',
+                          justifyContent: 'space-between',
                         }}
                       >
                         <Box style={{ flex: 2 }}>
@@ -317,8 +317,8 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                       </Box>
                       <Box
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
+                          display: 'flex',
+                          justifyContent: 'space-between',
                         }}
                       >
                         <Box style={{ flex: 2 }}>
@@ -335,8 +335,8 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                     </Box>
                     <Box
                       style={{
-                        display: "flex",
-                        justifyContent: "start",
+                        display: 'flex',
+                        justifyContent: 'start',
                         gap: 15,
                         marginTop: 20,
                       }}
@@ -345,11 +345,11 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                         variant="contained"
                         size="small"
                         style={{
-                          backgroundColor: "#004dcf",
+                          backgroundColor: '#004dcf',
                         }}
                         onClick={() => setTabIndex(1)}
                       >
-                        <Typography variant="subtitle3" color={"#fff"}>
+                        <Typography variant="subtitle3" color={'#fff'}>
                           Aktivitas
                         </Typography>
                       </Button>
@@ -357,11 +357,11 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                         variant="contained"
                         size="small"
                         style={{
-                          backgroundColor: "#14cc0b",
+                          backgroundColor: '#14cc0b',
                         }}
                         onClick={() => setTabIndex(2)}
                       >
-                        <Typography variant="subtitle3" color={"#fff"}>
+                        <Typography variant="subtitle3" color={'#fff'}>
                           Riwayat Kesehatan
                         </Typography>
                       </Button>
@@ -369,11 +369,11 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                         variant="contained"
                         size="small"
                         style={{
-                          backgroundColor: "#b47c0c",
+                          backgroundColor: '#b47c0c',
                         }}
                         onClick={() => setTabIndex(3)}
                       >
-                        <Typography variant="subtitle3" color={"#fff"}>
+                        <Typography variant="subtitle3" color={'#fff'}>
                           Riwayat Perkara
                         </Typography>
                       </Button>
@@ -384,16 +384,16 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                 <>
                   <Box
                     sx={{
-                      display: "flex",
+                      display: 'flex',
                       gap: 4,
-                      justifyContent: "space-between",
-                      alignItems: "start",
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
                       p: 1,
-                      overflow: "auto",
+                      overflow: 'auto',
                     }}
                   >
-                    <Typography variant="subtitle2" sx={{ width: "10%" }}>
-                      Snapshot{" "}
+                    <Typography variant="subtitle2" sx={{ width: '10%' }}>
+                      Snapshot{' '}
                     </Typography>
                     <Typography variant="subtitle2">Nama</Typography>
                     <Typography variant="subtitle2">Kamera</Typography>
@@ -401,24 +401,24 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                     <Typography variant="subtitle2">Waktu </Typography>
                     <Typography variant="subtitle2">Aksi </Typography>
                   </Box>
-                  <div style={{ height: "30vh", overflow: "auto" }}>
+                  <div style={{ height: '30vh', overflow: 'auto' }}>
                     {detailWBP.map((row, i) => (
                       <Box
                         key={i}
                         sx={{
-                          display: "flex",
+                          display: 'flex',
                           gap: 4,
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
                           p: 1,
-                          overflow: "auto",
+                          overflow: 'auto',
                         }}
                       >
-                        <div sx={{ width: "10%" }}>
+                        <div sx={{ width: '10%' }}>
                           <Avatar
                             alt={row.name}
                             src={webserviceurl + row.image}
-                            sx={{ width: 50, height: 50, borderRadius: "5px" }}
+                            sx={{ width: 50, height: 50, borderRadius: '5px' }}
                           />
                         </div>
 
@@ -438,15 +438,15 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                           variant="contained"
                           size="small"
                           style={{
-                            backgroundColor: "#004dcf",
+                            backgroundColor: '#004dcf',
                           }}
                           startIcon={<Search color="white" sx={{ mr: 1 }} />}
                         >
-                          <Link to={`/camera/${row.device_id}`}>
+                          <Link to={`/kamera/${row.device_id}`}>
                             <Typography
                               style={{
                                 fontSize: 10,
-                                color: "#fff",
+                                color: '#fff',
                                 marginLeft: -6,
                               }}
                             >
@@ -462,12 +462,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                 <Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Nama
                       </Typography>
                     </Box>
@@ -479,12 +479,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Suhu
                       </Typography>
                     </Box>
@@ -496,12 +496,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Step
                       </Typography>
                     </Box>
@@ -513,12 +513,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Heart Rate
                       </Typography>
                     </Box>
@@ -530,12 +530,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Tensi Darah
                       </Typography>
                     </Box>
@@ -547,12 +547,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 2 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Saturasi Oksigen
                       </Typography>
                     </Box>
@@ -567,12 +567,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                 <Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Nama
                       </Typography>
                     </Box>
@@ -584,12 +584,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Perkara
                       </Typography>
                     </Box>
@@ -601,12 +601,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Pasal
                       </Typography>
                     </Box>
@@ -618,12 +618,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Tanggal Sidang
                       </Typography>
                     </Box>
@@ -635,12 +635,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Tanggal Vonis
                       </Typography>
                     </Box>
@@ -652,12 +652,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Hukuman
                       </Typography>
                     </Box>
@@ -669,12 +669,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Mulai Penahanan
                       </Typography>
                     </Box>
@@ -686,12 +686,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Sisa Masa Penahanan
                       </Typography>
                     </Box>
@@ -703,12 +703,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   </Box>
                   <Box
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: 'flex',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <Box style={{ flex: 1 }}>
-                      <Typography variant="subtitle2" fontWeight={"bold"}>
+                      <Typography variant="subtitle2" fontWeight={'bold'}>
                         Tanggal Bebas
                       </Typography>
                     </Box>
@@ -728,11 +728,11 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       <MDBox
         p={2}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "absolute",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'absolute',
           ...positionGateway1Styles,
         }}
       >
@@ -749,11 +749,11 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       <MDBox
         p={2}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "absolute",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'absolute',
           ...positionGateway2Styles,
         }}
       >
@@ -773,7 +773,7 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
 
 // Setting default values for the props of IndoorMap
 IndoorMap.defaultProps = {
-  description: "",
+  description: '',
 };
 
 // Typechecking props for the IndoorMap

@@ -3,11 +3,26 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { Outlet } from 'react-router-dom';
 
+import BackgroundSecurityImage from '../images/security-background.jpg';
+
 const DefaultLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const backgroundStyle = {
+    backgroundImage: `url(${BackgroundSecurityImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+  };
+
+  const overlayStyle = {
+    backgroundColor: 'rgba(0, 0, 0, 0.71)', // Adjust the alpha value (0.5 in this example) to make it darker or lighter
+  };
+
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <div className="dark:text-bodydark" style={backgroundStyle}>
+      <div className="absolute inset-0" style={overlayStyle}></div>
+
       {/* <!-- ===== Page Wrapper Start ===== --> */}
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
