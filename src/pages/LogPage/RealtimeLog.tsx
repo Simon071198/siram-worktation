@@ -178,16 +178,16 @@ export default function Realtime() {
 
   return (
     <>
-      <div className="flex justify-between">
-        <h3>Log Realtime</h3>
-        <div className="flex w-[70%] space-x-4">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold text-2xl">Log Realtime</h3>
+        <div className="flex w-[70%] space-x-4 pb-4">
           <div className="w-1/6">
             <div className="w-full">
               <label
                 htmlFor="analytics-select"
                 className="block text-sm font-medium text-gray-700"
               >
-                Select Analytics
+                Pilih Analitik
               </label>
               <select
                 id="analytics-select"
@@ -196,19 +196,21 @@ export default function Realtime() {
                 value={selectedAnalytics}
                 onChange={(e) => setSelectedAnalytics(e.target.value)}
               >
-                <option value="">All Analytics</option>
-                <option value="unrecognized">Unrecognized</option>
-                <option value="face_recognition">Face Recognition</option>
+                <option value="">Semua Analitik</option>
+                <option value="unrecognized">Tidak Dikenal</option>
+                <option value="face_recognition">Pengenalan Wajah</option>
               </select>
             </div>
           </div>
+          {selectedAnalytics !== 'unrecognized' && (
+
           <div className="w-1/6">
             <div className="w-full">
               <label
                 htmlFor="name-input"
                 className="block text-sm font-medium text-gray-700"
               >
-                Name
+                Nama
               </label>
               <input
                 id="name-input"
@@ -220,25 +222,29 @@ export default function Realtime() {
               />
             </div>
           </div>
-          <div className="w-1/6">
-            <div className="w-full">
-              <label
-                htmlFor="age-input"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Age
-              </label>
-              <input
-                id="age-input"
-                type="text"
-                name="Age"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={selectedAge}
-                onChange={(e) => setSelectedAge(e.target.value)}
-              />
+          )}
+
+          {selectedAnalytics !== 'unrecognized' && (
+            <div className="w-1/6">
+              <div className="w-full">
+                <label
+                  htmlFor="age-input"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Usia
+                </label>
+                <input
+                  id="age-input"
+                  type="text"
+                  name="Age"
+                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={selectedAge}
+                  onChange={(e) => setSelectedAge(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="w-1/6">
+          )}
+          {/* <div className="w-1/6">
             <div className="w-full">
               <label
                 htmlFor="country-select"
@@ -258,35 +264,38 @@ export default function Realtime() {
                 <option value="WNI">WNI</option>
               </select>
             </div>
-          </div>
-          <div className="w-1/6">
-            <div className="w-full">
-              <label
-                htmlFor="gender-select"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Select Gender
-              </label>
-              <select
-                id="gender-select"
-                name="Select Gender"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={selectedGender}
-                onChange={(e) => setSelectedGender(e.target.value)}
-              >
-                <option value="">All Gender</option>
-                <option value="true">Pria</option>
-                <option value="false">Wanita</option>
-              </select>
+          </div> */}
+          {selectedAnalytics !== 'unrecognized' && (
+            <div className="w-1/6">
+              <div className="w-full">
+                <label
+                  htmlFor="gender-select"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Pilih Gender
+                </label>
+                <select
+                  id="gender-select"
+                  name="Select Gender"
+                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={selectedGender}
+                  onChange={(e) => setSelectedGender(e.target.value)}
+                >
+                  <option value="">Semua Gender</option>
+                  <option value="true">Pria</option>
+                  <option value="false">Wanita</option>
+                </select>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="w-1/6">
             <div className="w-full">
               <label
                 htmlFor="location-select"
                 className="block text-sm font-medium text-gray-700"
               >
-                Select Location
+                Pilih Lokasi
               </label>
               <select
                 id="location-select"
@@ -295,7 +304,7 @@ export default function Realtime() {
                 value={selectedLocation}
                 onChange={handleLocationChange}
               >
-                <option value="">All Location</option>
+                <option value="">Semua Lokasi</option>
                 {jsonData.map((entry) => (
                   <option key={entry.location} value={entry.location}>
                     {entry.location}
@@ -310,7 +319,7 @@ export default function Realtime() {
                 htmlFor="device-select"
                 className="block text-sm font-medium text-gray-700"
               >
-                Select Device
+                Pilih Kamera
               </label>
               <select
                 id="device-select"
@@ -319,7 +328,7 @@ export default function Realtime() {
                 value={selectedDevice}
                 onChange={handleDeviceChange}
               >
-                <option value="">All Devices</option>
+                <option value="">Semua Kamera</option>
                 {devices.map((device) => (
                   <option key={device.deviceId} value={device.deviceId}>
                     {device.deviceName}
@@ -345,10 +354,10 @@ export default function Realtime() {
 
       {selectedAnalytics == 'unrecognized' ? (
         <div className="flex flex-col">
-          <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
+          <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Foto
+                Foto Kamera
               </h5>
             </div>
 
@@ -357,43 +366,62 @@ export default function Realtime() {
                 Nama{' '}
               </h5>
             </div>
-            <div className="p-2.5 text-center xl:p-5">
+
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Usia{' '}
               </h5>
             </div>
+
             <div className="hidden p-2.5 text-center sm:block xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Aksi{' '}
+                Kamera{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Catatan Waktu{' '}
               </h5>
             </div>
           </div>
 
           {data.map((item) => {
             return (
-              <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
+              <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
                   {item.image ? (
                     <img
                       className="w-10 h-10 rounded-sm"
-                      src={"http://dev.transforme.co.id/gema_admin_api"+item.image}
+                      src={
+                        'http://dev.transforme.co.id/gema_admin_api' +
+                        item.image
+                      }
                       alt=""
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300">
+                      Foto Tidak Tersedia
+                    </div>
                   )}
-                  
-                  {/* <p className="hidden text-black dark:text-white sm:block">
-                    {item.face_pics}
-                  </p> */}
                 </div>
 
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.dob}</p>
+                  <p className="text-meta-3">Tidak Dikenal</p>
+                </div>
+
+                <div className="flex items-center justify-center p-2.5 xl:p-5">
+                  <p className="text-meta-3">
+                    {item.dob == null ? item.age : calculateAge(item.dob)}
+                  </p>
                 </div>
 
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                  <p className="text-black dark:text-white">{item.dob}</p>
+                  <p className="text-black dark:text-white">
+                    {item.device_name}-{item.location_name}
+                  </p>
+                </div>
+                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <p className="text-black dark:text-white">{item.timestamp}</p>
                 </div>
               </div>
             );
@@ -449,45 +477,71 @@ export default function Realtime() {
             return (
               <div className="grid grid-cols-8 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8">
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
-                {item.image ? (
+                  {item.image ? (
                     <img
                       className="w-10 h-10 rounded-sm"
-                      src={"http://dev.transforme.co.id/gema_admin_api"+item.image}
+                      src={
+                        'http://dev.transforme.co.id/gema_admin_api' +
+                        item.image
+                      }
                       alt=""
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300">
+                      Foto Tidak Tersedia
+                    </div>
                   )}
                 </div>
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
-                {item.face_pics ? (
+                  {item.face_pics ? (
                     <img
                       className="w-10 h-10 rounded-sm"
-                      src={"http://dev.transforme.co.id/gema_admin_api"+item.face_pics}
+                      src={
+                        'http://dev.transforme.co.id/gema_admin_api' +
+                        item.face_pics
+                      }
                       alt=""
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                    <div className="w-10 h-10 rounded-full bg-gray-300">
+                      Foto Tidak Tersedia
+                    </div>
                   )}
                 </div>
 
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.visitor_name}</p>
+                  <p className="text-meta-3">{item.visitor_name == 'unrecognized' ? 'Tidak Dikenal' : item.visitor_name}</p>
                 </div>
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.gender == null ? 'Tidak Diketahui' : (item.gender == true ? 'Pria' : 'Wanita')}</p>
+                  <p className="text-meta-3">
+                    {item.gender == null
+                      ? 'Tidak Diketahui'
+                      : item.gender == true
+                      ? 'Pria'
+                      : 'Wanita'}
+                  </p>
                 </div>
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.dob == null ? item.age : calculateAge(item.dob) }</p>
+                  <p className="text-meta-3">
+                    {item.dob == null ? item.age : calculateAge(item.dob)}
+                  </p>
                 </div>
 
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                  <p className="text-black dark:text-white">{
-                    item.visitor_name == 'unrecognized' ? "Tidak Dikenal" : (item.isemployee == true ? 'Petugas' : (item.isdpo == true ? 'Binaan Watchlist' : 'Tentara Binaan'))
-                  }</p>
+                  <p className="text-black dark:text-white">
+                    {item.visitor_name == 'unrecognized'
+                      ? 'Tidak Dikenal'
+                      : item.isemployee == true
+                      ? 'Petugas'
+                      : item.isdpo == true
+                      ? 'Binaan Watchlist'
+                      : 'Tentara Binaan'}
+                  </p>
                 </div>
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                  <p className="text-black dark:text-white">{item.device_name}-{item.location_name}</p>
+                  <p className="text-black dark:text-white">
+                    {item.device_name}-{item.location_name}
+                  </p>
                 </div>
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
                   <p className="text-black dark:text-white">{item.timestamp}</p>
