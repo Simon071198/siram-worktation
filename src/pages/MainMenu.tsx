@@ -58,7 +58,7 @@ const routes = [
   {
     id: 3,
     name: 'Pelacakan',
-    link: '/pelacakan',
+    link: '/pelacakan-wajah-prajurit',
     icon: PelacakanIcon,
   },
   {
