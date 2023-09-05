@@ -1,44 +1,47 @@
 import Breadcrumb from '../components/Breadcrumb';
 import userThree from '../images/user/user-03.png';
 import fireToast from '../hooks/fireToast';
-import { Table } from "../components/TableSettings";
-import { Modal } from "../components/ModalSettings";
-import { useState,useEffect } from "react";
+import { Table } from '../components/TableSettings';
+import { Modal } from '../components/ModalSettings';
+import { useState, useEffect, SetStateAction } from 'react';
 const Settings = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [rows, setRows] = useState(localStorage.getItem("alertSettings")?JSON.parse(localStorage.getItem("alertSettings")):[]);
+  const [rows, setRows] = useState(
+    localStorage.getItem('alertSettings')
+      ? JSON.parse(localStorage.getItem('alertSettings'))
+      : [],
+  );
   useEffect(() => {
     // storing input name
-    localStorage.setItem("alertSettings", JSON.stringify(rows));
+    localStorage.setItem('alertSettings', JSON.stringify(rows));
   }, [rows]);
   const [rowToEdit, setRowToEdit] = useState(null);
 
-  const handleDeleteRow = (targetIndex) => {
-    setRows(rows.filter((_, idx) => idx !== targetIndex));
+  const handleDeleteRow = (targetIndex: any) => {
+    setRows(rows.filter((_: any, idx: any) => idx !== targetIndex));
   };
 
-  const handleEditRow = (idx) => {
+  const handleEditRow = (idx: SetStateAction<null>) => {
     setRowToEdit(idx);
 
     setModalOpen(true);
   };
 
-  const handleSubmit = (newRow) => {
+  const handleSubmit = (newRow: any) => {
     rowToEdit === null
       ? setRows([...rows, newRow])
       : setRows(
-          rows.map((currRow, idx) => {
+          rows.map((currRow: any, idx: any) => {
             if (idx !== rowToEdit) return currRow;
 
             return newRow;
-          })
+          }),
         );
   };
 
   return (
     <>
       <div className="mx-auto max-w-270">
-        
         <Breadcrumb pageName="Settings" />
 
         <div className="grid grid-cols-5 gap-8">

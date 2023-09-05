@@ -1,36 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { apiLocationOnlineDeviceList } from '../../services/api';
-function Accordion({ title, content, isOpen, toggleAccordion }) {
-  return (
-    <details open={isOpen} className="group">
-      <summary
-        className="flex justify-between items-center font-medium cursor-pointer list-none"
-        onClick={toggleAccordion}
-      >
-        <span>{title}</span>
-        <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>
-          <svg
-            fill="none"
-            height="24"
-            shape-rendering="geometricPrecision"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <path d="M6 9l6 6 6-6"></path>
-          </svg>
-        </span>
-      </summary>
-      <p className={`text-neutral-600 mt-3 ${isOpen ? 'animate-fadeIn' : ''}`}>
-        {content}
-      </p>
-    </details>
-  );
-}
 
 const CameraList = () => {
   const [dense, setDense] = React.useState(false);
@@ -85,37 +55,37 @@ const CameraList = () => {
                 SAAS platform is a cloud-based software service that allows
                 users to access and use a variety of tools and functionality.
               </p> */}
-            {locationDeviceList.map((locationDevice) => (
+              {locationDeviceList.map((locationDevice) => (
                 <div className="pt-2 ml-[20px]">
-                    <details className="groupChild">
+                  <details className="groupChild">
                     <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
-                        <span>{locationDevice.location}</span>
-                        <span className="transition-transform groupChild-open:rotate-180">
+                      <span>{locationDevice.location}</span>
+                      <span className="transition-transform groupChild-open:rotate-180">
                         <svg
-                            fill="none"
-                            height="24"
-                            shape-rendering="geometricPrecision"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="1.5"
-                            viewBox="0 0 24 24"
-                            width="24"
+                          fill="none"
+                          height="24"
+                          shape-rendering="geometricPrecision"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.5"
+                          viewBox="0 0 24 24"
+                          width="24"
                         >
-                            <path d="M6 9l6 6 6-6"></path>
+                          <path d="M6 9l6 6 6-6"></path>
                         </svg>
-                        </span>
+                      </span>
                     </summary>
                     {locationDevice.devices.map((device) => (
-<NavLink to={`/camera/${device.deviceId}`}>
-                    <p className="text-neutral-600 mt-3 group-open:animate-fadeIn ml-[20px]">
-                        {device.deviceName}
-                    </p>
-</NavLink>
+                      <NavLink to={`/kamera/${device.deviceId}`}>
+                        <p className="text-neutral-600 mt-3 group-open:animate-fadeIn ml-[20px]">
+                          {device.deviceName}
+                        </p>
+                      </NavLink>
                     ))}
-                    </details>
+                  </details>
                 </div>
-            ))}
+              ))}
               {/* <div className="pt-2 ml-[20px]">
                 <details className="group">
                   <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
@@ -192,7 +162,7 @@ const CameraList = () => {
                     </span>
                   </summary>
                   <p className="text-neutral-600 mt-3 group-open:animate-fadeIn">
-                  Data belum tersedia
+                    Data belum tersedia
                   </p>
                 </details>
               </div>
@@ -244,13 +214,12 @@ const CameraList = () => {
                     </span>
                   </summary>
                   <p className="text-neutral-600 mt-3 group-open:animate-fadeIn">
-                  Data belum tersedia
+                    Data belum tersedia
                   </p>
                 </details>
               </div>
             </details>
           </div>
-         
         </div>
       </div>
     </>

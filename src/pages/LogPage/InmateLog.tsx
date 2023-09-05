@@ -1,15 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-// import { useMemo } from "react";
 
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableBody,
-  TableRow,
+
   TableCell,
   TextField,
   Select,
@@ -27,11 +20,10 @@ import {
 //   import DataTable from "examples/Tables/DataTable";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
-import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import Loader from "services/loader";
-import { apiVisitorLogList } from "services/api";
-import { webserviceurl } from "services/api";
+import { apiVisitorLogList } from "../../services/api";
+import { webserviceurl } from "../../services/api";
 let useStyles = makeStyles(() => ({
   header: {
     display: "flex",
@@ -153,7 +145,6 @@ export default function VisitorLog() {
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
-    // setEndDate(`${year}-${month}-${day}`);
     return `${year}-${month}-${day}`;
   }
   const handlePageChange = (event, page) => {
@@ -177,7 +168,6 @@ export default function VisitorLog() {
     apiVisitorLogList(params).then((res) => {
       console.log(res);
       setData(res.records);
-      // setData(data);
       setLoading(false);
       setTotalPages(res.pagesCount);
       setTotalItemPage(res.total);
@@ -192,7 +182,6 @@ export default function VisitorLog() {
 
   useEffect(() => {
     if (endDate !== "") {
-      // Perform your fetch request here, using todayDate as needed
       fetch();
     }
   }, [

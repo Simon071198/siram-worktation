@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 
-import { apiSearchVisitorByName, apiWatchlistHistory } from '../../services/api';
+import {
+  apiSearchVisitorByName,
+  apiWatchlistHistory,
+} from '../../services/api';
 import { webserviceurl } from '../../services/api';
-
 
 export default function EmployeeDatabaseSearchByName() {
   const [searchName, setSearchName] = useState('');
@@ -63,18 +64,14 @@ export default function EmployeeDatabaseSearchByName() {
   return (
     <>
       <div>
-      <h5 className="text-2xl mb-2">Pencarian di Database</h5>
+        <h5 className="text-2xl mb-2">Pelacakan Petugas di Database</h5>
 
-
-      <p className="mb-2">
-          Fitur untuk mencari data berdasarkan nama, silahkan masukan parameter
-          yang diperlukan
+        <p className="mb-2">
+          Fitur untuk mencari data petugas berdasarkan nama, silahkan masukan
+          parameter yang diperlukan
         </p>
         <br />
-        <form
-         
-          className='flex flex-col gap-4 w-full px-4 py-1'
-        >
+        <form className="flex flex-col gap-4 w-full px-4 py-1">
           <div
             style={{
               display: 'flex',
@@ -83,18 +80,15 @@ export default function EmployeeDatabaseSearchByName() {
               justifyContent: 'center',
             }}
           >
-            <div
-           
-            >
-           <div className="min-w-[400px] max-w-[600px] mx-auto mt-3 p-1 flex flex-col items-center rounded-10">
-
-               <input
-  type="text"
-  placeholder="Nama Prajurit Binaan"
-  value={searchName}
-  onChange={(e) => setSearchName(e.target.value)}
-  className="w-90 mt-1 mx-1 mb-0 p-2 border rounded-lg w-full"
-/>
+            <div>
+              <div className="min-w-[400px] max-w-[600px] mx-auto mt-3 p-1 flex flex-col items-center rounded-10">
+                <input
+                  type="text"
+                  placeholder="Nama Petugas"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  className="w-90 mt-1 mx-1 mb-0 p-2 border rounded-lg w-full"
+                />
 
                 <div className="flex justify-center mt-8">
                   <button
@@ -112,7 +106,7 @@ export default function EmployeeDatabaseSearchByName() {
                 <table className="min-w-full">
                   <thead>
                     <tr>
-                      <th className="py-2">Hasil Pencarian</th>
+                      <th className="py-2 px-3">Hasil Pencarian</th>
                     </tr>
                   </thead>
                   <tbody>
