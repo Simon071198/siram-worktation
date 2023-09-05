@@ -25,12 +25,30 @@ const LocationList = lazy(() => import('../pages/Location/LocationList'));
 const DatabaseSearchList = lazy(() => import('../pages/DatabaseSearch/DatabaseSearchList'));
 const InmateDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/InmateDatabaseSearchByName'));
 const EmployeeDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/EmployeeDatabaseSearchByName'));
+const LogList = lazy(() => import('../pages/Logs/LogList'));
+const InmateLog = lazy(() => import('../pages/Logs/InmateLog'));
+const RealtimeLog = lazy(() => import('../pages/Logs/RealtimeLog'));
 
 const coreRoutes = [
   {
     path: '/calendar',
     title: 'Calender',
     component: Calendar,
+  },
+  {
+    path: '/realtime-log',
+    title: 'RealtimeLog',
+    component: RealtimeLog,
+  },
+  {
+    path: '/inmate-log',
+    title: 'InmateLog',
+    component: InmateLog,
+  },
+  {
+    path: '/log-list',
+    title: 'LogList',
+    component: LogList,
   },
   {
     path: '/db-employee-search-by-name',
