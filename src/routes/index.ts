@@ -25,9 +25,9 @@ const LocationList = lazy(() => import('../pages/Location/LocationList'));
 const DatabaseSearchList = lazy(() => import('../pages/DatabaseSearch/DatabaseSearchList'));
 const InmateDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/InmateDatabaseSearchByName'));
 const EmployeeDatabaseSearchByName = lazy(() => import('../pages/DatabaseSearch/EmployeeDatabaseSearchByName'));
-const LogList = lazy(() => import('../pages/Logs/LogList'));
-const InmateLog = lazy(() => import('../pages/Logs/InmateLog'));
-const RealtimeLog = lazy(() => import('../pages/Logs/RealtimeLog'));
+const LogList = lazy(() => import('../pages/LogPage/LogList'));
+const InmateLog = lazy(() => import('../pages/LogPage/InmateLog'));
+const RealtimeLog = lazy(() => import('../pages/LogPage/RealtimeLog'));
 
 const coreRoutes = [
   {
