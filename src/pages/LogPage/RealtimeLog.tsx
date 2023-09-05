@@ -1,34 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import DataTable from 'examples/Tables/DataTable';
-import {
-  TableCell,
-  TextField,
-  Select,
-  MenuItem,
-  Button,
-  FormControl,
-  InputLabel,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
 import axios from 'axios';
 import { apiVisitorRealtimeLogList } from '../../services/api';
-import { makeStyles } from '@mui/styles';
 
 import { webserviceurl } from '../../services/api';
-
-let useStyles = makeStyles(() => ({
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBlock: 20,
-  },
-}));
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -65,8 +40,6 @@ const DataNotFoundModal = ({ open, onClose, message }) => {
 };
 
 export default function Realtime() {
-  let classes = useStyles();
-
   const [data, setData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -147,15 +120,11 @@ export default function Realtime() {
   }
 
   function calculateAge(birthdate) {
-    // console.log("Birthdate:", birthdate);
     const birthDate = new Date(birthdate);
-    // console.log("Parsed Birthdate:", birthDate);
 
     const currentDate = new Date();
-    // console.log("Current Date:", currentDate);
 
     let age = currentDate.getFullYear() - birthDate.getFullYear();
-    // console.log("Initial Age:", age);
 
     const birthMonth = birthDate.getMonth();
     const currentMonth = currentDate.getMonth();
@@ -168,7 +137,6 @@ export default function Realtime() {
       age--; // Subtract 1 if birthday hasn't occurred yet this year
     }
 
-    // console.log("Final Age:", age);
     return age;
   }
 
@@ -208,153 +176,9 @@ export default function Realtime() {
     fetchData();
   }, []);
 
-  const columnsRealtimeTable = useMemo(
-    () => [
-      {
-        Header: 'Camera Image',
-        accessor: 'image',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <img
-              src={
-                'https://dev.transforme.co.id/gema_admin_api' +
-                row.original.image
-              }
-              alt="Camera Image"
-              style={{ width: '100px' }}
-            />
-          </TableCell>
-        ),
-      },
-      {
-        Header: 'Database Image',
-        accessor: 'face_pics',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            {row.original.face_pics == null ? (
-              <Typography variant="body6">No Image</Typography>
-            ) : (
-              <img
-                src={
-                  'https://dev.transforme.co.id/gema_admin_api' +
-                  row.original.face_pics
-                }
-                alt="Database Image"
-                style={{ width: '100px' }}
-              />
-            )}
-          </TableCell>
-        ),
-      },
-      { Header: 'Name', accessor: 'visitor_name', width: '10%' },
-      // { Header: "Gender", accessor: "gender", width: "10%" },
-      {
-        Header: 'Gender',
-        accessor: 'gender',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <Typography variant="body6">
-              {row.original.gender === true
-                ? 'Pria'
-                : row.original.gender === false
-                ? 'Wanita'
-                : row.original.gender === null || row.original.gender === ''
-                ? 'Unknown'
-                : null}
-            </Typography>
-          </TableCell>
-        ),
-      },
-      {
-        Header: 'Age',
-        accessor: 'age',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <Typography variant="body6">
-              {calculateAge(row.original.dob)}
-            </Typography>
-          </TableCell>
-        ),
-      },
-
-      {
-        Header: 'Status',
-        accessor: 'status',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <Typography variant="body6">
-              {row.original.isdpo
-                ? 'Watchlist'
-                : row.original.isemployee
-                ? 'Employee'
-                : 'Prajurit Binaan'}
-            </Typography>
-          </TableCell>
-        ),
-      },
-      {
-        Header: 'Camera Filter',
-        accessor: 'device_name',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <Typography variant="body6">
-              {row.original.device_name} - {row.original.location_name}
-            </Typography>
-          </TableCell>
-        ),
-      },
-      { Header: 'Timestamp', accessor: 'timestamp', width: '10%' },
-    ],
-    [],
-  );
-  const columnsRealtimeTableUnrecognized = useMemo(
-    () => [
-      {
-        Header: 'Camera Image',
-        accessor: 'image',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <img
-              src={
-                'https://dev.transforme.co.id/gema_admin_api' +
-                row.original.image
-              }
-              alt="Camera Image"
-              style={{ width: '100px' }}
-            />
-          </TableCell>
-        ),
-      },
-      { Header: 'Name', accessor: 'visitor_name', width: '10%' },
-
-      { Header: 'Age', accessor: 'age', width: '10%' },
-      { Header: 'Status', accessor: 'status', width: '10%' },
-      {
-        Header: 'Camera Filter',
-        accessor: 'device_name',
-        width: '10%',
-        Cell: ({ row }) => (
-          <TableCell>
-            <Typography variant="body6">
-              {row.original.device_name} - {row.original.location_name}
-            </Typography>
-          </TableCell>
-        ),
-      },
-      { Header: 'Timestamp', accessor: 'timestamp', width: '10%' },
-    ],
-    [],
-  );
   return (
     <>
-      <div className={classes.header}>
+      <div className="flex justify-between">
         <h3>Log Realtime</h3>
         <div className="flex w-[70%] space-x-4">
           <div className="w-1/6">
@@ -520,23 +344,158 @@ export default function Realtime() {
       </div>
 
       {selectedAnalytics == 'unrecognized' ? (
-        <DataTable
-          // canSearch={true}
-          entriesPerPage={{ defaultValue: 100, entries: [50, 100] }}
-          table={{
-            columns: columnsRealtimeTableUnrecognized,
-            rows: data,
-          }}
-        />
+        <div className="flex flex-col">
+          <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Foto
+              </h5>
+            </div>
+
+            <div className="p-2.5 text-center xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama{' '}
+              </h5>
+            </div>
+            <div className="p-2.5 text-center xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Usia{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Aksi{' '}
+              </h5>
+            </div>
+          </div>
+
+          {data.map((item) => {
+            return (
+              <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
+                <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                  {item.image ? (
+                    <img
+                      className="w-10 h-10 rounded-sm"
+                      src={"http://dev.transforme.co.id/gema_admin_api"+item.image}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                  )}
+                  
+                  {/* <p className="hidden text-black dark:text-white sm:block">
+                    {item.face_pics}
+                  </p> */}
+                </div>
+
+                <div className="flex items-center justify-center p-2.5 xl:p-5">
+                  <p className="text-meta-3">{item.dob}</p>
+                </div>
+
+                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <p className="text-black dark:text-white">{item.dob}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
-        <DataTable
-          // canSearch={true}
-          entriesPerPage={{ defaultValue: 100, entries: [50, 100] }}
-          table={{
-            columns: columnsRealtimeTable,
-            rows: data,
-          }}
-        />
+        <div className="flex flex-col">
+          <div className="grid grid-cols-8 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8">
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Foto Kamera
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Foto Database
+              </h5>
+            </div>
+
+            <div className="p-2.5 text-center xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama{' '}
+              </h5>
+            </div>
+            <div className="p-2.5 text-center xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Gender{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Usia{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Status{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Kamera{' '}
+              </h5>
+            </div>
+            <div className="hidden p-2.5 text-center sm:block xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Catatan Waktu{' '}
+              </h5>
+            </div>
+          </div>
+
+          {data.map((item) => {
+            return (
+              <div className="grid grid-cols-8 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8">
+                <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                {item.image ? (
+                    <img
+                      className="w-10 h-10 rounded-sm"
+                      src={"http://dev.transforme.co.id/gema_admin_api"+item.image}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 p-2.5 xl:p-5">
+                {item.face_pics ? (
+                    <img
+                      className="w-10 h-10 rounded-sm"
+                      src={"http://dev.transforme.co.id/gema_admin_api"+item.face_pics}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gray-300">Foto Tidak Tersedia</div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-center p-2.5 xl:p-5">
+                  <p className="text-meta-3">{item.visitor_name}</p>
+                </div>
+                <div className="flex items-center justify-center p-2.5 xl:p-5">
+                  <p className="text-meta-3">{item.gender == null ? 'Tidak Diketahui' : (item.gender == true ? 'Pria' : 'Wanita')}</p>
+                </div>
+                <div className="flex items-center justify-center p-2.5 xl:p-5">
+                  <p className="text-meta-3">{item.dob == null ? item.age : calculateAge(item.dob) }</p>
+                </div>
+
+                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <p className="text-black dark:text-white">{
+                    item.visitor_name == 'unrecognized' ? "Tidak Dikenal" : (item.isemployee == true ? 'Petugas' : (item.isdpo == true ? 'Binaan Watchlist' : 'Tentara Binaan'))
+                  }</p>
+                </div>
+                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <p className="text-black dark:text-white">{item.device_name}-{item.location_name}</p>
+                </div>
+                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <p className="text-black dark:text-white">{item.timestamp}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </>
   );
