@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 import BackgroundSecurityImage from '../images/security-background.jpg';
 
 const DefaultLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const backgroundStyle = {
     backgroundImage: `url(${BackgroundSecurityImage})`,
@@ -26,6 +26,7 @@ const DefaultLayout = () => {
       {/* <!-- ===== Page Wrapper Start ===== --> */}
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
+        
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* <!-- ===== Sidebar End ===== --> */}
 
