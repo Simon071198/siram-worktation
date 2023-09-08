@@ -211,11 +211,26 @@ export async function apiVisitorList(params) {
   }
 }
 
-export async function apiUserList(params) {
+// export async function apiUserList(params) {
+//   try {
+//     const response = await axios({
+//       method: 'post',
+//       url: webserviceurl + 'user/read.php',
+//       data: params,
+//     });
+//     console.log(response.data.data.records);
+//     return response.data.data.records;
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// }
+
+export async function apiCreateUser(params) {
   try {
     const response = await axios({
       method: 'post',
-      url: webserviceurl + 'user/read.php',
+      url: webserviceurl + 'user/create.php',
       data: params,
     });
     console.log(response.data.data.records);
@@ -910,6 +925,18 @@ export function apiLocationList() {
     const response = axios({
       method: 'post',
       url: webserviceurl + 'location/location_list.php',
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export function apiCreateLocation() {
+  try {
+    const response = axios({
+      method: 'post',
+      url: webserviceurl + 'location/create.php',
     });
     return response;
   } catch (error) {

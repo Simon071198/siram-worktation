@@ -920,6 +920,18 @@ export function apiLocationList() {
   }
 }
 
+export function apiCreateLocation() {
+  try {
+    const response = axios({
+      method: "post",
+      url: webserviceurl + "location/create.php",
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export function apiCountryList() {
   try {
     const response = axios({

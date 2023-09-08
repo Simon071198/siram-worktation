@@ -1,8 +1,19 @@
 import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { apiLocationList } from '../../services/api';
+import CreateLocationModal from './components/AddLocation';
 const LocationList = () => {
   const [data, setData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     let params = {
       filter: ' ',
@@ -59,6 +70,16 @@ Longitude          </h5>
               <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
                 <p className="text-black dark:text-white">{item.long}</p>
               </div>
+
+              <div className="flex justify-end mb-4">
+                  <button 
+                    className="px-30 py-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={openModal} // Membuka modal sesuai dengan indeks item
+                  >
+                    Tambah
+                  </button>
+              </div>
+              <CreateLocationModal isOpen={isModalOpen} onClose={closeModal} />
             </div>
           );
         })}
