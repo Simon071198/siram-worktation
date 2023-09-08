@@ -5,6 +5,7 @@ import CreateLocationModal from './components/AddLocation';
 const LocationList = () => {
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [iseEditModalOpen, setIsEditModalOpen] = useState(false); 
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -12,6 +13,13 @@ const LocationList = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+  const openEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
   };
 
   useEffect(() => {
@@ -78,12 +86,58 @@ Longitude          </h5>
                   >
                     Tambah
                   </button>
+                  <button 
+                    className="px-30 py-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={openEditModal} // Membuka modal sesuai dengan indeks item
+                  >
+                    Edit
+                  </button>
               </div>
-              <CreateLocationModal isOpen={isModalOpen} onClose={closeModal} />
+              {/* <CreateLocationModal isOpen={isModalOpen} onClose={closeModal} /> */}
             </div>
           );
         })}
       </div>
+      {
+        isModalOpen && (
+          <div className=' position relative '>
+            <h1>MODAL</h1>
+            <form>
+              <label htmlFor="location_name">Location Name:</label>
+              <input
+                type="text"
+                id="location_name"
+                name="location_name"
+                // value={formData.location_name}
+                // onChange={handleChange}
+                required
+              />
+              <br />
+            </form>
+            <button onClick={closeModal}>Close</button>
+            </div>
+        )
+      }
+      {
+        iseEditModalOpen && (
+          <div className=' position relative '>
+            <h1>EDIT MODAL</h1>
+            <form>
+              <label htmlFor="location_name">Location Name:</label>
+              <input
+                type="text"
+                id="location_name"
+                name="location_name"
+                // value={formData.location_name}
+                // onChange={handleChange}
+                required
+              />
+              <br />
+            </form>
+            <button onClick={closeEditModal}>Close</button>
+            </div>
+        )
+      }
     </div>
   );
 };

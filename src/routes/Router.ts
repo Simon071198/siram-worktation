@@ -23,7 +23,7 @@ const DeviceBraceletList = lazy(() => import('../pages/Device/BraceletList'));
 const DeviceCameraList = lazy(() => import('../pages/Device/CameraList'));
 const DeviceGatewayList = lazy(() => import('../pages/Device/GatewayList'));
 const UserList = lazy(() => import('../pages/User/UserList'));
-const DialogAddUser = lazy(() => import('../pages/User/components/DialogAddUser'));
+// const DialogAddUser = lazy(() => import('../pages/User/components/DialogAddUser'))
 const LocationList = lazy(() => import('../pages/Location/LocationList'));
 const DatabaseSearchList = lazy(
   () => import('../pages/DatabaseSearch/DatabaseSearchList'),
@@ -91,11 +91,11 @@ const coreRoutes = [
     title: 'UserList',
     component: UserList,
   },
-  {
-    path: '/manajemen-pengguna',
-    title: 'UserList',
-    component: DialogAddUser,
-  },
+  // {
+  //   path: '/manajemen-pengguna',
+  //   title: 'UserList',
+  //   component: DialogAddUser,
+  // },
   {
     path: '/perangkat-gateway',
     // path: '/device-gateway-list',
