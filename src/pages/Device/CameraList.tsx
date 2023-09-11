@@ -3,6 +3,34 @@ import { useEffect, useState } from 'react';
 import { apiDeviceList } from '../../services/api';
 const CameraList = () => {
   const [data, setData] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isBlurActive, setIsBlurActive] = useState(false)
+
+  const openAddModal = () => {
+    setIsAddModalOpen(true)
+    setIsBlurActive(true)
+  }
+  const closeAddModal = () => {
+    setIsAddModalOpen(false)
+    setIsBlurActive(false)
+  }
+
+  const openEditModal = () => {
+    setIsEditModalOpen(true)
+  }
+  const closeEditModal = () => {
+    setIsEditModalOpen(false)
+  }
+
+  const openDeleteModal = () => {
+    setIsDeleteModalOpen(true)
+  }
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+  }
+
   useEffect(() => {
     let params = {
       filter: ' ',
@@ -55,7 +83,7 @@ const CameraList = () => {
               Lokasi
             </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+          <div className="ml-26 hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Aksi
             </h5>
@@ -92,10 +120,302 @@ const CameraList = () => {
               <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
                 <p className="text-meta-5"> {item.location}</p>
               </div>
+              {/* <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
+                <button
+                  className='px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none'
+                  // onClick={}  
+                >
+                  Tambah
+                </button>
+                <button
+                  className='px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none'
+                  // onClick={}
+                >
+                  Edit
+                </button>
+                <button
+                  className='px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none'
+                  // onClick={}
+                >
+                  Hapus
+                </button>
+              </div> */}
+              <div className="grid grid-cols-3 rounded-sm sm:grid-cols-3">
+                  <button 
+                    className="ml-10 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={openAddModal}
+                  >
+                    Tambah
+                  </button>
+                  <button 
+                    className="ml-20 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={openEditModal}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="ml-24 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={openDeleteModal}
+                  >
+                    Hapus
+                  </button>
+              </div>
             </div>
           );
         })}
       </div>
+      {
+        isAddModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 ${isBlurActive ? 'backdrop-blur-md' : ''}">
+            <div className="bg-white rounded-lg p-5 mb-9 shadow-lg w-[70%]">
+              <div className="position relative space-y-4">
+              <div className='flex justify-between items-center border-b'>
+                  <h1 className='text-xl font-bold text-transparent-dark3'>Tambah Daftar Camera</h1>
+                  <button 
+                    onClick={closeAddModal}
+                    className="px-4 py-2 text-sm font-semibold text- bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                  >
+                    Close
+                  </button>
+                </div>
+                <form action="" className="grid grid-cols-2 gap-4 p-8">
+                <div className="">
+                  <input 
+                    type="text"
+                    id='deviceName'
+                    name="deviceName"
+                    placeholder='Nama Perangkat'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='deviceCode'
+                    name="deviceCode"
+                    placeholder='Kode Perangkat'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='ipAddress'
+                    name="ipAddress"
+                    placeholder='Ip Address'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='urlRTSP'
+                    name="urlRTSP"
+                    placeholder='URL RTSP'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                <select
+                  id="status"
+                  name="status"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Status</option>
+                  <option value="online">Online</option>
+                  <option value="offline">Offline</option>
+                </select>
+                  </div>
+                <div className="">
+                <select
+                  id=""
+                  name=""
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Lokasi</option>
+                </select>
+                  </div>
+                <div className="">
+                <select
+                  id=""
+                  name=""
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Type Camera</option>
+                </select>
+                  </div>
+                  <div className="">
+                    <input 
+                      type="text" 
+                      id='remark'
+                      name='remark'
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200"
+                      placeholder='Remark Name'
+                      />
+                  </div>
+                  <div>
+                    <button className='px-4 py-2 rounded-lg bg-primary text-white ml-95 mb-[-20%] mt-7 font-medium'>
+                      SIMPAN
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        isEditModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 ${isBlurActive ? 'backdrop-blur-md' : ''}">
+            <div className="bg-white rounded-lg p-5 mb-9 shadow-lg w-[70%]">
+              <div className="position relative space-y-4">
+              <div className='flex justify-between items-center border-b'>
+                  <h1 className='text-xl font-bold text-transparent-dark3'>Ubah Camera</h1>
+                  <button 
+                    onClick={closeEditModal}
+                    className="px-4 py-2 text-sm font-semibold text- bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                  >
+                    Close
+                  </button>
+                </div>
+                <form action="" className="grid grid-cols-2 gap-4 p-8">
+                <div className="">
+                  <input 
+                    type="text"
+                    id='deviceName'
+                    name="deviceName"
+                    placeholder='Nama Perangkat'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='deviceCode'
+                    name="deviceCode"
+                    placeholder='Kode Perangkat'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='ipAddress'
+                    name="ipAddress"
+                    placeholder='Ip Address'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                  <input 
+                    type="text"
+                    id='urlRTSP'
+                    name="urlRTSP"
+                    placeholder='URL RTSP'
+                    whitespace-normal break-words
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200" 
+                    required
+                    />
+                  </div>
+                <div className="">
+                <select
+                  id="status"
+                  name="status"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Status</option>
+                  <option value="online">Online</option>
+                  <option value="offline">Offline</option>
+                </select>
+                  </div>
+                <div className="">
+                <select
+                  id=""
+                  name=""
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Lokasi</option>
+                </select>
+                  </div>
+                <div className="">
+                <select
+                  id=""
+                  name=""
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200 appearance-none cursor-pointer"
+                  required
+                >
+                  <option>Pilih Type Camera</option>
+                </select>
+                  </div>
+                  <div className="">
+                    <input 
+                      type="text" 
+                      id='remark'
+                      name='remark'
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-200"
+                      placeholder='Remark Name'
+                      />
+                  </div>
+                  <div>
+                    <button className='px-4 py-2 rounded-lg bg-primary text-white ml-95 mb-[-20%] mt-7 font-medium'>
+                      SIMPAN
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      {
+        isDeleteModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-5 mb-20 shadow-lg w-[30%]">
+              <div className="position relative space-y-4">
+                <div className="flex justify-between items-center">
+                  <h1 className='text-xl text-transparent-dark3 font-bold'>Konfirmasi Hapus Data</h1>
+                </div>
+                <div className='card'>
+                  <p className='mb-10 mt-5 font-medium'>Apakah anda yakin untuk menghapus data ?</p>
+                </div>
+                <div className='flex justify-end'>
+                  <button 
+                    onClick={closeDeleteModal}
+                    className='px-4 py-2 text-sm text-primary font-bold text-bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none'
+                  >
+                    BATAL
+                  </button>
+                  <button 
+                    // onClick={}
+                    className='px-4 py-2 text-sm text-white font-bold text-bg-b0 rounded-md hover:bg-blue-600 focus:outline-none bg-meta-10'
+                  >
+                    HAPUS
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 };

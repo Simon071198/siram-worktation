@@ -88,21 +88,21 @@ Longitude          </h5>
                 <p className="text-black dark:text-white">{item.long}</p>
               </div>
 
-              <div className="flex justify-end mb-4 mr-18">
+              <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
                   <button 
-                    className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    className="ml-10 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                     onClick={openModal} // Membuka modal sesuai dengan indeks item
                   >
                     Tambah
                   </button>
                   <button 
-                    className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    className="text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                     onClick={openEditModal} // Membuka modal sesuai dengan indeks item
                   >
                     Edit
                   </button>
                   <button 
-                    className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                    className="mr-10 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                     onClick={openDeleteModal} // Membuka modal sesuai dengan indeks item
                   >
                     Hapus

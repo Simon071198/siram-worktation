@@ -86,21 +86,21 @@ Tanggal Dibuat            </h5>
                 <p className="text-black dark:text-white">{item.createstamp}</p>
               </div>
 
-              <div className="flex justify-end mb-4 mr-10">
+              <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
                 <button 
-                  className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                  className="ml-8 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                   onClick={openAddModal}
                 >
                   Tambah
                 </button>
                 <button 
-                  className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                  className=" text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                   onClick={openEditModal}
                 >
                   Edit
                 </button>
                 <button 
-                  className="px-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
+                  className="mr-10 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
                   onClick={openDeleteModal}
                 >
                   Hapus
