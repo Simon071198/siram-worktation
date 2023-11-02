@@ -11,6 +11,37 @@
 @layer components {
 }
 
+.truncate-ellipsis-before::before {
+  content: '... ';
+}
+
+.custom-truncate {
+  
+}
+
+/* width */
+::-webkit-scrollbar { 
+  width: 4px; 
+  height: 4px;
+} 
+
+/* Track */
+::-webkit-scrollbar-track { 
+  background: #4b4a4a; 
+  /* background: transparent; */
+} 
+
+/* Handle */
+::-webkit-scrollbar-thumb { 
+  background: #000000; 
+  border-radius: 5px; 
+} 
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover { 
+  background: #555; 
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -160,4 +191,29 @@ span.flatpickr-weekday,
 
 [x-cloak] {
   display: none !important;
+}
+
+.hamburger-line {
+  @apply w-[30px] h-[2px] mt-2 block bg-slate-600;
+}
+
+.hamburger-line-white {
+  @apply w-[30px] h-[2px] mt-2 block bg-white;
+}
+
+
+.hamburger-active > span:nth-child(1) {
+  @apply  rotate-45
+}
+
+.hamburger-active > span:nth-child(2) {
+  @apply scale-0
+}
+
+.hamburger-active > span:nth-child(3) {
+  @apply  -rotate-45
+}
+
+.error-text {
+  @apply text-red-400 text-sm
 }
