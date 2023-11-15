@@ -11,6 +11,37 @@
 @layer components {
 }
 
+.truncate-ellipsis-before::before {
+  content: '... ';
+}
+
+.custom-truncate {
+  
+}
+
+/* width */
+::-webkit-scrollbar { 
+  width: 4px; 
+  height: 4px;
+} 
+
+/* Track */
+::-webkit-scrollbar-track { 
+  background: #4b4a4a; 
+  /* background: transparent; */
+} 
+
+/* Handle */
+::-webkit-scrollbar-thumb { 
+  background: #000000; 
+  border-radius: 5px; 
+} 
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover { 
+  background: #555; 
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
@@ -160,4 +191,68 @@ span.flatpickr-weekday,
 
 [x-cloak] {
   display: none !important;
+}
+
+.hamburger-line {
+  @apply w-[30px] h-[2px] mt-2 block bg-slate-600;
+}
+
+.hamburger-line-white {
+  @apply w-[30px] h-[2px] mt-2 block bg-white;
+}
+
+
+.hamburger-active > span:nth-child(1) {
+  @apply  rotate-45
+}
+
+.hamburger-active > span:nth-child(2) {
+  @apply scale-0
+}
+
+.hamburger-active > span:nth-child(3) {
+  @apply  -rotate-45
+}
+
+.error-text {
+  @apply text-red-400 text-sm
+}
+
+.action-button-bg-del {
+  @apply bg-red-500 text-white
+}
+
+.action-button-bg-edit {
+  @apply bg-blue-500 text-white
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: fit-content;
+  background-color: rgb(48, 47, 47);
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 6px;
+  /* padding: 5px 0; */
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-top: 5px;
+  margin-left: -21px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }

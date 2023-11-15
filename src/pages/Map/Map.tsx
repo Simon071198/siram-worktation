@@ -1,19 +1,21 @@
-
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { styled } from "@mui/material/styles";
-// import "./Style.css";
 import { Map, Marker, GoogleApiWrapper, InfoWindow } from "google-maps-react";
 import { apiLocationDeviceStatusTotalSummary } from "../../services/api";
 
+// Import the correct type for the 'google' prop
+import { GoogleApiWrapperProps } from "google-maps-react";
 
-let MapPage = (props) => {
-  const [activeMarker, setActiveMarker] = useState({});
-  const [selectedPlace, setSelectedPlace] = useState({});
-  const [lat, setLat] = useState(0);
-  const [lng, setLng] = useState(0);
-  const [markers, setMarkers] = useState([{ lat: 0, lng: 0 }]);
-  const [showingInfoWindow, setShowingInfoWindow] = useState(false); // Added showingInfoWindow state
+interface MapPageProps extends GoogleApiWrapperProps {
+  // Your additional props, if any
+}
+
+const MapPage: React.FC<MapPageProps> = (props) => {
+  const [activeMarker, setActiveMarker] = useState<any>({});
+  const [selectedPlace, setSelectedPlace] = useState<any>({});
+  const [lat, setLat] = useState<number>(0);
+  const [lng, setLng] = useState<number>(0);
+  const [markers, setMarkers] = useState<Array<any>>([{ lat: 0, lng: 0 }]);
+  const [showingInfoWindow, setShowingInfoWindow] = useState<boolean>(false);
 
   useEffect(() => {
     doLoadDeviceReady();
@@ -25,26 +27,23 @@ let MapPage = (props) => {
         console.log("res: ", res);
         console.log("data: ", res.data);
         console.log("status: ", res.status);
-        console.log("records: ", res.data.records);
-        if (res.status === 200) {
-          if (res.data.records.length > 0) {
-            var temp = res.data.records;
-            console.log("data temp: ", temp);
-            var markerlatLang = [];
-            for (var i = 0; i < temp.length; i++) {
-              markerlatLang.push({
-                lat: temp[i].lat,
-                lng: temp[i].long,
-                offline: temp[i].offline,
-                online: temp[i].online,
-                damage: temp[i].damage,
-
-                name: temp[i].location,
-              });
-            }
-            console.log("data lang: ", markerlatLang);
-            setMarkers(markerlatLang);
+        console.log("records: ", res.data?.records); // Use optional chaining
+        if (res.status === 200 && res.data?.records.length > 0) {
+          var temp = res.data.records;
+          console.log("data temp: ", temp);
+          var markerlatLang = [];
+          for (var i = 0; i < temp.length; i++) {
+            markerlatLang.push({
+              lat: temp[i].lat,
+              lng: temp[i].long,
+              offline: temp[i].offline,
+              online: temp[i].online,
+              damage: temp[i].damage,
+              name: temp[i].location,
+            });
           }
+          console.log("data lang: ", markerlatLang);
+          setMarkers(markerlatLang);
         }
       })
       .catch((err) => {
@@ -52,38 +51,14 @@ let MapPage = (props) => {
       });
   };
 
-  const onMarkerClick = (props, marker, e) => {
+  const onMarkerClick = (props: any, marker: any, e: any) => {
     console.log("PROPS", props);
     console.log("MARKER", marker);
     console.log("E", e);
     setActiveMarker(marker);
     setSelectedPlace(props.position);
-    // setSelectedPlace(props.mapCenter);
-    setShowingInfoWindow(true); // Set showingInfoWindow to true
+    setShowingInfoWindow(true);
   };
-
-  //   const onMapClick = (props) => {
-  //     if (showingInfoWindow) {
-  //       setShowingInfoWindow(false); // Set showingInfoWindow to false
-  //       setActiveMarker(null);
-  //       setSelectedPlace({});
-  //     }
-  //   };
-
-  // const markerIcon = {
-  //   path: "../../../src/assets/images/map_pin.png",
-  //   anchor: new props.google.maps.Point(16, 32),
-  //   scaledSize: new props.google.maps.Size(32, 32),
-  // };
-
-  //   const styles = {
-  //     tab: {
-  //       minWidth: "10px",
-  //     },
-  //     tabs: {
-  //       minWidth: "10px",
-  //     },
-  //   };
 
   const mapStyles = {
     position: "relative",
@@ -115,17 +90,15 @@ let MapPage = (props) => {
   };
 
   return (
-    <>
+    <div className="container py-[16px]">
       <div>
         <h3 className="text-lg font-semibold">Peta Lokasi Lemasmil</h3>
       </div>
-      <div className="    h-[55vh]
-">
+      <div className="h-[55vh]">
         <div>
           <div xs={12}>
             <div
               style={{
-                // backgroundColor: "yellow",
                 width: "100%",
                 minHeight: "50vh",
               }}
@@ -136,20 +109,11 @@ let MapPage = (props) => {
                 disableDefaultUI={true}
                 style={mapStyles}
                 initialCenter={indonesiaCoords}
-                // initialCenter={jabodetabekCoords}
               >
                 {markers.map((marker, index) => (
                   <Marker
                     key={index}
-                    icon={
-                      {
-                        // url: require("../../../src/assets/images/map_pin.png"),
-                        // fillColor: "#EB00FF",
-                        // fillOpacity: 1,
-                        // scale: 0.05,
-                        // size: 50
-                      }
-                    }
+                    icon={{}}
                     position={{
                       lat: marker.lat,
                       lng: marker.lng,
@@ -157,14 +121,13 @@ let MapPage = (props) => {
                       offline: marker.offline,
                       damage: marker.damage,
                       nama: marker.name,
-                      // last: marker.last,
                     }}
                     onClick={onMarkerClick}
                   />
                 ))}
                 <InfoWindow marker={activeMarker} visible={showingInfoWindow}>
                   <div>
-                  <div className="w-full flex justify-between gap-4">
+                    <div className="w-full flex justify-between gap-4">
                       <div className="w-1/2">
                         <h5>Location Name</h5>
                       </div>
@@ -182,7 +145,7 @@ let MapPage = (props) => {
                     </div>
                     <div className="w-full flex justify-between gap-4 text-xs">
                       <div className="w-1/2">
-                      <h5>Kamera Rusak</h5>
+                        <h5>Kamera Rusak</h5>
                       </div>
                       <div className="w-1/2">
                         {selectedPlace.damage}
@@ -190,7 +153,7 @@ let MapPage = (props) => {
                     </div>
                     <div className="w-full flex justify-between gap-4 text-xs">
                       <div className="w-1/2">
-                      <h5>Kamera Aktif</h5>
+                        <h5>Kamera Aktif</h5>
                       </div>
                       <div className="w-1/2">
                         {selectedPlace.online}
@@ -203,9 +166,10 @@ let MapPage = (props) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
+
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyAvM9Ow4c24huLBdFS3dFw9byoNa-UkmfI",

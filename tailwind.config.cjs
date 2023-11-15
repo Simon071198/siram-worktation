@@ -1,4 +1,4 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -8,48 +8,6 @@ module.exports = {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
     },
-    colors: {
-      current: 'currentColor',
-      transparent: 'transparent',
-      white: '#FFFFFF',
-      black: '#1C2434',
-      'black-2': '#010101',
-      body: '#64748B',
-      bodydark: '#AEB7C0',
-      bodydark1: '#DEE4EE',
-      bodydark2: '#8A99AF',
-      'transparent-dark': '#8A99AF44',
-      'transparent-dark1': '#00000088',
-      'transparent-dark2': '#00000055',
-      'transparent-dark3': '#344767',
-      primary: '#3C50E0',
-      secondary: '#80CAEE',
-      stroke: '#E2E8F0',
-      gray: '#EFF4FB',
-      graydark: '#333A48',
-      'gray-2': '#F7F9FC',
-      'gray-3': '#FAFAFA',
-      whiten: '#F1F5F9',
-      whiter: '#F5F7FD',
-      boxdark: '#24303F',
-      'boxdark-2': '#1A222C',
-      strokedark: '#2E3A47',
-      'form-strokedark': '#3d4d60',
-      'form-input': '#1d2a39',
-      'meta-1': '#DC3545',
-      'meta-2': '#EFF2F7',
-      'meta-3': '#10B981',
-      'meta-4': '#313D4A',
-      'meta-5': '#259AE6',
-      'meta-6': '#FFBA00',
-      'meta-7': '#FF6766',
-      'meta-8': '#F0950C',
-      'meta-9': '#E5E7EB',
-      'meta-10': '#e74033',
-      success: '#219653',
-      danger: '#D34053',
-      warning: '#FFA70B',
-    },
     screens: {
       '2xsm': '375px',
       xsm: '425px',
@@ -57,6 +15,57 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      container:{
+        center : true,
+        padding: {
+          DEFAULT: '16px',
+          
+          // lg: '80px',
+          // top: '16px',
+          
+      },
+    },
+      colors: {
+        current: 'currentColor',
+        transparent: 'transparent',
+        white: '#FFFFFF',
+        black: '#1C2434',
+        'black-2': '#010101',
+        body: '#64748B',
+        bodydark: '#AEB7C0',
+        bodydark1: '#DEE4EE',
+        bodydark2: '#8A99AF',
+        'transparent-light': '#ffffffaa',
+        'transparent-dark': '#8A99AF44',
+        'transparent-dark1': '#00000088',
+        'transparent-dark2': '#00000055',
+        primary: '#3C50E0',
+        secondary: '#80CAEE',
+        stroke: '#E2E8F0',
+        gray: '#EFF4FB',
+        graydark: '#333A48',
+        'gray-2': '#F7F9FC',
+        'gray-3': '#FAFAFA',
+        whiten: '#F1F5F9',
+        whiter: '#F5F7FD',
+        boxdark: '#24303F',
+        'boxdark-2': '#1A222C',
+        strokedark: '#2E3A47',
+        'form-strokedark': '#3d4d60',
+        'form-input': '#1d2a39',
+        'meta-1': '#DC3545',
+        'meta-2': '#EFF2F7',
+        'meta-3': '#10B981',
+        'meta-4': '#313D4A',
+        'meta-5': '#259AE6',
+        'meta-6': '#FFBA00',
+        'meta-7': '#FF6766',
+        'meta-8': '#F0950C',
+        'meta-9': '#E5E7EB',
+        success: '#219653',
+        danger: '#D34053',
+        warning: '#FFA70B',
+      },
       fontSize: {
         'title-xxl': ['44px', '55px'],
         'title-xl': ['36px', '45px'],
@@ -253,7 +262,11 @@ module.exports = {
         'spin-2': 'spin 2s linear infinite',
         'spin-3': 'spin 3s linear infinite',
       },
+
+      gridColumn : {
+        'span-0.5':'span 0.5/span 0.5'
+      }
     },
   },
   plugins: [],
-}
+};

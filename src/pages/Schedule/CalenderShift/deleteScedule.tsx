@@ -1,0 +1,235 @@
+import { useEffect, useRef, useState } from 'react';
+import {
+  apiReadAllScheduleShift,
+} from '../../../services/api';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'dayjs/locale/id';
+import { Alerts } from '../GrupShift/Alert';
+import dayjs from 'dayjs';
+import { BsTrash, BsX } from 'react-icons/bs';
+import { BiLoaderAlt } from 'react-icons/bi';
+
+interface Schedule {
+  schedule_id: any;
+  shif_id: any;
+}
+const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
+  //get Token
+  const tokenItem = localStorage.getItem('token');
+  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
+  let token = tokens.token;
+
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [buttonLoad, setButtonLoad] = useState(false);
+
+  //useEffect untuk menambahkan event listener  ke elemen dokumen
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        modalContainerRef.current &&
+        !modalContainerRef.current.contains(e.target as Node)
+      ) {
+        closeModal();
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [closeModal]);
+
+  const [schedule, setSchedule] = useState<Schedule[]>([]);
+  const [activeDeleteItemIds, setActiveDeleteItemIds] = useState<string[]>([]);
+  const [scheduleDeleteData, setScheduleDeleteData] = useState([
+    {
+      schedule_id: '',
+    },
+  ]);
+
+  const handledelete = (item: any) => {
+    const newScheduleDeleteData = scheduleDeleteData.filter(
+      (schedule) => schedule.schedule_id !== ''
+    );
+
+    newScheduleDeleteData.push({ schedule_id: item });
+
+    setScheduleDeleteData(newScheduleDeleteData);
+    setActiveDeleteItemIds([...activeDeleteItemIds, item]);
+  };
+  const handleCancel = (item: any) => {
+    const updatedItemIds = activeDeleteItemIds.filter((id) => id !== item);
+    const updatedataDelete = scheduleDeleteData.filter(
+      (id) => id.schedule_id !== item
+    );
+    setActiveDeleteItemIds(updatedItemIds);
+    setScheduleDeleteData(updatedataDelete);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchSchedule = async () => {
+      const filter = {
+        filter: {
+          tanggal: defaultValue.tanggal,
+          bulan: defaultValue.bulan,
+          tahun: defaultValue.tahun,
+        },
+      };
+
+      try {
+        const schedule = await apiReadAllScheduleShift(filter, token);
+        setSchedule(schedule.data.records);
+        setIsLoading(false);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
+    };
+    fetchSchedule();
+  }, []);
+
+  const [errors, setErrors] = useState('');
+  const validate = () => {
+    if (
+      scheduleDeleteData[0]?.schedule_id == '' ||
+      scheduleDeleteData.length === 0
+    ) {
+      setErrors('Silahkan pilih data!');
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const handleSubmit = () => {
+    setButtonLoad(true);
+    if (!validate()) return;
+    onSubmit(scheduleDeleteData).then(() => setButtonLoad(false));
+  };
+
+  const tanggal = dayjs(
+    `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
+    {
+      locale: 'id',
+    }
+  ).format('DD MMMM YYYY');
+  return (
+    <div
+      ref={modalContainerRef}
+      className="modal-container rounded-md fixed z-50 flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    >
+      {isLoading ? (
+        <div className={`justify-center flex items-center`}>
+          <svg
+            className="animate-spin h-20 w-20 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+      ) : (
+        <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark overflow-auto">
+          <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
+            <div className="w-full flex justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-black dark:text-white mr-6">
+                  Hapus Data Schedule {tanggal}
+                </h3>
+              </div>
+              <strong
+                className="text-xl align-center cursor-pointer "
+                onClick={closeModal}
+              >
+                &times;
+              </strong>
+            </div>
+            <div className="pt-6 ">
+              <div className="w-full pb-2 flex justify-between">
+                <h1 className="text-sm font-semibold  xt-black dark:text-white w-2/3">
+                  Nama Shift
+                </h1>
+                <h1 className="text-sm font-semibold  xt-black dark:text-white w-1/3 flex justify-center">
+                  Aksi
+                </h1>
+              </div>
+              {schedule.map((item: any) => {
+                const isDeleteVisible = activeDeleteItemIds.includes(
+                  item.schedule_id
+                );
+
+                return (
+                  <div className="flex justify-between pb-2">
+                    <h1
+                      className={`w-2/3 capitalize ${!isDeleteVisible ? 'text-white' : ''
+                        }`}
+                    >
+                      {item.nama_shift}
+                    </h1>
+                    <div className="w-1/3 flex justify-center ">
+                      {!isDeleteVisible ? (
+                        <button
+                          onClick={() => handledelete(item.schedule_id)}
+                          className="flex items-center space-x-2 rounded bg-red-500 px-2 text-white"
+                        >
+                          <BsTrash size={10} />{' '}
+                          <h2 className="text-sm">Hapus</h2>{' '}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleCancel(item.schedule_id)}
+                          className="flex items-center space-x-2 rounded bg-blue-500 px-2 text-white"
+                        >
+                          <BsX size={10} /> <h2 className="text-sm">Cancel</h2>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="h-3">
+              <h1 className="text-red-600 text-sm">{errors}</h1>
+            </div>
+
+            <div className="flex justify-center mt-5">
+              <button
+                className={` ${buttonLoad ? 'bg-slate-600' : 'bg-primary hover:bg-blue-500'
+                  }btn w-full flex justify-center rounded  py-2 px-6 font-medium text-gray hover:shadow-1`}
+                type="submit"
+                onClick={handleSubmit}
+              >
+                {buttonLoad ? (
+                  <>
+                    <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                  </>
+                ) : (
+                  <></>
+                )}
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DeleteSchedule;

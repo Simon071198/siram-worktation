@@ -74,39 +74,38 @@ export default function EmployeeDatabaseSearchByName() {
         <form className="flex flex-col gap-4 w-full px-4 py-1">
           <div
             style={{
-              display: 'flex',
               gap: '2rem',
               width: '100%',
               justifyContent: 'center',
             }}
           >
             <div>
-              <div className="min-w-[400px] max-w-[600px] mx-auto mt-3 p-1 flex flex-col items-center rounded-10">
+              <div className="mt-3 p-1 flex flex-col items-center rounded-10 ">
                 <input
                   type="text"
                   placeholder="Nama Petugas"
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
-                  className="w-90 mt-1 mx-1 mb-0 p-2 border rounded-lg w-full"
+                  className="w-[500px] rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                 />
 
-                <div className="flex justify-center mt-8">
-                  <button
-                    type="button"
-                    className="bg-primary text-white px-6 py-3 rounded-md cursor-pointer"
-                    onClick={handleSearch}
-                  >
-                    Cari
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="bg-primary text-white px-6 py-2 mt-3 w-50 rounded-md cursor-pointer"
+                  onClick={handleSearch}
+                >
+                  Cari
+                </button>
+
               </div>
             </div>
+
             <div>
-              <div className="max-w-md mx-auto bg-white shadow-md rounded-md overflow-hidden">
+              <div className=" w-[500px] mx-auto bg-meta-4 shadow-md rounded-t-md overflow-hidden mt-5">
                 <table className="min-w-full">
                   <thead>
                     <tr>
-                      <th className="py-2 px-3">Hasil Pencarian</th>
+                      <th className="py-2 px-3 bg-slate-600">Hasil Pencarian</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -116,18 +115,19 @@ export default function EmployeeDatabaseSearchByName() {
                         className="cursor-pointer"
                         key={row.name}
                       >
-                        <td className="px-6 py-4 border-b">{row.name}</td>
+                        <td className="px-6 py-4 border-t border-slate-600 capitalize">{row.name}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+
           </div>
         </form>
         {isModalOpen && (
-          <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-70">
-            <div className="bg-white w-4/5 h-4/5 max-w-3xl p-6 rounded-xl overflow-y-scroll">
+          <div className="fixed z-[9999] top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-70">
+            <div className="dark:bg-boxdark border border-slate-400 w-4/5 h-4/5 max-w-3xl p-6 rounded-xl overflow-y-scroll">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-semibold">
                   Detail Prajurit Binaan
@@ -157,32 +157,32 @@ export default function EmployeeDatabaseSearchByName() {
                     <table>
                       <tbody>
                         <tr>
-                          <td className="font-semibold">Nama</td>
-                          <td>{selectedCard.name}</td>
+                          <td className="font-semibold ">Nama</td>
+                          <td className='pl-4 capitalize'>{selectedCard.name}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Tanggal Lahir</td>
-                          <td>{selectedCard.dob}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.dob}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Kebangsaan</td>
-                          <td>{selectedCard.country_name}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.country_name}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Nomor Identitas</td>
-                          <td>{selectedCard.identity}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.identity}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Jenis Kelamin</td>
-                          <td>{selectedCard.gender ? 'Male' : 'Female'}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.gender ? 'Male' : 'Female'}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">ID Prajurit Binaan</td>
-                          <td>{selectedCard.visitor_id}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.visitor_id}</td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Tanggal Input</td>
-                          <td>{selectedCard.create_stamp}</td>
+                          <td className='pl-4 capitalize'>{selectedCard.create_stamp}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -201,7 +201,7 @@ export default function EmployeeDatabaseSearchByName() {
                     key={index}
                     onClick={() => handleCardClick(data)}
                   >
-                    <div className="max-w-xs bg-white shadow-md rounded-md overflow-hidden">
+                    <div className="max-w-xs bg-slate-600 h-full shadow-md rounded-md overflow-hidden">
                       <img
                         className="h-48 w-full object-cover"
                         src={

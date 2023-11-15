@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import UserOne from '../images/user/user-01.png';
 
@@ -8,6 +8,9 @@ const DropdownUser = () => {
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+
+  const navigate = useNavigate();
+  const dataUser = JSON.parse(localStorage.getItem('dataUser') || '{}') as any;
 
   // close on click outside
   useEffect(() => {
@@ -35,6 +38,12 @@ const DropdownUser = () => {
     return () => document.removeEventListener('keydown', keyHandler);
   });
 
+  const handleLogout = () => {
+    localStorage.removeItem('dataUser');
+    localStorage.removeItem('token');
+    navigate('/auth/signin');
+  };
+
   return (
     <div className="relative">
       <Link
@@ -44,14 +53,21 @@ const DropdownUser = () => {
         to="#"
       >
         <span className="hidden text-right lg:block">
-          <span className="block text-sm font-medium text-black dark:text-white">
-            Rizki Irwansyah
+          <span className="block capitalize text-sm font-medium text-black dark:text-white">
+            {dataUser.nama_petugas}
           </span>
-          <span className="block text-xs">Petugas Lemasmil</span>
+          <span className="block text-xs capitalize text-white">
+            {dataUser.role_name}
+          </span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
+        <span className="h-12 w-12 rounded-full overflow-hidden">
+          <img
+            src={
+              'https://dev.transforme.co.id/siram_admin_api' + dataUser.image
+            }
+            alt="User"
+          />
         </span>
 
         <svg
@@ -78,15 +94,16 @@ const DropdownUser = () => {
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
-        className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${
-          dropdownOpen === true ? 'block' : 'hidden'
-        }`}
+        // className={`absolute right-0 mt-4 flex w-62.5 flex-col border-b border-r border-l border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-300
+        className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-transparent-dark1
+         ${dropdownOpen === true ? 'block' : 'hidden'}`}
       >
-        <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+        {/* <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>
             <Link
               to="/profile"
-              className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+              // className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+              className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base text-meta-4"
             >
               <svg
                 className="fill-current"
@@ -111,7 +128,8 @@ const DropdownUser = () => {
           <li>
             <Link
               to="/settings"
-              className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+              // className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+              className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base text-meta-4"
             >
               <svg
                 className="fill-current"
@@ -133,8 +151,12 @@ const DropdownUser = () => {
               Pengaturan Akun
             </Link>
           </li>
-        </ul>
-        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        </ul> */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base "
+          // className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base text-meta-4"
+        >
           <svg
             className="fill-current"
             width="22"
