@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   apiChangePassword,
   apiCreateUser,
@@ -13,11 +13,16 @@ import {
 } from '../../services/api';
 import { AddSidangModal } from './ModalAddSidang';
 import { Alerts } from './AlertSidang';
+// import Loader from 'renderer/common/Loader';
 import Loader from '../../common/Loader';
+// import Pagination from 'renderer/components/Pagination';
 import Pagination from '../../components/Pagination';
 import { DeleteSidangModal } from './ModalDeleteSidang';
 import * as xlsx from 'xlsx';
+// import DropdownAction from 'renderer/components/DropdownAction';
 import DropdownAction from '../../components/DropdownAction';
+import SearchInputButton from '../Device/Search';
+import dayjs from 'dayjs';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -34,7 +39,7 @@ const SidangList = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [modalUbahPasswordOpen, setModalUbahPasswordOpen] = useState(false);
   const [deleteData, setDeleteData] = useState(null);
-
+  const [searchData, setSearchData] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
   const [alertIsAdded, setAlertIsAdded] = useState(false);
@@ -55,10 +60,10 @@ const SidangList = () => {
     const newArraySaksi: any = [];
     const newArrayPengacara: any = [];
     const newArrayHakim: any = [];
-    item?.sidang_jaksa.map((item: any) =>
-      newArrayJaksa.push({
-        jaksa_penuntut_id: item?.jaksa_penuntut_id,
-        nama_jaksa: item?.nama_jaksa,
+    item?.sidang_oditur?.map((item: any) =>
+      newArrayJaksa?.push({
+        oditur_penuntut_id: item?.oditur_penuntut_id,
+        nama_oditur: item?.nama_oditur,
       })
     );
 
@@ -79,16 +84,16 @@ const SidangList = () => {
 
     item?.sidang_hakim.map((item: any) =>
       newArrayHakim.push({
-        hakim_id: item?.hakim_id,
-        nama_hakim: item?.nama_hakim,
+        hakim_id: item?.hakim_id ?? '',
+        nama_hakim: item?.nama_hakim ?? '',
       })
     );
 
     const hakimKetua = item?.sidang_hakim.find(
       (item: any) => item.ketua_hakim === '1'
     );
-    const jaksaKetua = item?.sidang_jaksa.find(
-      (item: any) => item.ketua_jaksa === '1'
+    const jaksaKetua = item?.sidang_oditur.find(
+      (item: any) => item.ketua_oditur === '1'
     );
 
     const detailItem: any = {
@@ -113,17 +118,18 @@ const SidangList = () => {
       saksiHolder: newArraySaksi,
       pengacaraHolder: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
-      jaksaHolder: newArrayJaksa,
-      role_ketua_hakim_holder: {
-        hakim_id: hakimKetua.hakim_id,
-        nama_hakim: hakimKetua.nama_hakim,
-      },
-      role_ketua_jaksa_holder: {
-        jaksa_penuntut_id: jaksaKetua.jaksa_penuntut_id,
-        nama_jaksa: jaksaKetua.nama_jaksa,
+      oditurHolder: newArrayJaksa,
+      // role_ketua_hakim_holder: {
+      //   hakim_id: hakimKetua.hakim_id,
+      //   nama_hakim: hakimKetua.nama_hakim,
+      // },
+      role_ketua_oditur_holder: {
+        oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
+        nama_oditur: jaksaKetua?.nama_oditur,
       },
       link_dokumen_persidangan: item.link_dokumen_persidangan,
     };
+    // console.log(jaksaKetua, 'jaksaKetua');
     console.log('NEW ITEM DETAIl', detailItem);
     setDetailData(detailItem);
     setModalDetailOpen(true);
@@ -136,10 +142,10 @@ const SidangList = () => {
     const newArraySaksi: any = [];
     const newArrayPengacara: any = [];
     const newArrayHakim: any = [];
-    item?.sidang_jaksa.map((item: any) =>
-      newArrayJaksa.push({
-        jaksa_penuntut_id: item?.jaksa_penuntut_id,
-        nama_jaksa: item?.nama_jaksa,
+    item?.sidang_oditur?.map((item: any) =>
+      newArrayJaksa?.push({
+        oditur_penuntut_id: item?.oditur_penuntut_id,
+        nama_oditur: item?.nama_oditur,
       })
     );
 
@@ -172,10 +178,10 @@ const SidangList = () => {
     const hakimKetua = item?.sidang_hakim.find(
       (item: any) => item.ketua_hakim === '1'
     );
-    const jaksaKetua = item?.sidang_jaksa.find(
-      (item: any) => item.ketua_jaksa === '1'
+    const jaksaKetua = item?.sidang_oditur.find(
+      (item: any) => item.ketua_oditur === '1'
     );
-    console.log('HAKIM KETUA', hakimKetua);
+    // console.log('HAKIM KETUA', hakimKetua);
 
     // console.log('NEW ARRAY',newArrayJaksa)
 
@@ -202,15 +208,15 @@ const SidangList = () => {
       saksiHolder: newArraySaksi,
       pengacaraHolder: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
-      jaksaHolder: newArrayJaksa,
+      oditurHolder: newArrayJaksa,
       // hakim_id:[],
-      role_ketua_hakim_holder: {
-        hakim_id: hakimKetua.hakim_id,
-        nama_hakim: hakimKetua.nama_hakim,
-      },
-      role_ketua_jaksa_holder: {
-        jaksa_penuntut_id: jaksaKetua.jaksa_penuntut_id,
-        nama_jaksa: jaksaKetua.nama_jaksa,
+      // role_ketua_hakim_holder: {
+      //   hakim_id: hakimKetua.hakim_id,
+      //   nama_hakim: hakimKetua.nama_hakim,
+      // },
+      role_ketua_oditur_holder: {
+        oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
+        nama_oditur: jaksaKetua?.nama_oditur,
       },
       link_dokumen_persidangan: item.link_dokumen_persidangan,
     };
@@ -330,9 +336,9 @@ const SidangList = () => {
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
-      filter: '',
-      currentPage: currentPage,
-      pageSize: 10,
+      // filter: '',
+      // currentPage: currentPage,
+      // pageSize: 10,
     };
     try {
       const response = await apiSidangRead(params);
@@ -353,45 +359,107 @@ const SidangList = () => {
     setIsLoading(false);
   };
 
+  const flattenObject = (obj: any, prefix = ''): any => {
+    return Object.keys(obj).reduce((acc: any, key) => {
+      const propName = prefix ? `${prefix}.${key}` : key;
+
+      if (
+        typeof obj[key] === 'object' &&
+        obj[key] !== null &&
+        !Array.isArray(obj[key])
+      ) {
+        return { ...acc, ...flattenObject(obj[key], propName) };
+      } else {
+        return {
+          ...acc,
+          [propName]:
+            obj[key] !== null && typeof obj[key] === 'object'
+              ? JSON.stringify(obj[key])
+              : obj[key],
+        };
+      }
+    }, {});
+  };
+
   const exportToExcel = async () => {
+    const keyProperty: any[] = [];
+    for (const obj of data) {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          keyProperty.push(key);
+        }
+      }
+    }
     const dataToExcel = [
-      [
-        'Name',
-        'Ruangan Tahanan',
-        'Nomor DMAC Gelang',
-        'Tanggal diTahan',
-        'Kasus Perkara',
-        'Alamat',
-      ],
-      ...data.map((item: any) => [
-        // item.nama,
-        // item.nama_hunian_wbp_otmil,
-        // item.DMAC,
-        // item.tanggal_ditahan_otmil,
-        // item.nama_kategori_perkara,
-        // item.alamat,
-      ]),
+      keyProperty,
+      ...data.map((item: any) => {
+        const flattenedItem = flattenObject(item);
+        return Object.values(flattenedItem);
+      }),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(
+      wb,
+      `DataSidang${dayjs(new Date()).format('DDMMYYYY-HHmmss')}.xlsx`
+    );
+  };
+
+  interface ItemType {
+    nama_wbp: string;
+    nama_jenis_persidangan: string;
+  }
+  const handleSearchSidang = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    try {
+      e.preventDefault();
+      let params = {
+        filter: {
+          nama_wbp: searchData,
+          // nama_jenis_persidangan: searchData,
+        },
+        currentPage: currentPage,
+        pageSize: 10,
+      };
+      const response = await apiSidangRead(params);
+      if (response.data.status === 'OK') {
+        const result = response.data.records;
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else if (response.data.status === 'No Data') {
+        const result = response.data.records;
+        setData(result);
+        // setPages(response.data.pagination.totalPages);
+        // setRows(response.data.pagination.totalRecords);
+      } else {
+        throw new Error('Terjadi kesalahan saat mencari data.');
+      }
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
   };
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="w-full">
-              {/* <SearchInputButton
-              value=''
-              placehorder="Cari nama binaan"
-              onChange={}
-            /> */}
+              <SearchInputButton
+                value={searchData}
+                placehorder="Cari nama binaan"
+                onChange={(e) => setSearchData(e.target.value)}
+              />
             </div>
 
             <select
@@ -410,7 +478,7 @@ const SidangList = () => {
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
-              // onClick={handleSearchClick}
+              onClick={handleSearchSidang}
               id="button-addon1"
               data-te-ripple-init
               data-te-ripple-color="light"
@@ -450,7 +518,7 @@ const SidangList = () => {
         </div>
 
         <div className="flex flex-col">
-          <div className="grid grid-cols-6 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+          <div className="grid grid-cols-5 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nama WBP
@@ -467,14 +535,10 @@ const SidangList = () => {
                 Jadwal Sidang
               </h5>
             </div>
+
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Ketua Hakim
-              </h5>
-            </div>
-            <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Ketua Jaksa
+                Ketua Oditur
               </h5>
             </div>
             <div className="p-2.5 xl:p-5 ">
@@ -491,7 +555,7 @@ const SidangList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    <div className="grid grid-cols-6 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                    <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
                       <div
                         onClick={() => handleDetailClick(item)}
                         className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
@@ -518,26 +582,17 @@ const SidangList = () => {
                           {item.jadwal_sidang}
                         </p>
                       </div>
+
                       <div
                         onClick={() => handleDetailClick(item)}
                         className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
                       >
-                        <p className="hidden text-black dark:text-white sm:block">
-                          {item?.sidang_hakim.find(
-                            (item: any) => item.ketua_hakim === '1'
-                          ).nama_hakim}
-                        </p>
-                      </div>
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
-                      >
-                        <p className="hidden text-black dark:text-white sm:block">
-                          <p className="hidden text-black dark:text-white sm:block">
-                            {item?.sidang_jaksa.find(
-                              (item: any) => item.ketua_jaksa === '1'
-                            ).nama_jaksa}
-                          </p>
+                        <p className="hidden text-black dark:text-white sm:block text-center">
+                          {item?.sidang_oditur && item.sidang_oditur.length > 0
+                            ? item?.sidang_oditur?.find(
+                                (item: any) => item.ketua_oditur === '1'
+                              )?.nama_oditur || ''
+                            : ''}
                         </p>
                       </div>
 

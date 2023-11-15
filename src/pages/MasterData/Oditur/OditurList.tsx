@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { Alerts } from './AlertOditur';
 import {
   apiReadOditur,
   apiDeleteOditur,
   apiCreateOditur,
   apiUpdateOditur,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddOditorModal } from './ModalAddOditur';
 import { DeleteOditurModal } from './ModalDeleteOditur';
 import SearchInputButton from '../Search';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
 
 // Interface untuk objek 'params' dan 'item'

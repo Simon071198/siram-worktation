@@ -1077,7 +1077,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Daftar Tipe Aset{' '}
                             </NavLink>
                           </li>
-                          <li>
+                          {/* <li>
                             <NavLink
                               to="/hakim-data"
                               onClick={handleNavLinkClick}
@@ -1088,7 +1088,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Daftar Hakim{' '}
                             </NavLink>
-                          </li>
+                          </li> */}
                           <li>
                             <NavLink
                               to="/oditur-penyidik-data"

@@ -108,7 +108,7 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       setModalOpen(true);
     } catch (error) {
       console.error('Error fetching watchlist history:', error);
-      alert('Connection error: tidak dapat mengambil data Prajurit Binaan');
+      alert('Connection error: tidak dapat mengambil data Tersangka');
     }
   };
 

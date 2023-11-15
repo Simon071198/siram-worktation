@@ -538,7 +538,7 @@ const InmateList = () => {
 
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Data Prajurit Binaan
+            Data Tersangka
           </h4>
 
           {!isOperator && (

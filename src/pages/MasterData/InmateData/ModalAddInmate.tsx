@@ -876,10 +876,10 @@ export const AddInmateModal = ({
                 <div>
                   <h3 className="text-xl font-semibold text-black  dark:text-white">
                     {isDetail
-                      ? 'Detail data prajurit binaan'
+                      ? 'Detail data tersangka'
                       : isEdit
-                        ? 'Edit data prajurit binaan'
-                        : 'Tambah data prajurit binaan'}
+                        ? 'Edit data tersangka'
+                        : 'Tambah data tersangka'}
                   </h3>
                 </div>
                 <strong
@@ -895,7 +895,7 @@ export const AddInmateModal = ({
                   {/* ----- DATA PRIBADI ----- */}
                   <div>
                     <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
-                      Data Prajurit Binaan
+                      Data Tersangka
                     </p>
                     <div className="flex flex-col gap-4">
                       <div className=" grid grid-cols-2 gap-4 items-start ">
@@ -2809,7 +2809,7 @@ export const AddInmateModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Prajurit Binaan
+                    Ubah Data Tersangka
                   </button>
                 ) : (
                   <button
@@ -2842,7 +2842,7 @@ export const AddInmateModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Prajurit Binaan
+                    Tambah Data Tersangka
                   </button>
                 )}
               </form>

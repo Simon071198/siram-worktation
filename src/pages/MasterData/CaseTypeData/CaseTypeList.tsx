@@ -386,9 +386,9 @@ const CaseTypeList = () => {
         </div>
 
         <div className="flex justify-between items-center mb-3">
-          <h4 className="ext-xl font-semibold text-black dark:text-white">
+          <h1 className="ext-xl font-bold text-black dark:text-white">
             Jenis Perkara
-          </h4>
+          </h1>
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { Alerts } from './AlertPengadilanMiliter';
 import {
   apiReadPengadilanMiliter,
   apiDeletePengadilanMiliter,
   apiCreatePengadilanMiliter,
   apiUpdatePengadilanMiliter,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddPengadilanMiliterModal } from './ModalAddPengadilanMiliter';
 import { DeletePengadilanMiliterModal } from './ModalDeletePengadilanMiliter';
 import SearchInputButton from '../Search';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
 
 // Interface untuk objek 'params' dan 'item'

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import { Alerts } from './AlertPengadilanMiliter';
-import { apiReadKota, apiReadProvinsi } from '../../services/api';
+import { apiReadKota, apiReadProvinsi } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;

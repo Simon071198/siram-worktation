@@ -9,11 +9,14 @@ import {
 } from '../../services/api';
 import { AddBAPModal } from './ModalAddBAP';
 import { Alerts } from './AlertBAP';
+// import Loader from 'renderer/common/Loader';
 import Loader from '../../common/Loader';
 import { DeleteBAPModal } from './ModalDeleteBAP';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../MasterData/Search';
+// import Pagination from 'renderer/components/Pagination';
 import Pagination from '../../components/Pagination';
+// import DropdownAction from 'renderer/components/DropdownAction';
 import DropdownAction from '../../components/DropdownAction';
 
 // interface Item {
@@ -41,7 +44,7 @@ const BAPList = () => {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [filter, setFilter] = useState('');
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize ,setPageSize]=useState(10)
   const [isOperator, setIsOperator] = useState<boolean>();
 
   const tokenItem = localStorage.getItem('token')
@@ -75,12 +78,12 @@ const BAPList = () => {
       let params = {
         filter: {
           nama_dokumen_bap: filter,
-          lokasi_otmil: 'Cimahi',
+          // lokasi_otmil: 'Cimahi',
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiReadBAP(params, token);
+      const response = await apiReadBAP(params,token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -90,7 +93,7 @@ const BAPList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (e: any) {
+    } catch (e:any) {
       const error = e.message
       Alerts.fire({
         icon: 'error',
@@ -117,7 +120,7 @@ const BAPList = () => {
   // useEffect untuk fetch data dari API
   useEffect(() => {
     fetchData();
-  }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
+  }, [currentPage,pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
   useEffect(() => {
     // Menambahkan event listener untuk tombol "Enter" pada komponen ini
@@ -133,7 +136,7 @@ const BAPList = () => {
   const fetchData = async () => {
     let params = {
       filter: {
-        lokasi_otmil: 'Cimahi',
+        // lokasi_otmil: 'Cimahi',
       },
       page: currentPage,
       pageSize: pageSize,
@@ -141,7 +144,7 @@ const BAPList = () => {
 
     setIsLoading(true);
     try {
-      const response = await apiReadBAP(params, token);
+      const response = await apiReadBAP(params,token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -150,7 +153,7 @@ const BAPList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (e: any) {
+    } catch (e:any) {
       const error = e.message
       Alerts.fire({
         icon: 'error',
@@ -195,16 +198,16 @@ const BAPList = () => {
   // function untuk menghapus data
   const handleSubmitDelete = async (params: any) => {
     try {
-      const responseDelete = await apiDeleteBAP(params, token);
+      const responseDelete = await apiDeleteBAP(params,token);
       if (responseDelete.data.status === 'OK') {
-
+       
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
         fetchData()
-      } else if (responseDelete.data.status === "NO") {
+      } else if (responseDelete.data.status === "NO"){
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -224,17 +227,17 @@ const BAPList = () => {
   // function untuk menambah data
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
-    try {
-      const responseCreate = await apiCreateBAP(params, token)
-      if (responseCreate.data.status === "OK") {
-
+    try{
+      const responseCreate = await apiCreateBAP(params,token)
+      if(responseCreate.data.status === "OK"){
+        
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
         fetchData()
-      } else if (responseCreate.data.status === 'NO') {
+      } else if (responseCreate.data.status === 'NO'){
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
@@ -242,7 +245,7 @@ const BAPList = () => {
       } else {
         throw new Error(responseCreate.data.message);
       }
-    } catch (e: any) {
+    } catch (e:any){
       const error = e.message
       Alerts.fire({
         icon: 'error',
@@ -255,25 +258,25 @@ const BAPList = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateBAP(params, token)
-      if (responseEdit.data.status === "OK") {
-
+       const responseEdit = await apiUpdateBAP(params,token)
+       if(responseEdit.data.status === "OK"){
+        
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
         fetchData()
-      } else if (responseEdit.data.status === 'NO') {
+       } else if (responseEdit.data.status === 'NO'){
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',
         });
-      } else {
+       } else {
         throw new Error(responseEdit.data.message);
-      }
-    } catch (e: any) {
-      const error = e.message
+       }
+    }catch (e:any){
+       const error = e.message
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -288,44 +291,32 @@ const BAPList = () => {
       setIsOperator(false);
     }
 
-    console.log(isOperator, 'Operator');
+    console.log(isOperator ,'Operator');
   }, [isOperator]);
+    
+  
 
-
-
-  const exportToExcel = () => {
+  const exportToExcel = ()=>{
     const dataToExcel = [
       [
         'Nama Dokumen BAP',
-        'Link Dokumen BAP',
-        'Alasan Penyidikan',
-        'Lokasi Penyidikan',
-        'Waktu Penyidikan',
+        'Nomor Penyidikan',
         'Agenda Penyidikan',
-        'Hasil Penyidikan',
-        'Nomer Kasus',
-        'Nama Kasus',
-        'NRP WBP',
-        'Lokasi Otmil',
-        'nama wbp',
+        'nomor kasus',
+        'nama kasus',
+        'nama',
+        'nrp wbp',
         'nama saksi',
-        'keterangan saksi',
       ],
       ...data.map((item: any) => [
         item.nama_dokumen_bap,
-        item.link_dokumen_bap,
-        item.alasan_penyidikan,
-        item.lokasi_penyidikan,
-        item.waktu_penyidikan,
+        item.nomor_penyidikan,
         item.agenda_penyidikan,
-        item.hasil_penyidikan,
         item.nomor_kasus,
         item.nama_kasus,
+        item.nama,
         item.nrp_wbp,
-        item.lokasi_otmil,
-        item.nama_wbp,
         item.nama_saksi,
-        item.keterangan_saksi,
       ]),
     ];
 
@@ -339,241 +330,213 @@ const BAPList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-        <div className="flex justify-center w-full">
-          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
-              <SearchInputButton
-                value={filter}
-                placehorder="Cari Nama Dokumen"
-                onChange={handleFilterChange}
-              />
-            </div>
-
-            <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-              type="button"
-              onClick={handleSearchClick}
-              id="button-addon1"
-              data-te-ripple-init
-              data-te-ripple-color="light"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-5 w-5 text-black"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </button>
-
-            <button
-              onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
-            >
-              Export&nbsp;Excel
-            </button>
+    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <div className="flex justify-center w-full">
+        <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+          <div className="w-full">
+            <SearchInputButton
+              value={filter}
+              placehorder="Cari Nama Dokumen"
+              onChange={handleFilterChange}
+            />
           </div>
-        </div>
-        <div className="flex justify-between">
-          <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-            Data Pecatatan BAP
-          </h4>
-          {!isOperator &&
-            <button
-              onClick={() => setModalAddOpen(true)}
-              className=" text-black rounded-md bg-blue-300 w-20 h-10"
+
+          <button
+            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+            type="button"
+            onClick={handleSearchClick}
+            id="button-addon1"
+            data-te-ripple-init
+            data-te-ripple-color="light"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-5 w-5 text-black"
             >
-              Tambah
-            </button>
-          }
+              <path
+                fill-rule="evenodd"
+                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+
+          <button
+            onClick={exportToExcel}
+            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+          >
+            Export&nbsp;Excel
+          </button>
         </div>
+      </div>
+      <div className="flex justify-between">
+        <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
+          Data Pecatatan BAP
+        </h4>
+        {!isOperator && 
+        <button
+          onClick={() => setModalAddOpen(true)}
+          className=" text-black rounded-md bg-blue-300 w-20 h-10"
+        >
+          Tambah
+        </button>
+        }
+      </div>
 
-        <div className="flex flex-col">
-          {isOperator ?
-
-            <div className="grid grid-cols-5 text-center rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-              <div className="p-2.5 xl:py-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama dokumen bap
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  link dokumen
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama kasus
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 ">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama wbp
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 ">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama saksi
-                </h5>
-              </div>
-
+      <div className="flex flex-col">
+        {isOperator ? 
+        
+          <div className="grid grid-cols-5 text-center rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+            <div className="p-2.5 xl:py-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama dokumen bap
+              </h5>
+            </div>
+    
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              nomor penyidikan
+              </h5>
             </div>
 
-            :
-
-            <div className="grid grid-cols-11 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-              <div className="p-2.5 col-span-2 xl:py-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama dokumen bap
-                </h5>
-              </div>
-
-              <div className="p-2.5 col-span-2 xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  link dokumen
-                </h5>
-              </div>
-
-              <div className="p-2.5 col-span-2 xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama kasus
-                </h5>
-              </div>
-
-              <div className="p-2.5 col-span-2 xl:p-5 ">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama wbp
-                </h5>
-              </div>
-
-              <div className="p-2.5 col-span-2 xl:p-5 ">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  nama saksi
-                </h5>
-              </div>
-              <div className="p-2.5 col-span-1 xl:p-5 ">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Aksi
-                </h5>
-              </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama kasus
+              </h5>
             </div>
-          }
+            
+            <div className="p-2.5 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                pihak terlibat
+              </h5>
+            </div>
 
-          {data.length == 0 ? (
-            <div className="flex justify-center p-4 w-ful">No Data</div>
-          ) : (
-            <>
-              {data.map((item: any) => {
-                return (
-                  <div>
-                    {isOperator ?
-                      <>
-                        <div
-                          className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 capitalize"
-                          key={item.nama_dokumen_bap}
-                        >
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_dokumen_bap}
-                            </p>
-                          </div>
+          </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.link_dokumen_bap}
-                            </p>
-                          </div>
+        :
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
-                          </div>
+          <div className="grid grid-cols-9 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+            <div className="p-2.5 col-span-2 xl:py-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama dokumen bap
+              </h5>
+            </div>
+    
+            <div className="p-2.5 col-span-2 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              nomor penyidikan
+              </h5>
+            </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_wbp}
-                            </p>
-                          </div>
+            <div className="p-2.5 col-span-2 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama kasus
+              </h5>
+            </div>
+            
+            <div className="p-2.5 col-span-2 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Pihak terlibat
+              </h5>
+            </div>
+            <div className="p-2.5 col-span-1 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Aksi
+              </h5>
+            </div>
+          </div>
+        }
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_saksi}
-                            </p>
-                          </div>
+        {data.length == 0 ? (
+          <div className="flex justify-center p-4 w-ful">No Data</div>
+        ) : (
+          <>
+            {data.map((item: any) => {
+              return (
+                <div>
+                  {isOperator ? 
+                  <>
+                  <div
+                  className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4 capitalize"
+                  key={item.nama_dokumen_bap}
+                >
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nama_dokumen_bap}
+                    </p>
+                  </div>
 
-                        </div>
-                        <div className="border-t border-slate-600"></div>
-                      </>
-                      :
-                      <>
-                        <div
-                          className="grid grid-cols-11 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                          key={item.nama_dokumen_bap}
-                        >
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_dokumen_bap}
-                            </p>
-                          </div>
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nomor_penyidikan}
+                    </p>
+                  </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.link_dokumen_bap}
-                            </p>
-                          </div>
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nama_kasus}
+                    </p>
+                  </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
-                          </div>
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                    {item.nama_wbp ? `${item.nama_wbp} (tersangka)` : `${item.nama_saksi} (saksi)`}
+                    </p>
+                  </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_wbp}
-                            </p>
-                          </div>
+                </div>
+                <div className="border-t border-slate-600"></div>
+                </>
+                  : 
+                  <>
+                  <div
+                  className="grid grid-cols-9 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
+                  key={item.nama_dokumen_bap}
+                >
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nama_dokumen_bap}
+                    </p>
+                  </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_saksi}
-                            </p>
-                          </div>
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nomor_penyidikan}
+                    </p>
+                  </div>
 
-                          <div className="flex items-center col-span-1 justify-center gap-2 p-2.5 xl:p-5">
-                            {/* <button
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.nama_kasus}
+                    </p>
+                  </div>
+
+                  <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                    {item.nama_wbp ? `${item.nama_wbp} (tersangka)` : `${item.nama_saksi} (saksi)`}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center col-span-1 justify-center gap-2 p-2.5 xl:p-5">
+                    {/* <button
                       onClick={() => handleEditClick(item)}
                       className="py-1 px-2  text-black rounded-md bg-blue-300"
                     >
@@ -585,81 +548,81 @@ const BAPList = () => {
                     >
                       Hapus
                     </button> */}
-                            <div className="relative">
-                              <DropdownAction
-                                handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
-                              ></DropdownAction>
-                            </div>
-                          </div>
+                      <div className="relative">
+                          <DropdownAction
+                            handleEditClick={() => handleEditClick(item)}
+                            handleDeleteClick={() => handleDeleteClick(item)}
+                          ></DropdownAction>
                         </div>
-                        <div className="border-t border-slate-600"></div>
-                      </>
-                    }
-
-
                   </div>
-                );
-              })}
-            </>
-          )}
+                </div>
+                <div className="border-t border-slate-600"></div>
+                </>
+                  }
+               
 
-          {modalDetailOpen && (
-            <AddBAPModal
-              closeModal={() => setModalDetailOpen(false)}
-              onSubmit={handleSubmitAdd}
-              defaultValue={detailData}
-              isDetail={true}
-            />
-          )}
-          {modalEditOpen && (
-            <AddBAPModal
-              closeModal={handleCloseEditModal}
-              onSubmit={handleSubmitEdit}
-              defaultValue={editData}
-              isEdit={true}
-            />
-          )}
-          {modalAddOpen && (
-            <AddBAPModal
-              closeModal={handleCloseAddModal}
-              onSubmit={handleSubmitAdd}
-            />
-          )}
-          {modalDeleteOpen && (
-            <DeleteBAPModal
-              closeModal={handleCloseDeleteModal}
-              onSubmit={handleSubmitDelete}
-              defaultValue={deleteData}
-            />
-          )}
-        </div>
+                </div>
+              );
+            })}
+          </>
+        )}
 
-        {data.length === 0 ? null : (
-          <div className="mt-5">
-            <div className='flex gap-4 items-center '>
-              <p>
-                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-              </p>
-              <select
-                value={pageSize}
-                onChange={handleChangePageSize}
-                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-              >
-                <option value="10">10</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="1000">1000</option>
-              </select>
-            </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={pages}
-              onChangePage={handleChagePage}
-            />
-          </div>
+        {modalDetailOpen && (
+          <AddBAPModal
+            closeModal={() => setModalDetailOpen(false)}
+            onSubmit={handleSubmitAdd}
+            defaultValue={detailData}
+            isDetail={true}
+          />
+        )}
+        {modalEditOpen && (
+          <AddBAPModal
+            closeModal={handleCloseEditModal}
+            onSubmit={handleSubmitEdit}
+            defaultValue={editData}
+            isEdit={true}
+          />
+        )}
+        {modalAddOpen && (
+          <AddBAPModal
+            closeModal={handleCloseAddModal}
+            onSubmit={handleSubmitAdd}
+          />
+        )}
+        {modalDeleteOpen && (
+          <DeleteBAPModal
+            closeModal={handleCloseDeleteModal}
+            onSubmit={handleSubmitDelete}
+            defaultValue={deleteData}
+          />
         )}
       </div>
+
+      {data.length === 0 ? null : (
+        <div className="mt-5">
+           <div className='flex gap-4 items-center '>
+          <p>
+            Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+          </p>
+          <select
+            value={pageSize}
+            onChange={handleChangePageSize}
+            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+          >
+            <option value="10">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="1000">1000</option>
+          </select>
+            </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pages}
+            onChangePage={handleChagePage}
+          />
+        </div>
+      )}
+    </div>
     </div>
   );
 };
