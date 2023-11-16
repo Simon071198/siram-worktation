@@ -20,6 +20,26 @@ function removeBase64Prefix(base64String: string) {
   return base64String;
 }
 
+// api realtime 
+export async function apiRealtimeLog(params: any,token:any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/kamera_log_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // API status wbp start
 export async function apiReadStatusWBP() {
   try {
@@ -77,7 +97,7 @@ export async function apiReadPenyidikan(params: any, token: any) {
 }
 
 export async function apiCreatePenyidikan(params: any, token: any) {
-  console.log("params", params);
+  console.log('params', params);
 
   try {
     const response = await axios({
@@ -628,7 +648,7 @@ export async function apiCreateJaksapenuntut(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_insert.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penuntut_insert.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -647,7 +667,7 @@ export async function apiUpdateJaksapenuntut(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_update.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penuntut_update.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -666,7 +686,7 @@ export async function apiDeleteJaksapenuntut(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_delete.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penuntut_delete.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -706,7 +726,7 @@ export async function apiCreateJaksaPenyidik(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_insert.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penyidik_insert.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -725,7 +745,7 @@ export async function apiUpdateJaksaPenyidik(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_update.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penyidik_update.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -744,7 +764,7 @@ export async function apiDeleteJaksaPenyidik(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_delete.php',
+      url: newwebserviceurl + 'siram_api/jaksa_penyidik_delete.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -759,6 +779,162 @@ export async function apiDeleteJaksaPenyidik(params: any, token: any) {
   }
 }
 // api Jaksa penyidik end
+
+// api Oditur penyidik start
+export async function apiReadOditurPenyidik(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penyidik_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiCreateOditurPenyidik(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penyidik_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiUpdateOditurPenyidik(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penyidik_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiDeleteOditurPenyidik(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penyidik_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+// api Oditur penyidik end
+
+// api Oditur penuntut start
+export async function apiReadOditurPenuntut(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penuntut_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiCreateOditurPenuntut(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penuntut_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiUpdateOditurPenuntut(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penuntut_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiDeleteOditurPenuntut(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/oditur_penuntut_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+// api Oditur penuntut end
 
 // api hakim start
 export async function apiReadHakim(params: any, token: any) {
@@ -2186,7 +2362,7 @@ export async function apiReadKategoriPerkara(params: any) {
 
 // Define an interface for the 'params' object
 interface ApiVisitorParams {
-  device_id: string;
+  device_id: any;
   country_id: string;
   age: string;
   analytics: string;
@@ -2224,7 +2400,7 @@ export async function apiVisitorRealtimeLogList(params: ApiVisitorParams) {
     console.log(parameter, 'parameter');
     const response = await axios({
       method: 'post',
-      url: "https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php",
+      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
       data: JSON.stringify(parameter),
     });
     console.log(response.data);
@@ -2337,12 +2513,12 @@ export async function apiVisitorWNAList(params: any) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -3928,7 +4104,7 @@ export async function apiMatraRead(params: any) {
   }
 }
 //datasidang
-export async function apiSidangRead(params: any) {
+export async function apiSidangRead(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3936,6 +4112,7 @@ export async function apiSidangRead(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response);
@@ -4282,6 +4459,60 @@ export async function apiKasusRead(params: any, token: any) {
     });
     console.log(response);
     return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function allKameraLemasmil() {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/kamera_read_all_lemasmil.php',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response.data.records);
+    return response.data.records;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function allKameraOtmil() {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/kamera_read_all_otmil.php',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response.data.records);
+    return response.data.records;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function allKameraOtmilByLocation() {
+  const otmil = {
+    lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
+  };
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/kamera_read_by_location.php',
+      data: otmil,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response.data.records);
+    return response.data.records;
   } catch (error) {
     console.log(error);
     throw error;

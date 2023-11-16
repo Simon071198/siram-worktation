@@ -373,7 +373,7 @@ const BAPList = () => {
       </div>
       <div className="flex justify-between">
         <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-          Data Pecatatan BAP
+          Data Pencatatan BAP
         </h4>
         {!isOperator && 
         <button

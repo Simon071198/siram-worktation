@@ -91,7 +91,7 @@ const routes = [
   },
   {
     id: 2,
-    name: 'Pencatatan BAP',
+    name: 'Daftar BAP',
     link: '/pencatatan-bap',
     icon: BAPIcon,
   },

@@ -16,8 +16,7 @@ import {
 import Select from 'react-select';
 import { Alerts } from './AlertSidang';
 import { CiGlass } from 'react-icons/ci';
-import { ipcRenderer } from 'electron';
-
+// import { ipcRenderer } from 'electron';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -61,10 +60,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       agenda_sidang: '',
       saksi: [],
       pengacara: [],
-      hakim_id: [],
-      role_ketua_hakim: '',
-      jaksa_penuntut_id: [],
-      role_ketua_jaksa: '',
+      // hakim_id: [],
+      // role_ketua_hakim: '',
+      oditur_penuntut_id: [],
+      role_ketua_oditur: '',
     }
   );
 
@@ -81,11 +80,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [jaksa, setJaksa] = useState([]);
   const [hakim, setHakim] = useState([]);
   const [kasus, setKasus] = useState([]);
+  console.log(kasus, 'kasus');
   const [pengadilanMiliter, setPengadilanMiliter] = useState([]);
   const [ahli, setAhli] = useState([]);
   const [saksi, setSaksi] = useState([]);
   const [wbp, setWbp] = useState([]);
-
+  const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
 
@@ -112,7 +112,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       ) {
         if (
           !value ||
-          (key === 'hakim_id' && Array.isArray(value) && value.length === 0) ||
+          // (key === 'hakim_id' && Array.isArray(value) && value.length === 0) ||
           (key === 'jaksa_penuntut_id' &&
             Array.isArray(value) &&
             value.length === 0) ||
@@ -140,7 +140,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   };
 
   const handleSelectKetuaJaksa = (e: any) => {
-    setFormState({ ...formState, role_ketua_jaksa: e?.value });
+    setFormState({ ...formState, role_ketua_oditur: e?.value });
   };
 
   const handleSelectHakim = (e: any) => {
@@ -158,14 +158,15 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     for (let i = 0; i < e.length; i++) {
       arrayTemp.push(e[i].value);
     }
-    setFormState({ ...formState, jaksa_penuntut_id: arrayTemp });
+
+    setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
   };
 
   useEffect(() => {
     console.log('jaksa');
     if (isEdit || isDetail) {
-      const jaksaMap = formState.jaksaHolder.map(
-        (item: any) => item.jaksa_penuntut_id
+      const jaksaMap = formState?.oditurHolder?.map(
+        (item: any) => item?.oditur_penuntut_id
       );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
@@ -177,9 +178,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       setFormState({
         ...formState,
         hakim_id: hakimMap,
-        jaksa_penuntut_id: jaksaMap,
-        role_ketua_hakim: formState.role_ketua_hakim_holder.hakim_id,
-        role_ketua_jaksa: formState.role_ketua_jaksa_holder.jaksa_penuntut_id,
+        oditur_penuntut_id: jaksaMap,
+        // role_ketua_hakim: formState.role_ketua_hakim_holder.hakim_id,
+        role_ketua_oditur:
+          formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
         ahli: ahliMap,
         saksi: saksiMap,
         pengacara: pengacaraMap,
@@ -188,13 +190,29 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     }
   }, []);
 
-  const handleSelectSaksi = (e: any) => {
-    let arrayTemp = [];
-    for (let i = 0; i < e.length; i++) {
-      arrayTemp.push(e[i].value);
+  useEffect(() => {
+    if (getSaksi.length > 0) {
+      const saksiValues = getSaksi.map((item: any) => item.value);
+      setFormState((prevFormState: any) => ({
+        ...prevFormState,
+        saksi: saksiValues,
+      }));
     }
+  }, [getSaksi]);
 
-    setFormState({ ...formState, saksi: arrayTemp });
+  const handleSelectSaksi = (e: any) => {
+    console.log(e, 'handleSelectSaksi');
+    const selectedValues = e.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    }));
+
+    setFormState((prevFormState: any) => ({
+      ...prevFormState,
+      saksi: selectedValues.map((valueItem: any) => valueItem.value),
+    }));
+
+    setGetSaksi(selectedValues);
   };
 
   const handleSelectAhli = (e: any) => {
@@ -214,6 +232,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     e.preventDefault();
     // console.log(formState, 'formState');
     console.log('SUBMIT', e);
+
     if (!validateForm()) return;
     setButtonLoad(true);
     console.log('formstateValidate', formState);
@@ -254,20 +273,18 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
+
     if (file) {
       const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
 
-      reader.onloadend = async () => {
+      reader.onloadend = () => {
         setFormState({ ...formState, pdf_file_base64: reader.result });
-
-        // setImagePreview(reader.result);
-        console.log(formState.pdf_file_base64, 'Preview');
+        console.log('Preview:', reader.result);
       };
+
       reader.readAsDataURL(file);
     }
   };
-
   const handleRemoveDoc = () => {
     setFormState({ ...formState, pdf_file_base64: '' });
     const inputElement = document.getElementById(
@@ -278,6 +295,22 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     }
   };
 
+  const handleKasus = async (e: any) => {
+    setFormState({ ...formState, kasus_id: e.target.value });
+    const saksiFilter = kasus.filter(
+      (item: any) => item.kasus_id == e.target.value
+    )[0];
+    if (saksiFilter) {
+      const saksiMap = saksiFilter.saksi.map((item: any) => ({
+        label: item.nama_saksi,
+        value: item.saksi_id,
+      }));
+      setGetSaksi(saksiMap);
+      console.log('getSaksi', getSaksi);
+    } else {
+      setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+    }
+  };
   useEffect(() => {
     Promise.all([
       getAllJenisSidang(),
@@ -311,9 +344,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       filter: '',
       pageSize: 1000,
     };
+
     try {
       const response = await apiReadJaksapenuntut(params, token);
       setJaksa(response.data.records);
+      // console.log('JAKSA', response.data.records);
     } catch (e: any) {
       Alerts.fire({
         icon: 'error',
@@ -482,10 +517,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -542,28 +577,35 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   // };
 
   const handleDownloadDoc = () => {
-    const url = `/proxy?url=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`; // Ganti dengan URL file yang ingin Anda unduh
+    // const url = `/proxy?url=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`; // Ganti dengan URL file yang ingin Anda unduh
 
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const filename: any = url.split('/').pop()
-        a.href = blobUrl;
-        a.download = `${formState.nama_dokumen_persidangan}-${filename}`; // Ganti dengan nama file yang Anda inginkan
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        // document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch((error) => {
-        console.error('Gagal mengunduh file:', error);
-      });
+    // fetch(url)
+    //   .then((response) => response.blob())
+    //   .then((blob) => {
+    //     const blobUrl = URL.createObjectURL(blob);
+    //     const a = document.createElement('a');
+    //     const filename: any = url.split('/').pop();
+    //     a.href = blobUrl;
+    //     a.download = `${formState.nama_dokumen_persidangan}-${filename}`; // Ganti dengan nama file yang Anda inginkan
+    //     a.style.display = 'none';
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     // document.body.removeChild(a);
+    //     window.URL.revokeObjectURL(blobUrl);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Gagal mengunduh file:', error);
+    //   });
+    window.open(
+      `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
+      '_blank'
+    );
+
+    // Optional: Customize the new window (size, position, etc.)
+    // if (newWindow) {
+    //   newWindow.resizeTo(500, 500);
+    // }
   };
-
-
 
   return (
     <div>
@@ -616,8 +658,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     {isDetail
                       ? 'Detail Data Sidang'
                       : isEdit
-                        ? 'Edit Data Sidang'
-                        : 'Tambah Data Sidang'}
+                      ? 'Edit Data Sidang'
+                      : 'Tambah Data Sidang'}
                   </h3>
                 </div>
                 <strong
@@ -640,7 +682,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       </label>
 
                       <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         placeholder="Tahap sidang"
                         name="nama_sidang"
@@ -671,7 +713,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Jenis sidang
                       </label>
                       <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         name="jenis_persidangan_id"
                         value={formState.jenis_persidangan_id}
@@ -702,7 +744,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Anggota Jaksa Penuntut
+                      Anggota Oditur Penuntut
                     </label>
                     <Select
                       className="basic-multi-select"
@@ -710,33 +752,33 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
-                          ? formState.jaksaHolder.map((item: any) => ({
-                            value: item.jaksa_penuntut_id,
-                            label: item.nama_jaksa,
-                          }))
-                          : formState.jaksa_penuntut_id
+                          ? formState?.oditurHolder?.map((item: any) => ({
+                              value: item.oditur_penuntut_id,
+                              label: item.nama_oditur,
+                            }))
+                          : ''
                       }
-                      placeholder={'Pilih jaksa penuntut'}
+                      placeholder={'Pilih oditur penuntut'}
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
-                      name="jaksa_penuntut_id"
+                      name="oditur_penuntut_id"
                       styles={customStyles}
-                      options={jaksa.map((item: any) => ({
-                        value: item.jaksa_penuntut_id,
-                        label: item.nama_jaksa,
+                      options={jaksa?.map((item: any) => ({
+                        value: item.oditur_penuntut_id,
+                        label: item.nama_oditur,
                       }))}
                       onChange={handleSelectJaksa}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'jaksa_penuntut_id' ? 'Pilih jaksa' : ''
+                        item === 'oditur_penuntut_id' ? 'Pilih jaksa' : ''
                       )}
                     </p>
                   </div>
 
                   {/* anggota Hakim */}
-                  <div className="form-group w-full ">
+                  {/* <div className="form-group w-full ">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -750,9 +792,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.hakimHolder.map((item: any) => ({
-                            value: item.hakim_id,
-                            label: item.nama_hakim,
-                          }))
+                              value: item.hakim_id,
+                              label: item.nama_hakim,
+                            }))
                           : formState.hakim_id
                       }
                       placeholder={'Pilih hakim'}
@@ -772,11 +814,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         item === 'hakim_id' ? 'Pilih hakim' : ''
                       )}
                     </p>
-                  </div>
+                  </div> */}
 
                   <div className="grid grid-cols-2 gap-4">
                     {/* Ketua Hakim */}
-                    <div className="form-group w-full ">
+                    {/* <div className="form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -786,16 +828,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <Select
                         className="basic-select"
                         classNamePrefix="select"
-                        defaultValue={
-                          isEdit || isDetail
-                            ? {
-                              value:
-                                formState.role_ketua_hakim_holder.hakim_id,
-                              label:
-                                formState.role_ketua_hakim_holder.nama_hakim,
-                            }
-                            : formState.role_ketua_hakim
-                        }
+                        // defaultValue={
+                        //   isEdit || isDetail
+                        //     ? {
+                        //         value:
+                        //           formState.role_ketua_hakim_holder.hakim_id,
+                        //         label:
+                        //           formState.role_ketua_hakim_holder.nama_hakim,
+                        //       }
+                        //     : formState.role_ketua_hakim
+                        // }
                         placeholder={'Pilih ketua hakim'}
                         isClearable={true}
                         isSearchable={true}
@@ -817,14 +859,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           item === 'role_ketua_hakim' ? 'Pilih ketua hakim' : ''
                         )}
                       </p>
-                    </div>
+                    </div> */}
                     {/* Ketua Jaksa */}
                     <div className="form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
                       >
-                        Ketua Jaksa
+                        Ketua Oditur
                       </label>
                       <Select
                         className="basic-select"
@@ -832,21 +874,23 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                              value:
-                                formState.role_ketua_jaksa_holder
-                                  .jaksa_penuntut_id,
-                              label:
-                                formState.role_ketua_jaksa_holder.nama_jaksa,
-                            }
+                                value:
+                                  formState?.role_ketua_oditur_holder
+                                    ?.oditur_penuntut_id,
+                                label:
+                                  formState?.role_ketua_oditur_holder
+                                    ?.nama_oditur,
+                              }
                             : //   ? formState?.sidang_jaksa
-                            //       .filter((item: any) => item.ketua_jaksa=== '1')
-                            //       .map((obj: any) => ({
-                            //         value: obj.jaksa_penuntut_id,
-                            //         label: obj.nama_jaksa,
-                            //       }))
-                            formState.jaksa_penuntut_id
+                              //       .filter((item: any) => item.ketua_jaksa=== '1')
+                              //       .map((obj: any) => ({
+                              //         value: obj.jaksa_penuntut_id,
+                              //         label: obj.nama_jaksa,
+                              //       }))
+                              // ''
+                              formState.oditur_penuntut_id
                         }
-                        placeholder={'Pilih ketua jaksa'}
+                        placeholder={'Pilih ketua oditur'}
                         isClearable={true}
                         isSearchable={true}
                         isDisabled={isDetail}
@@ -867,27 +911,26 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           //   }))
                           // :
                           jaksa
-                            .filter((jaksa: any) =>
-                              formState.jaksa_penuntut_id.includes(
-                                jaksa.jaksa_penuntut_id
+                            ?.filter((jaksa: any) =>
+                              formState?.oditur_penuntut_id?.includes(
+                                jaksa.oditur_penuntut_id
                               )
                             )
-                            .map((item: any) => ({
-                              value: item.jaksa_penuntut_id,
-                              label: item.nama_jaksa,
+                            ?.map((item: any) => ({
+                              value: item.oditur_penuntut_id,
+                              label: item.nama_oditur,
                             }))
                         }
                         onChange={handleSelectKetuaJaksa}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'role_ketua_jaksa' ? 'Pilih ketua jaksa' : ''
+                          item === 'role_ketua_jaksa'
+                            ? 'Pilih ketua oditur'
+                            : ''
                         )}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 justify-normal">
                     {/* kasus sidang */}
                     <div className="form-group w-full ">
                       <label
@@ -897,8 +940,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Kasus
                       </label>
                       <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                        onChange={handleChange}
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        onChange={handleKasus}
                         name="kasus_id"
                         value={formState.kasus_id}
                         disabled={isDetail}
@@ -918,7 +961,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         )}
                       </p>
                     </div>
+                  </div>
 
+                  <div className="grid grid-cols-2 gap-4 justify-normal">
                     {/* juru sita */}
                     <div className="form-group w-full ">
                       <label
@@ -928,7 +973,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Juru sita
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         placeholder="Juru sita"
                         name="juru_sita"
@@ -951,7 +996,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Pengadilan militer
                       </label>
                       <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         name="pengadilan_militer_id"
                         value={formState.pengadilan_militer_id}
@@ -984,7 +1029,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Pengawas peradilan militer
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         placeholder="Pengawas"
                         name="pengawas_peradilan_militer"
@@ -1011,7 +1056,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Agenda sidang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       onChange={handleChange}
                       placeholder="Agenda sidang"
                       name="agenda_sidang"
@@ -1142,14 +1187,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.ahliHolder.map((item: any) => ({
-                            value: item.ahli_id,
-                            label:
-                              item.nama_ahli +
-                              ' ' +
-                              '(' +
-                              item.bidang_ahli +
-                              ')',
-                          }))
+                              value: item.ahli_id,
+                              label:
+                                item.nama_ahli +
+                                ' ' +
+                                '(' +
+                                item.bidang_ahli +
+                                ')',
+                            }))
                           : formState.ahli_id
                       }
                       placeholder={'Pilih ahli'}
@@ -1187,25 +1232,46 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.saksiHolder.map((item: any) => ({
-                            value: item.saksi_id,
-                            label: item.nama_saksi,
-                          }))
+                              value: item.saksi_id,
+                              label: item.nama_saksi,
+                            }))
                           : //   ? formState?.sidang_saksi.map((item: any) => ({
-                          //       value: item.saksi_id,
-                          //       label: item.nama_saksi,
-                          //     }))
-                          formState.saksi_id
+                            //       value: item.saksi_id,
+                            //       label: item.nama_saksi,
+                            //     }))
+                            // formState.kasus_id
+                            // ? formState.saksi.saksi.map((item: any) => ({
+                            //     value: item.saksi_id,
+                            //     label: item.nama_saksi,
+                            //   }))
+                            // getSaksi.length > 0
+                            // ? getSaksi.map((item: any) => ({
+                            //     value: item.value,
+                            //     label: item.label,
+                            //   })) :
+                            formState.saksi_id
                       }
+                      value={getSaksi.map((item: any) => ({
+                        value: item.value,
+                        label: item.label,
+                      }))}
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
                       name="saksi"
                       styles={customStyles}
-                      options={saksi.map((item: any) => ({
-                        value: item.saksi_id,
-                        label: item.nama_saksi,
-                      }))}
+                      options={
+                        // formState.kasus_id
+                        //   ? getSaksi.map((item: any) => ({
+                        //       value: item.value,
+                        //       label: item.label,
+                        //     })) :
+                        saksi.map((item: any) => ({
+                          value: item.saksi_id,
+                          label: item.nama_saksi,
+                        }))
+                      }
                       onChange={handleSelectSaksi}
                     />
                     <p className="error-text">
@@ -1220,8 +1286,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     <div className="flex items-center">
                       <p className="text-white">Pengacara</p>
                       <p
-                        className={`${pengacaraEror ? 'block' : 'hidden'
-                          } ml-4 text-red-400 text-sm`}
+                        className={`${
+                          pengacaraEror ? 'block' : 'hidden'
+                        } ml-4 text-red-400 text-sm`}
                       >
                         Masukan nama pengacara
                       </p>
@@ -1264,8 +1331,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         )}
                       </div>
                       <div
-                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${formState.pengacara?.length === 0 ? 'hidden' : 'block'
-                          }`}
+                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${
+                          formState.pengacara?.length === 0 ? 'hidden' : 'block'
+                        }`}
                       >
                         {/* {isDetail || isEdit
                           ? formState.pengacara?.map(
@@ -1348,7 +1416,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {/* Vonis tahun */}
                       <div className="form-group w-full ">
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           onChange={handleChange}
                           placeholder="Tahun"
                           name="masa_tahanan_tahun"
@@ -1366,7 +1434,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {/* Vonis bulan */}
                       <div className="form-group w-full ">
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           onChange={handleChange}
                           name="masa_tahanan_bulan"
                           placeholder="Bulan"
@@ -1384,7 +1452,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {/* Vonis hari */}
                       <div className="form-group w-full ">
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           onChange={handleChange}
                           placeholder="Hari"
                           name="masa_tahanan_hari"
@@ -1411,7 +1479,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Nama Dokumen
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       onChange={handleChange}
                       placeholder="Nama Dokumen"
                       name="nama_dokumen_persidangan"
@@ -1444,8 +1512,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
-                              }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                              isDetail ? 'hidden' : 'block'
+                            }`}
                           >
                             <button
                               className="p-[2px]"
@@ -1481,11 +1550,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
-                              }`}
+                            className={`flex justify-center mt-3 ${
+                              isDetail ? 'block' : 'hidden'
+                            }`}
                           >
                             <button
-                              type='button'
+                              type="button"
                               onClick={handleDownloadDoc}
                               className="bg-blue-500 px-3 py-1 rounded-xl text-white duration-300 ease-in-out  hover:scale-105 "
                             >
@@ -1571,18 +1641,18 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID')
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
               .length > 0 && (
               <div className="error mt-4">
@@ -1597,8 +1667,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -1630,8 +1701,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
