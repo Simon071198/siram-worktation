@@ -14,13 +14,17 @@ import {
 } from '../../services/api';
 import { AddInventarisModal } from './ModalAddInventaris';
 import { Alerts } from './AlertInventaris';
-import Loader from '../../../common/Loader/index';
-import Pagination from '../../../components/Pagination/index';
+// import Loader from 'renderer/common/Loader';
+import Loader from '../../common/Loader';
+// import Pagination from 'renderer/components/Pagination';
+import Pagination from '../../components/Pagination';
 import { DeleteInventarisModal } from './ModalDeleteInventaris';
 import SearchInputButton from '../MasterData/Search';
 
 import * as xlsx from 'xlsx';
 import TextWithEllipsis from './truncate';
+// import DropdownAction from 'renderer/components/DropdownAction';
+import DropdownAction from '../../components/DropdownAction';
 
 const tokenItem = localStorage.getItem('token')
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -333,6 +337,7 @@ const InventarisList = () => {
   return isLoading ? (
     <Loader />
   ) : (
+    <div className='container py-[16px]'>
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="flex justify-center w-full">
         <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -481,7 +486,7 @@ const InventarisList = () => {
                     <div 
                      onClick={() => handleDetailClick(item)}
                     className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block">
+                      <p className="hidden text-black dark:text-white sm:block truncate">
                         {item.model}
                       </p>
                     </div>
@@ -497,7 +502,7 @@ const InventarisList = () => {
                 
                     {!isOperator && 
                     <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
-                      <button
+                      {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
                       >
@@ -508,7 +513,13 @@ const InventarisList = () => {
                         className="py-1  px-2 text-white rounded-md bg-red-400"
                       >
                         Hapus
-                      </button>
+                      </button> */}
+                       <div className="relative">
+                            <DropdownAction
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            ></DropdownAction>
+                          </div>
                     </div>
                     }
                   </div>
@@ -577,6 +588,7 @@ const InventarisList = () => {
           />
         </div>
       )}
+    </div>
     </div>
   );
 };

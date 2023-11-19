@@ -7,7 +7,7 @@ import {
   apiReadAllShift,
 } from '../../../services/api';
 import { Alerts } from './Alert';
-import Loader from '../../../common/Loader/index';
+import Loader from '../../../common/Loader';
 import { DeleteShiftModal } from './deleteDataShift';
 
 interface Item {
@@ -49,13 +49,16 @@ const DataSceduleShift = () => {
     setModalEditOpen(false)
   };
 
-  const token = localStorage.getItem('token');
+  //get Token
+  const tokenItem = localStorage.getItem('token');
+  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
+  let token = tokens.token
 
   useEffect(() => {
     const data = async () => {
       setIsLoading(true);
       try {
-        const response = await apiReadAllShift(token);
+        const response = await apiReadAllShift(token, token);
         setDataShift(response.data.records);
         if (response.data.status !== 'OK') {
           throw new Error(response.data.message);
@@ -80,7 +83,7 @@ const DataSceduleShift = () => {
     const AddData = await apiCreatShift(data);
     if (AddData.data.status === 'OK') {
       handleCloseAddModal();
-      const response = await apiReadAllShift(token);
+      const response = await apiReadAllShift(token, token);
       Alerts.fire({
         icon: 'success',
         title: 'Berhasil menambah data',
@@ -96,14 +99,10 @@ const DataSceduleShift = () => {
 
   //Update Data Shift
   const handleEditShift = async (params: any) => {
-    const data = {
-      params: params,
-      token: token,
-    };
-    const AddData = await apiEditShift(data);
+    const AddData = await apiEditShift(params, token);
     if (AddData.data.status === 'OK') {
       handleCloseAddModal();
-      const response = await apiReadAllShift(token);
+      const response = await apiReadAllShift(token, token);
       Alerts.fire({
         icon: 'success',
         title: 'Berhasil mengedit data',
@@ -136,13 +135,11 @@ const DataSceduleShift = () => {
 
   const handleSubmitDeleteShift = async (params: any) => {
     const data = {
-      params: params,
-      token: token,
     };
-    const AddData = await apiDeleteShift(data);
+    const AddData = await apiDeleteShift(params, token);
     if (AddData.data.status === 'OK') {
       handleCloseDeleteModal();
-      const response = await apiReadAllShift(token);
+      const response = await apiReadAllShift(data, token);
       Alerts.fire({
         icon: 'success',
         title: 'Berhasil menghapus data',
@@ -161,111 +158,113 @@ const DataSceduleShift = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      {modalAddOpen && (
-        <AddDataShiftKerja
-          closeModal={handleCloseAddModal}
-          onSubmit={handleAddShift}
-        />
-      )}
-      {modalEditOpen && (
-        <AddDataShiftKerja
-          closeModal={handleCloseAddModal}
-          onSubmit={handleEditShift}
-          defaultValue={detailData}
-          isEdit={true}
-        />
-      )}
+    <div className='container py-[16px]'>
+      <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        {modalAddOpen && (
+          <AddDataShiftKerja
+            closeModal={handleCloseAddModal}
+            onSubmit={handleAddShift}
+          />
+        )}
+        {modalEditOpen && (
+          <AddDataShiftKerja
+            closeModal={handleCloseAddModal}
+            onSubmit={handleEditShift}
+            defaultValue={detailData}
+            isEdit={true}
+          />
+        )}
 
-      {modalDetailOpen && (
-        <AddDataShiftKerja
-          closeModal={() => setModalDetailOpen(false)}
-          onSubmit={handleAddShift}
-          defaultValue={detailData}
-          isDetail={true}
-        />
-      )}
-      {modalDeleteOpen && (
-        <DeleteShiftModal
-          closeModal={handleCloseDeleteModal}
-          onSubmit={handleSubmitDeleteShift}
-          defaultValue={deleteData}
-        />
-      )}
-      <div className="flex justify-between mb-3">
-        <h1 className="text-xl font-semibold text-black dark:text-white">
-          Data Shift Kerja
-        </h1>
-        <button
-          onClick={() => setModalAddOpen(!modalAddOpen)}
-          className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-        >
-          Tambah
-        </button>
-      </div>
-      <div className="flex flex-col mb-5  ">
-        <div className="rounded-b-md rounded-t-md">
-          <ul>
-            <li className="py-2.5 flex rounded-t-md bg-gray-2 dark:bg-slate-600">
-              <ul className="w-full py-2.5">
-                <li className="flex items-center justify-center grid grid-cols-4">
-                  <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
-                    Nama Shift
-                  </div>
-                  <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
-                    Waktu Mulai
-                  </div>
-                  <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
-                    Waktu Selesai
-                  </div>
-                  <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base ">
-                    Aksi
-                  </div>
-                </li>
-              </ul>
-            </li>
-            <li className="py-2.5 flex rounded-b-md bg-gray-2 dark:bg-meta-4 ">
-              <ul className="w-full py-2.5 space-y-4">
-                {dataShift.map((item: any) => {
-                  return (
-                    <>
-                      <li className="flex items-center justify-center grid grid-cols-4">
-                        <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
-                          {item.nama_shift}
-                        </div>
-                        <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
-                          {item.waktu_mulai}
-                        </div>
-                        <div className=" capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
-                          {item.waktu_selesai}
-                        </div>
-                        <div className="flex items-center justify-center space-x-1 text-sm font-medium uppercase xsm:text-base ">
-                          <button
-                            onClick={() => handleDetailClick(item)}
-                            className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                          >
-                            Detail
-                          </button>
-                          <button
-                            onClick={() => handleEditClick(item)}
-                            className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(item.shift_id)}
-                            className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </li>
-                    </>
-                  );
-                })}
-              </ul>
-            </li>
-          </ul>
+        {modalDetailOpen && (
+          <AddDataShiftKerja
+            closeModal={() => setModalDetailOpen(false)}
+            onSubmit={handleAddShift}
+            defaultValue={detailData}
+            isDetail={true}
+          />
+        )}
+        {modalDeleteOpen && (
+          <DeleteShiftModal
+            closeModal={handleCloseDeleteModal}
+            onSubmit={handleSubmitDeleteShift}
+            defaultValue={deleteData}
+          />
+        )}
+        <div className="flex justify-between mb-3">
+          <h1 className="text-xl font-semibold text-black dark:text-white">
+            Data Jam Shift Kerja
+          </h1>
+          <button
+            onClick={() => setModalAddOpen(!modalAddOpen)}
+            className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+          >
+            Tambah
+          </button>
+        </div>
+        <div className="flex flex-col mb-5  ">
+          <div className="rounded-b-md rounded-t-md">
+            <ul>
+              <li className="py-2.5 flex rounded-t-md bg-gray-2 dark:bg-slate-600">
+                <ul className="w-full py-2.5">
+                  <li className="flex items-center justify-center grid grid-cols-4">
+                    <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
+                      Nama Shift
+                    </div>
+                    <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
+                      Waktu Mulai
+                    </div>
+                    <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
+                      Waktu Selesai
+                    </div>
+                    <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base ">
+                      Aksi
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li className="py-2.5 flex rounded-b-md bg-gray-2 dark:bg-meta-4 ">
+                <ul className="w-full py-2.5 space-y-4">
+                  {dataShift.map((item: any) => {
+                    return (
+                      <>
+                        <li className="flex items-center justify-center grid grid-cols-4">
+                          <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
+                            {item.nama_shift}
+                          </div>
+                          <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
+                            {item.waktu_mulai}
+                          </div>
+                          <div className=" capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
+                            {item.waktu_selesai}
+                          </div>
+                          <div className="flex items-center justify-center space-x-1 text-sm font-medium uppercase xsm:text-base ">
+                            <button
+                              onClick={() => handleDetailClick(item)}
+                              className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                            >
+                              Detail
+                            </button>
+                            <button
+                              onClick={() => handleEditClick(item)}
+                              className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(item.shift_id)}
+                              className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </li>
+                      </>
+                    );
+                  })}
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

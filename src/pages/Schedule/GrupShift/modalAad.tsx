@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiReadAllStaff } from '../../../services/api';
+import { Alerts } from './Alert';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -22,9 +23,11 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   isDetail,
 }) => {
-  //get token
-  const token = localStorage.getItem('token')
-  
+  //get Token
+  const tokenItem = localStorage.getItem('token');
+  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
+  let token = tokens.token;
+
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,16 +48,20 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     }, 1000);
     const dataStaff = async () => {
       const filter = {
-        token:token,
-        pageSize : {
-          pageSize: Number.MAX_SAFE_INTEGER,
-          // filter : {
-          //   grup_petugas_id:null
-          // }
-        }
+        pageSize: Number.MAX_SAFE_INTEGER,
+        // filter : {
+        //   grup_petugas_id:null
+        // }
       };
-      const staff = await apiReadAllStaff(filter);
-      setStaff(staff.data.records);
+      try {
+        const staff = await apiReadAllStaff(filter, token);
+        setStaff(staff.data.records);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
     };
     dataStaff();
   }, []);
@@ -83,12 +90,12 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     setErrors2([]);
 
     if (!dataGrup.nama_grup_petugas) {
-      errorFields.push('Nama Grup');
+      errorFields.push('Isi Nama Grup');
       setErrors(errorFields);
     }
 
     if (!dataGrup.ketua_grup) {
-      errorFields.push('Ketua Grup');
+      errorFields.push('Isi Ketua Grup');
       setErrors2(errorFields);
     }
 
@@ -114,7 +121,6 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
 
     onSubmit(dataGrup);
   };
-
 
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
@@ -174,17 +180,19 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                     value={dataGrup.nama_grup_petugas}
                     onChange={handleChange}
                   />
-                  {errors.length > 0 &&
-                    errors.some((error) => error === 'Nama Grup') && (
-                      <div className="error">
-                        {errors.map(
-                          (error, index) =>
-                            error === 'Nama Grup' && (
-                              <div key={index}>{error}</div>
-                            )
-                        )}
-                      </div>
-                    )}
+                  <div className="h-3">
+                    {errors.length > 0 &&
+                      errors.some((error) => error === 'Isi Nama Grup') && (
+                        <div className="error text-red-500 text-sm">
+                          {errors.map(
+                            (error, index) =>
+                              error === 'Isi Nama Grup' && (
+                                <div key={index}>{error}</div>
+                              )
+                          )}
+                        </div>
+                      )}
+                  </div>
                 </div>
                 <div className="form-group w-full">
                   <label
@@ -201,27 +209,32 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                     onChange={handleChange}
                   >
                     <option value="">Pilih Petugas</option>
-                    {staff.filter(staffItem => staffItem.grup_petugas_id == null).map((staffItem) => {
-                      return(
-                      <option
-                        // key={staffItem.petugas_id}
-                        value={staffItem.petugas_id}
-                      >
-                        {staffItem.nama}
-                      </option>
-                    )})}
+                    {staff
+                      .filter((staffItem) => staffItem.grup_petugas_id == '')
+                      .map((staffItem) => {
+                        return (
+                          <option
+                            // key={staffItem.petugas_id}
+                            value={staffItem.petugas_id}
+                          >
+                            {staffItem.nama}
+                          </option>
+                        );
+                      })}
                   </select>
-                  {errors2.length > 0 &&
-                    errors2.some((error) => error === 'Ketua Grup') && (
-                      <div className="error">
-                        {errors2.map(
-                          (error, index) =>
-                            error === 'Ketua Grup' && (
-                              <div key={index}>{error}</div>
-                            )
-                        )}
-                      </div>
-                    )}
+                  <div className="h-3">
+                    {errors2.length > 0 &&
+                      errors2.some((error) => error === 'Isi Ketua Grup') && (
+                        <div className="error text-red-500 text-sm">
+                          {errors2.map(
+                            (error, index) =>
+                              error === 'Isi Ketua Grup' && (
+                                <div key={index}>{error}</div>
+                              )
+                          )}
+                        </div>
+                      )}
+                  </div>
                 </div>
                 {isDetail ? null : (
                   <button

@@ -11,11 +11,12 @@ import {
 import { AddUserModal } from './ModalAddUser';
 // import Alerts from './AlertUser';
 import { Alerts } from './AlertUser';
-import Loader from '../../../common/Loader/index';
-import Pagination from '../../../components/Pagination/index';
+import Loader from '../../common/Loader';
+import Pagination from '../../components/Pagination';
 import { DeleteUserModal } from './ModalDeleteUser';
 import { UbahPasswordModal } from './ModalUbahPassword';
 import SearchInputButton from '../MasterData/Search';
+import DropdownActionWithPass from '../../components/DropdownActionWithPass';
 
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -431,7 +432,7 @@ const UserList = () => {
                       Detail
                     </button> */}
 
-                        <button
+                        {/* <button
                           onClick={() => handleEditClick(item)}
                           className="py-1 px-2  text-black rounded-md bg-blue-300"
                         >
@@ -448,7 +449,8 @@ const UserList = () => {
                           className="py-1  px-2 text-white rounded-md bg-red-400"
                         >
                           Hapus
-                        </button>
+                        </button> */}
+                        <DropdownActionWithPass handleUbahPassword={() => handleUbahPassword(item)} handleEditClick={() => handleEditClick(item)} handleDeleteClick={() => handleDeleteClick(item)}></DropdownActionWithPass>
                       </div>
                     </div>
                     <div className="border-t border-slate-600"></div>

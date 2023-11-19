@@ -4,7 +4,7 @@ import { BiCategory } from 'react-icons/bi';
 const routeMasterData = [
   {
     id: 1,
-    name: 'Data Prajurit Binaan',
+    name: 'Data Tersangka',
     link: '/inmate-data',
     icon: (
       <svg
@@ -69,30 +69,8 @@ const routeMasterData = [
     ),
   },
   {
-    id: 4,
-    name: 'Data Acara',
-    link: '/event-data',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        width="25"
-        height="25"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
-        />
-      </svg>
-    ),
-  },
-  {
     id: 5,
-    name: 'Data Perkara',
+    name: 'Data Jenis Perkara',
     link: '/case-type-data',
     icon: (
       <svg
@@ -162,31 +140,31 @@ const routeMasterData = [
       </svg>
     ),
   },
-  {
-    id: 10,
-    name: 'Data Hakim',
-    link: '/hakim-data',
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        width='25'
-        height='25'
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-        />
-      </svg>
-    ),
-  },
+  // {
+  //   id: 10,
+  //   name: 'Data Hakim',
+  //   link: '/hakim-data',
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       fill="none"
+  //       viewBox="0 0 24 24"
+  //       stroke-width="1.5"
+  //       stroke="currentColor"
+  //       width='25'
+  //       height='25'
+  //     >
+  //       <path
+  //         stroke-linecap="round"
+  //         stroke-linejoin="round"
+  //         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+  //       />
+  //     </svg>
+  //   ),
+  // },
   {
     id: 11,
-    name: 'Data Jaksa',
+    name: 'Data Oditur',
     link: '/jaksa-list',
     icon: (
       <svg
@@ -254,6 +232,72 @@ const routeMasterData = [
     id: 11,
     name: 'Data Jenis Sidang',
     link: '/jenis-persidangan-data',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        width='25'
+        height='25'
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+        />
+      </svg>
+    ),
+  },
+  {
+    id: 12,
+    name: 'Data Barang Bukti',
+    link: '/barang-bukti',
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        width='25'
+        height='25'
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+        />
+      </svg>
+    ),
+  },
+  // {
+  //   id: 13,
+  //   name: 'Oditur',
+  //   link: '/oditur',
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       fill="none"
+  //       viewBox="0 0 24 24"
+  //       stroke-width="1.5"
+  //       stroke="currentColor"
+  //       width='25'
+  //       height='25'
+  //     >
+  //       <path
+  //         stroke-linecap="round"
+  //         stroke-linejoin="round"
+  //         d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+  //       />
+  //     </svg>
+  //   ),
+  // },
+  {
+    id: 13,
+    name: 'pengadilan Militer',
+    link: '/pengadilan-militer',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

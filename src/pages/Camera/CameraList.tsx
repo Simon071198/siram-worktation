@@ -69,7 +69,7 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
+
               {locationDeviceListLemasmil.map((locationDevice, index) => (
                 <div className="pt-2 ml-[20px]" key={index}>
                   <details className="groupChild">
@@ -185,7 +185,7 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
+
               {locationDeviceListOtmil.map((locationDevice, index) => (
                 <div className="pt-2 ml-[20px]" key={index}>
                   <details className="groupChild">
@@ -281,9 +281,9 @@ const CameraList = () => {
               </div> */}
             </details>
           </div>
-         
 
-          
+
+
           <div className="py-5">
             <details className="group">
               <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
@@ -304,7 +304,7 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
+
 
               <div className="py-5 ml-[20px]">
                 <details className="groupChild">

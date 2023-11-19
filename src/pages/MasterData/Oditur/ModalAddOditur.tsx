@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Alerts } from './AlertTipe';
+import { Alerts } from './AlertOditur';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 console.log(dataAdmin, 'DATA ADMIN');
 
-export const AddTipeModal = ({
+export const AddOditorModal = ({
   closeModal,
   onSubmit,
   defaultValue,
@@ -16,12 +16,9 @@ export const AddTipeModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-     nama_tipe:''
+     nama_oditur:''
     }
   );
-  // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
-
-  //state
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -138,10 +135,10 @@ export const AddTipeModal = ({
                 <div>
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
-                      ? 'Detail Data Petugas'
+                      ? 'Detail Data Oditur'
                       : isEdit
-                      ? 'Edit Data Petugas'
-                      : 'Tambah Data Petugas'}
+                      ? 'Edit Data Oditur'
+                      : 'Tambah Data Oditur'}
                   </h3>
                 </div>
                 <strong
@@ -158,19 +155,19 @@ export const AddTipeModal = ({
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
                   >
-                    Nama tipe
+                    Nama Oditur
                   </label>
                   <input
                     className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                    name="nama_tipe"
-                    placeholder="Nama tipe"
+                    name="nama_oditur"
+                    placeholder="Nama Oditur"
                     onChange={handleChange}
-                    value={formState.nama_tipe}
+                    value={formState.nama_oditur}
                     disabled={isDetail}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_tipe' ? 'Masukan nama' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
                     )}
                   </p>
                 </div>
@@ -189,13 +186,13 @@ export const AddTipeModal = ({
                     </div>
                   </>
                 )}
-                {errors.length > 0 && (
+                {/* {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
                       Ada data yang masih belum terisi !
                     </p>
                   </div>
-                )}
+                )} */}
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
                   <div className="error mt-4">
@@ -243,7 +240,7 @@ export const AddTipeModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Tipe
+                    Ubah Data Oditor
                   </button>
                 ) : (
                   <button
@@ -277,7 +274,7 @@ export const AddTipeModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Tipe
+                    Tambah Data Oditor
                   </button>
                 )}
               </form>

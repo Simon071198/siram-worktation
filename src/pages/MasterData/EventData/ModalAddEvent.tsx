@@ -8,6 +8,7 @@ import {
   apiReadZona,
   apiReadAllEvent,
 } from '../../../services/api';
+import { Alerts } from './AlertEvent';
 interface AddVisitorModalProps {
   closeModal: () => void;
   onSubmit: (params: any) => void;
@@ -51,7 +52,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       status_kegiatan: defaultValue?.status_kegiatan ?? '',
       waktu_mulai_kegiatan: defaultValue?.waktu_mulai_kegiatan ?? '',
       waktu_selesai_kegiatan: defaultValue?.waktu_selesai_kegiatan ?? '',
-      peserta: defaultValue?.peserta ?? [],
+      peserta: isEdit ? defaultValue?.peserta.map((item:any) => item.wbp_profile_id) : [],
       lokasi_otmil_id: defaultValue?.lokasi_otmil_id ?? '',
       ruangan_otmil_id: defaultValue?.ruangan_otmil_id ?? '',
       nama_ruangan_otmil: defaultValue?.nama_ruangan_otmil ?? '',
@@ -61,9 +62,11 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     }
   );
 
+  
+
 
   const [errors, setErrors] = useState<string[]>([]);
-  const modalContainerRef = useRef(null);
+  const modalContainerRef = useRef<HTMLDivElement|null>(null);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [NamaZona, setNamaZona] = useState<namazona[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,21 +78,29 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
   const [selectedTargetItems, setSelectedTargetItems] = useState<string[]>([]);
   const [dataEvent, setDataEvent] = useState([]);
 
+  const tokenItem = localStorage.getItem('token')
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
   //useEffect untuk menambahkan event listener  ke elemen dokumen
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (
-        modalContainerRef.current &&
-        !modalContainerRef.current.contains(e.target as Node)
-      ) {
-        closeModal();
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [closeModal]);
+  // useEffect(() => {
+  //   const handleOutsideClick = (e: MouseEvent) => {
+  //     if (
+  //       modalContainerRef.current &&
+  //       !modalContainerRef.current.contains(e.target as Node)
+  //     ) {
+  //       closeModal();
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleOutsideClick);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleOutsideClick);
+  //   };
+  // }, [closeModal]);
+
   const validateForm = () => {
     let errorFields = [];
     for (const [key, value] of Object.entries(formState)) {
@@ -116,64 +127,65 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     return true;
   };
 
-  const handleChange = (e:any) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    let updatedFormState = { ...formState, [name]: value };
+  
+    if (name === "waktu_mulai_kegiatan" || name === "waktu_selesai_kegiatan") {
+      const now = new Date(); // Waktu sekarang
+      const waktuMulai = new Date(updatedFormState.waktu_mulai_kegiatan);
+      const waktuSelesai = new Date(updatedFormState.waktu_selesai_kegiatan);
+  
+      if (now < waktuMulai) {
+        updatedFormState.status_kegiatan = "Terjadwal";
+      } else if (now >= waktuMulai && now <= waktuSelesai) {
+        updatedFormState.status_kegiatan = "Berlangsung";
+      } else {
+        updatedFormState.status_kegiatan = "Selesai";
+      }
+    }
+  
+    setFormState(updatedFormState);
   };
-
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formState, 'formState');
     if (!validateForm()) return;
     setButtonLoad(true);
-    
+      
     onSubmit(formState);
     console.log(onSubmit);
     // closeModal();
   };
-
-  const token = localStorage.getItem('token')
+  
 
   useEffect(() => {
     const fetchData = async () => {
       let params = {
-        token:token,
-        data : {
-          pagination : {
-            pageSize: 10,
-          },
-        }
+            pageSize: 1000,
       };
       try {
-        const response = await apiReadAllWBP(params);
+        const response = await apiReadAllWBP(params,token);
         const wbpData = response.data.records;
         const selectedData = wbpData.map((item:any) => ({
           wbp_profile_id: item.wbp_profile_id,
           wbp_nama: item.nama,
         }));
         if(isEdit) {
-          let idsToExclude = formState.peserta.map((obj: namawbpDetail) => obj.wbp_profile_id);
-          let filteredData = selectedData.filter((item: namawbpDetail) => !idsToExclude.includes(item.wbp_profile_id))
-          console.log('filtered data', filteredData)
+          let idsToExclude = defaultValue.peserta.map((obj:any) => obj.wbp_profile_id);
+          const filteredData = selectedData.filter((item:any) => !idsToExclude.includes(item.wbp_profile_id));
+          console.log('filtered data', idsToExclude)
+          console.log('ds:',filteredData)
           setSourceList(filteredData)
         } else {
           setSourceList(selectedData);
+
         }
-        
-        const ruangan = await apiReadAllRuanganOtmil(params);
-        const ruanganlem = ruangan.data.records;
-        setruanganotmil(ruanganlem);
-
-        const lokasi = await apiReadAlllokasiOtmil(params);
-        const lokasilem = lokasi.data.records;
-        setlokasiotmil(lokasilem);
-
-        const zone = await apiReadZona(params);
-        const zona = zone.data.records;
-        setNamaZona(zona);
-
-        // const target = await apiReadAllEvent(params);
-        // const listtarget = target.data.records;
-        // setDataEvent(listtarget);
+        Promise.all([
+          ruangan(),
+          lokasi(),
+        ])
         
         setTimeout(() => {
           setIsLoading(false);
@@ -184,8 +196,39 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     };
     fetchData();
   }, []);
+
+  const ruangan = async () => {
+    let params = {
+      pageSize:10000,
+      filter : {
+        nama_lokasi_otmil : 'Cimahi',
+      }
+    }
+    await apiReadAllRuanganOtmil(params,token)
+    .then((res)=> {
+      setruanganotmil(res.data.records)
+    }) 
+    .catch((err)=> 
+    Alerts.fire({
+      icon:'error',
+      title: err.massage,
+    }))
+  }
   
-  console.log(targetList,'target')
+  const lokasi = async () => {
+    let params = {
+      pageSize:1000,
+    }
+    await apiReadAlllokasiOtmil(token)
+    .then((res)=> {
+      setlokasiotmil(res.data.records)
+    }) 
+    .catch((err)=> 
+    Alerts.fire({
+      icon:'error',
+      title: err.massage,
+    }))
+  }
 
   const handleRuanganChange = (e: any) => {
     const selectedRuangan = e.target.value;
@@ -270,18 +313,43 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       peserta: prevFormState.peserta.filter((id:any) => !removedIds.includes(id)),
     }));
   };
+
   useEffect(() => {
     if (defaultValue && defaultValue.peserta) {
       setTargetList(defaultValue.peserta);
     }
   }, [defaultValue]);
+
+  const modalStyles: any = {
+    backdrop: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(0, 0, 0, 0.5)', // Background color with transparency for the blur effect
+      backdropFilter: 'blur(5px)', // Adjust the blur intensity as needed
+      zIndex: 40, // Ensure the backdrop is behind the modal
+    },
+    modalContainer: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      // Add your other modal styles here
+    },
+  };
   
+
   return (
+    <div>
+    <div style={modalStyles.backdrop}></div>
     <div
-      ref={modalContainerRef}
-      className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] overflow-y-scroll"
-    >
-      <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-600 h-full w-[80vh]">
+        ref={modalContainerRef}
+        style={modalStyles.modalContainer}
+        className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] w-1/2 overflow-y-scroll bg-slate-600 border border-slate-800 rounded-md"
+      >
+      <div className="modal rounded-sm w-full">
         {isLoading ? (
           <div className="h-[500px] justify-center flex items-center">
             <svg
@@ -311,9 +379,9 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
               <div>
                 <h3 className="text-xl font-semibold text-black dark:text-white">
                   {isDetail
-                    ? 'Detail User'
+                    ? 'Detail Data Event'
                     : isEdit
-                    ? 'Edit User'
+                    ? 'Edit Data Event'
                     : 'Tambah Data Event'}
                 </h3>
               </div>
@@ -336,7 +404,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </label>
                   <input
                     type="text"
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="nama_kegiatan"
                     dark:text-gray
                     placeholder="nama kegiatan"
@@ -353,39 +421,6 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </p>
                 </div>
 
-                {/* status_kegiatan */}
-                <div className="form-group w-full ">
-                  <label
-                    className="block text-sm font-medium text-black dark:text-white"
-                    htmlFor="id"
-                  >
-                    status_kegiatan
-                  </label>
-                  <select
-                    className="w-full rounded border border-stroke py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    name="status_kegiatan"
-                    onChange={handleChange}
-                    value={formState.status_kegiatan}
-                    disabled={isDetail}
-                  >
-                    <option disabled value="">
-                      Pilih status
-                    </option>
-                    <option value="Terjadwal">Terjadwal</option>
-                    <option value="Berlangsung">Berlangsung</option>
-                    <option value="Selesai">Selesai</option>
-                  </select>
-                  <p className="error-text">
-                  {errors.map((item) =>
-                    item === 'status_kegiatan'
-                      ? 'Pilih Status Kegiatan'
-                      : ''
-                  )}
-                </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-5 justify-normal pt-5">
                 <div className="form-group w-full">
                   <label
                     className="block text-sm font-medium text-black dark:text-white"
@@ -395,7 +430,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </label>
                   <input
                     type="datetime-local"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="waktu_mulai_kegiatan"
                     onChange={handleChange}
                     value={formState.waktu_mulai_kegiatan}
@@ -419,7 +454,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </label>
                   <input
                     type="datetime-local"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="waktu_selesai_kegiatan"
                     onChange={handleChange}
                     value={formState.waktu_selesai_kegiatan}
@@ -433,6 +468,63 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   )}
                 </p>
                 </div>
+
+                {/* status_kegiatan */}
+                <div className="form-group w-full">
+                  <label
+                    className="block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Status Kegiatan
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="status_kegiatan"
+                    dark:text-gray
+                    placeholder="Status kegiatan"
+                    onChange={handleChange}
+                    value={formState.status_kegiatan}
+                    disabled
+                  />
+                  <p className="error-text">
+                  {errors.map((item) =>
+                    item === 'status_kegiatan'
+                      ? 'Masukan Status Kegiatan'
+                      : ''
+                  )}
+                </p>
+                </div>
+
+                {/* <div className="form-group w-full ">
+                  <label
+                    className="block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    status kegiatan
+                  </label>
+                  <select
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="status_kegiatan"
+                    onChange={handleChange}
+                    value={formState.status_kegiatan}
+                    disabled={isDetail}
+                  >
+                    <option disabled value="">
+                      Pilih status
+                    </option>
+                    <option value="Terjadwal">Terjadwal</option>
+                    <option value="Berlangsung">Berlangsung</option>
+                    <option value="Selesai">Selesai</option>
+                  </select>
+                  <p className="error-text">
+                  {errors.map((item) =>
+                    item === 'status_kegiatan'
+                      ? 'Pilih Status Kegiatan'
+                      : ''
+                  )}
+                </p>
+                </div> */}
               </div>
 
               <div className="grid grid-cols-2 gap-5 justify-normal pt-5">
@@ -441,7 +533,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   <select
                     id="ruangan_otmil_id"
                     name="ruangan_otmil_id"
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     value={formState.ruangan_otmil_id}
                     onChange={handleRuanganChange}
                     disabled={isDetail}
@@ -466,30 +558,11 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </div>
 
                 <div className="form-group w-full">
-                  <label htmlFor="nama_ruangan_otmil">Nama Ruangan:</label>
-                  <input
-                    type="text"
-                    id="nama_ruangan_otmil"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    name="nama_ruangan_otmil"
-                    value={formState.nama_ruangan_otmil}
-                    disabled={isDetail}
-                  />
-                  <p className="error-text">
-                  {errors.map((item) =>
-                    item === 'nama_ruangan_otmil'
-                      ? 'Masukan Ruangan'
-                      : ''
-                  )}
-                </p>
-                </div>
-
-                <div className="form-group w-full">
                   <label htmlFor="jenis_ruangan_otmil">Jenis Ruangan:</label>
                   <input
                     type="text"
                     id="jenis_ruangan_otmil"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="jenis_ruangan_otmil"
                     value={formState.jenis_ruangan_otmil}
                     disabled={isDetail}
@@ -508,7 +581,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   <input
                     type="text"
                     id="nama_lokasi_otmil"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="nama_lokasi_otmil"
                     value={formState.nama_lokasi_otmil}
                     disabled={isDetail}
@@ -526,7 +599,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   <input
                     type="text"
                     id="nama_zona"
-                    className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="nama_zona"
                     onChange={handleChange}
                     value={formState.nama_zona}
@@ -544,14 +617,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
 
               {isEdit ? (
                 <div className="grid grid-cols-9 w-full justify-between mt-5">
-                  <div className="focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary col-span-4 text-center px-3 py-1 font-medium text-white rounded-md overflow-y-scroll">
-                    <h2>Pilih Peserta</h2>
+                  <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <h2 className='py-2 rounded-md bg-slate-600 mb-2'>Pilih Peserta</h2>
                     <ul>
                     {sourceList.map((item: namawbpDetail) => (
-                      <li key={item.wbp_profile_id} className='text-start'>
+                      <li key={item.wbp_profile_id} className='text-start px-2 '>
                         <label>
                           <input
-                            className='mr-1'
+                            className='py-1 mr-1'
                             name='wbp_profile_id'
                             type="checkbox"
                             checked={selectedSourceItems.includes(item.wbp_profile_id)}
@@ -569,14 +642,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     <p onClick={transferRight} className='cursor-pointer py-2'><BiSolidRightArrow size={25} color='white'/></p>
                   </div>
 
-                  <div className="max-h-24 focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary col-span-4 text-center px-3 py-1 font-medium text-white rounded-md overflow-y-scroll">
-                    <h2>Peserta Ikut</h2>
+                  <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <h2 className='py-2 rounded-md bg-slate-600 mb-2'>Peserta Ikut</h2>
                     <ul>
                     {targetList.map((item: namawbpDetail) => (
                       <li key={item.wbp_profile_id} className='text-start'>
                         <label>
                           <input
-                            className='mr-1'
+                            className='mx-1'
                             name='wbp_profile_id'
                             type="checkbox"
                             value={formState.peserta}
@@ -605,11 +678,11 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </div>
               ) : isDetail ? (
                 <div className=" w-full justify-between mt-5">
-                  <div className="max-h-24 focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary text-center px-3 py-1 font-medium text-white rounded-md overflow-y-scroll">
-                    <h2>Peserta Ikut</h2>
-                    <ul>
+                  <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <h2 className='py-2 rounded-md bg-slate-600 mb-2'>Peserta Ikut</h2>
+                    <ul className='grid grid-cols-3 gap-x-5 mx-2'>
                     {defaultValue.peserta.map((item: namawbpDetail) => (
-                      <li key={item.wbp_profile_id} className='text-start'>
+                      <li key={item.wbp_profile_id} className='text-center py-2 rounded-md truncate border-2 border-slate-500 my-2 box-border'>
                         <label>
                           {item.wbp_nama}
                         </label>
@@ -620,14 +693,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </div>
               ) :  (
                 <div className="grid grid-cols-9 w-full justify-between mt-5">
-                  <div className="focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary col-span-4 text-center px-3 py-1 font-medium text-white rounded-md overflow-y-scroll">
-                    <h2>Pilih Peserta</h2>
+                  <div className="focus:border-primary bg-slate-800 focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <h2 className='py-2 rounded-md bg-slate-600 mb-2'>Pilih Peserta</h2>
                     <ul>
                     {sourceList.map((item:namawbpDetail) => (
                       <li key={item.wbp_profile_id} className='text-start'>
                         <label>
                           <input
-                            className='mr-1'
+                            className='mx-1'
                             name='wbp_profile_id'
                             type="checkbox"
                             checked={selectedSourceItems.includes(item.wbp_profile_id)}
@@ -641,12 +714,12 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </div>
 
                   <div className=' box-border m-auto flex-row'>
-                    <p onClick={transferLeft} className='cursor-pointer'><BiSolidLeftArrow size={30} color='white'/></p>
-                    <p onClick={transferRight} className='cursor-pointer'><BiSolidRightArrow size={30} color='white'/></p>
+                    <p onClick={transferLeft} className='cursor-pointer py-2'><BiSolidLeftArrow size={25} color='white'/></p>
+                    <p onClick={transferRight} className='cursor-pointer py-2'><BiSolidRightArrow size={25} color='white'/></p>
                   </div>
 
-                  <div className="max-h-24 focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary col-span-4 text-center px-3 py-1 font-medium text-white rounded-md overflow-y-scroll">
-                    <h2>Peserta Ikut</h2>
+                  <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <h2 className='py-2 rounded-md bg-slate-600 mb-2'>Peserta Ikut</h2>
                     <ul>
                     {targetList.map((item: namawbpDetail) => (
                       <li key={item.wbp_profile_id} className='text-start'>
@@ -781,6 +854,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };

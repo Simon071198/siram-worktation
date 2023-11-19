@@ -1,24 +1,32 @@
 import { NavLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   apiChangePassword,
   apiCreateUser,
   apiEditUser,
   apiNewDeleteUser,
   apiReadAllUser,
+  apiSidangDelete,
   apiSidangInsert,
   apiSidangRead,
+  apiSidangUpdate,
 } from '../../services/api';
 import { AddSidangModal } from './ModalAddSidang';
 import { Alerts } from './AlertSidang';
-import Loader from '../../../common/Loader/index';
-import Pagination from '../../../components/Pagination/index';
+// import Loader from 'renderer/common/Loader';
+import Loader from '../../common/Loader';
+// import Pagination from 'renderer/components/Pagination';
+import Pagination from '../../components/Pagination';
 import { DeleteSidangModal } from './ModalDeleteSidang';
-import SearchInputButton from '../MasterData/Search';
+import * as xlsx from 'xlsx';
+// import DropdownAction from 'renderer/components/DropdownAction';
+import DropdownAction from '../../components/DropdownAction';
+import SearchInputButton from '../Device/Search';
+import dayjs from 'dayjs';
 
-const tokenItem = localStorage.getItem('token')
-  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-const token = dataToken.token
+const tokenItem = localStorage.getItem('token');
+const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+const token = dataToken.token;
 
 const SidangList = () => {
   const [data, setData] = useState([]);
@@ -31,7 +39,7 @@ const SidangList = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [modalUbahPasswordOpen, setModalUbahPasswordOpen] = useState(false);
   const [deleteData, setDeleteData] = useState(null);
-
+  const [searchData, setSearchData] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
   const [alertIsAdded, setAlertIsAdded] = useState(false);
@@ -46,25 +54,175 @@ const SidangList = () => {
   };
 
   const handleDetailClick = (item: any) => {
-    console.log(item, 'item item');
-    setDetailData(item);
+    console.log(item, 'detail item');
+    const newArrayJaksa: any = [];
+    const newArrayAhli: any = [];
+    const newArraySaksi: any = [];
+    const newArrayPengacara: any = [];
+    const newArrayHakim: any = [];
+    item?.sidang_oditur?.map((item: any) =>
+      newArrayJaksa?.push({
+        oditur_penuntut_id: item?.oditur_penuntut_id,
+        nama_oditur: item?.nama_oditur,
+      })
+    );
+
+    item?.sidang_ahli.map((item: any) =>
+      newArrayAhli.push({
+        ahli_id: item?.ahli_id,
+        nama_ahli: item?.nama_ahli,
+        bidang_ahli: item?.bidang_ahli,
+      })
+    );
+
+    item?.sidang_saksi.map((item: any) =>
+      newArraySaksi.push({
+        saksi_id: item?.saksi_id,
+        nama_saksi: item?.nama_saksi,
+      })
+    );
+
+    item?.sidang_hakim.map((item: any) =>
+      newArrayHakim.push({
+        hakim_id: item?.hakim_id ?? '',
+        nama_hakim: item?.nama_hakim ?? '',
+      })
+    );
+
+    const hakimKetua = item?.sidang_hakim.find(
+      (item: any) => item.ketua_hakim === '1'
+    );
+    const jaksaKetua = item?.sidang_oditur.find(
+      (item: any) => item.ketua_oditur === '1'
+    );
+
+    const detailItem: any = {
+      sidang_id: item?.sidang_id,
+      waktu_mulai_sidang: item?.waktu_mulai_sidang,
+      waktu_selesai_sidang: item?.waktu_selesai_sidang,
+      jadwal_sidang: item?.jadwal_sidang,
+      perubahan_jadwal_sidang: item?.perubahan_jadwal_sidang,
+      kasus_id: item?.kasus_id,
+      masa_tahanan_tahun: item?.masa_tahanan_tahun,
+      masa_tahanan_bulan: item?.masa_tahanan_bulan,
+      masa_tahanan_hari: item?.masa_tahanan_hari,
+      nama_sidang: item?.nama_sidang,
+      juru_sita: item?.juru_sita,
+      pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
+      jenis_persidangan_id: item?.jenis_persidangan_id,
+      pengadilan_militer_id: item?.pengadilan_militer_id,
+      nama_dokumen_persidangan: item?.nama_dokumen_persidangan,
+      hasil_vonis: item?.hasil_vonis,
+      ahliHolder: newArrayAhli,
+      agenda_sidang: item?.agenda_sidang,
+      saksiHolder: newArraySaksi,
+      pengacaraHolder: item?.sidang_pengacara,
+      hakimHolder: newArrayHakim,
+      oditurHolder: newArrayJaksa,
+      // role_ketua_hakim_holder: {
+      //   hakim_id: hakimKetua.hakim_id,
+      //   nama_hakim: hakimKetua.nama_hakim,
+      // },
+      role_ketua_oditur_holder: {
+        oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
+        nama_oditur: jaksaKetua?.nama_oditur,
+      },
+      link_dokumen_persidangan: item.link_dokumen_persidangan,
+    };
+    // console.log(jaksaKetua, 'jaksaKetua');
+    console.log('NEW ITEM DETAIl', detailItem);
+    setDetailData(detailItem);
     setModalDetailOpen(true);
   };
 
   const handleEditClick = (item: any) => {
     console.log(item, 'item item');
-    setEditData(item);
-    setModalEditOpen(true);
-  };
+    const newArrayJaksa: any = [];
+    const newArrayAhli: any = [];
+    const newArraySaksi: any = [];
+    const newArrayPengacara: any = [];
+    const newArrayHakim: any = [];
+    item?.sidang_oditur?.map((item: any) =>
+      newArrayJaksa?.push({
+        oditur_penuntut_id: item?.oditur_penuntut_id,
+        nama_oditur: item?.nama_oditur,
+      })
+    );
 
-  const handleUbahPassword = (item: any) => {
-    console.log(item, 'item password');
-    const dataPassword: any = {
-      user_id: item.user_id,
-      username: item.username,
+    item?.sidang_ahli.map((item: any) =>
+      newArrayAhli.push({
+        ahli_id: item?.ahli_id,
+        nama_ahli: item?.nama_ahli,
+        bidang_ahli: item?.bidang_ahli,
+      })
+    );
+
+    item?.sidang_saksi.map((item: any) =>
+      newArraySaksi.push({
+        saksi_id: item?.saksi_id,
+        nama_saksi: item?.nama_saksi,
+      })
+    );
+
+    // item?.sidang_pengacara.map((item: any) =>
+    //   newArrayPengacara.push({nama_pengacara:item?.nama_pengacara})
+    // );
+
+    item?.sidang_hakim.map((item: any) =>
+      newArrayHakim.push({
+        hakim_id: item?.hakim_id,
+        nama_hakim: item?.nama_hakim,
+      })
+    );
+
+    const hakimKetua = item?.sidang_hakim.find(
+      (item: any) => item.ketua_hakim === '1'
+    );
+    const jaksaKetua = item?.sidang_oditur.find(
+      (item: any) => item.ketua_oditur === '1'
+    );
+    // console.log('HAKIM KETUA', hakimKetua);
+
+    // console.log('NEW ARRAY',newArrayJaksa)
+
+    const editItem: any = {
+      sidang_id: item?.sidang_id,
+      waktu_mulai_sidang: item?.waktu_mulai_sidang,
+      waktu_selesai_sidang: item?.waktu_selesai_sidang,
+      jadwal_sidang: item?.jadwal_sidang,
+      perubahan_jadwal_sidang: item?.perubahan_jadwal_sidang,
+      kasus_id: item?.kasus_id,
+      masa_tahanan_tahun: item?.masa_tahanan_tahun,
+      masa_tahanan_bulan: item?.masa_tahanan_bulan,
+      masa_tahanan_hari: item?.masa_tahanan_hari,
+      nama_sidang: item?.nama_sidang,
+      juru_sita: item?.juru_sita,
+      pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
+      jenis_persidangan_id: item?.jenis_persidangan_id,
+      pengadilan_militer_id: item?.pengadilan_militer_id,
+      nama_dokumen_persidangan: item?.nama_dokumen_persidangan,
+      // pdf_file_base64:item?.pdf_file_base64,
+      hasil_vonis: item?.hasil_vonis,
+      ahliHolder: newArrayAhli,
+      agenda_sidang: item?.agenda_sidang,
+      saksiHolder: newArraySaksi,
+      pengacaraHolder: item?.sidang_pengacara,
+      hakimHolder: newArrayHakim,
+      oditurHolder: newArrayJaksa,
+      // hakim_id:[],
+      // role_ketua_hakim_holder: {
+      //   hakim_id: hakimKetua.hakim_id,
+      //   nama_hakim: hakimKetua.nama_hakim,
+      // },
+      role_ketua_oditur_holder: {
+        oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
+        nama_oditur: jaksaKetua?.nama_oditur,
+      },
+      link_dokumen_persidangan: item.link_dokumen_persidangan,
     };
-    setUbahPasswordData(dataPassword);
-    setModalUbahPasswordOpen(true);
+    console.log('NEW ITEM EDIT', editItem);
+    setEditData(editItem);
+    setModalEditOpen(true);
   };
 
   const handleCloseAddModal = () => {
@@ -83,15 +241,14 @@ const SidangList = () => {
   const handleSubmitAddUser = async (params: any) => {
     console.log(params, 'params submit add');
     try {
-      const responseCreate = await apiSidangInsert(params,token);
+      const responseCreate = await apiSidangInsert(params, token);
       if (responseCreate.data.status === 'OK') {
-        
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'error') {
         const errorCreate = responseCreate.data.message;
         Alerts.fire({
@@ -113,37 +270,16 @@ const SidangList = () => {
   const handleSubmitEditUser = async (params: any) => {
     console.log(params, 'params submit edit');
     try {
-      const responseEdit = await apiEditUser(params);
+      const responseEdit = await apiSidangUpdate(params, token);
       if (responseEdit.data.status === 'OK') {
         console.log('edit succes');
-        let fecthParam = {
-          filter: {
-            lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
-          },
-          page: currentPage,
-          pageSize: 10,
-        };
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
 
-        const responseRead = await apiReadAllUser(fecthParam);
-        if (responseRead.data.status === 'OK') {
-          const rr = responseRead.data;
-          setData(rr.records);
-          setPages(rr.pagination.totalPages);
-          setRows(rr.pagination.totalRecords);
-        } else if (responseRead.data.status === 'error') {
-          const errorRead = responseRead.data.message;
-          Alerts.fire({
-            icon: 'error',
-            title: errorRead,
-          });
-        } else {
-          throw new Error(responseRead.data.message);
-        }
+        fetchData();
       } else if (responseEdit.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
@@ -164,35 +300,14 @@ const SidangList = () => {
   const handleSubmitDeleteDataPetugas = async (params: any) => {
     console.log('DELETE', params);
     try {
-      const responseDelete = await apiNewDeleteUser(params);
+      const responseDelete = await apiSidangDelete(params, token);
       if (responseDelete.data.status === 'OK') {
-        let fecthParam = {
-          filter: {
-            lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
-          },
-          page: currentPage,
-          pageSize: 10,
-        };
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        const responseRead = await apiReadAllUser(fecthParam);
-        if (responseRead.data.status === 'OK') {
-          const rr = responseRead.data;
-          setData(rr.records);
-          setPages(rr.pagination.totalPages);
-          setRows(rr.pagination.totalRecords);
-        } else if (responseRead.data.status === 'error') {
-          const errorRead = responseRead.data.message;
-          Alerts.fire({
-            icon: 'error',
-            title: errorRead,
-          });
-        } else {
-          throw new Error(responseRead.data.message);
-        }
+        fetchData();
       } else if (responseDelete.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
@@ -221,18 +336,18 @@ const SidangList = () => {
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
-      filter: '',
+      // filter: '',
       // currentPage: currentPage,
       // pageSize: 10,
     };
     try {
       const response = await apiSidangRead(params);
-      if(response.data.status === "OK"){
+      if (response.data.status === 'OK') {
         setData(response.data.records);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
-        throw new Error (response.data.message)
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       const error = e.message;
@@ -244,198 +359,304 @@ const SidangList = () => {
     setIsLoading(false);
   };
 
-  console.log(data,'DATA')
+  const flattenObject = (obj: any, prefix = ''): any => {
+    return Object.keys(obj).reduce((acc: any, key) => {
+      const propName = prefix ? `${prefix}.${key}` : key;
+
+      if (
+        typeof obj[key] === 'object' &&
+        obj[key] !== null &&
+        !Array.isArray(obj[key])
+      ) {
+        return { ...acc, ...flattenObject(obj[key], propName) };
+      } else {
+        return {
+          ...acc,
+          [propName]:
+            obj[key] !== null && typeof obj[key] === 'object'
+              ? JSON.stringify(obj[key])
+              : obj[key],
+        };
+      }
+    }, {});
+  };
+
+  const exportToExcel = async () => {
+    const keyProperty: any[] = [];
+    for (const obj of data) {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          keyProperty.push(key);
+        }
+      }
+    }
+    const dataToExcel = [
+      keyProperty,
+      ...data.map((item: any) => {
+        const flattenedItem = flattenObject(item);
+        return Object.values(flattenedItem);
+      }),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `DataSidang${dayjs(new Date()).format('DDMMYYYY-HHmmss')}.xlsx`
+    );
+  };
+
+  interface ItemType {
+    nama_wbp: string;
+    nama_jenis_persidangan: string;
+  }
+  const handleSearchSidang = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    try {
+      e.preventDefault();
+      let params = {
+        filter: {
+          nama_wbp: searchData,
+          // nama_jenis_persidangan: searchData,
+        },
+        currentPage: currentPage,
+        pageSize: 10,
+      };
+      const response = await apiSidangRead(params);
+      if (response.data.status === 'OK') {
+        const result = response.data.records;
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else if (response.data.status === 'No Data') {
+        const result = response.data.records;
+        setData(result);
+        // setPages(response.data.pagination.totalPages);
+        // setRows(response.data.pagination.totalRecords);
+      } else {
+        throw new Error('Terjadi kesalahan saat mencari data.');
+      }
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
+  };
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <div className="flex justify-center w-full">
-        <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-          <div className="w-full">
-            {/* <SearchInputButton
-              value=''
-              placehorder="Cari nama binaan"
-              onChange={}
-            /> */}
-          </div>
-         
-          <select
-            // value={filterHunian}
-            // onChange={handleFilterChangeHunian}
-            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-          >
-            <option value="">Semua perkara</option>
-            {/* {hunian.map((item: any) => (
+    <div className="container py-[16px]">
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="flex justify-center w-full">
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+            <div className="w-full">
+              <SearchInputButton
+                value={searchData}
+                placehorder="Cari nama binaan"
+                onChange={(e) => setSearchData(e.target.value)}
+              />
+            </div>
+
+            <select
+              // value={filterHunian}
+              // onChange={handleFilterChangeHunian}
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+            >
+              <option value="">Semua perkara</option>
+              {/* {hunian.map((item: any) => (
               <option value={item.hunian_wbp_otmil}>
                 {item.nama_hunian_wbp_otmil}
               </option>
             ))} */}
-          </select>
+            </select>
 
-          <button
-            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-            type="button"
-            // onClick={handleSearchClick}
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-black"
+            <button
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              type="button"
+              onClick={handleSearchSidang}
+              id="button-addon1"
+              data-te-ripple-init
+              data-te-ripple-color="light"
             >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 text-black"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
 
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
+              Export&nbsp;Excel
+            </button>
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
+            Data Daftar Sidang
+          </h4>
           <button
-            // onClick={exportToExcel}
-            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            onClick={() => setModalAddOpen(true)}
+            className=" text-black rounded-md bg-blue-300 w-20 h-10"
           >
-            Export&nbsp;Excel
+            Tambah
           </button>
         </div>
-      </div>
-      <div className="flex justify-between">
-        <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-          Data Daftar Sidang
-        </h4>
-        <button
-          onClick={() => setModalAddOpen(true)}
-          className=" text-black rounded-md bg-blue-300 w-20 h-10"
-        >
-          Tambah
-        </button>
-      </div>
 
-      <div className="flex flex-col">
-        <div className="grid grid-cols-4 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama WBP
-            </h5>
-          </div>
-  
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Jenis sidang
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Tanggal sidang
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 ">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Aksi
-            </h5>
-          </div>
-        </div>
+        <div className="flex flex-col">
+          <div className="grid grid-cols-5 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama WBP
+              </h5>
+            </div>
 
-        {data.length == 0 ? (
-          <div className="flex justify-center p-4 w-ful">No Data</div>
-        ) : (
-           <>
-            {data.map((item: any) => {
-              return (
-                <div>
-                  <div
-                    className="grid grid-cols-4 rounded-sm  bg-gray-2 dark:bg-meta-4  "
-                  >
-                    <div 
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block">
-                        {item.nama_wbp_profile}
-                      </p>
-                    </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Jenis Sidang
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Jadwal Sidang
+              </h5>
+            </div>
 
-                    <div 
-                     onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block">
-                        {item.nama_jenis_persidangan}
-                      </p>
-                    </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Ketua Oditur
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Aksi
+              </h5>
+            </div>
+          </div>
 
-                    <div 
-                     onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block">
-                        {item.waktu_mulai_sidang}
-                      </p>
-                    </div>
-                
-                    <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
-                
-                      <button
+          {data.length == 0 ? (
+            <div className="flex justify-center p-4 w-ful">No Data</div>
+          ) : (
+            <>
+              {data.map((item: any) => {
+                return (
+                  <div>
+                    <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block">
+                          {item.nama_wbp}
+                        </p>
+                      </div>
+
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block">
+                          {item.nama_jenis_persidangan}
+                        </p>
+                      </div>
+
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block">
+                          {item.jadwal_sidang}
+                        </p>
+                      </div>
+
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block text-center">
+                          {item?.sidang_oditur && item.sidang_oditur.length > 0
+                            ? item?.sidang_oditur?.find(
+                                (item: any) => item.ketua_oditur === '1'
+                              )?.nama_oditur || ''
+                            : ''}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                        {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
                       >
                         Ubah
                       </button>
                       <button
-                        onClick={() => handleUbahPassword(item)}
-                        className="py-1  px-2 text-black rounded-md bg-blue-300"
-                      >
-                        Ganti Pass
-                      </button>
-                      <button
                         onClick={() => handleDeleteClick(item)}
                         className="py-1  px-2 text-white rounded-md bg-red-400"
                       >
                         Hapus
-                      </button>
+                      </button> */}
+                        <div className="relative">
+                          <DropdownAction
+                            handleEditClick={() => handleEditClick(item)}
+                            handleDeleteClick={() => handleDeleteClick(item)}
+                          ></DropdownAction>
+                        </div>
+                      </div>
                     </div>
+                    <div className="border-t border-slate-600"></div>
                   </div>
-                <div className="border-t border-slate-600"></div>
-                </div>
-              );
-            })}
-          </>
-        )}
+                );
+              })}
+            </>
+          )}
 
-        {modalDetailOpen && (
-          <AddSidangModal
-            closeModal={() => setModalDetailOpen(false)}
-            onSubmit={handleSubmitAddUser}
-            defaultValue={detailData}
-            isDetail={true}
-            token ={token}
-          />
-        )}
-        {modalEditOpen && (
-          <AddSidangModal
-            closeModal={handleCloseEditModal}
-            onSubmit={handleSubmitEditUser}
-            defaultValue={editData}
-            isEdit={true}
-            token ={token}
-          />
-        )}
-        {modalAddOpen && (
-          <AddSidangModal
-            closeModal={handleCloseAddModal}
-            onSubmit={handleSubmitAddUser}
-            token ={token}
-          />
-        )}
-        {modalDeleteOpen && (
-          <DeleteSidangModal
-            closeModal={handleCloseDeleteModal}
-            onSubmit={handleSubmitDeleteDataPetugas}
-            defaultValue={deleteData}
-          />
-        )}
-        {/* {alertIsAdded && (
+          {modalDetailOpen && (
+            <AddSidangModal
+              closeModal={() => setModalDetailOpen(false)}
+              onSubmit={handleSubmitAddUser}
+              defaultValue={detailData}
+              isDetail={true}
+              token={token}
+            />
+          )}
+          {modalEditOpen && (
+            <AddSidangModal
+              closeModal={handleCloseEditModal}
+              onSubmit={handleSubmitEditUser}
+              defaultValue={editData}
+              isEdit={true}
+              token={token}
+            />
+          )}
+          {modalAddOpen && (
+            <AddSidangModal
+              closeModal={handleCloseAddModal}
+              onSubmit={handleSubmitAddUser}
+              token={token}
+            />
+          )}
+          {modalDeleteOpen && (
+            <DeleteSidangModal
+              closeModal={handleCloseDeleteModal}
+              onSubmit={handleSubmitDeleteDataPetugas}
+              defaultValue={deleteData}
+            />
+          )}
+          {/* {alertIsAdded && (
           <Alerts
             alertType="success"
             alertMessage="Added"
@@ -450,20 +671,21 @@ const SidangList = () => {
             alertDescription="Successfully edited data"
           />
         )} */}
-      </div>
-
-      {data.length === 0 ? null : (
-        <div className="mt-5">
-          <p>
-            Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pages}
-            onChangePage={handleChagePage}
-          />
         </div>
-      )}
+
+        {data.length === 0 ? null : (
+          <div className="mt-5">
+            <p>
+              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pages}
+              onChangePage={handleChagePage}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

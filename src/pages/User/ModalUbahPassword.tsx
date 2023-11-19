@@ -58,9 +58,9 @@ export const UbahPasswordModal = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    setButtonLoad(true)
     console.log(formState, 'formState');
     if (!validateForm()) return;
+    setButtonLoad(true)
     onSubmit(formState).then(()=>setButtonLoad(false))
     console.log(formState, 'Succes validate formState');
     // closeModal();

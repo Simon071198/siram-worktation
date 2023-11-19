@@ -32,20 +32,20 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
   const [isLoading, setIsLoading] = useState(true);
 
 //useEffect untuk menambahkan event listener  ke elemen dokumen
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (
-        modalContainerRef.current &&
-        !modalContainerRef.current.contains(e.target as Node)
-      ) {
-        closeModal();
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [closeModal]);
+  // useEffect(() => {
+  //   const handleOutsideClick = (e: MouseEvent) => {
+  //     if (
+  //       modalContainerRef.current &&
+  //       !modalContainerRef.current.contains(e.target as Node)
+  //     ) {
+  //       closeModal();
+  //     }
+  //   };
+  //   document.addEventListener('mousedown', handleOutsideClick);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleOutsideClick);
+  //   };
+  // }, [closeModal]);
 
   // function
   const validateForm = () => {
@@ -98,17 +98,49 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
     fetchData();
   }, []);
 
+  const modalStyles: any = {
+    backdrop: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(0, 0, 0, 0.5)', // Background color with transparency for the blur effect
+      backdropFilter: 'blur(5px)', // Adjust the blur intensity as needed
+      zIndex: 40, // Ensure the backdrop is behind the modal
+    },
+    modalContainer: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      // Add your other modal styles here
+    },
+  };
+
   //return
   return (
+    <div>
+    <div style={modalStyles.backdrop}></div>
     <div
-      ref={modalContainerRef}
-      className="modal-container fixed z-50 flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] bg-boxdark"
-    >
-      <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-600 h-full w-[80vh]">
+        ref={modalContainerRef}
+        style={modalStyles.modalContainer}
+        className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] w-1/2 overflow-y-scroll bg-slate-600 border border-slate-800 rounded-md"
+      >
+      <div className="modal rounded-sm w-full">
       {isLoading ? (
+          <div>
+          <div className="flex flex-row-reverse pr-5 pt-3">
+            <strong
+              className="text-xl align-center cursor-pointer "
+              onClick={closeModal}
+            >
+              &times;
+            </strong>
+          </div>
           <div className="h-[500px] justify-center flex items-center">
             <svg
-              className="animate-spin h-30 w-30 text-white"
+              className="animate-spin h-20 w-20 text-white "
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -128,16 +160,17 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
               ></path>
             </svg>
           </div>
+        </div>
         ) : (
         <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
           <div className="w-full flex justify-between">
             <div>
               <h3 className="text-xl font-semibold text-black dark:text-white">
                 {isDetail
-                  ? 'Detail Data Kejahatan'
+                  ? 'Detail Kategori Perkara'
                   : isEdit
-                  ? 'Edit Data Kejahatan'
-                  : 'Tambah Data Kejahatan'}
+                  ? 'Edit Kategori Perkara'
+                  : 'Tambah Kategori Perkara'}
               </h3>
             </div>
             <strong
@@ -153,20 +186,20 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
              
               <div className="form-group w-full">
                 <label
-                  className="block text-sm font-medium text-black dark:text-white"
+                  className="block text-sm text-start mb-1 font-medium text-black dark:text-white"
                   htmlFor="id"
                 >
                   Nama kategori perkara
                 </label>
                 <input
-                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                   name="nama_kategori_perkara"
                   placeholder='Nama kategori Perkara'
                   onChange={handleChange}
                   value={formState.nama_kategori_perkara}
                   disabled={isDetail}
                 />
-                <p className="error-text p-0 m-0">
+                <p className="text-start error-text p-0 m-0">
                   {errors.map((item) =>
                     item === 'nama_kategori_perkara'
                       ? 'Pilih Kategori Perkara'
@@ -262,6 +295,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
         </div>
         )}
       </div>
+    </div>   
     </div>
   );
 };

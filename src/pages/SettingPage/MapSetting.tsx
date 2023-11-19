@@ -82,7 +82,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     lat: (jabodetabekBounds.north + jabodetabekBounds.south) / 2,
     lng: (jabodetabekBounds.east + jabodetabekBounds.west) / 2,
   };
-  
+
 
   return (
     <>
@@ -96,7 +96,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
               style={{
                 width: "100%",
                 height: "100vh",
-                position : 'relative',
+                position: 'relative',
               }}
             >
               <Map
@@ -107,7 +107,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
                 style={{
                   width: "100%",
                   minHeight: "80vh",
-                  position : 'absolut',
+                  position: 'absolut',
                 }}
               >
                 {markers.map((marker, index) => (

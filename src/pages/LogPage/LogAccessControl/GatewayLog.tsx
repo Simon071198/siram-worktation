@@ -4,8 +4,8 @@ import axios from 'axios';
 import { apiGatewayLog, apiVisitorLogList } from '../../../services/api';
 import { webserviceurl } from '../../../services/api';
 import { NavLink } from 'react-router-dom';
-import Pagination from '../../../components/Pagination/index';
-import Loader from '../../../common/Loader/index';
+import Pagination from '../../../components/Pagination';
+import Loader from '../../../common/Loader';
 
 export default function GatewayLog() {
   const [data, setData] = useState([]);
@@ -29,19 +29,19 @@ export default function GatewayLog() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const handleLocationChange = (event:any) => {
+  const handleLocationChange = (event: any) => {
     setSelectedLocation(event.target.value);
     setSelectedDevice('');
   };
 
-  const handleDeviceChange = (event:any) => {
+  const handleDeviceChange = (event: any) => {
     setSelectedDevice(event.target.value);
   };
 
   // const selectedLocationEntry:any = jsonData.find(
   //   (entry:any) => entry.location === selectedLocation
   // );
-  
+
   // const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
 
   const handleExportClick = () => {
@@ -57,13 +57,13 @@ export default function GatewayLog() {
     setShowModal(false);
     setModalMessage('');
   };
-  function handleStartDateChange(e:any) {
+  function handleStartDateChange(e: any) {
     setStartDate(e.target.value);
   }
-  function handleEndDateChange(e:any) {
+  function handleEndDateChange(e: any) {
     setEndDate(e.target.value);
   }
-  
+
   function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -73,17 +73,17 @@ export default function GatewayLog() {
     return `${year}-${month}-${day}`;
   }
 
-  const handleChangePage = (event:any, page:any) => {
-  setCurrentPage(event);
+  const handleChangePage = (event: any, page: any) => {
+    setCurrentPage(event);
   };
 
-  const handleAnalyticsChange = (e:any) => {
+  const handleAnalyticsChange = (e: any) => {
     // Reset current page to 1 when analytics value changes
     setSelectedAnalytics(e.target.value);
     // setCurrentPage(1);
   };
 
-  function calculateAge(birthdate:any) {
+  function calculateAge(birthdate: any) {
     const birthDate = new Date(birthdate);
 
     const currentDate = new Date();
@@ -152,7 +152,7 @@ export default function GatewayLog() {
   //   selectedName,
   //   selectedGender,
   // ]);
-  
+
   // useEffect(() => {
   //   const fetchData = async () => {
   //     const result = await axios.post(
@@ -163,23 +163,23 @@ export default function GatewayLog() {
   //   };
   //   fetchData();
   // }, []);
-  useEffect(()=>{
+  useEffect(() => {
     getGatewayLog()
-  },[])
+  }, [])
 
-  const  getGatewayLog = async()=>{
+  const getGatewayLog = async () => {
     try {
       setIsLoading(true)
       let params = {
-        filter :''
+        filter: ''
       }
       const responseLog = await apiGatewayLog(params)
       setData(responseLog.data.records)
       setPages(responseLog.data.pagination.totalPages);
       setRows(responseLog.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (e:any){
-      console.log('ERROR GATEWAY',e.message)
+    } catch (e: any) {
+      console.log('ERROR GATEWAY', e.message)
     }
   }
 
@@ -217,8 +217,8 @@ export default function GatewayLog() {
                         <input
                           name="Name"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedName}
-                          // onChange={(e) => setSelectedName(e.target.value)}
+                        // value={selectedName}
+                        // onChange={(e) => setSelectedName(e.target.value)}
                         />
                       </div>
 
@@ -228,8 +228,8 @@ export default function GatewayLog() {
                           type="number"
                           name="Age"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedAge}
-                          // onChange={(e) => setSelectedAge(e.target.value)}
+                        // value={selectedAge}
+                        // onChange={(e) => setSelectedAge(e.target.value)}
                         />
                       </div>
 
@@ -238,8 +238,8 @@ export default function GatewayLog() {
                         <select
                           name="Select Gender"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedGender}
-                          // onChange={(e) => setSelectedGender(e.target.value)}
+                        // value={selectedGender}
+                        // onChange={(e) => setSelectedGender(e.target.value)}
                         >
                           <option value="">Semua Gender</option>
                           <option value="true">Pria</option>
@@ -278,7 +278,7 @@ export default function GatewayLog() {
                       name="Select Device"
                       // value={selectedDevice}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleDeviceChange}
+                    // onChange={handleDeviceChange}
                     >
                       <option value="">Semua Perangkat</option>
 
@@ -296,7 +296,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={startDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleStartDateChange}
+                    // onChange={handleStartDateChange}
                     />
                   </div>
 
@@ -306,19 +306,19 @@ export default function GatewayLog() {
                       type="date"
                       // value={endDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleEndDateChange}
+                    // onChange={handleEndDateChange}
                     />
                   </div>
                 </div>
               </div>
               <div className='text-right'>
-              <button
-                className="bg-blue-500 text-white px-2 rounded-md py-1"
-                type="button"
+                <button
+                  className="bg-blue-500 text-white px-2 rounded-md py-1"
+                  type="button"
                 // onClick={handleExportClick}
-              >
-                Export Excel
-              </button>
+                >
+                  Export Excel
+                </button>
               </div>
             </div>
           </form>
@@ -386,45 +386,45 @@ export default function GatewayLog() {
               Lokasi Gedung{' '}
             </h5>
           </div> */}
-          
+
         </div>
         {data.map((item: any) => {
-              return (
-                <div>
-                  <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4  text-sm">
-                    <div className="p-2.5 xl:p-5 justify-center flex ">
-                      <p className="hidden text-black dark:text-white sm:block truncate capitalize">
-                        {item.nama_wbp}
-                      </p>
-                    </div>
+          return (
+            <div>
+              <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4  text-sm">
+                <div className="p-2.5 xl:p-5 justify-center flex ">
+                  <p className="hidden text-black dark:text-white sm:block truncate capitalize">
+                    {item.nama_wbp}
+                  </p>
+                </div>
 
-                    <div className="p-2.5 sm:flex xl:p-5 justify-center flex t">
-                      <p className="text-black dark:text-white truncate capitalize">
-                        {item.gmac}
-                      </p>
-                    </div>
+                <div className="p-2.5 sm:flex xl:p-5 justify-center flex t">
+                  <p className="text-black dark:text-white truncate capitalize">
+                    {item.gmac}
+                  </p>
+                </div>
 
-                    <div className="p-2.5 xl:p-5 justify-center flex  ">
-                      <p className="text-black dark:text-white truncate capitalize">
-                        {item.nama_ruangan_otmil}
-                      </p>
-                    </div>
+                <div className="p-2.5 xl:p-5 justify-center flex  ">
+                  <p className="text-black dark:text-white truncate capitalize">
+                    {item.nama_ruangan_otmil}
+                  </p>
+                </div>
 
-                    
 
-                    <div className="p-2.5 sm:flex xl:p-5 justify-center flex  ">
-                      <p className="text-black dark:text-white truncate capitalize">
-                        {item.status_zona_ruangan_otmil}
-                      </p>
-                    </div>
 
-                    <div className="p-2.5 sm:flex xl:p-5 justify-center flex ">
-                      <p className="text-black dark:text-white capitalize ">
-                        {item.timestamp}
-                      </p>
-                    </div>
+                <div className="p-2.5 sm:flex xl:p-5 justify-center flex  ">
+                  <p className="text-black dark:text-white truncate capitalize">
+                    {item.status_zona_ruangan_otmil}
+                  </p>
+                </div>
 
-                    {/* <div 
+                <div className="p-2.5 sm:flex xl:p-5 justify-center flex ">
+                  <p className="text-black dark:text-white capitalize ">
+                    {item.timestamp}
+                  </p>
+                </div>
+
+                {/* <div 
                   
                     className="p-2.5  xl:p-5 justify-center flex  ">
                       <p className="text-black dark:text-white max-w-sm truncate cursor-pointer">
@@ -432,12 +432,12 @@ export default function GatewayLog() {
                       </p>
                     </div> */}
 
-                  
-                  </div>
-                  <div className="border-t border-slate-600"></div>
-                </div>
-              );
-            })}
+
+              </div>
+              <div className="border-t border-slate-600"></div>
+            </div>
+          );
+        })}
 
         {/* {data.map((item: any) => {
           return (
@@ -505,17 +505,17 @@ export default function GatewayLog() {
           );
         })} */}
         {data.length === 0 ? null : (
-        <div className="mt-5">
-          <p>
-            Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pages}
-            onChangePage={handleChangePage}
-          />
-        </div>
-      )}
+          <div className="mt-5">
+            <p>
+              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pages}
+              onChangePage={handleChangePage}
+            />
+          </div>
+        )}
       </div>
 
       {/* <div
@@ -528,7 +528,7 @@ export default function GatewayLog() {
       >
 
       </div> */}
-      
+
     </div>
   );
 }

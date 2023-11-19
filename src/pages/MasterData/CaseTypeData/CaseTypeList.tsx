@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader/index';
+import Loader from '../../../common/Loader';
 import { AddCaseTypeModal } from './ModalAddCaseType';
 import { DeleteCaseTypeModal } from './ModalDeleteCaseType';
 import { Alerts } from './AlertCaseType';
 import {
   apiCreateJenisJahat,
   apiDeleteJenisJahat,
-  apiReadAllJenisJahat,
   apiReadAllKategoriJahat,
   apiReadjenisperkara,
   apiUpdateJenisJahat,
 } from '../../../services/api';
-import Pagination from '../../../components/Pagination/index';
+import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
+import ToolsTip from '../../../components/ToolsTip';
+import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
+import DropdownAction from '../../../components/DropdownAction';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -41,7 +43,18 @@ const CaseTypeList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [filterPekara, setFilterPerkara] = useState('');
+  const [kategoriPerkara, setKategoriPerkara] = useState([]);
   const [dataExcel, setDataExcel] = useState([]);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -62,17 +75,27 @@ const CaseTypeList = () => {
     // }
   };
 
-  
+  const handleFilterChangePerkara = (e: any) => {
+    const newFilter = e.target.value;
+    setFilterPerkara(newFilter);
+  };
+
   const handleSearchClick = async () => {
+    let params = {
+      filter: {
+        nama_jenis_perkara: filter,
+        nama_kategori_perkara: filterPekara,
+      },
+      page: currentPage,
+      pageSize: pageSize,
+    };
     try {
-      const response = await apiReadjenisperkara({
-        filter: { nama_jenis_perkara: filter },
-      });
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
+      const response = await apiReadjenisperkara(params, token);
       if (response.status === 200) {
         const result = response.data;
         setData(result.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
@@ -81,11 +104,17 @@ const CaseTypeList = () => {
     }
   };
 
-  const handleEnterKeyPress = (event:any) => {
+  const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleSearchClick();
-      console.log('ENTER DIPNCET')
+      console.log('ENTER DIPNCET');
     }
+  };
+
+  const handleChangePageSize = async (e: any) => {
+    const size = e.target.value;
+    setPageSize(size);
+    setCurrentPage(1);
   };
 
   const handleChagePage = (pageNumber: any) => {
@@ -100,23 +129,33 @@ const CaseTypeList = () => {
     return () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
-  }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
+  }, [filter, filterPekara]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   // useEffect untuk fetch data dari API
   useEffect(() => {
     fetchData();
-  }, [currentPage]); // Anda juga dapat menambahkan dependencies jika diperlukan
+
+    apiReadAllKategoriJahat()
+      .then((res) => {
+        setKategoriPerkara(res);
+      })
+      .catch((err) =>
+        Alerts.fire({
+          icon: 'error',
+          title: err.message,
+        })
+      );
+  }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
   const fetchData = async () => {
-    let param = {
+    let params = {
       filter: ' ',
       page: currentPage,
-      pageSize: 10,
+      pageSize: pageSize,
     };
     setIsLoading(true);
     try {
-      const response = await apiReadjenisperkara(param);
+      const response = await apiReadjenisperkara(params, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -165,284 +204,380 @@ const CaseTypeList = () => {
     setModalEditOpen(false);
   };
 
-
-  const token = localStorage.getItem('token')
-
   // function untuk menghapus data
-  const handleSubmitDeleteJenisJahat = (params: Params) => {
-    const fetchParams = {
-      params:params,
-      token : token,
-    };
-    apiDeleteJenisJahat(fetchParams).then((res) => {
-      if (res.data.status === 'OK') {
-        setModalDeleteOpen(false);
-        apiReadjenisperkara(fetchParams).then((res) => {
-          setData(res.data.records);
-          setPages(res.data.pagination.totalPages);
-        setRows(res.data.pagination.totalRecords);
-          Alerts.fire({
-            icon: 'success',
-            title: 'Berhasil menghapus data',
-          });
+  const handleSubmitDeleteJenisJahat = async (params: any) => {
+    try {
+      const responseDelete = await apiDeleteJenisJahat(params, token);
+      if (responseDelete.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
         });
-      } else {
+        setModalDeleteOpen(false);
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal menghapus data',
+          title: 'Gagal hapus data',
         });
+      } else {
+        throw new Error(responseDelete.data.message);
       }
-    });
-
-    setModalDeleteOpen(false);
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
   };
 
   // function untuk menambah data
-  const handleSubmitAddJenisJahat = async (params: Params) => {
-    const fetchParams = {
-      params:params,
-      token:token,
-    };
-    apiCreateJenisJahat(fetchParams).then((res) => {
-      if (res.data.status === 'OK') {
-        setModalDeleteOpen(false);
-        apiReadjenisperkara(fetchParams).then((res) => {
-          setData(res.data.records);
-          setPages(res.data.pagination.totalPages);
-        setRows(res.data.pagination.totalRecords);
-          Alerts.fire({
-            icon: 'success',
-            title: 'Berhasil menambah data',
-          });
-          //atur mau tetap buka modal atau tidak
-          handleCloseAddModal(); //tutup modal
+  const handleSubmitAddJenisJahat = async (params: any) => {
+    console.log('DATA DARI LIST', params);
+    try {
+      const responseCreate = await apiCreateJenisJahat(params, token);
+      if (responseCreate.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
         });
-      } else {
+        setModalAddOpen(false);
+        fetchData();
+      } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal menambah data',
+          title: 'Gagal membuat data',
         });
-        handleCloseAddModal(); //tutup modal
+      } else {
+        throw new Error(responseCreate.data.message);
       }
-    });
-
-    setModalDeleteOpen(false);
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
   };
 
   // function untuk mengubah data
-  const handleSubmitEditJenisJahat = async (params: Params) => {
-    const fetchParams = {
-      params:params,
-      token:token,
-    };
-    apiUpdateJenisJahat(fetchParams).then((res) => {
-      if (res.data.status === 'OK') {
-        setModalDeleteOpen(false);
-        apiReadjenisperkara(fetchParams).then((res) => {
-          setData(res.data.records);
-          setPages(res.data.pagination.totalPages);
-        setRows(res.data.pagination.totalRecords);
-          //atur mau tetap buka modal atau tidak
-          handleCloseEditModal(); //tutup modal
+  const handleSubmitEditJenisJahat = async (params: any) => {
+    console.log(params, 'edit');
+    try {
+      const responseEdit = await apiUpdateJenisJahat(params, token);
+      if (responseEdit.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengubah data',
         });
-      } else {
+        setModalEditOpen(false);
+        fetchData();
+      } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',
         });
+      } else {
+        throw new Error(responseEdit.data.message);
       }
-    });
-
-    setModalDeleteOpen(false);
-    Alerts.fire({
-      icon: 'success',
-      title: 'Berhasil mengubah data',
-    });
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
   };
 
-  const exportToExcel = async () => {
-  
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
+  const exportToExcel = () => {
     const dataToExcel = [
-      ['Name', 'Ruangan Tahanan', 'Nomor DMAC Gelang' , 'Tanggal diTahan' , 'Kasus Perkara' , 'Alamat'],
-      ...dataExcel.map((item:any) => [item.nama, item.nama_hunian_wbp_otmil, item.DMAC , item.tanggal_ditahan_otmil, item.nama_kategori_perkara, item.alamat]),
+      [
+        'Nama Jenis Perkara',
+        'pasal',
+        'nama kategori perkara',
+        // 'vonis tahun',
+        // 'vonis bulan',
+        // 'vonis hari',
+      ],
+      ...data.map((item: any) => [
+        item.nama_jenis_perkara,
+        item.pasal,
+        item.nama_kategori_perkara,
+        // item.vonis_tahun_perkara,
+        // item.vonis_bulan_perkara,
+        // item.vonis_hari_perkara,
+      ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(wb, 'Jenis Perkara.xlsx');
   };
 
   return isLoading ? (
     <Loader />
   ) : (
     <div className="container py-[16px]">
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <div className="flex justify-center w-full">
-        <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-          <div className="w-full">
-            <SearchInputButton
-              value={filter}
-              placehorder="Cari nama"
-              onChange={handleFilterChange}
-         
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="flex justify-center w-full">
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+            <div className="w-full">
+              <SearchInputButton
+                value={filter}
+                placehorder="Cari nama jenis perkara"
+                onChange={handleFilterChange}
+
               // onClick={handleSearchClick}
+              />
+            </div>
+            <select
+              value={filterPekara}
+              onChange={handleFilterChangePerkara}
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+            >
+              <option value="">Semua Jenis Perkara</option>
+              {kategoriPerkara.map((item: any) => (
+                <option value={item.kategori_perkara}>
+                  {item.nama_kategori_perkara}
+                </option>
+              ))}
+            </select>
+            <button
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              type="button"
+              onClick={handleSearchClick}
+              id="button-addon1"
+              data-te-ripple-init
+              data-te-ripple-color="light"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 text-black"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
+              Export&nbsp;Excel
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mb-3">
+          <h1 className="ext-xl font-bold text-black dark:text-white">
+            Jenis Perkara
+          </h1>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(true)}
+              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          {isOperator ? (
+            <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-3">
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm text-start font-medium uppercase xsm:text-base">
+                  Nama Jenis Perkara
+                </h5>
+              </div>
+
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Pasal
+                </h5>
+              </div>
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Nama Kategori Perkara
+                </h5>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-4">
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm text-start font-medium uppercase xsm:text-base">
+                  Nama Jenis Perkara
+                </h5>
+              </div>
+
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Pasal
+                </h5>
+              </div>
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Nama Kategori Perkara
+                </h5>
+              </div>
+              <div className="hidden p-2.5 text-center sm:block xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Aksi
+                </h5>
+              </div>
+            </div>
+          )}
+
+          {data.length === 0 ? (
+            <div className="flex justify-center p-4 w-ful">No Data</div>
+          ) : (
+            <>
+              {data.map((item: any) => {
+                return (
+                  <div>
+                    {isOperator ? (
+                      <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3">
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center p-2.5 xl:p-5"
+                        >
+                          <p className="cursor-pointer hidden text-black dark:text-white sm:block">
+                            {item.nama_jenis_perkara}
+                          </p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="cursor-pointer flex items-center justify-center p-2.5 xl:p-5"
+                        >
+                          <p className="text-meta-3">{item.pasal}</p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                        >
+                          <p className="text-black dark:text-white">
+                            {item.nama_kategori_perkara}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center p-2.5 xl:p-5"
+                        >
+                          <p className="cursor-pointer hidden text-black dark:text-white sm:block">
+                            {item.nama_jenis_perkara}
+                          </p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="cursor-pointer flex items-center justify-center p-2.5 xl:p-5"
+                        >
+                          <p className="text-meta-3">{item.pasal}</p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                        >
+                          <p className="text-black dark:text-white">
+                            {item.nama_kategori_perkara}
+                          </p>
+                        </div>
+                        <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
+                          <div className="relative">
+                            <DropdownAction
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            ></DropdownAction>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="border-t border-slate-600"></div>
+                  </div>
+                );
+              })}
+            </>
+          )}
+
+          {modalDetailOpen && (
+            <AddCaseTypeModal
+              closeModal={() => setModalDetailOpen(false)}
+              onSubmit={handleSubmitAddJenisJahat}
+              defaultValue={detailData}
+              isDetail={true}
+            />
+          )}
+          {modalEditOpen && (
+            <AddCaseTypeModal
+              closeModal={handleCloseEditModal}
+              onSubmit={handleSubmitEditJenisJahat}
+              defaultValue={editData}
+              isEdit={true}
+            />
+          )}
+          {modalAddOpen && (
+            <AddCaseTypeModal
+              closeModal={handleCloseAddModal}
+              onSubmit={handleSubmitAddJenisJahat}
+            />
+          )}
+          {modalDeleteOpen && (
+            <DeleteCaseTypeModal
+              closeModal={handleCloseDeleteModal}
+              onSubmit={handleSubmitDeleteJenisJahat}
+              defaultValue={deleteData}
+            />
+          )}
+        </div>
+
+        {data.length === 0 ? null : (
+          <div className="mt-5">
+            <div className="flex gap-4 items-center ">
+              <p>
+                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+              </p>
+              <select
+                value={pageSize}
+                onChange={handleChangePageSize}
+                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              >
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pages}
+              onChangePage={handleChagePage}
             />
           </div>
-          <button
-            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-            type="button"
-            onClick={handleSearchClick}
-
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-black"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-
-          <button 
-          onClick={exportToExcel}
-          className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium">
-            Export&nbsp;Excel
-          </button>
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-3">
-        <h4 className="ext-xl font-semibold text-black dark:text-white">
-          Jenis Perkara
-        </h4>
-        <button
-          onClick={() => setModalAddOpen(true)}
-          className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-        >
-          Tambah
-        </button>
-      </div>
-
-      <div className="flex flex-col">
-        <div className="grid grid-cols-4 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-4">
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm text-start font-medium uppercase xsm:text-base">
-              Nama Jenis Perkara
-            </h5>
-          </div>
-
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Pasal
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama Kategori Perkara
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Aksi
-            </h5>
-          </div>
-        </div>
-
-        {data.map((item: any) => {
-          return (
-            <div>
-              <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4">
-                <div className="flex items-center p-2.5 xl:p-5">
-                  <p className="hidden text-black dark:text-white sm:block">
-                    {item.nama_jenis_perkara}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.pasal}</p>
-                </div>
-
-                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                  <p className="text-black dark:text-white">
-                    {item.nama_kategori_perkara}
-                  </p>
-                </div>
-                <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-                  <button
-                    onClick={() => handleDetailClick(item)}
-                    className="py-1 px-2 text-black rounded-md bg-blue-300"
-                  >
-                    Detail
-                  </button>
-
-                  <button
-                    onClick={() => handleEditClick(item)}
-                    className="py-1 px-2 text-black rounded-md bg-blue-300"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(item)}
-                    className="py-1 px-2 text-white rounded-md bg-red-400"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-              <div className="border-t border-slate-600"></div>
-            </div>
-          );
-        })}
-        {modalDetailOpen && (
-          <AddCaseTypeModal
-            closeModal={() => setModalDetailOpen(false)}
-            onSubmit={handleSubmitAddJenisJahat}
-            defaultValue={detailData}
-            isDetail={true}
-          />
-        )}
-        {modalEditOpen && (
-          <AddCaseTypeModal
-            closeModal={handleCloseEditModal}
-            onSubmit={handleSubmitEditJenisJahat}
-            defaultValue={editData}
-            isEdit={true}
-          />
-        )}
-        {modalAddOpen && (
-          <AddCaseTypeModal
-            closeModal={handleCloseAddModal}
-            onSubmit={handleSubmitAddJenisJahat}
-          />
-        )}
-        {modalDeleteOpen && (
-          <DeleteCaseTypeModal
-            closeModal={handleCloseDeleteModal}
-            onSubmit={handleSubmitDeleteJenisJahat}
-            defaultValue={deleteData}
-          />
         )}
       </div>
-      <p>
-        Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-      </p>
-      <div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={pages}
-          onChangePage={handleChagePage}
-        />
-      </div>
-    </div>
     </div>
   );
 };

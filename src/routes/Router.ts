@@ -20,6 +20,10 @@ const DataSceduleShift = lazy(
   () => import('../pages/Schedule/SceduleShift/dataSceduleShift')
 );
 
+const Penugasan = lazy(
+  () => import('../pages/Schedule/Penugasan/dataPenugasan')
+);
+
 const Statistic = lazy(() => import('../pages/Statistic/Statistic'));
 import CameraDetail from '../pages/Camera/CameraDetail';
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
@@ -77,6 +81,9 @@ const RoomSetting = lazy(() => import('../pages/SettingPage/RoomSetting'));
 const DeviceSetting = lazy(() => import('../pages/SettingPage/DeviceSetting'));
 const SettingList = lazy(() => import('../pages/SettingPage/SettingList'));
 const LiveChatList = lazy(() => import('../pages/LiveChat/LiveChatList'));
+const AktifitasPengunjung = lazy(
+  () => import('../pages/AktifitasPengunjung/AktifitasPengunjungList')
+);
 
 const FaceDBList = lazy(() => import('../pages/FaceDBPage/FaceDBList'));
 // const InmateFaceDB = lazy(() => import('../pages/FaceDBPage/InmateFaceDB'));
@@ -127,10 +134,9 @@ const DaftarHakim = lazy(
   () => import('../pages/MasterData/HakimData/HakimList')
 );
 
-const DaftarJaksaPenyidik= lazy(
-  () => import('../pages/MasterData/JaksaData/JaksaPenyidik/JaksaPenyidikList')
+const DaftarJaksaPenyidik = lazy(
+  () => import('../pages/MasterData/JaksaData/OditurPenyidik/OditurPenyidikList')
 );
-
 
 const DaftarJaksaPenuntut = lazy(
   () => import('../pages/MasterData/JaksaData/JaksaPenuntut/JaksaPenuntutList')
@@ -143,31 +149,77 @@ const DaftarJaksa = lazy(
 const DaftarSaksi = lazy(
   () => import('../pages/MasterData/SaksiData/SaksiList')
 );
-const DaftarAhli = lazy(
-  () => import('../pages/MasterData/AhliData/AhliList')
-);
+const DaftarAhli = lazy(() => import('../pages/MasterData/AhliData/AhliList'));
 const DaftarJenisPersidangan = lazy(
   () => import('../pages/MasterData/JenisPersidanganData/JenisPersidanganList')
 );
-
+const BarangBukti = lazy(
+  () => import('../pages/MasterData/BarangBukti/BarangBuktiList')
+);
+const DaftarKasus = lazy(() => import('../pages/Daftarkasus/DaftarKasusList'));
+const Oditor = lazy(() => import('../pages/MasterData/Oditur/OditurList'));
+const PengadilanMiliter = lazy(
+  () => import('../pages/MasterData/PengadilanMiliter/PengadilanMiliterList')
+);
+const Penyidikan = lazy(
+  () => import('../pages/Penyidikan/DataPenyidikan/PenyidikanList')
+);
+const HistoryPenyidikan = lazy(
+  () => import('../pages/Penyidikan/HistoryPenyidikan/HistoryPenyidikanList')
+);
+const ListPenyidikan = lazy(()=>import('../pages/Penyidikan/penyelidikanList'))
 // const KameraTest = lazy(()=> import('../pages/KameraDevTest/KameraMainPage'))
 // const KameraDetail = lazy(()=> import('../pages/KameraDevTest/KameraDetail'))
 
 const CameraPlayback = lazy(() => import('../pages/Camera/CameraPlayback'));
 
-
 const coreRoutes = [
   // {
   //   path: '/kemera-dev-test/:id',
   //   title: 'kamera dev test',
-  //   component: KameraDetail, 
+  //   component: KameraDetail,
   // },
-  
+
   // {
   //   path: '/kemera-dev-test',
   //   title: 'kamera dev test',
-  //   component: KameraTest, 
+  //   component: KameraTest,
   // },
+  {
+    path: '/penyidikan',
+    title: 'penyidikan',
+    component: Penyidikan,
+  },
+  {
+    path: '/historyPenyidikan',
+    title: 'history penyidikan',
+    component: HistoryPenyidikan,
+  },
+  {
+    path: '/listPenyidikan',
+    title: 'list penyidikan',
+    component: ListPenyidikan,
+  },
+  {
+    path: '/pengadilan-militer',
+    title: 'pengadilan militer',
+    component: PengadilanMiliter,
+  },
+  {
+    path: '/oditur',
+    title: 'oditur',
+    component: Oditor,
+  },
+  {
+    path: '/daftar-kasus',
+    title: 'daftar kasus',
+    component: DaftarKasus,
+  },
+  {
+    path: '/barang-bukti',
+    title: 'barang bukti',
+    component: BarangBukti,
+  },
   {
     path: '/jenis-persidangan-data',
     title: 'jenis persidangan data',
@@ -189,7 +241,7 @@ const coreRoutes = [
     component: DaftarJaksa,
   },
   {
-    path: '/jaksa-penyidik-data',
+    path: '/oditur-penyidik-data',
     title: 'jaksa penyidik data',
     component: DaftarJaksaPenyidik,
   },
@@ -207,6 +259,16 @@ const coreRoutes = [
     path: '/tipeasset-data',
     title: 'tipeasset data',
     component: DaftarTipeAsset,
+  },
+  {
+    path: '/setting-list',
+    title: 'setting',
+    component: SettingList,
+  },
+  {
+    path: '/pengunjung',
+    title: 'aktifitas pengunjung',
+    component: AktifitasPengunjung,
   },
   {
     path: '/daftar-sidang',
@@ -247,6 +309,11 @@ const coreRoutes = [
     path: '/GroupShift',
     title: 'GroupShift',
     component: GroupShift,
+  },
+  {
+    path: '/Penugasan',
+    title: 'Penugasan',
+    component: Penugasan,
   },
   {
     path: '/DataSceduleShift',

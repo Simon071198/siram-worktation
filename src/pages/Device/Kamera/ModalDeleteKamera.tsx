@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState ,useEffect,useRef} from 'react';
 
-export const DeleteKameraModal = ({ closeModal, onSubmit, defaultValue }) => {
+interface modal {
+  closeModal : () => void;
+  onSubmit: (params:any)=>void
+  defaultValue?:any
+}
+
+export const DeleteKameraModal: React.FC<modal> = ({ closeModal, onSubmit, defaultValue }) => {
+
   const [formState, setFormState] = useState(defaultValue
   );
-  
-  const modalContainerRef = useRef(null);
+  const [errors, setErrors] = useState<string[]>([]);
+  const modalContainerRef = useRef<HTMLDivElement|null>(null);
 
   useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (
-        modalContainerRef.current &&
-        !modalContainerRef.current.contains(e.target)
-      ) {
+    const handleOutsideClick = (e:any) => {
+      if (modalContainerRef.current && !modalContainerRef.current.contains(e.target)) {
         closeModal();
       }
     };
@@ -22,10 +26,12 @@ export const DeleteKameraModal = ({ closeModal, onSubmit, defaultValue }) => {
     };
   }, [closeModal]);
 
-  const handleSubmit = (e) => {
+
+console.log(":ada",formState)
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     console.log(formState, 'formState');
-
+  
     onSubmit(formState);
 
     closeModal();
@@ -33,15 +39,15 @@ export const DeleteKameraModal = ({ closeModal, onSubmit, defaultValue }) => {
 
   return (
     <div
-      ref={modalContainerRef}
-      className="modal-container fixed z-50 flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    >
+    ref={modalContainerRef}
+    className="modal-container fixed z-50 flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  >
       <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark overflow-auto">
         <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
           <div className="w-full flex justify-between">
             <div>
               <h3 className="text-xl font-semibold text-black dark:text-white">
-                Konfirmasi Hapus Data
+            Konfirmasi Hapus Data 
               </h3>
             </div>
             <strong
@@ -51,15 +57,22 @@ export const DeleteKameraModal = ({ closeModal, onSubmit, defaultValue }) => {
               &times;
             </strong>
           </div>
-          <div className="pt-6">
+          <div className='pt-6'>
             <p className="text-sm text-black dark:text-white">
-              Apakah Anda yakin ingin menghapus data ini?
+Apakah Anda yakin ingin menghapus data ini? 
             </p>
+            <p className="text-sm text-black dark:text-white">
+            {formState.nama_kegiatan} akan dihapus            </p>
+
           </div>
+         
+       
+      
 
-          <br></br>
-
-          <div className="flex justify-between">
+            <br></br>
+          
+            <div className="flex justify-between">
+                
             <button
               className="btn flex justify-center rounded bg-gray-200 py-2 px-6 font-medium text-gray-900 hover:shadow-1"
               type="submit"
@@ -74,7 +87,8 @@ export const DeleteKameraModal = ({ closeModal, onSubmit, defaultValue }) => {
             >
               Hapus
             </button>
-          </div>
+</div>
+            
         </div>
       </div>
     </div>

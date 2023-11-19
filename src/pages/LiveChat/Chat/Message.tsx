@@ -1,5 +1,5 @@
 import React from 'react';
-import iconPicture from '../../../../../assets/icon.png';
+import iconPicture from '../../../../../../../assets/icon.png';
 import { time } from 'console';
 
 const Message = (props: any) => {
@@ -12,9 +12,8 @@ const Message = (props: any) => {
       {picture.length > 0 && content === '' ? (
         // picture without content
         <div
-          className={`flex mb-[20px] ${
-            from === 'you' ? 'flex-row-reverse' : 'flex-row'
-          } items-start gap-x-3`}
+          className={`flex mb-[20px] ${from === 'you' ? 'flex-row-reverse' : 'flex-row'
+            } items-start gap-x-3`}
         >
           <div className="flex flex-col">
             <img
@@ -25,9 +24,8 @@ const Message = (props: any) => {
           </div>
 
           <div
-            className={`max-w-md flex flex-col ${
-              from === 'you' ? 'items-end' : 'items-start'
-            } gap-y-1`}
+            className={`max-w-md flex flex-col ${from === 'you' ? 'items-end' : 'items-start'
+              } gap-y-1`}
           >
             <div className="flex flex-col">
               <div>
@@ -35,11 +33,10 @@ const Message = (props: any) => {
                   <img
                     src={data.pic}
                     alt={`image from ${from}`}
-                    className={`px-1 py-1 mb-2 max-w-[200px] max-h-[200px] object-center ${
-                      from === 'you'
+                    className={`px-1 py-1 mb-2 max-w-[200px] max-h-[200px] object-center ${from === 'you'
                         ? 'text-white bg-slate-400 rounded-l-md rounded-br-md self-end'
                         : 'text-slate-400 bg-white rounded-r-md rounded-bl-md'
-                    }`}
+                      }`}
                   ></img>
                 ))}
               </div>
@@ -53,9 +50,8 @@ const Message = (props: any) => {
           {picture.length > 0 && content !== '' ? (
             // picture with content
             <div
-              className={`flex mb-[20px] ${
-                from === 'you' ? 'flex-row-reverse' : 'flex-row'
-              } items-start gap-x-3`}
+              className={`flex mb-[20px] ${from === 'you' ? 'flex-row-reverse' : 'flex-row'
+                } items-start gap-x-3`}
             >
               <div className="flex flex-col">
                 <img
@@ -66,9 +62,8 @@ const Message = (props: any) => {
               </div>
 
               <div
-                className={`max-w-md flex flex-col ${
-                  from === 'you' ? 'items-end' : 'items-start'
-                } gap-y-1`}
+                className={`max-w-md flex flex-col ${from === 'you' ? 'items-end' : 'items-start'
+                  } gap-y-1`}
               >
                 <div className="flex flex-col">
                   <>
@@ -76,20 +71,18 @@ const Message = (props: any) => {
                       <img
                         src={data.pic}
                         alt={`image from ${from}`}
-                        className={`px-1 py-1 mb-2 max-w-[200px] max-h-[200px] object-center ${
-                          from === 'you'
+                        className={`px-1 py-1 mb-2 max-w-[200px] max-h-[200px] object-center ${from === 'you'
                             ? 'text-white bg-slate-400 rounded-l-md rounded-br-md self-end'
                             : 'text-slate-400 bg-white rounded-r-md rounded-bl-md'
-                        }`}
+                          }`}
                       ></img>
                     ))}
                   </>
                   <p
-                    className={`px-3 py-1 max-w-fit ${
-                      from === 'you'
+                    className={`px-3 py-1 max-w-fit ${from === 'you'
                         ? 'text-white bg-slate-400 rounded-l-md rounded-br-md self-end'
                         : 'text-slate-400 bg-white rounded-r-md rounded-bl-md'
-                    }`}
+                      }`}
                   >
                     {content}
                   </p>
@@ -101,9 +94,8 @@ const Message = (props: any) => {
           ) : (
             // no picture
             <div
-              className={`flex mb-[20px] ${
-                from === 'you' ? 'flex-row-reverse' : 'flex-row'
-              } items-start gap-x-3`}
+              className={`flex mb-[20px] ${from === 'you' ? 'flex-row-reverse' : 'flex-row'
+                } items-start gap-x-3`}
             >
               <div className="flex flex-col">
                 <img
@@ -114,17 +106,15 @@ const Message = (props: any) => {
               </div>
 
               <div
-                className={`max-w-md flex flex-col ${
-                  from === 'you' ? 'items-end' : 'items-start'
-                } gap-y-1`}
+                className={`max-w-md flex flex-col ${from === 'you' ? 'items-end' : 'items-start'
+                  } gap-y-1`}
               >
                 <div className="flex flex-col">
                   <p
-                    className={`px-3 py-1 max-w-fit ${
-                      from === 'you'
+                    className={`px-3 py-1 max-w-fit ${from === 'you'
                         ? 'text-white bg-slate-400 rounded-l-md rounded-br-md self-end'
                         : 'text-slate-400 bg-white rounded-r-md rounded-bl-md'
-                    }`}
+                      }`}
                   >
                     {content}
                   </p>

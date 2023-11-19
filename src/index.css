@@ -217,3 +217,42 @@ span.flatpickr-weekday,
 .error-text {
   @apply text-red-400 text-sm
 }
+
+.action-button-bg-del {
+  @apply bg-red-500 text-white
+}
+
+.action-button-bg-edit {
+  @apply bg-blue-500 text-white
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: fit-content;
+  background-color: rgb(48, 47, 47);
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 6px;
+  /* padding: 5px 0; */
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-top: 5px;
+  margin-left: -21px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

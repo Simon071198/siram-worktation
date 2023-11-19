@@ -41,7 +41,7 @@ const DropdownUser = () => {
   const handleLogout = () => {
     localStorage.removeItem('dataUser');
     localStorage.removeItem('token');
-    navigate('/auth/signin')
+    navigate('/auth/signin');
   };
 
   return (
@@ -54,15 +54,20 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block capitalize text-sm font-medium text-black dark:text-white">
-          {/* <span className="block capitalize text-sm font-medium text-black dark:text-meta-4"> */}
             {dataUser.nama_petugas}
           </span>
-          {/* <span className="block text-xs capitalize">Petugas Lemasmil</span> */}
-          <span className="block text-xs capitalize text-white">{dataUser.role_name}</span>
+          <span className="block text-xs capitalize text-white">
+            {dataUser.role_name}
+          </span>
         </span>
 
         <span className="h-12 w-12 rounded-full overflow-hidden">
-          <img src={'https://dev.transforme.co.id/siram_admin_api' + dataUser.image} alt="User" />
+          <img
+            src={
+              'https://dev.transforme.co.id/siram_admin_api' + dataUser.image
+            }
+            alt="User"
+          />
         </span>
 
         <svg
@@ -91,9 +96,7 @@ const DropdownUser = () => {
         onBlur={() => setDropdownOpen(false)}
         // className={`absolute right-0 mt-4 flex w-62.5 flex-col border-b border-r border-l border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-300
         className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-transparent-dark1
-         ${
-          dropdownOpen === true ? 'block' : 'hidden'
-        }`}
+         ${dropdownOpen === true ? 'block' : 'hidden'}`}
       >
         {/* <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>

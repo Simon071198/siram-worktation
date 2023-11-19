@@ -114,15 +114,15 @@ export const AddInmateModal = ({
       is_sick: '',
       wbp_sickness: '',
       // kejahatan: 'a',
-      kategori_perkara_id: '',
-      jenis_perkara_id: '',
+      // kategori_perkara_id_jenis_perkara: '',
+      // jenis_perkara_id: '',
       // vonis_tahun: '',
       // vonis_bulan: '',
       // vonis_hari: '',
       tanggal_ditahan_otmil: '',
       bidang_keahlian_id: '',
       gelang_id: '',
-      dmac: '',
+      DMAC: '',
       residivis: '',
       hunian_wbp_otmil_id: '',
       nomor_tahanan: '',
@@ -263,7 +263,7 @@ export const AddInmateModal = ({
       setFormState({
         ...formState,
         gelang_id: e.target.value,
-        dmac: selectedGelang ? selectedGelang.dmac : '',
+        DMAC: selectedGelang ? selectedGelang.dmac : '',
       });
     } else if (e.target.name === 'is_sick') {
       // Jika is_sick berubah, atur nilai wbp_sickness sesuai kondisi
@@ -297,7 +297,7 @@ export const AddInmateModal = ({
         setFormState({
           ...formState,
           tanggal_penetapan_tersangka: formState.tanggal_penetapan_tersangka,
-          tanggal_penetapan_terdakwa:formState.tanggal_penetapan_terdakwa,
+          tanggal_penetapan_terdakwa: formState.tanggal_penetapan_terdakwa,
           tanggal_penetapan_terpidana: e.target.value,
         });
       } else {
@@ -475,7 +475,7 @@ export const AddInmateModal = ({
       filter: {
         nama_lokasi_otmil: 'Cimahi',
       },
-    })
+    }, token)
       .then((res) => {
         console.log(res.data.records, 'res');
 
@@ -504,9 +504,12 @@ export const AddInmateModal = ({
   };
 
   const getAllJenisPerkara = async () => {
-    await apiReadAllJenisPerkara(token)
-      .then((res) => {
-        setJenisPerkara(res);
+    let params = {
+      pageSize : 1000,
+    }
+    await apiReadAllJenisPerkara(params,token)
+    .then((res) => {
+      setJenisPerkara(res.data.records);
       })
       .catch((err) =>
         Alerts.fire({
@@ -780,10 +783,10 @@ export const AddInmateModal = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -873,10 +876,10 @@ export const AddInmateModal = ({
                 <div>
                   <h3 className="text-xl font-semibold text-black  dark:text-white">
                     {isDetail
-                      ? 'Detail data prajurit binaan'
+                      ? 'Detail data tersangka'
                       : isEdit
-                      ? 'Edit data prajurit binaan'
-                      : 'Tambah data prajurit binaan'}
+                        ? 'Edit data tersangka'
+                        : 'Tambah data tersangka'}
                   </h3>
                 </div>
                 <strong
@@ -892,10 +895,10 @@ export const AddInmateModal = ({
                   {/* ----- DATA PRIBADI ----- */}
                   <div>
                     <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
-                      Data Prajurit Binaan
+                      Data Tersangka
                     </p>
                     <div className="flex flex-col gap-4">
-                      <div className=" grid grid-cols-2 gap-2 items-start ">
+                      <div className=" grid grid-cols-2 gap-4 items-start ">
                         {/* Gambar */}
 
                         {isDetail && (
@@ -1365,9 +1368,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.provinsi_id,
-                                    label: formState.nama_provinsi,
-                                  }
+                                  value: formState.provinsi_id,
+                                  label: formState.nama_provinsi,
+                                }
                                 : formState.provinsi_id
                             }
                             placeholder={'Pilih provinsi'}
@@ -1425,9 +1428,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.kota_id,
-                                    label: formState.nama_kota,
-                                  }
+                                  value: formState.kota_id,
+                                  label: formState.nama_kota,
+                                }
                                 : formState.kota_id
                             }
                             placeholder={'Pilih kota'}
@@ -1619,7 +1622,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {formState.is_sick === '0' ||
-                        formState.is_sick === '' ? null : (
+                          formState.is_sick === '' ? null : (
                           <>
                             <div className="form-group w-full flex flex-col">
                               <label
@@ -1659,7 +1662,7 @@ export const AddInmateModal = ({
                     <div className="flex flex-col gap-4">
                       <div className="grid grid-cols-2 gap-4">
                         {/* Kategori Perkara */}
-                        <div className="form-group w-full ">
+                        {/* <div className="form-group w-full ">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1668,9 +1671,9 @@ export const AddInmateModal = ({
                           </label>
                           <select
                             className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="kategori_perkara_id"
+                            name="kategori_perkara_id_jenis_perkara"
                             onChange={handleChange}
-                            value={formState.kategori_perkara_id}
+                            value={formState.kategori_perkara_id_jenis_perkara}
                             disabled={isDetail}
                           >
                             <option value="">Pilih Kategori Perkara</option>
@@ -1682,15 +1685,15 @@ export const AddInmateModal = ({
                           </select>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'kategori_perkara_id'
+                              item === 'kategori_perkara_id_jenis_perkara'
                                 ? 'Pilih kategori perkara'
                                 : ''
                             )}
                           </p>
-                        </div>
+                        </div> */}
 
                         {/* Jenis Perkara */}
-                        <div className="form-group w-full ">
+                        {/* <div className="form-group w-full ">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1711,7 +1714,7 @@ export const AddInmateModal = ({
                                 // For example, only render items that meet a certain condition
                                 return (
                                   item.kategori_perkara_id ===
-                                  formState.kategori_perkara_id
+                                  formState.kategori_perkara_id_jenis_perkara
                                 ); // Change 'someCondition' to your actual condition
                               })
                               .map((item: any) => (
@@ -1730,7 +1733,7 @@ export const AddInmateModal = ({
                                 : ''
                             )}
                           </p>
-                        </div>
+                        </div> */}
                       </div>
 
                       {/* Pasal */}
@@ -1898,6 +1901,273 @@ export const AddInmateModal = ({
                         </div>
                       )}
                       <div className="grid grid-cols-1 gap-4">
+
+
+                        <div className="grid grid-cols-2 gap-4">
+                          {/* Tanggal diTahan */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Tanggal Ditahan
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="tanggal_ditahan_otmil"
+                              onChange={handleChange}
+                              value={formState.tanggal_ditahan_otmil}
+                              disabled={isDetail}
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'tanggal_ditahan_otmil'
+                                  ? 'Masukan tanggal ditahan'
+                                  : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Keahlian */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Keahlian
+                            </label>
+                            <select
+                              className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="bidang_keahlian_id"
+                              onChange={handleChange}
+                              value={formState.bidang_keahlian_id}
+                              disabled={isDetail}
+                            >
+                              <option disabled value="">
+                                Pilih Keahlian
+                              </option>
+                              {keahlian.map((item) => (
+                                <option value={item.bidang_keahlian_id}>
+                                  {item.nama_bidang_keahlian}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'bidang_keahlian_id'
+                                  ? 'Pilih keahlian'
+                                  : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Gelang */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Gelang
+                            </label>
+                            <select
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="gelang_id"
+                              onChange={handleChange}
+                              value={formState.gelang_id}
+                              disabled={isDetail}
+                            >
+                              <option value="" disabled>
+                                Pilih Gelang
+                              </option>
+
+                              {isDetail
+                                ? gelang.map((item: any) => (
+                                  <option value={item.gelang_id}>
+                                    {item.nama_gelang}
+                                  </option>
+                                ))
+                                : isEdit ?
+                                  gelang.map((item: any) => {
+                                    const isUsed = dataWbp.some((wbp: any) => wbp.gelang_id === item.gelang_id);
+                                    return (
+                                      <option value={item.gelang_id} key={item.gelang_id}>
+                                        {item.nama_gelang} {isUsed ? "(Sedang Digunakan)" : "(Tidak Digunakan)"}
+                                      </option>
+                                    );
+                                  })
+                                  :
+
+                                  gelang
+                                    .filter(
+                                      (item: any) =>
+                                        !dataWbp
+                                          .map((wbp: any) => wbp.gelang_id || wbp.gelang_id)
+                                          .includes(item.gelang_id)
+                                    )
+                                    .map((item: any) => (
+                                      <option value={item.gelang_id}>
+                                        {item.nama_gelang}
+                                      </option>
+                                    ))
+
+                              }
+
+
+
+
+
+                            </select>
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'gelang_id' ? 'Pilih gelang' : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* DMAC Gelang */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              DMAC Gelang
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="DMAC"
+                              placeholder="DMAC"
+                              onChange={handleChange}
+                              value={formState.DMAC}
+                              disabled
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'DMAC' ? 'Pilih gelang dulu' : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Residivis */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Residivis
+                            </label>
+
+                            <select
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="residivis"
+                              onChange={handleChange}
+                              value={formState.residivis}
+                              disabled={isDetail}
+                            >
+                              <option value="" disabled>
+                                Pilih Residivis
+                              </option>
+
+                              <option value="0">Tidak</option>
+                              <option value="1">Ya</option>
+                            </select>
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'residivis' ? 'Pilih Ya/Tidak' : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Hunian Tahanan */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Hunian Tahanan
+                            </label>
+                            <select
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="hunian_wbp_otmil_id"
+                              onChange={handleChange}
+                              value={formState.hunian_wbp_otmil_id}
+                              disabled={isDetail}
+                            >
+                              <option value="" disabled>
+                                Pilih Hunian Tahanan
+                              </option>
+                              {hunian.map((item: any) => (
+                                <option value={item.hunian_wbp_otmil_id}>
+                                  {item.nama_hunian_wbp_otmil}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'hunian_wbp_otmil_id'
+                                  ? 'Pilih hunian'
+                                  : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Nomor Tahanan*/}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Nomor Tahanan
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="nomor_tahanan"
+                              placeholder="Nomor Tahanan"
+                              onChange={handleChange}
+                              value={formState.nomor_tahanan}
+                              disabled={isDetail}
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'nomor_tahanan'
+                                  ? 'Masukan nomor tahanan'
+                                  : ''
+                              )}
+                            </p>
+                          </div>
+
+                          {/* Terisolasi */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Terisolasi (?)
+                            </label>
+                            <select
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="is_isolated"
+                              onChange={handleChange}
+                              value={formState.is_isolated}
+                              disabled={isDetail}
+                            >
+                              <option value="" disabled>
+                                Silahkan Dipilih
+                              </option>
+                              <option value="0">Tidak</option>
+                              <option value="1">Ya</option>
+                            </select>
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : ''
+                              )}
+                            </p>
+                          </div>
+
+
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                           {/* Status Wbp*/}
                           <div className="form-group w-full ">
@@ -2001,329 +2271,83 @@ export const AddInmateModal = ({
                           </div> */}
 
                           {formState.status_wbp_kasus_id === '' || formState.status_wbp_kasus_id === null ? null :
-                          <>
-                           {/* Tanggal Penetapan Terpidana*/}
-                            <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan terpidana
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_terpidana"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_terpidana}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_terpidana' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
+                            <>
+                              {/* Tanggal Penetapan Terpidana*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan terpidana
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_terpidana"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_terpidana}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_terpidana' ? 'Masukan tanggal penetapan' : ''
+                                  )}
+                                </p>
+                              </div>
 
-                           {/* Tanggal Penetapan Terdakwa*/}
-                           <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan terdakwa
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_terdakwa"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_terdakwa}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_terdakwa' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
+                              {/* Tanggal Penetapan Terdakwa*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan terdakwa
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_terdakwa"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_terdakwa}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_terdakwa' ? 'Masukan tanggal penetapan' : ''
+                                  )}
+                                </p>
+                              </div>
 
-                          {/* Tanggal Penetapan Tersangka*/}
-                          <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan tersangka
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_tersangka"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_tersangka}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_tersangka' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
-                          </>
-                        }
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Tanggal diTahan */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal Ditahan
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_ditahan_otmil"
-                              onChange={handleChange}
-                              value={formState.tanggal_ditahan_otmil}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_ditahan_otmil'
-                                  ? 'Masukan tanggal ditahan'
-                                  : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Keahlian */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Keahlian
-                            </label>
-                            <select
-                              className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="bidang_keahlian_id"
-                              onChange={handleChange}
-                              value={formState.bidang_keahlian_id}
-                              disabled={isDetail}
-                            >
-                              <option disabled value="">
-                                Pilih Keahlian
-                              </option>
-                              {keahlian.map((item) => (
-                                <option value={item.bidang_keahlian_id}>
-                                  {item.nama_bidang_keahlian}
-                                </option>
-                              ))}
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'bidang_keahlian_id'
-                                  ? 'Pilih keahlian'
-                                  : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Gelang */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Gelang
-                            </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="gelang_id"
-                              onChange={handleChange}
-                              value={formState.gelang_id}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Gelang
-                              </option>
-
-                              {isDetail
-                                ? gelang.map((item: any) => (
-                                    <option value={item.gelang_id}>
-                                      {item.nama_gelang}
-                                    </option>
-                                  ))
-                                : gelang
-                                    .filter(
-                                      (item: any) =>
-                                        !dataWbp
-                                          .map((wbp: any) => wbp.gelang_id)
-                                          .includes(item.gelang_id)
-                                    )
-                                    .map((item: any) => (
-                                      <option value={item.gelang_id}>
-                                        {item.nama_gelang}
-                                      </option>
-                                    ))}
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'gelang_id' ? 'Pilih gelang' : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* DMAC Gelang */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              DMAC Gelang
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="dmac"
-                              placeholder="DMAC"
-                              onChange={handleChange}
-                              value={formState.dmac}
-                              disabled
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'dmac' ? 'Pilih gelang dulu' : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Residivis */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Residivis
-                            </label>
-
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="residivis"
-                              onChange={handleChange}
-                              value={formState.residivis}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Residivis
-                              </option>
-
-                              <option value="1">Tidak</option>
-                              <option value="0">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'residivis' ? 'Pilih Ya/Tidak' : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Hunian Tahanan */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Hunian Tahanan
-                            </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="hunian_wbp_otmil_id"
-                              onChange={handleChange}
-                              value={formState.hunian_wbp_otmil_id}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Hunian Tahanan
-                              </option>
-                              {hunian.map((item: any) => (
-                                <option value={item.hunian_wbp_otmil_id}>
-                                  {item.nama_hunian_wbp_otmil}
-                                </option>
-                              ))}
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'hunian_wbp_otmil_id'
-                                  ? 'Pilih hunian'
-                                  : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Nomor Tahanan*/}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Nomor Tahanan
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="nomor_tahanan"
-                              placeholder="Nomor Tahanan"
-                              onChange={handleChange}
-                              value={formState.nomor_tahanan}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'nomor_tahanan'
-                                  ? 'Masukan nomor tahanan'
-                                  : ''
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Terisolasi */}
-                          <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Terisolasi (?)
-                            </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="is_isolated"
-                              onChange={handleChange}
-                              value={formState.is_isolated}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Silahkan Dipilih
-                              </option>
-                              <option value="0">Tidak</option>
-                              <option value="1">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : ''
-                              )}
-                            </p>
-                          </div>
+                              {/* Tanggal Penetapan Tersangka*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan tersangka
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_tersangka"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_tersangka}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_tersangka' ? 'Masukan tanggal penetapan' : ''
+                                  )}
+                                </p>
+                              </div>
+                            </>
+                          }
                         </div>
                       </div>
                     </div>
@@ -2340,83 +2364,26 @@ export const AddInmateModal = ({
                             <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg ">
                               {isEdit
                                 ? autocompleteDataZona
-                                    ?.filter(
-                                      (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.includes(
-                                          item.ruangan_otmil_id
-                                        )
-                                    )
-                                    .map((zonaItem: any) => (
-                                      <div
-                                        key={zonaItem.ruangan_otmil_id}
-                                        className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${
-                                          zonaItem.nama_zona === 'Hijau'
-                                            ? 'border-green-500'
-                                            : zonaItem.nama_zona === 'Kuning'
-                                            ? 'border-yellow-500'
-                                            : zonaItem.nama_zona === 'Merah'
+                                  ?.filter(
+                                    (item: any) =>
+                                      !formState.akses_ruangan_otmil_id.includes(
+                                        item.ruangan_otmil_id
+                                      )
+                                  )
+                                  .map((zonaItem: any) => (
+                                    <div
+                                      key={zonaItem.ruangan_otmil_id}
+                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${zonaItem.nama_zona === 'Hijau'
+                                        ? 'border-green-500'
+                                        : zonaItem.nama_zona === 'Kuning'
+                                          ? 'border-yellow-500'
+                                          : zonaItem.nama_zona === 'Merah'
                                             ? 'border-red-500'
                                             : 'border-slate-800'
                                         } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
-                                        data-te-ripple-color="dark"
-                                      >
-                                        <p className="text-xs capitalize font-semibold">
-                                          {' '}
-                                          {zonaItem.nama_ruangan_otmil}
-                                        </p>
-                                        <button
-                                          className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                          onClick={(e) => {
-                                            e.preventDefault(); // Prevent page reload
-                                            handleAddZona(
-                                              zonaItem.ruangan_otmil_id,
-                                              'akses_ruangan_otmil_id'
-                                            );
-                                          }}
-                                        >
-                                          Ijinkan
-                                        </button>
-                                        {/* <button
-                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
-                                    onClick={(e) => {
-                                      e.preventDefault(); // Prevent page reload
-                                      handleAddZona(
-                                        zonaItem.ruangan_otmil_id,
-                                        'zona_kuning'
-                                      );
-                                    }}
-                                  >
-                                    Awasi
-                                  </button> */}
-                                        <button
-                                          className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                          onClick={(e) => {
-                                            e.preventDefault(); // Prevent page reload
-                                            handleAddZona(
-                                              zonaItem.ruangan_otmil_id,
-                                              'zona_merah'
-                                            );
-                                          }}
-                                        >
-                                          Larang
-                                        </button>
-                                      </div>
-                                    ))
-                                : autocompleteDataZona?.map((zonaItem: any) => (
-                                    <div
-                                      key={zonaItem.ruangan_otmil_id}
-                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${
-                                        zonaItem.nama_zona === 'Hijau'
-                                          ? 'border-green-500'
-                                          : zonaItem.nama_zona === 'Kuning'
-                                          ? 'border-yellow-400'
-                                          : zonaItem.nama_zona === 'Merah'
-                                          ? 'border-red-500'
-                                          : 'border-slate-500'
-                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
                                       data-te-ripple-color="dark"
                                     >
-                                      <p className="text-xs text-white capitalize font-semibold">
+                                      <p className="text-xs capitalize font-semibold">
                                         {' '}
                                         {zonaItem.nama_ruangan_otmil}
                                       </p>
@@ -2432,7 +2399,18 @@ export const AddInmateModal = ({
                                       >
                                         Ijinkan
                                       </button>
-
+                                      {/* <button
+                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
+                                    onClick={(e) => {
+                                      e.preventDefault(); // Prevent page reload
+                                      handleAddZona(
+                                        zonaItem.ruangan_otmil_id,
+                                        'zona_kuning'
+                                      );
+                                    }}
+                                  >
+                                    Awasi
+                                  </button> */}
                                       <button
                                         className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                                         onClick={(e) => {
@@ -2446,7 +2424,51 @@ export const AddInmateModal = ({
                                         Larang
                                       </button>
                                     </div>
-                                  ))}
+                                  ))
+                                : autocompleteDataZona?.map((zonaItem: any) => (
+                                  <div
+                                    key={zonaItem.ruangan_otmil_id}
+                                    className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${zonaItem.nama_zona === 'Hijau'
+                                      ? 'border-green-500'
+                                      : zonaItem.nama_zona === 'Kuning'
+                                        ? 'border-yellow-400'
+                                        : zonaItem.nama_zona === 'Merah'
+                                          ? 'border-red-500'
+                                          : 'border-slate-500'
+                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
+                                    data-te-ripple-color="dark"
+                                  >
+                                    <p className="text-xs text-white capitalize font-semibold">
+                                      {' '}
+                                      {zonaItem.nama_ruangan_otmil}
+                                    </p>
+                                    <button
+                                      className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                      onClick={(e) => {
+                                        e.preventDefault(); // Prevent page reload
+                                        handleAddZona(
+                                          zonaItem.ruangan_otmil_id,
+                                          'akses_ruangan_otmil_id'
+                                        );
+                                      }}
+                                    >
+                                      Ijinkan
+                                    </button>
+
+                                    <button
+                                      className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                      onClick={(e) => {
+                                        e.preventDefault(); // Prevent page reload
+                                        handleAddZona(
+                                          zonaItem.ruangan_otmil_id,
+                                          'zona_merah'
+                                        );
+                                      }}
+                                    >
+                                      Larang
+                                    </button>
+                                  </div>
+                                ))}
                             </div>
                             {/* Display errors */}
                             {/* {errors.map((error, index) => (
@@ -2467,72 +2489,72 @@ export const AddInmateModal = ({
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
+                              <div
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {item.nama_ruangan_otmil}
+                                </p>
+                              </div>
+                            ))
+                            : formState.akses_ruangan_otmil_id?.map(
+                              (zonaId: any) => (
                                 <div
+                                  key={zonaId}
                                   className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
                                   data-te-ripple-color="dark"
                                 >
                                   <p className="capitalize text-center">
-                                    {item.nama_ruangan_otmil}
+                                    {
+                                      zona.find(
+                                        (zonaItem: any) =>
+                                          zonaItem.ruangan_otmil_id === zonaId
+                                      )?.nama_ruangan_otmil
+                                    }
                                   </p>
-                                </div>
-                              ))
-                            : formState.akses_ruangan_otmil_id?.map(
-                                (zonaId: any) => (
-                                  <div
-                                    key={zonaId}
-                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                    data-te-ripple-color="dark"
+                                  <span
+                                    data-te-chip-close
+                                    onClick={() =>
+                                      handleRemoveZona(
+                                        zonaId,
+                                        'akses_ruangan_otmil_id'
+                                      )
+                                    }
+                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                                   >
-                                    <p className="capitalize text-center">
-                                      {
-                                        zona.find(
-                                          (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id === zonaId
-                                        )?.nama_ruangan_otmil
-                                      }
-                                    </p>
-                                    <span
-                                      data-te-chip-close
-                                      onClick={() =>
-                                        handleRemoveZona(
-                                          zonaId,
-                                          'akses_ruangan_otmil_id'
-                                        )
-                                      }
-                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke-width="1.5"
+                                      stroke="currentColor"
+                                      className="h-3 w-3"
                                     >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                        className="h-3 w-3"
-                                      >
-                                        <path
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M6 18L18 6M6 6l12 12"
-                                        />
-                                      </svg>
-                                    </span>
-                                  </div>
-                                  // <div
-                                  //   key={zonaId}
-                                  //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                                  // >
-                                  //   <span className="text-sm">
-                                  //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                                  //   </span>
-                                  //   <button
-                                  //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                                  //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                                  //   >
-                                  //     X
-                                  //   </button>
-                                  // </div>
-                                )
-                              )}
+                                      <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
+                                    </svg>
+                                  </span>
+                                </div>
+                                // <div
+                                //   key={zonaId}
+                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                                // >
+                                //   <span className="text-sm">
+                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                                //   </span>
+                                //   <button
+                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                                //   >
+                                //     X
+                                //   </button>
+                                // </div>
+                              )
+                            )}
                         </div>
 
                         {/* Display errors */}
@@ -2648,70 +2670,70 @@ export const AddInmateModal = ({
                         <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
-                                <div
-                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                  data-te-ripple-color="dark"
-                                >
-                                  <p className="capitalize text-center">
-                                    {item.nama_ruangan_otmil}
-                                  </p>
-                                </div>
-                              ))
+                              <div
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {item.nama_ruangan_otmil}
+                                </p>
+                              </div>
+                            ))
                             : formState.zona_merah?.map((zonaId: any) => (
-                                <div
-                                  key={zonaId}
-                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                  data-te-ripple-color="dark"
+                              <div
+                                key={zonaId}
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {
+                                    zona.find(
+                                      (zonaItem: any) =>
+                                        zonaItem.ruangan_otmil_id === zonaId
+                                    )?.nama_ruangan_otmil
+                                  }
+                                </p>
+                                <span
+                                  data-te-chip-close
+                                  onClick={() =>
+                                    handleRemoveZona(
+                                      zonaId,
+                                      'akses_ruangan_otmil_id'
+                                    )
+                                  }
+                                  className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                                 >
-                                  <p className="capitalize text-center">
-                                    {
-                                      zona.find(
-                                        (zonaItem: any) =>
-                                          zonaItem.ruangan_otmil_id === zonaId
-                                      )?.nama_ruangan_otmil
-                                    }
-                                  </p>
-                                  <span
-                                    data-te-chip-close
-                                    onClick={() =>
-                                      handleRemoveZona(
-                                        zonaId,
-                                        'akses_ruangan_otmil_id'
-                                      )
-                                    }
-                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    className="h-3 w-3"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      stroke="currentColor"
-                                      className="h-3 w-3"
-                                    >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M6 18L18 6M6 6l12 12"
-                                      />
-                                    </svg>
-                                  </span>
-                                </div>
-                                // <div
-                                //   key={zonaId}
-                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                                // >
-                                //   <span className="text-sm">
-                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                                //   </span>
-                                //   <button
-                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                                //   >
-                                //     X
-                                //   </button>
-                                // </div>
-                              ))}
+                                    <path
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                </span>
+                              </div>
+                              // <div
+                              //   key={zonaId}
+                              //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                              // >
+                              //   <span className="text-sm">
+                              //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                              //   </span>
+                              //   <button
+                              //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                              //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                              //   >
+                              //     X
+                              //   </button>
+                              // </div>
+                            ))}
                         </div>
 
                         {/* Display errors */}
@@ -2722,18 +2744,18 @@ export const AddInmateModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -2758,9 +2780,8 @@ export const AddInmateModal = ({
 
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -2788,13 +2809,12 @@ export const AddInmateModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Prajurit Binaan
+                    Ubah Data Tersangka
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -2822,7 +2842,7 @@ export const AddInmateModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Prajurit Binaan
+                    Tambah Data Tersangka
                   </button>
                 )}
               </form>

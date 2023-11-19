@@ -1,30 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export const DeleteHakimModal = ({ closeModal, onSubmit, defaultValue }:any) => {
+export const DeleteDaftarKasusModal = ({ closeModal, onSubmit, defaultValue }:any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-    
+      kasus_id : ''
     }
   );
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef:any = useRef(null);
   const [buttonLoad, setButtonLoad] = useState(false);
-
-  // useEffect(() => {
-  //   const handleOutsideClick = (e:any) => {
-  //     if (
-  //       modalContainerRef.current &&
-  //       !modalContainerRef.current.contains(e.target)
-  //     ) {
-  //       closeModal();
-  //     }
-  //   };
-
-  //   document.addEventListener('mousedown', handleOutsideClick);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, [closeModal]);
 
   const handleSubmit = (e:any) => {
     e.preventDefault();
@@ -82,8 +66,8 @@ export const DeleteHakimModal = ({ closeModal, onSubmit, defaultValue }:any) => 
             <p className="text-sm te  xt-black dark:text-white max-w-md">
               Apakah Anda yakin ingin menghapus data ini? 
             </p>
-            <p className="text-sm text-black dark:text-white">
-            Nama petugas <span className='text-red-400'>{formState.nama}</span> akan dihapus
+            <p className="text-sm text-center text-black dark:text-white">
+            Nama Daftar Kasus <span className='text-red-400'>{formState.nama_kasus}</span> akan dihapus
             </p>
           </div>
 

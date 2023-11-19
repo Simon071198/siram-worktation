@@ -42,7 +42,9 @@ function App() {
                 </React.Suspense>
               }
             />
-          ))}
+            
+          )
+          )}
         </Route>
       </Routes>
     </>

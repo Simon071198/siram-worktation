@@ -1,30 +1,31 @@
 import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { apiReadAllGateway } from '../../services/api';
-import Loader from '../../../common/Loader/index';
+import Loader from '../../common/Loader';
 const GatewayList = () => {
   const [data, setData] = useState([]);
 
-  const [isLoading, setIsLoading]= useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let fetchData = async () => {
-    
-    // await setIsLoading(true);
+
+      // await setIsLoading(true);
       let params = {
         filter: ' ',
       };
-    await apiReadAllGateway(params).then((res) => {
+      await apiReadAllGateway(params).then((res) => {
         console.log(res, 'res');
-  
+
         setData(res);
       });
-      setIsLoading(false);} 
-      fetchData();
+      setIsLoading(false);
+    }
+    fetchData();
   }, []);
 
   return isLoading ? (
-    <Loader/>
+    <Loader />
   ) : (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="flex justify-between">
@@ -120,9 +121,9 @@ const GatewayList = () => {
                 >
                   Edit
                 </button>
-                <button 
-                // onClick={() => handleDeleteClick(item)}
-                className="p-1 text-black rounded-sm bg-blue-300">
+                <button
+                  // onClick={() => handleDeleteClick(item)}
+                  className="p-1 text-black rounded-sm bg-blue-300">
                   Delete
                 </button>
               </div>

@@ -59,16 +59,15 @@ const Header = (props: {
           {/* <!-- Hamburger Toggle BTN --> */}
 
           {/* <Link className="block flex-shrink-0 lg:hidden" to="/"> */}
-          {props.sidebarOpen && (
+     
             <NavLink
               to="/"
               className="flex justify-center items-center gap-x-2 w-full"
             >
               <img src={Logo} alt="Logo" className="w-10" />
-              <span className="text-xl text-white">SIRAM Workstation</span>
+              <span className="text-xl text-white">SIRAM Workstation OTMIL</span>
               {/* <span className="text-xl text-meta-4">SIRAM Workstation</span> */}
             </NavLink>
-          )}
         </div>
 
         <div className="hidden sm:block"></div>

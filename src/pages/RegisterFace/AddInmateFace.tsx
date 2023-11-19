@@ -21,7 +21,7 @@ const AddInnmateFace = () => {
   const handleInsertVisitor = async () => {
     try {
       setLoading(true);
-console.log(formValues, 'formValues formValues');
+      console.log(formValues, 'formValues formValues');
 
 
       const response = await apiVisitorInsert(formValues);
@@ -41,14 +41,14 @@ console.log(formValues, 'formValues formValues');
     if (file) {
       const reader = new FileReader();
       console.log(reader.result, 'reader reader');
-      
+
       reader.onloadend = async () => {
         console.log(reader.result, 'reader.result reader.result');
         await setFormValues({ ...formValues, image: reader.result })
 
         // setImagePreview(reader.result);
         console.log(formValues.image, 'imagePreview imagePreview');
-        
+
       };
       reader.readAsDataURL(file);
     }

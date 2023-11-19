@@ -36,10 +36,34 @@ export const DeleteRoomModal: React.FC<RoomModalProps> = ({ closeModal, onSubmit
     closeModal();
   };
 
+  const modalStyles: any = {
+    backdrop: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'rgba(0, 0, 0, 0.5)', // Background color with transparency for the blur effect
+      backdropFilter: 'blur(5px)', // Adjust the blur intensity as needed
+      zIndex: 40, // Ensure the backdrop is behind the modal
+    },
+    modalContainer: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      // Add your other modal styles here
+    },
+  };
+
+
   return (
+    <div>
+      <div style={modalStyles.backdrop}></div>
     <div
       ref={modalContainerRef}
-      className="modal-container fixed z-50 flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      style={modalStyles.modalContainer}
+      className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
     >
       <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark overflow-auto">
         <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -57,11 +81,11 @@ export const DeleteRoomModal: React.FC<RoomModalProps> = ({ closeModal, onSubmit
             </strong>
           </div>
           <div className="pt-6">
-            <p className="text-sm te  xt-black dark:text-white">
+            <p className="text-sm text-black dark:text-white">
               Apakah Anda yakin ingin menghapus data ini?
             </p>
-            <p className="text-sm text-black dark:text-white">
-              
+            <p className="text-sm text-center text-black dark:text-white">
+              Nama Ruangan <span className='text-red-400 uppercase font-semibold'> {formState.nama_ruangan_otmil} </span> Akan Dihapus 
             </p>
           </div>
 
@@ -85,6 +109,7 @@ export const DeleteRoomModal: React.FC<RoomModalProps> = ({ closeModal, onSubmit
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

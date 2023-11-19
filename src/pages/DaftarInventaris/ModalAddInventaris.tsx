@@ -6,7 +6,7 @@ import {
   apiReadAllStaff,
   apiReadAllUser,
   apiTipeAsetRead,
-} from '../../../services/api';
+} from '../../services/api';
 import { Alerts } from './AlertInventaris';
 
 interface AddInventarisModalProps {
@@ -40,9 +40,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       keterangan: '',
       tanggal_masuk: '',
       foto_barang: '',
-      garansi:'',
-      merek:''
-      
+      garansi: '',
+      merek: ''
+
     }
   );
 
@@ -151,7 +151,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       filter: '',
     };
     try {
-      const response = await apiTipeAsetRead(params,token);
+      const response = await apiTipeAsetRead(params, token);
       // console.log(response,'RUANGAN')
       setTipeAset(response.data.records);
     } catch (e: any) {
@@ -234,8 +234,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     {isDetail
                       ? 'Detail Data Inventaris'
                       : isEdit
-                      ? 'Edit Data Inventaris'
-                      : 'Tambah Data Inventaris'}
+                        ? 'Edit Data Inventaris'
+                        : 'Tambah Data Inventaris'}
                   </h3>
                 </div>
                 <strong
@@ -247,7 +247,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col mt-4">
-                  
+
                   <div className="grid grid-cols-2 gap-4 -mb-8 ">
                     {isDetail && (
                       <div className="form-group w-full h-[330px]">
@@ -682,18 +682,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -715,9 +715,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -749,9 +748,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

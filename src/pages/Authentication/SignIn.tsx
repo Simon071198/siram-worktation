@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.svg';
+// import LogoDark from '../../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.png';
 import { useForm } from 'react-hook-form';
 import { CiUser, CiMail, CiLock, CiUnlock } from 'react-icons/ci';
 import { apiUserLogin } from '../../services/api';
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
-import { log } from 'console';
+// import { log } from 'console';
 
 const SignIn = () => {
   const [error, setError]: any = useState(false);
@@ -100,11 +100,10 @@ const SignIn = () => {
               </h2>
 
               <p
-                className={` ${
-                  error
+                className={` ${error
                     ? 'block bg-red-500 text-white text-center mb-6 rounded-md py-2'
                     : 'hidden'
-                }`}
+                  }`}
               >
                 {errorName}
               </p>
@@ -164,9 +163,8 @@ const SignIn = () => {
 
                 <div className="mb-5">
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

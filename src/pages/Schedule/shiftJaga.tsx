@@ -1,49 +1,56 @@
 import { NavLink } from 'react-router-dom';
 import { HiOutlineUserGroup } from 'react-icons/hi';
-import {MdOutlinePermContactCalendar} from 'react-icons/md'
+import { MdOutlinePermContactCalendar } from 'react-icons/md';
+import { FaUserClock } from 'react-icons/fa';
+import { BiTask } from 'react-icons/bi';
 
 const routeMasterData = [
   {
     id: 1,
     name: 'Calendar Shift',
     link: '/CalendarShift',
-    icon: (
-     <MdOutlinePermContactCalendar size={26}/>
-    ),
+    icon: <MdOutlinePermContactCalendar size={26} />,
   },
   {
     id: 2,
     name: 'Grup Petugas Shift',
     link: '/GroupShift',
-    icon: (
-      <HiOutlineUserGroup size={25}/>
-    ),
-  }
+    icon: <HiOutlineUserGroup size={25} />,
+  },
+  {
+    id: 3,
+    name: 'Data Shift',
+    link: '/DataSceduleShift',
+    icon: <FaUserClock size={22} />,
+  },
+  {
+    id: 4,
+    name: 'Penugasan',
+    link: '/Penugasan',
+    icon: <BiTask size={25} />,
+  },
 ];
 
 const MasterDataList = () => {
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 m-6">
         {routeMasterData.map((data) => (
           <NavLink to={data.link}>
-            <div className="rounded-xl border border-stroke bg-slate-300  shadow-default dark:border-strokedark dark:bg-slate-300 ">
-              <div className="bg-gradient-to-r from-red-500 to-yellow-500 m-[1px] rounded-xl overflow-hidden hover:from-yellow-500 hover:to-red-500 transition duration-700 ease-linear">
-                <div className="bg-slate-300 m-[2px] rounded-xl hover:bg-slate-200 px-7 py-3">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-slate-400 text-slate-200">
-                      {data.icon}
-                    </div>
+            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="flex items-center gap-4">
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                  {data.icon}
+                </div>
 
-                    <div>
-                      <h4 className="text-title-md font-bold text-black dark:text-meta-4">
-                        {data.name}
-                      </h4>
-                    </div>
-                  </div>
+                <div>
+                  <h4 className="text-title-md font-bold text-black dark:text-white">
+                    {data.name}
+                  </h4>
+                  <span className="text-sm font-medium"> {data.name}</span>
                 </div>
               </div>
-            </div>
+            </div>{' '}
           </NavLink>
         ))}
       </div>

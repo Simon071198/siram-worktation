@@ -83,7 +83,7 @@ export const DeleteJenisPersidanganModal = ({ closeModal, onSubmit, defaultValue
               Apakah Anda yakin ingin menghapus data ini? 
             </p>
             <p className="text-sm text-black dark:text-white">
-            Nama petugas <span className='text-red-400'>{formState.nama}</span> akan dihapus
+            Jenis Sidang <span className='text-red-400'>{formState.nama_jenis_persidangan}</span> akan dihapus
             </p>
           </div>
 

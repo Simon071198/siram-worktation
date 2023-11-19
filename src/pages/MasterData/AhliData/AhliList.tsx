@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader/index';
-import { Alerts } from './AlertAhli';
+import Loader from '../../../common/Loader';
+import { Alerts } from '../AhliData/AlertAhli';
 import {
   apiAhliDelete,
   apiAhliInsert,
@@ -19,9 +19,10 @@ import {
 import { AddAhliModal } from './ModalAddAhli';
 import { DeleteAhliModal } from './ModalDeleteAhli';
 import SearchInputButton from '../Search';
-import Pagination from '../../../components/Pagination/index';
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
+import DropdownAction from '../../../components/DropdownAction';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -106,14 +107,14 @@ const AhliList = () => {
     try {
       let params = {
         filter: {
-          nama: filter,
-          jabatan: filterJabatan,
-          nama_pangkat: filterPangkat,
+          nama_ahli: filter,
+          // jabatan: filterJabatan,
+          // nama_pangkat: filterPangkat,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiReadAllStaff(params, token);
+      const response = await apiAhliRead(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -152,15 +153,15 @@ const AhliList = () => {
     fetchData();
   }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
-  // useEffect(() => {
-  //   // Menambahkan event listener untuk tombol "Enter" pada komponen ini
-  //   document.addEventListener('keypress', handleEnterKeyPress);
+  useEffect(() => {
+    // Menambahkan event listener untuk tombol "Enter" pada komponen ini
+    document.addEventListener('keypress', handleEnterKeyPress);
 
-  //   // Membersihkan event listener ketika komponen di-unmount
-  //   return () => {
-  //     document.removeEventListener('keypress', handleEnterKeyPress);
-  //   };
-  // }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
+    // Membersihkan event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener('keypress', handleEnterKeyPress);
+    };
+  }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
     let param = {
@@ -234,7 +235,7 @@ const AhliList = () => {
         });
         setModalDeleteOpen(false);
         fetchData();
-      } else if (responseDelete.data.status === 'NO') {
+      } else if (responseDelete.data.status === 'No') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -256,7 +257,7 @@ const AhliList = () => {
     console.log('DATA DARI LIST', params);
     try {
       const responseCreate = await apiAhliInsert(params, token);
-      if (responseCreate.data.status === 'OK') {
+      if (responseCreate.data.status === 'Ok') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
@@ -321,19 +322,19 @@ const AhliList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Petugas', 'Jabatan', 'Pangkat', 'Divisi'],
+      ['Nama Ahli', 'Bidang Ahli', 'Bukti Keahlian'],
       ...data.map((item: any) => [
-        item.nama,
-        item.jabatan,
-        item.nama_pangkat,
-        item.divisi,
+        item.nama_ahli,
+        item.bidang_ahli,
+        item.bukti_keahlian,
+        // item.divisi,
       ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'dataPetugas.xlsx');
+    xlsx.writeFile(wb, 'dataAhli.xlsx');
   };
 
   return isLoading ? (
@@ -342,15 +343,15 @@ const AhliList = () => {
     <div className="container py-[16px]">
       <div className=" rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
-          {/* <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
           <div className="w-full">
             <SearchInputButton
               value={filter}
-              placehorder="Cari nama petugas"
+              placehorder="Cari nama ahli"
               onChange={handleFilterChange}
             />
           </div>
-          <div className="w-full">
+          {/* <div className="w-full">
             <SearchInputButton
               value={filterJabatan}
               placehorder="Cari jabatan"
@@ -368,7 +369,7 @@ const AhliList = () => {
                 {item.nama_pangkat}
               </option>
             ))}
-          </select>
+          </select> */}
 
           <button
             className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
@@ -398,7 +399,7 @@ const AhliList = () => {
           >
             Export&nbsp;Excel
           </button>
-        </div> */}
+        </div>
         </div>
 
         <div className="flex justify-between items-center mb-3">
@@ -503,7 +504,7 @@ const AhliList = () => {
                   </div>
                   <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
                   
-                    <button
+                    {/* <button
                       onClick={() => handleEditClick(item)}
                       className="py-1 px-2 text-black rounded-md bg-blue-300"
                     >
@@ -514,7 +515,13 @@ const AhliList = () => {
                       className="py-1 px-2 text-white rounded-md bg-red-400"
                     >
                       Hapus
-                    </button>
+                    </button> */}
+                     <div className="relative">
+                            <DropdownAction
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            ></DropdownAction>
+                          </div>
                   </div>
                 </div>
                 <div className="border-t border-slate-600"></div>

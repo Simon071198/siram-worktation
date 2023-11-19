@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export const DeleteTipeModal = ({ closeModal, onSubmit, defaultValue }:any) => {
+export const DeleteJaksaPenuntut = ({ closeModal, onSubmit, defaultValue }:any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
     
@@ -82,8 +82,8 @@ export const DeleteTipeModal = ({ closeModal, onSubmit, defaultValue }:any) => {
             <p className="text-sm te  xt-black dark:text-white max-w-md">
               Apakah Anda yakin ingin menghapus data ini? 
             </p>
-            <p className="text-sm text-black dark:text-white">
-            Nama petugas <span className='text-red-400'>{formState.nama}</span> akan dihapus
+            <p className="text-sm text-center text-black dark:text-white">
+            Nama Jaksa <span className='text-red-400'>{formState.nama_jaksa}</span> akan dihapus
             </p>
           </div>
 

@@ -4,8 +4,8 @@ import { BiCategory } from 'react-icons/bi';
 const routeMasterData = [
   {
     id: 1,
-    name: 'Data Jaksa Penyidik',
-    link: '/jaksa-penyidik-data',
+    name: 'Data Oditur Penyidik',
+    link: '/oditur-penyidik-data',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@ const routeMasterData = [
   },
   {
     id: 2,
-    name: 'Data Jaksa Penuntut',
+    name: 'Data Oditur Penuntut',
     link: '/jaksa-penuntut-data',
     icon: (
       <svg

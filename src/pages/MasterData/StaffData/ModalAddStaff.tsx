@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Loader from '../../../common/Loader/index';
+import Loader from '../../../common/Loader';
 import Select from 'react-select';
 import {
   apiAgama,
@@ -148,17 +148,17 @@ export const AddStaffModal = ({
   // useEffect untuk mengambil data dari api
   useEffect(() => {
     Promise.all([
-    matraData(),
-    pangkatData(),
-    lokasiKesatuanData(),
-    kotaData(),
-    provinsiData(),
-    agamaData(),
-    statusKawinData(),
-    pendidikanData(),
-    keahlianData(),
-    kesatuanData()
-  ]).then(()=> setIsLoading(false))
+      matraData(),
+      pangkatData(),
+      lokasiKesatuanData(),
+      kotaData(),
+      provinsiData(),
+      agamaData(),
+      statusKawinData(),
+      pendidikanData(),
+      keahlianData(),
+      kesatuanData()
+    ]).then(() => setIsLoading(false))
   }, []);
 
   const validateForm = () => {
@@ -166,7 +166,7 @@ export const AddStaffModal = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'lokasi_lemasmil_id' &&  key !== 'foto_wajah_fr' && key !== 'nomor_petugas' && key !== 'grup_petugas_id' && key !== 'nama_grup_petugas'// Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+        key !== 'lokasi_lemasmil_id' && key !== 'foto_wajah_fr' && key !== 'nomor_petugas' && key !== 'grup_petugas_id' && key !== 'nama_grup_petugas'// Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
       ) {
         if (!value) {
           errorFields.push(key);
@@ -190,7 +190,7 @@ export const AddStaffModal = ({
 
   const handleSelectProvinsi = (e: any) => {
     // setSelectedOption(e)
-    setFormState({ ...formState, provinsi_id: e?.value});
+    setFormState({ ...formState, provinsi_id: e?.value });
   };
 
   const handleSelectKota = (e: any) => {
@@ -448,10 +448,10 @@ export const AddStaffModal = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -543,8 +543,8 @@ export const AddStaffModal = ({
                     {isDetail
                       ? 'Detail Data Petugas'
                       : isEdit
-                      ? 'Edit Data Petugas'
-                      : 'Tambah Data Petugas'}
+                        ? 'Edit Data Petugas'
+                        : 'Tambah Data Petugas'}
                   </h3>
                 </div>
                 <strong
@@ -1102,44 +1102,44 @@ export const AddStaffModal = ({
                         </p>
                       </div>
 
-                      </div>
+                    </div>
 
-                      <div className=" grid grid-cols-2 gap-4">
-                        {/* Status Kawin */}
-                        <div className="form-group w-full ">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Status Kawin
-                          </label>
-                          <select
-                            className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                            name="status_kawin_id"
-                            onChange={handleChange}
-                            value={formState.status_kawin_id}
-                            disabled={isDetail}
-                          >
-                            <option value="" disabled>
-                              Pilih status kawin
+                    <div className=" grid grid-cols-2 gap-4">
+                      {/* Status Kawin */}
+                      <div className="form-group w-full ">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Status Kawin
+                        </label>
+                        <select
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          name="status_kawin_id"
+                          onChange={handleChange}
+                          value={formState.status_kawin_id}
+                          disabled={isDetail}
+                        >
+                          <option value="" disabled>
+                            Pilih status kawin
+                          </option>
+                          {statusKawin.map((item) => (
+                            <option value={item.status_kawin_id}>
+                              {item.nama_status_kawin}
                             </option>
-                            {statusKawin.map((item) => (
-                              <option value={item.status_kawin_id}>
-                                {item.nama_status_kawin}
-                              </option>
-                            ))}
-                          </select>
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'status_kawin_id'
-                                ? 'Pilih status kawin'
-                                : ''
-                            )}
-                          </p>
-                        </div>
+                          ))}
+                        </select>
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'status_kawin_id'
+                              ? 'Pilih status kawin'
+                              : ''
+                          )}
+                        </p>
                       </div>
-                    
-                      <div className=" grid grid-cols-2 gap-4">
+                    </div>
+
+                    <div className=" grid grid-cols-2 gap-4">
                       {/* Provinsi */}
                       <div className="form-group w-full ">
                         <label
@@ -1165,28 +1165,30 @@ export const AddStaffModal = ({
                             </option>
                           ))}
                         </select> */}
-                         <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            defaultValue={isEdit || isDetail ? (
-                              {value: formState.provinsi_id,
-                              label: formState.nama_provinsi})
-                              :
-                              formState.provinsi_id
-                            }
-                            placeholder={'Pilih provinsi'}
-                            isClearable={true}
-                            isSearchable={true}
-                            isDisabled={isDetail}
-                            name="provinsi_id"
-                            styles={customStyles}
-                            options={provinsi.map((item: any) => ({
-                              value: item.provinsi_id,
-                              label: item.nama_provinsi,
-                            }))
-                            }
-                            onChange={handleSelectProvinsi}
-                          />
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={isEdit || isDetail ? (
+                            {
+                              value: formState.provinsi_id,
+                              label: formState.nama_provinsi
+                            })
+                            :
+                            formState.provinsi_id
+                          }
+                          placeholder={'Pilih provinsi'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="provinsi_id"
+                          styles={customStyles}
+                          options={provinsi.map((item: any) => ({
+                            value: item.provinsi_id,
+                            label: item.nama_provinsi,
+                          }))
+                          }
+                          onChange={handleSelectProvinsi}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
                             item === 'provinsi_id' ? 'Pilih provinsi' : ''
@@ -1223,22 +1225,24 @@ export const AddStaffModal = ({
                             ))}
                         </select> */}
                         <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            defaultValue={isEdit || isDetail ? (
-                              {value: formState.kota_id,
-                              label: formState.nama_kota})
-                              :
-                              formState.kota_id
-                            }
-                            placeholder={'Pilih kota'}
-                            isClearable={true}
-                            isSearchable={true}
-                            isDisabled={isDetail}
-                            name="kota_id"
-                            styles={customStyles}
-                            options={
-                              kota
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={isEdit || isDetail ? (
+                            {
+                              value: formState.kota_id,
+                              label: formState.nama_kota
+                            })
+                            :
+                            formState.kota_id
+                          }
+                          placeholder={'Pilih kota'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="kota_id"
+                          styles={customStyles}
+                          options={
+                            kota
                               .filter((item: any) => {
                                 return (
                                   item.provinsi_id === formState.provinsi_id
@@ -1248,10 +1252,10 @@ export const AddStaffModal = ({
                                 value: item.kota_id,
                                 label: item.nama_kota,
                               }))
-                            }
+                          }
 
-                            onChange={handleSelectKota}
-                          />
+                          onChange={handleSelectKota}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
                             item === 'kota_id' ? 'Pilih kota' : ''
@@ -1289,18 +1293,18 @@ export const AddStaffModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -1325,9 +1329,8 @@ export const AddStaffModal = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -1359,9 +1362,8 @@ export const AddStaffModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

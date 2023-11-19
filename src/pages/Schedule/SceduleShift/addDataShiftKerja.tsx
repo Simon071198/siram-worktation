@@ -8,7 +8,6 @@ interface AddRoomModalProps {
   isEdit?: boolean;
 }
 
-
 const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
   closeModal,
   onSubmit,
@@ -27,7 +26,11 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
     }
   );
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState({
+    nama_shift: '',
+    waktu_mulai: '',
+    waktu_selesai: '',
+  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -52,22 +55,38 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
   }, [closeModal]);
 
   const validateForm = () => {
-    if (dataShift.id && dataShift.value) {
-      setErrors([]);
+    const newErrors = ({
+      nama_shift: '',
+      waktu_mulai: '',
+      waktu_selesai: '',
+    });
+    if (
+      dataShift.nama_shift &&
+      dataShift.waktu_mulai &&
+      dataShift.waktu_selesai
+    ) {
+      setErrors({
+        ...errors,
+        nama_shift: '',
+        waktu_mulai: '',
+        waktu_selesai: '',
+      });
       return true;
     } else {
-      let errorFields = [];
-      for (const [key, value] of Object.entries(dataShift)) {
-        if (!value) {
-          errorFields.push(key == 'id' ? 'Bond ID' : key);
-        }
-        // }
+      if (!dataShift.nama_shift) {
+        newErrors.nama_shift='Isi Nama Shift';
       }
-      setErrors(errorFields);
-      if (errorFields.length > 0) {
+      if (!dataShift.waktu_mulai) {
+        newErrors.waktu_mulai= 'Isi Waktu Mulai' ;
+      }
+      if (!dataShift.waktu_selesai) {
+        newErrors.waktu_selesai= 'Isi Waktu selesai' ;
+      } 
+      setErrors(newErrors)
+      if (Object.keys(newErrors).length > 0) {
         return false;
       }
-      return true;
+      return true
     }
   };
   const handleChange = (
@@ -118,7 +137,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Tambah Data Shift Kerja
+                {isDetail ? "Data Shift Kerja": isEdit ? "Edit Data Shift Kerja" : "Tambah Data Shift Kerja"}
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "
@@ -144,6 +163,11 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                       value={dataShift.nama_shift}
                       onChange={handleChange}
                     />
+                    <div className="h-3">
+                      <h1 className="pl-2 text-xs text-red-500">
+                        {errors.nama_shift}
+                      </h1>
+                    </div>
                   </div>
                   <div className="flex justify-between space-x-2">
                     <div className="form-group w-1/2 ">
@@ -161,6 +185,11 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                         value={dataShift.waktu_mulai}
                         onChange={handleChange}
                       />
+                      <div className="h-3">
+                        <h1 className="pl-2 text-xs text-red-500">
+                          {errors.waktu_mulai}
+                        </h1>
+                      </div>
                     </div>
                     <div className="form-group w-1/2 ">
                       <label
@@ -177,32 +206,14 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                         value={dataShift.waktu_selesai}
                         onChange={handleChange}
                       />
+                      <div className="h-3">
+                        <h1 className="pl-2 text-xs text-red-500">
+                          {errors.waktu_selesai}
+                        </h1>
+                      </div>
                     </div>
                   </div>
                 </div>
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
-                {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <div className="error">
-                    Please input{' '}
-                    {errors
-                      .filter((item: string) => !item.startsWith('INVALID_ID'))
-                      .join(', ')}
-                  </div>
-                )}
                 {isDetail ? null : (
                   <button
                     className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"

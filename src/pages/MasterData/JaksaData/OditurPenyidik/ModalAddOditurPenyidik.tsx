@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Alerts } from './AlertHakim';
+import { Alerts } from './AlertOditurPenyidik';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 console.log(dataAdmin, 'DATA ADMIN');
 
-export const AddHakimModal = ({
+export const AddJaksaPenyidikModal = ({
   closeModal,
   onSubmit,
   defaultValue,
@@ -16,7 +16,9 @@ export const AddHakimModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-     nama_tipe:''
+      nama_oditur: '',
+      nip: '',
+      alamat: '',
     }
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
@@ -34,10 +36,10 @@ export const AddHakimModal = ({
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -138,10 +140,10 @@ export const AddHakimModal = ({
                 <div>
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
-                      ? 'Detail Data Petugas'
+                      ? 'Detail Data Oditur Penyidik'
                       : isEdit
-                      ? 'Edit Data Petugas'
-                      : 'Tambah Data Petugas'}
+                        ? 'Edit Data Oditur Penyidik'
+                        : 'Tambah Data Oditur Penyidik'}
                   </h3>
                 </div>
                 <strong
@@ -153,42 +155,89 @@ export const AddHakimModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
+                {/* nama jaksa */}
                 <div className="form-group w-full mt-4">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
                   >
-                    Nama tipe
+                    Nama Oditur
                   </label>
                   <input
                     className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                    name="nama_tipe"
-                    placeholder="Nama tipe"
+                    name="nama_oditur"
+                    placeholder="Nama Oditur"
                     onChange={handleChange}
-                    value={formState.nama_tipe}
+                    value={formState.nama_oditur}
                     disabled={isDetail}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_tipe' ? 'Masukan nama' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
+                    )}
+                  </p>
+                </div>
+
+                {/* NIP */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    NIP
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="nip"
+                    placeholder="NIP"
+                    onChange={handleChange}
+                    value={formState.nip}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'nip' ? 'Masukan NIP' : ''
+                    )}
+                  </p>
+                </div>
+
+                {/* Alamat */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Alamat
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="alamat"
+                    placeholder="Alamat"
+                    onChange={handleChange}
+                    value={formState.alamat}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'alamat' ? 'Masukan Alamat' : ''
                     )}
                   </p>
                 </div>
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -213,9 +262,8 @@ export const AddHakimModal = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -243,13 +291,12 @@ export const AddHakimModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Tipe
+                    Ubah Data Oditur Penyidik
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -277,7 +324,7 @@ export const AddHakimModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Tipe
+                    Tambah Data Oditur Penyidik
                   </button>
                 )}
               </form>

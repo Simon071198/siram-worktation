@@ -10,6 +10,7 @@ export const DeleteSidangModal = ({ closeModal, onSubmit, defaultValue }:any) =>
   console.log(defaultValue,'VALUE')
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef:any = useRef(null);
+  const [buttonLoad, setButtonLoad] = useState(false);
 
   // useEffect(() => {
   //   const handleOutsideClick = (e:any) => {
@@ -29,11 +30,10 @@ export const DeleteSidangModal = ({ closeModal, onSubmit, defaultValue }:any) =>
 
   const handleSubmit = (e:any) => {
     e.preventDefault();
+    setButtonLoad(true)
     console.log(formState, 'formState');
 
-    onSubmit(formState);
-
-    closeModal();
+    onSubmit(formState).then(()=>setButtonLoad(false))
   };
 
   const modalStyles:any = {
@@ -99,12 +99,39 @@ export const DeleteSidangModal = ({ closeModal, onSubmit, defaultValue }:any) =>
               Batal
             </button>
             <button
-              className="btn flex justify-center rounded bg-red-500 py-2 px-6 font-medium text-white hover:bg-red-400"
-              type="submit"
-              onClick={handleSubmit}
-            >
-              Hapus
-            </button>
+                className={`btn flex justify-center rounded py-2 px-6 font-medium text-white  ${
+                  buttonLoad ? 'bg-slate-400 hover:bg-none' : 'hover:bg-red-400 bg-red-500 '
+                }`}
+                type="submit"
+                disabled={buttonLoad}
+                onClick={handleSubmit}
+              >
+                {buttonLoad ? (
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  ''
+                )}
+                Hapus
+              </button>
           </div>
         </div>
       </div>

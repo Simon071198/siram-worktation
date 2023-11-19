@@ -89,14 +89,14 @@ export default function EmployeeDatabaseSearchByName() {
                   className="w-[500px] rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                 />
 
-                  <button
-                    type="button"
-                    className="bg-primary text-white px-6 py-2 mt-3 w-50 rounded-md cursor-pointer"
-                    onClick={handleSearch}
-                  >
-                    Cari
-                  </button>
-               
+                <button
+                  type="button"
+                  className="bg-primary text-white px-6 py-2 mt-3 w-50 rounded-md cursor-pointer"
+                  onClick={handleSearch}
+                >
+                  Cari
+                </button>
+
               </div>
             </div>
 

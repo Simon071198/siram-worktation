@@ -9,9 +9,9 @@ const KameraSidebar = (props:any) => {
       id: 1,
       nama_ruangan: 'Ruang 1',
       kamera: [
-        { kamera_id:'112345678-1234-1234-12345672',kamera_name: 'CAM_R1-D1' },
-        { kamera_id:'12345678-1234-1234-12345672',kamera_name: 'CAM_R1-D2' },
-        { kamera_id:'12345678-1234-1234-12345672',kamera_name: 'CAM_R1-D3' },
+        { kamera_id:'1',kamera_name: 'CAM_R1-D1' },
+        { kamera_id:'2',kamera_name: 'CAM_R1-D2' },
+        { kamera_id:'3',kamera_name: 'CAM_R1-D3' },
       ],
     },
     {

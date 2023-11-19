@@ -1,6 +1,6 @@
 // import { NavLink } from 'react-router-dom';
 // import { useEffect, useState } from 'react';
-// import { apiReadAllGelang } from '../../../services/api';
+// import { apiReadAllGelang } from '../../services/api';
 // const BraceletList = () => {
 //   const [data, setData] = useState([]);
 

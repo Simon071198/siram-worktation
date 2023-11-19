@@ -1,6 +1,6 @@
 import React, { useState ,useEffect,useRef} from 'react';
 
-export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }) => {
+export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }:any) => {
 
   const [formState, setFormState] = useState(
     defaultValue || {
@@ -10,10 +10,10 @@ export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }) => {
     }
   );
   const [errors, setErrors] = useState<string[]>([]);
-  const modalContainerRef = useRef(null);
+  const modalContainerRef:any = useRef(null);
 
   useEffect(() => {
-    const handleOutsideClick = (e) => {
+    const handleOutsideClick = (e:any) => {
       if (modalContainerRef.current && !modalContainerRef.current.contains(e.target)) {
         closeModal();
       }
@@ -27,7 +27,7 @@ export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }) => {
 
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     console.log(formState, 'formState');
     
@@ -61,8 +61,8 @@ export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }) => {
             <p className="text-sm text-black dark:text-white">
 Apakah Anda yakin ingin menghapus data ini? 
             </p>
-            <p className="text-sm text-black dark:text-white">
-            {formState.nama} akan dihapus            </p>
+            <p className="text-sm text-white">
+            <span className='text-red-500'>{formState.nama} </span>akan dihapus  </p>
 
           </div>
          

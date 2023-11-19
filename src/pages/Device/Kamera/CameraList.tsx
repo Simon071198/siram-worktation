@@ -1,5 +1,5 @@
 // import { useEffect, useState } from 'react';
-// import Loader from '../../../common/Loader/index';
+// import Loader from '../../common/Loader';
 // import { AddKameraModal } from './ModalAddKategoriPerkara';
 // import { DeleteKategoriPerkaraTypeModal } from './ModalDeleteKategoriPerkara';
 // import { Alerts } from './AlertKategoriPerkara';
@@ -8,8 +8,8 @@
 //   apiDeleteKategoriPerkara,
 //   apiCreateKategoriPerkara,
 //   apiUpdateKategoriPerkara
-// } from '../../../services/api';
-// import Pagination from '../../../components/Pagination/index';
+// } from '../../services/api';
+// import Pagination from '../../components/Pagination';
 // import SearchInputButton from '../Search';
 // import * as xlsx from 'xlsx';
 

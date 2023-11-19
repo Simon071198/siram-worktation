@@ -55,12 +55,12 @@ export default function Realtime() {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const handleLocationChange = (event) => {
+  const handleLocationChange = (event: any) => {
     setSelectedLocation(event.target.value);
     setSelectedDevice('');
   };
 
-  const handleDeviceChange = (event) => {
+  const handleDeviceChange = (event: any) => {
     setSelectedDevice(event.target.value);
   };
 
@@ -103,7 +103,7 @@ export default function Realtime() {
     setModalMessage('');
   };
 
-  function convertToCSV(data) {
+  function convertToCSV(data: any) {
     const csvRows = [];
     const headers = Object.keys(data[0]);
 
@@ -120,7 +120,7 @@ export default function Realtime() {
     return csvRows.join('\n');
   }
 
-  function calculateAge(birthdate) {
+  function calculateAge(birthdate: any) {
     const birthDate = new Date(birthdate);
 
     const currentDate = new Date();
@@ -188,72 +188,71 @@ export default function Realtime() {
         </div>
       </NavLink> */}
       <div className="flex-col items-center">
-        <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
-        <div className="flex justify-between mb-4 items-end">
-          <div className='flex gap-4 flex-wrap'>
-          <div className="">
-            <div className="items-center">
-              <h1
-                className="block text-sm font-medium truncate text-gray-700"
-              >
-                Pilih Analitik
-              </h1>
-              <select
-                id="analytics-select"
-                name="Select Analytics"
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                value={selectedAnalytics}
-                onChange={(e) => setSelectedAnalytics(e.target.value)}
-              >
-                <option value="">Semua Analitik</option>
-                <option value="unrecognized">Tidak Dikenal</option>
-                <option value="face_recognition">Pengenalan Wajah</option>
-              </select>
-            </div>
-          </div>
-          {selectedAnalytics !== 'unrecognized' && (
-
-          <div className="">
-            <div className="items-center">
-              <h1
-                className="w-full block text-sm font-medium text-gray-700"
-              >
-                Nama
-              </h1>
-              <input
-                placeholder='Masukan Nama'
-                id="name-input"
-                type="text"
-                name="Name"
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                value={selectedName}
-                onChange={(e) => setSelectedName(e.target.value)}
-              />
-            </div>
-          </div>
-          )}
-
-          {selectedAnalytics !== 'unrecognized' && (
+        <div className="grid grid-cols-5 gap-4 mb-4 items-end">
+          <div className='grid grid-cols-3 col-span-4 gap-x-7 flex-wrap'>
             <div className="">
               <div className="items-center">
                 <h1
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium truncate text-gray-700"
                 >
-                  Usia
+                  Pilih Analitik
                 </h1>
-                <input
-                  placeholder='Masukan Usia'
-                  id="age-input"
-                  type="text"
-                  name="Age"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                  value={selectedAge}
-                  onChange={(e) => setSelectedAge(e.target.value)}
-                />
+                <select
+                  id="analytics-select"
+                  name="Select Analytics"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  value={selectedAnalytics}
+                  onChange={(e) => setSelectedAnalytics(e.target.value)}
+                >
+                  <option value="">Semua Analitik</option>
+                  <option value="unrecognized">Tidak Dikenal</option>
+                  <option value="face_recognition">Pengenalan Wajah</option>
+                </select>
               </div>
             </div>
-          )}
-          {/* <div className="">
+            {selectedAnalytics !== 'unrecognized' && (
+
+              <div className="">
+                <div className="items-center">
+                  <h1
+                    className="w-full block text-sm font-medium text-gray-700"
+                  >
+                    Nama
+                  </h1>
+                  <input
+                    placeholder='Masukan Nama'
+                    id="name-input"
+                    type="text"
+                    name="Name"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    value={selectedName}
+                    onChange={(e) => setSelectedName(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {selectedAnalytics !== 'unrecognized' && (
+              <div className="">
+                <div className="items-center">
+                  <h1
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Usia
+                  </h1>
+                  <input
+                    placeholder='Masukan Usia'
+                    id="age-input"
+                    type="text"
+                    name="Age"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    value={selectedAge}
+                    onChange={(e) => setSelectedAge(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            {/* <div className="">
             <div className="w-full">
               <h1
                 htmlFor="country-select"
@@ -274,92 +273,92 @@ export default function Realtime() {
               </select>
             </div>
           </div> */}
-          {selectedAnalytics !== 'unrecognized' && (
+            {selectedAnalytics !== 'unrecognized' && (
+              <div className="">
+                <div className="items-center">
+                  <h1
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Pilih Gender
+                  </h1>
+                  <select
+                    id="gender-select"
+                    name="Select Gender"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    value={selectedGender}
+                    onChange={(e) => setSelectedGender(e.target.value)}
+                  >
+                    <option value="">Semua Gender</option>
+                    <option value="true">Pria</option>
+                    <option value="false">Wanita</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            <div className="">
+              <div className="items-center">
+                <h1
+                  className="w-full block text-sm font-medium text-gray-700"
+                >
+                  Pilih Lokasi
+                </h1>
+                <select
+                  id="location-select"
+                  name="Select Location"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  value={selectedLocation}
+                  onChange={handleLocationChange}
+                >
+                  <option value="">Semua Lokasi</option>
+                  {jsonData.map((entry) => (
+                    <option key={entry.location} value={entry.location}>
+                      {entry.location}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <div className="">
               <div className="items-center">
                 <h1
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Pilih Gender
+                  Pilih Kamera
                 </h1>
                 <select
-                  id="gender-select"
-                  name="Select Gender"
+                  id="device-select"
+                  name="Select Device"
                   className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                  value={selectedGender}
-                  onChange={(e) => setSelectedGender(e.target.value)}
+                  value={selectedDevice}
+                  onChange={handleDeviceChange}
                 >
-                  <option value="">Semua Gender</option>
-                  <option value="true">Pria</option>
-                  <option value="false">Wanita</option>
+                  <option value="">Semua Kamera</option>
+                  {devices.map((device) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.deviceName}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
-          )}
-
-          <div className="">
-            <div className="items-center">
-              <h1
-                className="w-full block text-sm font-medium text-gray-700"
-              >
-                Pilih Lokasi
-              </h1>
-              <select
-                id="location-select"
-                name="Select Location"
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                value={selectedLocation}
-                onChange={handleLocationChange}
-              >
-                <option value="">Semua Lokasi</option>
-                {jsonData.map((entry) => (
-                  <option key={entry.location} value={entry.location}>
-                    {entry.location}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
-          <div className="">
-            <div className="items-center">
-              <h1
-                className="block text-sm font-medium text-gray-700"
-              >
-                Pilih Kamera
-              </h1>
-              <select
-                id="device-select"
-                name="Select Device"
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                value={selectedDevice}
-                onChange={handleDeviceChange}
-              >
-                <option value="">Semua Kamera</option>
-                {devices.map((device) => (
-                  <option key={device.deviceId} value={device.deviceId}>
-                    {device.deviceName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-        
 
-        <button
-          onClick={handleExportClick}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded"
-        >
-          Export CSV
-        </button>
-        <DataNotFoundModal
-          open={showModal}
-          onClose={handleCloseModal}
-          message={modalMessage}
+
+          <button
+            onClick={handleExportClick}
+            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded"
+          >
+            Export CSV
+          </button>
+          <DataNotFoundModal
+            open={showModal}
+            onClose={handleCloseModal}
+            message={modalMessage}
           />
-          </div>
+        </div>
       </div>
-
+      <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
       {selectedAnalytics == 'unrecognized' ? (
         <div className="flex flex-col">
           <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-meta-4 dark:bg-slate-600 sm:grid-cols-5">
@@ -525,8 +524,8 @@ export default function Realtime() {
                     {item.gender == null
                       ? 'Tidak Diketahui'
                       : item.gender == true
-                      ? 'Pria'
-                      : 'Wanita'}
+                        ? 'Pria'
+                        : 'Wanita'}
                   </p>
                 </div>
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
@@ -540,10 +539,10 @@ export default function Realtime() {
                     {item.visitor_name == 'unrecognized'
                       ? 'Tidak Dikenal'
                       : item.isemployee == true
-                      ? 'Petugas'
-                      : item.isdpo == true
-                      ? 'Binaan Watchlist'
-                      : 'Tentara Binaan'}
+                        ? 'Petugas'
+                        : item.isdpo == true
+                          ? 'Binaan Watchlist'
+                          : 'Tentara Binaan'}
                   </p>
                 </div>
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">

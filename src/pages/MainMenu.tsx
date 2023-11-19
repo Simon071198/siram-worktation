@@ -15,6 +15,8 @@ import {
   DataPerkaraIcon,
   DaftarInventarisIcon,
   ChatIcon,
+  eventIcons,
+  Pengunjung,
 } from '../components/Icons';
 import BackgroundSecurityImage from '../images/security-background.jpg';
 import 'tailwindcss/tailwind.css';
@@ -67,7 +69,7 @@ const MainMenu = () => {
         <div className="flex justify-center items-center gap-x-2 bg-transparent-dark1 backdrop-blur w-full py-5 fixed z-10">
           <img src={Logo} alt="Logo" className="w-12" />
           <span className="text-4xl text-white font-bold tracking-wider">
-            SIRAM Workstation
+            SIRAM Workstation OTMIL
           </span>
         </div>
         <div className="pb-20 pt-30 px-20 overflow-y-auto grid grid-cols-1 gap-20 md:grid-cols-2 md:gap-20 xl:grid-cols-3 2xl:gap-20 relative">
@@ -82,64 +84,88 @@ const MainMenu = () => {
 
 const routes = [
   {
+    id: 1,
+    name: 'Penyidikan',
+    link: '/listPenyidikan',
+    icon: Pengunjung,
+  },
+  {
     id: 2,
-    name: 'Kamera',
-    link: '/kamera',
-    icon: CameraIcon,
-  },
-  {
-    id: 3,
-    name: 'Pelacakan',
-    link: '/db-search-list',
-    icon: PelacakanIcon,
-  },
-  {
-    id: 4,
-    name: 'Pengaturan',
-    link: '/setting-list',
-    icon: PengaturanIcon,
-  },
-  {
-    id: 7,
-    name: 'Log',
-    link: '/log-riwayat',
-    icon: LogIcon,
-  },
-  {
-    id: 12,
-    name: 'Master Data',
-    link: '/master-data-list',
-    icon: DashboardIcon,
-  },
-  {
-    id: 13,
-    name: 'Live Chat',
-    link: '/live-chat-list',
-    icon: ChatIcon,
-  },
-  {
-    id: 14,
-    name: 'Shift',
-    link: '/ShiftJaga',
-    icon: ShiftIcon,
-  },
-  {
-    id: 15,
-    name: 'Pencatatan BAP',
+    name: 'Daftar BAP',
     link: '/pencatatan-bap',
     icon: BAPIcon,
   },
   {
-    id: 16,
+    id: 3,
     name: 'Daftar Sidang',
     link: '/daftar-sidang',
     icon: DataPerkaraIcon,
   },
   {
-    id: 17,
+    id: 4,
+    name: 'Daftar Kasus',
+    link: '/daftar-kasus',
+    icon: Pengunjung,
+  },
+  {
+    id: 5,
+    name: 'Aktifitas Pengunjung',
+    link: '/pengunjung',
+    icon: Pengunjung,
+  },
+  {
+    id: 6,
+    name: 'Shift',
+    link: '/ShiftJaga',
+    icon: ShiftIcon,
+  },
+  {
+    id: 7,
+    name: 'Master Data',
+    link: '/master-data-list',
+    icon: DashboardIcon,
+  },
+  {
+    id: 8,
+    name: 'Kegiatan',
+    link: '/event-data',
+    icon: eventIcons,
+  },
+  {
+    id: 9,
     name: 'Daftar Inventaris',
     link: '/daftar-inventaris',
     icon: DaftarInventarisIcon,
+  },
+  {
+    id: 10,
+    name: 'Kamera',
+    link: '/kamera',
+    icon: CameraIcon,
+  },
+  {
+    id: 11,
+    name: 'Pelacakan',
+    link: '/db-search-list',
+    icon: PelacakanIcon,
+  },
+  {
+    id: 12,
+    name: 'Live Chat',
+    link: '/live-chat-list',
+    icon: ChatIcon,
+  },
+  {
+    id: 13,
+    name: 'Pengaturan',
+    link: '/setting-list',
+    icon: PengaturanIcon,
+  },
+  {
+    id: 14,
+    name: 'Log',
+    link: '/log-riwayat',
+    icon: LogIcon,
   },
 ];
 

@@ -22,7 +22,7 @@ const DataCamera = (props) => {
     groupId: '',
     groupShow: [],
     ffmpegIP: 'localhost',
-    baseUrl: 'http://localhost:4000/stream/',
+    baseUrl: 'http://192.168.1.135:5003/streams/',
     extenstion: '_.m3u8',
     girdView: 1,
     isFullscreenEnabled: false,
@@ -37,11 +37,12 @@ const DataCamera = (props) => {
     isWebSocketConnected: false,
     dataVisitorLog: [],
   });
+  let [uhuy, setUhuy] = useState('');
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://localhost:4000'));
-  const clientFR = useRef(new W3CWebSocket('ws://localhost:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.135:5003'));
+  const clientFR = useRef(new W3CWebSocket('ws://192.168.1.135:5003'));
 
   useEffect(() => {
     client.current.onopen = () => {
@@ -49,6 +50,7 @@ const DataCamera = (props) => {
     };
     clientFR.current.onopen = () => {
       console.log('WebSocket FR Connected');
+      setUhuy('http://192.168.1.135:5003/streams/192.168.1.98_.m3u8');
     };
     clientFR.current.onmessage = (message) => {
       const dataFromServer = message;
@@ -74,7 +76,7 @@ const DataCamera = (props) => {
     setInterval(fetchDataInmateRealtime, 5000);
 
 
-    
+
     fetchDataAndSendRequest(); // Call the function to initiate the process
   }, [props.id]);
 
@@ -205,24 +207,26 @@ const DataCamera = (props) => {
 
   const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);
-    var urlStream = state.baseUrl + obj.IpAddress + state.extenstion;
+    var urlStream = state.baseUrl + '192.168.1.98' + state.extenstion;
+    // var urlStream = state.baseUrl + obj.IpAddress + state.extenstion;
     console.log(urlStream);
     return (
       <div className="w-full  p-1" key={index}>
         <div className="bg-black p-1">
           <div className="relative">
-            {/* <div className="player-wrapper"> */}
+            <div className="player-wrapper">
+
               <ReactPlayer
                 className="react-player"
                 url={urlStream}
-                width="90%"
-                height="80%"
+                width="100%"
+                height="100%"
                 playing={true}
                 playsinline={true}
                 controls={true}
                 ref={playerRef}
               />
-            {/* </div> */}
+            </div>
             {/* <div className="absolute left-4 right-4 top-2">
               <span className="text-white text-lg font-semibold">
                 {obj.deviceName}
@@ -236,10 +240,10 @@ const DataCamera = (props) => {
 
   const { deviceDetail, dataVisitorLog } = state;
   const unrecognizedRows = dataVisitorLog.filter(
-    (row) => row.nama_wbp === 'unrecognized'
+    (row) => row.visitor_name === 'unrecognized'
   );
   const faceDetectionRows = dataVisitorLog.filter(
-    (row) => row.nama_wbp !== 'unrecognized'
+    (row) => row.visitor_name !== 'unrecognized'
   );
 
   return (
@@ -254,7 +258,7 @@ const DataCamera = (props) => {
       </h1>
 
       <div className="flex gap-4 h-[52vh] justify-between">
-        <div className="w-[80%]">
+        <div className="w-[80%] h-full">
           {state.listViewCamera.map((obj, index) => (
             <div key={index}>{renderStream1(obj, index)}</div>
           ))}
@@ -310,7 +314,7 @@ const DataCamera = (props) => {
           </div>
         </div>
       </div>
-      <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
+      {/* <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
         <div className="w-[65%] h-full">
           <div className="w-full">
             <p className="font-semibold pl-5 pt-10">
@@ -387,7 +391,7 @@ const DataCamera = (props) => {
             </tbody>
           </table>
         </div>
-      </div> 
+      </div> */}
     </>
   );
 };

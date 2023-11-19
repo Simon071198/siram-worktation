@@ -80,11 +80,11 @@ export const DeleteBAPModal = ({ closeModal, onSubmit, defaultValue }:any) => {
             </strong>
           </div>
           <div className="pt-6">
-            <p className="text-sm te  xt-black dark:text-white">
+            <p className="text-sm text-center text-black dark:text-white">
               Apakah Anda yakin ingin menghapus data ini ?
             </p>
-            <p className="text-sm text-black dark:text-white">
-             Username <span className='text-red-400'>{formState.username} </span> ?
+            <p className="text-sm text-black text-center dark:text-white">
+              Dokumen BAP <span className='text-red-400 font-semibold'>{formState.nama_dokumen_bap} </span> akan Dihapus ?
             </p>
           </div>
 

@@ -1,8 +1,10 @@
+import { log } from 'console';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { BsTrash } from 'react-icons/bs';
 import Select from 'react-select';
-import { apiReadAllStaff } from '../../../services/api';
+import { apiReadAllStaff, apiUpdateAllStaff } from '../../../services/api';
+import { Alerts } from '../SceduleShift/Alert';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -21,8 +23,10 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   onSubmit,
 }) => {
-  //get token
-  const token = localStorage.getItem('token');
+  //get Token
+  const tokenItem = localStorage.getItem('token');
+  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
+  let token = tokens.token;
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +62,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
     .filter((item: any) => item.grup_petugas_id !== dataGrup.grup_petugas_id)
     .map((item: any) => ({
       value: item.petugas_id,
-      label: item.nama,
+      label: item.nama_grup_petugas
+        ? `${item.nama} (${item.nama_grup_petugas})`
+        : `${item.nama} (No team available)`,
     }));
   const [errors, setErrors] = useState({
     namaGrup: '',
@@ -66,8 +72,12 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   });
 
   //data add petugas grup
-  const [addStaff, setAddStaff] = useState<{ grup_petugas_id: any; petugas_id?: any; nama?: any } | null>(null);
-  console.log('hallo:',addStaff);
+  const [addStaff, setAddStaff] = useState<{
+    grup_petugas_id: any;
+    petugas_id?: any;
+    nama?: any;
+  } | null>(null);
+  console.log('hallo:', addStaff);
 
   //fecth data
   useEffect(() => {
@@ -76,28 +86,29 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
     }, 1000);
     const dataStaff = async () => {
       const filter = {
-        token: token,
-        pageSize: {
-          pageSize: Number.MAX_SAFE_INTEGER,
-          filter: {
-            grup_petugas_id: dataGrup.grup_petugas_id,
-          },
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: dataGrup.grup_petugas_id,
         },
       };
       const filter2 = {
-        token: token,
-        pageSize: {
-          pageSize: Number.MAX_SAFE_INTEGER,
-          filter: {
-            grup_petugas_id: '',
-          },
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: '',
         },
       };
-      const staff = await apiReadAllStaff(filter);
-      const staffNew = await apiReadAllStaff(filter2);
+      try {
+        const staff = await apiReadAllStaff(filter, token);
+        const staffNew = await apiReadAllStaff(filter2, token);
 
-      setStaff(staff.data.records);
-      setNewStaff(staffNew.data.records);
+        setStaff(staff.data.records);
+        setNewStaff(staffNew.data.records);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
     };
     dataStaff();
   }, []);
@@ -177,15 +188,62 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
     const selectedStaff = newStaff.find(
       (item) => item.petugas_id === selectedOption.value
     );
-    console.log('add:', selectedStaff);
+    console.log('add:', staff);
 
     // Mengatur data yang dipilih ke dalam state addStaff
     const updatedSelectedStaff = {
       ...selectedStaff,
       grup_petugas_id: dataGrup.grup_petugas_id,
+      nama_grup_petugas: dataGrup.nama_grup_petugas,
     };
-    console.log('dta:', updatedSelectedStaff);
-    setAddStaff(updatedSelectedStaff)
+    console.log('dta:', addStaff);
+    setAddStaff(updatedSelectedStaff);
+  };
+
+  const handleAddPetugas = async () => {
+    const addDataPetugas = await apiUpdateAllStaff(addStaff, token);
+    if (addDataPetugas.data.status === 'OK') {
+      const filter = {
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: dataGrup.grup_petugas_id,
+        },
+      };
+      const filter2 = {
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: '',
+        },
+      };
+      const staff = await apiReadAllStaff(filter, token);
+      const staffNew = await apiReadAllStaff(filter2, token);
+      setStaff(staff.data.records);
+      setNewStaff(staffNew.data.records);
+    }
+  };
+  const handleDeletePetugas = async (item: any) => {
+    const updatedItem = { ...item, grup_petugas_id: null };
+    console.log('delete:', updatedItem);
+
+    const addDataPetugas = await apiUpdateAllStaff(updatedItem, token);
+    if (addDataPetugas.data.status === 'OK') {
+      const filter = {
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: dataGrup.grup_petugas_id,
+        },
+      };
+      const filter2 = {
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: '',
+        },
+      };
+      const staff = await apiReadAllStaff(filter, token);
+      const staffNew = await apiReadAllStaff(filter2, token);
+      setStaff(staff.data.records);
+      setNewStaff(staffNew.data.records);
+    }
   };
 
   //function Submit Update
@@ -197,10 +255,95 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
     onSubmit(grupEdit);
   };
 
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
+
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
       <div
-        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[80vh]`}
+        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[90vh]`}
         ref={modalContainerRef}
       >
         {isLoading ? (
@@ -230,7 +373,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Data Grup Shift Kerja
+                Edit Grup Shift Kerja
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "
@@ -271,8 +414,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                       Ketua Grup
                     </label>
                     <Select
-                      className="w-full mr-3 dark:text-black"
+                      className="w-full mr-3 dark:text-black capitalize"
                       placeholder="Tambah Anggota Grup"
+                      styles={customStyles}
                       defaultValue={ketuaGrupOption}
                       options={StaffOptions}
                       onChange={handleChangeSelect}
@@ -286,13 +430,15 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                   </label>
                   <div className="flex jutify-between">
                     <Select
-                      className="w-full mr-3 dark:text-black "
+                      className="w-full mr-3 dark:text-black capitalize"
                       placeholder="Tambah Anggota Grup"
+                      styles={customStyles}
                       options={newStaffOptions}
                       onChange={handleChangeAdd}
                     />
                     <button
                       type="button"
+                      onClick={handleAddPetugas}
                       className="text-black rounded-md flex items-center text-xs bg-blue-300 py-2 px-3"
                     >
                       <AiOutlineUserAdd /> Tambah
@@ -312,7 +458,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                         className="block text-sm font-medium text-black dark:text-white "
                         htmlFor="id"
                       >
-                        Total Jam Kerja
+                        Jabatan
                       </label>
                     </div>
                     <div className="form-group w-2/6 ">
@@ -320,7 +466,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
                       >
-                        Total Cuti
+                        Divisi
                       </label>
                     </div>
                   </div>
@@ -337,8 +483,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                               value={item.nama}
                             />
                           </div>
-                          <div className="form-group w-1/6 ">
+                          <div className="form-group w-2/6 ">
                             <input
+                              value={item.jabatan}
                               name="jam"
                               className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
                             />
@@ -346,13 +493,15 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                           <div className="form-group w-2/6 ">
                             <input
                               name="cuti"
+                              value={item.divisi}
                               className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
                             />
                           </div>
                           <div className="w-1/12 ">
                             <button
                               type="button"
-                              className="w-full h-full flex items-center justify-center"
+                              onClick={() => handleDeletePetugas(item)}
+                              className="w-full h-full flex items-center justify-center hover:text-red-600"
                             >
                               <BsTrash />
                             </button>

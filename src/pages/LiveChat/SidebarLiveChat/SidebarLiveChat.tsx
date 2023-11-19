@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import IconProfile from '../../../../../assets/icon.png';
+import IconProfile from '../../../../../../../assets/icon.png';
 import LiveChatDisplay from '../Chat/LiveChatDisplay';
 import BeforeActiveChat from '../Chat/BeforeActiveChat';
 import SearchChat from './SearchChat';
@@ -65,9 +65,8 @@ function SidebarLiveChat() {
                   <button
                     key={index}
                     onClick={() => handlePersonClick(index, data)}
-                    className={`w-full hover:bg-slate-400  rounded-lg text-white hover:text-black  ${
-                      isActiveButton === index ? 'bg-slate-400' : ''
-                    } `}
+                    className={`w-full hover:bg-slate-400  rounded-lg text-white hover:text-black  ${isActiveButton === index ? 'bg-slate-400' : ''
+                      } `}
                   >
                     <div className="px-2 flex items-center ">
                       <img
@@ -84,7 +83,7 @@ function SidebarLiveChat() {
                         </div>
                         <div className="flex items-start">
                           {data.dataChat[data.dataChat?.length - 1].from ===
-                          'you' ? (
+                            'you' ? (
                             <p className="text-sm font-light">
                               You:{' '}
                               {data.dataChat[data.dataChat.length - 1]?.content}{' '}

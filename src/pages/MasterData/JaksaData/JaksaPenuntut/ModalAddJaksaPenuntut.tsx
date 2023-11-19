@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Alerts } from './AlertHakim';
+import { Alerts } from './AlertJaksaPenuntut';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 console.log(dataAdmin, 'DATA ADMIN');
 
-export const AddHakimModal = ({
+export const AddJaksaPenuntutModal = ({
   closeModal,
   onSubmit,
   defaultValue,
@@ -16,12 +16,11 @@ export const AddHakimModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-     nama_tipe:''
+      nama_oditur:'',
+      nip:'',
+      alamat:'',
     }
-  );
-  // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
-
-  //state
+  )
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -138,10 +137,10 @@ export const AddHakimModal = ({
                 <div>
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
-                      ? 'Detail Data Petugas'
+                      ? 'Detail Data Oditur Penuntut'
                       : isEdit
-                      ? 'Edit Data Petugas'
-                      : 'Tambah Data Petugas'}
+                      ? 'Edit Data Oditur Penuntut'
+                      : 'Tambah Data Oditur Penuntut'}
                   </h3>
                 </div>
                 <strong
@@ -153,24 +152,71 @@ export const AddHakimModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
+                {/* nama jaksa */}
                 <div className="form-group w-full mt-4">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
                   >
-                    Nama tipe
+                    Nama Oditur
                   </label>
                   <input
                     className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                    name="nama_tipe"
-                    placeholder="Nama tipe"
+                    name="nama_oditur"
+                    placeholder="Nama Oditur"
                     onChange={handleChange}
-                    value={formState.nama_tipe}
+                    value={formState.nama_oditur}
                     disabled={isDetail}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_tipe' ? 'Masukan nama' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
+                    )}
+                  </p>
+                </div>
+                
+                {/* NIP */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    NIP
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="nip"
+                    placeholder="NIP"
+                    onChange={handleChange}
+                    value={formState.nip}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'nip' ? 'Masukan NIP' : ''
+                    )}
+                  </p>
+                </div>
+                
+                {/* Alamat */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Alamat
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="alamat"
+                    placeholder="Alamat"
+                    onChange={handleChange}
+                    value={formState.alamat}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'alamat' ? 'Masukan Alamat' : ''
                     )}
                   </p>
                 </div>
@@ -243,7 +289,7 @@ export const AddHakimModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Tipe
+                    Ubah Data Oditur Penuntut
                   </button>
                 ) : (
                   <button
@@ -277,7 +323,7 @@ export const AddHakimModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Tipe
+                    Tambah Data Oditur Penuntut
                   </button>
                 )}
               </form>

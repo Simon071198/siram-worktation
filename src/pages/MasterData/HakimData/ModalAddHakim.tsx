@@ -154,94 +154,96 @@ export const AddHakimModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 gap-4 mt-4">
-                  <div className="form-group w-full ">
-                    <label
-                      className="  block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      NIP
-                    </label>
-                    <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="nip"
-                      placeholder="NIP"
-                      onChange={handleChange}
-                      value={formState.nip}
-                      disabled={isDetail}
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'nip' ? 'Masukan nip' : ''
-                      )}
-                    </p>
-                  </div>
+                {/* Nama Hakim */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Nama Hakim
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="nama_hakim"
+                    placeholder="Nama Hakim"
+                    onChange={handleChange}
+                    value={formState.nama_hakim}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'nama_hakim' ? 'Masukan Nama Hakim' : ''
+                    )}
+                  </p>
+                </div>
 
-                  <div className="form-group w-full ">
-                    <label
-                      className="  block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Nama Hakim
-                    </label>
-                    <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="nama_hakim"
-                      placeholder="Nama hakim"
-                      onChange={handleChange}
-                      value={formState.nama_hakim}
-                      disabled={isDetail}
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'nama_hakim' ? 'Masukan nama hakim' : ''
-                      )}
-                    </p>
-                  </div>
+                {/* NIP */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    NIP
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="nip"
+                    placeholder="NIP"
+                    onChange={handleChange}
+                    value={formState.nip}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'nip' ? 'Masukan NIP' : ''
+                    )}
+                  </p>
+                </div>
 
-                  <div className="form-group w-full ">
-                    <label
-                      className="  block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Departemen
-                    </label>
-                    <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="departemen"
-                      placeholder="Departemen"
-                      onChange={handleChange}
-                      value={formState.departemen}
-                      disabled={isDetail}
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'departemen' ? 'Masukan departemen' : ''
-                      )}
-                    </p>
-                  </div>
+                {/* alamat */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className=" capitalize block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    alamat
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="alamat"
+                    placeholder="alamat"
+                    onChange={handleChange}
+                    value={formState.alamat}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'alamat' ? 'Masukan alamat' : ''
+                    )}
+                  </p>
+                </div>
 
-                  <div className="form-group w-full ">
-                    <label
-                      className="  block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Alamat
-                    </label>
-                    <textarea
-                      className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="alamat"
-                      placeholder="Alamat"
-                      onChange={handleChange}
-                      value={formState.alamat}
-                      disabled={isDetail}
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'alamat' ? 'Masukan alamat' : ''
-                      )}
-                    </p>
-                  </div>
+                {/* departemen */}
+                <div className="form-group w-full mt-4">
+                  <label
+                    className=" capitalize block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    departemen
+                  </label>
+                  <input
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    name="departemen"
+                    placeholder="departemen"
+                    onChange={handleChange}
+                    value={formState.departemen}
+                    disabled={isDetail}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'departemen' ? 'Masukan departemen' : ''
+                    )}
+                  </p>
                 </div>
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))

@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiReadAllStaff } from '../../../services/api';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import dayjs from 'dayjs';
+import id from 'date-fns/locale/id';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import 'dayjs/locale/id';
+import { Alerts } from './Alert';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -17,8 +24,10 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   isDetail,
 }) => {
-  //get token
-  const token = localStorage.getItem('token');
+  //get Token
+  const tokenItem = localStorage.getItem('token');
+  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
+  let token = tokens.token;
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,22 +51,45 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
   const [staff, setStaff] = useState<Staff[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
+  // //DatePicker
+  const [selectedDayMonth, setSelectedDayMonth] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(dayjs(new Date()));
+
+  const handleMonthChange = (date: any) => {
+    setSelectedMonth(dayjs(date));
+  };
+  registerLocale('id', id);
+  setDefaultLocale('id');
+
+  const onChangeDayMonth = (event: any) => {
+    const selectedValue = event.target.value;
+    if (selectedValue === 'Bulan') {
+      setSelectedDayMonth(true);
+    } else if (selectedValue === 'Hari') {
+      setSelectedDayMonth(false);
+    }
+  };
+
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
     const dataStaff = async () => {
-      const filter = {
-        token: token,
-        pageSize: {
-          // pageSize: Number.MAX_SAFE_INTEGER,
-          filter: {
-            grup_petugas_id: dataGrup.grup_petugas_id,
-          },
+      const params = {
+        pageSize: Number.MAX_SAFE_INTEGER,
+        filter: {
+          grup_petugas_id: dataGrup.grup_petugas_id,
         },
       };
-      const staff = await apiReadAllStaff(filter);
-      setStaff(staff.data.records);
+      try {
+        const staff = await apiReadAllStaff(params, token);
+        setStaff(staff.data.records);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
     };
     dataStaff();
   }, []);
@@ -81,7 +113,7 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
       <div
-        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[80vh]`}
+        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[90vh]`}
         ref={modalContainerRef}
       >
         {isLoading ? (
@@ -157,6 +189,38 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
                   >
                     Anggota Grup
                   </label>
+                  <div className="flex justify-end mb-2 space-x-2 text-center mr-1">
+                    <h2 className="text-white mr-2">Periode Kerja : </h2>
+                    <select
+                      onChange={onChangeDayMonth}
+                      value={selectedDayMonth ? 'Bulan' : 'Hari'}
+                      className="rounded bg-slate-600 w-24"
+                    >
+                      <option value="Hari">Hari</option>
+                      <option value="Bulan">Bulan</option>
+                    </select>
+                    <div>
+                      {!selectedDayMonth ? (
+                        <DatePicker
+                          className="rounded w-36 text-center bg-slate-600"
+                          selected={selectedMonth.toDate()}
+                          onChange={handleMonthChange}
+                          dateFormat="dd MMMM yyyy"
+                          locale={'id'}
+                        />
+                      ) : (
+                        <DatePicker
+                          className="rounded w-36 text-center bg-slate-600"
+                          selected={selectedMonth.toDate()}
+                          onChange={handleMonthChange}
+                          dateFormat="MMMM yyyy"
+                          showMonthYearPicker
+                          showFullMonthYearPicker
+                          locale={'id'}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <div className=" w-full flex justify-between space-x-2">
                     <div className="form-group w-1/3 ">
                       <label
@@ -218,27 +282,27 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <div className="error">
-                    Please input{' '}
-                    {errors
-                      .filter((item: string) => !item.startsWith('INVALID_ID'))
-                      .join(', ')}
-                  </div>
-                )}
+                    <div className="error">
+                      Please input{' '}
+                      {errors
+                        .filter((item: string) => !item.startsWith('INVALID_ID'))
+                        .join(', ')}
+                    </div>
+                  )}
                 {isDetail ? null : (
                   <button
                     className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"

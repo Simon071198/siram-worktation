@@ -4,7 +4,7 @@ import {
   apiReadAllRole,
   apiReadAllStaff,
   apiReadAllUser,
-} from '../../../services/api';
+} from '../../services/api';
 import { Alerts } from './AlertUser';
 import { set } from 'react-hook-form';
 
@@ -274,10 +274,10 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -365,8 +365,8 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     {isDetail
                       ? 'Detail Data Pengguna'
                       : isEdit
-                      ? 'Edit Data Pengguna'
-                      : 'Tambah Data Pengguna'}
+                        ? 'Edit Data Pengguna'
+                        : 'Tambah Data Pengguna'}
                   </h3>
                 </div>
                 <strong
@@ -641,18 +641,18 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID')
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -674,9 +674,8 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -708,9 +707,8 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

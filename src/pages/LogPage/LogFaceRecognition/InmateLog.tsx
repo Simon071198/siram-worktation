@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import axios from 'axios';
-import { apiVisitorLogList } from '../../../services/api';
-import { webserviceurl } from '../../../services/api';
-import Loader from '../../../common/Loader/index';
+import { apiVisitorLogList } from '../../services/api';
+import { webserviceurl } from '../../services/api';
+import Loader from '../../common/Loader';
 import { NavLink } from 'react-router-dom';
 
 const DataNotFoundModal = ({ onClose, message }) => {
@@ -19,7 +19,7 @@ const DataNotFoundModal = ({ onClose, message }) => {
     </div>
   );
 };
-function Pagination({ totalPages, onPageChange , currentPage}) {
+function Pagination({ totalPages, onPageChange, currentPage }) {
   const [currentPageComponent, setCurrentPageComponent] = useState(currentPage);
 
   const handlePageChange = (newPage) => {
@@ -65,7 +65,7 @@ export default function VisitorLog() {
   const [modalMessage, setModalMessage] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-  
+
 
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
@@ -150,7 +150,7 @@ export default function VisitorLog() {
 
   const handleAnalyticsChange = async (e) => {
     // Reset current page to 1 when analytics value changes
-    await  setSelectedAnalytics(e.target.value);
+    await setSelectedAnalytics(e.target.value);
     await setCurrentPage(1);
   };
 
@@ -248,127 +248,127 @@ export default function VisitorLog() {
         <h3 className="text-2xl font-semibold mb-4"> Log Prajurit Binaan</h3>
         <div className="flex-col w-full gap-4">
           <div className='flex items-end mb-4 justify-between'>
-          <div className='flex gap-4 flex-wrap'>
-          <form>
-            <div className='items-center'>
-            <h1 className=''>Pilih Analitik</h1>
-            <select
-              className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-              name="Select Analytics"
-              value={selectedAnalytics}
-              onChange={
-                handleAnalyticsChange
-              }
-            >
-              <option value="">Semua Analitik</option>
-              <option value="unrecognized">Unrecognized</option>
-              <option value="face_recognition">Face Recognition</option>
-            </select>
-            </div>
-          </form>
-          {selectedAnalytics == 'unrecognized' ? null : (
-            <form>
-              <div className='flex-col'>
-              <h1>Nama</h1>
-              <input
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                name="Name"
-                placeholder='Nama'
-                value={selectedName}
-                onChange={(e) => setSelectedName(e.target.value)}
-              />
-              </div>
-            </form>
-          )}
-          {selectedAnalytics == 'unrecognized' ? null : (
-            <form>
-              <div className='flex-col'>
-              <h1>Usia</h1>
-              <input
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                type="number"
-                placeholder='Usia'
-                name="Age"
-                value={selectedAge}
-                onChange={(e) => setSelectedAge(e.target.value)}
-                />
-              </div>
-            </form>
-          )}
-          {selectedAnalytics == 'unrecognized' ? null : (
-            <form>
-              <div>
-              <h1 id="demo-simple-select-autowidth-label">
-                Pilih Gender
-              </h1>
-              <select
-                className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                name="Select Gender"
-                value={selectedGender}
-                onChange={(e) => setSelectedGender(e.target.value)}
+            <div className='flex gap-4 flex-wrap'>
+              <form>
+                <div className='items-center'>
+                  <h1 className=''>Pilih Analitik</h1>
+                  <select
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    name="Select Analytics"
+                    value={selectedAnalytics}
+                    onChange={
+                      handleAnalyticsChange
+                    }
+                  >
+                    <option value="">Semua Analitik</option>
+                    <option value="unrecognized">Unrecognized</option>
+                    <option value="face_recognition">Face Recognition</option>
+                  </select>
+                </div>
+              </form>
+              {selectedAnalytics == 'unrecognized' ? null : (
+                <form>
+                  <div className='flex-col'>
+                    <h1>Nama</h1>
+                    <input
+                      className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      name="Name"
+                      placeholder='Nama'
+                      value={selectedName}
+                      onChange={(e) => setSelectedName(e.target.value)}
+                    />
+                  </div>
+                </form>
+              )}
+              {selectedAnalytics == 'unrecognized' ? null : (
+                <form>
+                  <div className='flex-col'>
+                    <h1>Usia</h1>
+                    <input
+                      className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      type="number"
+                      placeholder='Usia'
+                      name="Age"
+                      value={selectedAge}
+                      onChange={(e) => setSelectedAge(e.target.value)}
+                    />
+                  </div>
+                </form>
+              )}
+              {selectedAnalytics == 'unrecognized' ? null : (
+                <form>
+                  <div>
+                    <h1 id="demo-simple-select-autowidth-label">
+                      Pilih Gender
+                    </h1>
+                    <select
+                      className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      name="Select Gender"
+                      value={selectedGender}
+                      onChange={(e) => setSelectedGender(e.target.value)}
+                    >
+                      <option value="">Semua Gender</option>
+                      <option value="true">Pria</option>
+                      <option value="false">Wanita</option>
+                    </select>
+                  </div>
+                </form>
+              )}
+
+              <form>
+                <h1 id="demo-simple-select-autowidth-label">Pilih Lokasi</h1>
+                <select
+                  className="w-full rounded-md border border-stroke dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-0 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  name="Select Location"
+                  value={selectedLocation}
+                  onChange={handleLocationChange}
                 >
-                <option value="">Semua Gender</option>
-                <option value="true">Pria</option>
-                <option value="false">Wanita</option>
-              </select>
-              </div>
-            </form>
-          )}
+                  <option value="">Semua Lokasi</option>
+                  {jsonData.map((entry) => (
+                    <option key={entry.location} value={entry.location}>
+                      {entry.location}
+                    </option>
+                  ))}
+                </select>
+              </form>
+              <form>
+                <div>
+                  <h1 id="demo-simple-select-autowidth-label">
+                    Pilih Perangkat
+                  </h1>
+                  <select
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    name="Select Device"
+                    value={selectedDevice}
+                    onChange={handleDeviceChange}
+                  >
+                    <option value="">Semua Perangkat</option>
 
-          <form>
-            <h1 id="demo-simple-select-autowidth-label">Pilih Lokasi</h1>
-            <select
-              className="w-full rounded-md border border-stroke dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-0 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-              name="Select Location"
-              value={selectedLocation}
-              onChange={handleLocationChange}
-              >
-              <option value="">Semua Lokasi</option>
-              {jsonData.map((entry) => (
-                <option key={entry.location} value={entry.location}>
-                  {entry.location}
-                </option>
-              ))}
-            </select>
-          </form>
-          <form>
-            <div>
-            <h1 id="demo-simple-select-autowidth-label">
-              Pilih Perangkat
-            </h1>
-            <select
-              className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-              name="Select Device"
-              value={selectedDevice}
-              onChange={handleDeviceChange}
-              >
-              <option value="">Semua Perangkat</option>
-
-              {devices.map((device) => (
-                <option key={device.deviceId} value={device.deviceId}>
-                  {device.deviceName}
-                </option>
-              ))}
-            </select>
+                    {devices.map((device) => (
+                      <option key={device.deviceId} value={device.deviceId}>
+                        {device.deviceName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </form>
             </div>
-          </form>
+            <div>
+              <button
+                className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+                onClick={handleExportClick}
+              >
+                Export CSV
+              </button>
+            </div>
+            {showModal && (
+              <DataNotFoundModal
+                onClose={handleCloseModal}
+                message={modalMessage}
+              />
+            )}
           </div>
-          <div>
-          <button
-            className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-            onClick={handleExportClick}
-            >
-            Export CSV
-          </button>
         </div>
-        {showModal && (
-          <DataNotFoundModal
-          onClose={handleCloseModal}
-          message={modalMessage}
-          />
-          )}
-          </div>
-          </div>
       </div>
       <div className="flex justify-between w-full gap-4 py-4">
         <div className="flex items-center">
@@ -383,8 +383,8 @@ export default function VisitorLog() {
         <div className="flex items-center">
           <h1 className='w-full'>Tanggal Akhir</h1>
           <input
-          className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-          type="date" value={endDate} onChange={handleEndDateChange} />
+            className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+            type="date" value={endDate} onChange={handleEndDateChange} />
         </div>
       </div>
       {selectedAnalytics == 'unrecognized' ? (
@@ -501,10 +501,10 @@ export default function VisitorLog() {
                         {item.gender === true
                           ? 'Pria'
                           : item.gender === false
-                          ? 'Wanita'
-                          : item.gender === null || item.gender === ''
-                          ? 'Unknown'
-                          : null}
+                            ? 'Wanita'
+                            : item.gender === null || item.gender === ''
+                              ? 'Unknown'
+                              : null}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -577,7 +577,7 @@ export default function VisitorLog() {
           page={currentPage}
           onChange={handlePageChange}
         /> */}
-      <Pagination totalPages={totalPages} onPageChange={handlePageChange} currentPage={currentPage} />
+        <Pagination totalPages={totalPages} onPageChange={handlePageChange} currentPage={currentPage} />
       </div>
     </>
   );

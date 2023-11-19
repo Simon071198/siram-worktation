@@ -39,6 +39,7 @@ const routeSearchList = [
 const DatabaseSearchList = () => {
   return (
     <>
+    <div className='container'>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
         {routeSearchList.map((data) => (
           <NavLink to={data.link}>
@@ -167,6 +168,7 @@ Cari Petugas Lemasmil                </h4>
           </div>{' '}
         </NavLink> */}
       </div>
+    </div>
     </>
   );
 };
