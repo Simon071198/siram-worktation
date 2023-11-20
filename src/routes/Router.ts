@@ -242,12 +242,12 @@ const coreRoutes = [
   },
   {
     path: '/oditur-penyidik-data',
-    title: 'jaksa penyidik data',
+    title: 'oditur penyidik data',
     component: DaftarJaksaPenyidik,
   },
   {
-    path: '/jaksa-penuntut-data',
-    title: 'jaksa penuntut data',
+    path: '/oditur-penuntut-data',
+    title: 'oditur penuntut data',
     component: DaftarJaksaPenuntut,
   },
   {

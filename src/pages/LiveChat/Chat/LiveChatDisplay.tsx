@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Message from './Message';
-import iconPicture from '../../../../../../../assets/icon.png'
+import iconPicture from '../../../images/logo/logo.png';
 import InputChat from './InputChat';
 import Messages from './Messages';
 

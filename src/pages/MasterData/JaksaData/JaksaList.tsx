@@ -27,7 +27,7 @@ const routeMasterData = [
   {
     id: 2,
     name: 'Data Oditur Penuntut',
-    link: '/jaksa-penuntut-data',
+    link: '/oditur-penuntut-data',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

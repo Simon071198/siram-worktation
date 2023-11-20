@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import IconProfile from '../../../../../../../assets/icon.png';
+// import IconProfile from './assets/icon.png';
+import IconProfile from '../../../images/logo/logo.png';
 import LiveChatDisplay from '../Chat/LiveChatDisplay';
 import BeforeActiveChat from '../Chat/BeforeActiveChat';
 import SearchChat from './SearchChat';
+// import { dummyData } from '../../../Misc/dataDummy.js';
 import { dummyData } from '../Misc/dataDummy.js';
 
 function SidebarLiveChat() {

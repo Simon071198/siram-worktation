@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { apiReadAllRuanganOtmil, apiReadAlllokasiOtmil, apiReadZona } from '../../services/api';
+import { apiReadAllRuanganOtmil, apiReadAlllokasiOtmil, apiReadZona } from '../../../services/api';
 
 
 // interface

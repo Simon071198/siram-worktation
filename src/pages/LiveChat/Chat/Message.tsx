@@ -1,5 +1,5 @@
 import React from 'react';
-import iconPicture from '../../../../../../../assets/icon.png';
+import iconPicture from '../../../images/logo/logo.png';
 import { time } from 'console';
 
 const Message = (props: any) => {

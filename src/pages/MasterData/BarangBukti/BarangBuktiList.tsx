@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { Alerts } from './AlertBarangBukti';
 import {
   apiReadBarangBukti,
   apiDeleteBarangBukti,
   apiCreateBarangBukti,
   apiUpdateBarangBukti,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddBarangBuktiModal } from './ModalAddBarangBukti';
 import { DeleteBarangBuktiModal } from './ModalDeleteBarangBukti';
 import SearchInputButton from '../Search';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
