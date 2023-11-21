@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { AddGateway } from './ModalAddGateway';
 import { DeleteGatewayModal } from './ModalDeleteGateway';
 import { Alerts } from './AlertGateway';
@@ -8,11 +8,11 @@ import {
   apiDeleteGateway,
   apiCreateGateway,
   apiUpdateGateway
-} from '../../services/api';
-import Pagination from '../../components/Pagination';
+} from '../../../services/api';
+import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 
 // Interface untuk objek 'params' dan 'item'
 

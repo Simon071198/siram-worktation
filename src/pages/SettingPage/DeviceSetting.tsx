@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import CameraList from '../Device/Kamera/CameraList';  
+import CameraList from '../Device/Kamera/CameraList'; 
 import BraceletList from '../Device/Gelang/BraceletList';
 import GatewayList from '../Device/Gateway/GatewayList';
 const DeviceSetting = () => {
