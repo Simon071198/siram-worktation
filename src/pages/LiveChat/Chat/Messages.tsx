@@ -2,9 +2,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import { time } from 'console';
 
-const Messages = (props: any) => {
-  const { FilteredData } = props;
-  console.log('TEST', FilteredData);
+interface ChatMessagesProps {
+    roomMessages: any[];
+    selectedRoom: string | null;
+    messagesRef: React.RefObject<HTMLDivElement>;
+  }
+
+const Messages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, messagesRef }) => {
+  useEffect(() => {
+    if (selectedRoom) {
+      // Fetch or listen for messages for the selected room
+    }
+  }, [selectedRoom]);
+
   const namaBulan = [
     'Januari',
     'Februari',
@@ -43,10 +53,12 @@ const Messages = (props: any) => {
 
   const newMessage: any = [];
 
-  FilteredData.dataChat.forEach((message: any) => {
-    const content = message.content;
-    const from = message.from;
-    const picture = message.picture;
+  console.log(roomMessages,'message room')
+
+  roomMessages.forEach((message: any) => {
+    const content = message.message;
+    const from = message.username;
+    // const picture = message.picture;
 
     const startDate = new Date(message.timestamp);
     const currentDate = new Date();
@@ -69,14 +81,16 @@ const Messages = (props: any) => {
     const newArray = {
       content: content,
       from: from,
-      picture : picture,
       timeAgoString: timeAgoString,
-      waktuChat: waktuChat,
-      timeStamp: message.timestamp,
+      // picture : picture,
+      // waktuChat: waktuChat,
+      // timeStamp: message.timestamp,
     };
 
-    console.log('---------');
-    console.log(newArray);
+    // console.log('content',content)
+
+    // console.log('---------');
+    // console.log(newArray);
 
     newMessage.push(newArray);
   });
@@ -112,10 +126,10 @@ const Messages = (props: any) => {
         {messagesByDate[date].map((data: any, index: any) => (
           <Message
             key={index}
-            picture = {data.picture}
             content={data.content}
             from={data.from}
-            waktuChat={data.waktuChat}
+            // picture = {data.picture}
+            // waktuChat={data.waktuChat}
           />
         ))}
       </div>
@@ -137,3 +151,60 @@ const Messages = (props: any) => {
 };
 
 export default Messages;
+
+
+// 
+// import React, { useEffect } from "react";
+
+// interface ChatMessagesProps {
+//   roomMessages: any[];
+//   selectedRoom: string | null;
+//   messagesRef: React.RefObject<HTMLDivElement>;
+// }
+
+// const ChatMessages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, messagesRef }) => {
+//   useEffect(() => {
+//     if (selectedRoom) {
+//       // Fetch or listen for messages for the selected room
+//     }
+//   }, [selectedRoom]);
+
+//   return (
+//     <div
+//       className="h-[70vh] w-full border-4 border-gray-300 p-4 rounded overflow-y-auto"
+//       ref={messagesRef as React.RefObject<HTMLDivElement>}
+//     >
+//       {roomMessages.map((roomMessage: any, index: any) => (
+//         <div
+//           key={index}
+//           className={`my-2 ${
+//             roomMessage.username === "username" ? "justify-end text-right" : "justify-start"
+//           }`}
+//         >
+//           <div
+//             className={`rounded p-2 ${
+//               roomMessage.username === "username" ? "bg-green-100 text-right" : "bg-blue-100"
+//             }`}
+//           >
+//             <p
+//               className={`font-bold ${
+//                 roomMessage.username === "username" ? "text-green-900" : "text-blue-900"
+//               }`}
+//             >
+//               {roomMessage.username}
+//             </p>
+//             <p
+//               className={`${
+//                 roomMessage.username === "username" ? "text-green-900" : "text-blue-900"
+//               }`}
+//             >
+//               {roomMessage.message}
+//             </p>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default ChatMessages;
