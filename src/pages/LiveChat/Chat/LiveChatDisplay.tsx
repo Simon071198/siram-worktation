@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import ChatMessages from "./Messages";
 import Input from "./InputChat";
 // import iconPicture from '../../../../../assets/icon.png'
-import iconPicture from "../../../images/logo/logo.png";
+import iconPicture from '../../../images/logo/logo.png'
 
 const socket = io("http://192.168.1.135:4010");
 
