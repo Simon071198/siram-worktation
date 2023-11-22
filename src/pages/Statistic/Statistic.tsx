@@ -1,4 +1,4 @@
-import ChartThree from '../../../components/ChartThree';
+import ChartThree from '../../components/ChartThree';
 let IconBracelet = () => {
   return (
     <div className="flex h-11.5 w-11.5 items-center justify-center text-black rounded-full bg-slate-100 dark:bg-slate-200">

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { Alerts } from './AlertPenyidikan';
 import {
   apiReadPenyidikan,
   apiDeletePenyidikan,
   apiCreatePenyidikan,
   apiUpdatePenyidikan,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddPenyidikanModal } from './ModalAddHistoryPenyidikan';
 import { DeletePenyidikanModal } from './ModalDeleteHistoryPenyidikan';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
-import SearchInputButton from '../../../MasterData/Search';
+import SearchInputButton from '../../MasterData/Search';
 import { log } from 'console';
 
 // Interface untuk objek 'params' dan 'item'

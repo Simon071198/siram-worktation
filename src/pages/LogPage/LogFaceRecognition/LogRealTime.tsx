@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import {
   apiJenisSidangInsert,
   apiJenisSidangRead,
   apiJenisSidangUpdate,
   apiJenisSidangDelete,
-} from '../../services/api';
-import Pagination from '../../components/Pagination';
+} from '../../../services/api';
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 

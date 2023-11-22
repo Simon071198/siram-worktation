@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { set } from 'react-hook-form';
@@ -21,7 +21,7 @@ const CameraPlayback = () => {
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://localhost:4000'));
+  // const client = useRef(new W3CWebSocket('ws://localhost:4000'));
 
   useEffect(() => {
     // Fetch camera data when the component mounts.
@@ -32,10 +32,10 @@ const CameraPlayback = () => {
       });
 
     // WebSocket logic
-    client.current.onopen = () => {
-      console.log('WebSocket Client Connected');
-      // No need to send a request here; it will be sent when the camera is selected.
-    };
+    // client.current.onopen = () => {
+    //   console.log('WebSocket Client Connected');
+    //   // No need to send a request here; it will be sent when the camera is selected.
+    // };
 
     // Handle WebSocket messages (response from the server)
     client.current.onmessage = async (message) => {
