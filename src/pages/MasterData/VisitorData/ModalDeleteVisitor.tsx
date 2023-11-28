@@ -61,8 +61,8 @@ export const DeleteVisitorModal = ({ closeModal, onSubmit, defaultValue }:any) =
             <p className="text-sm text-black dark:text-white">
 Apakah Anda yakin ingin menghapus data ini? 
             </p>
-            <p className="text-sm text-white">
-            <span className='text-red-500'>{formState.nama} </span>akan dihapus  </p>
+            <p className="text-sm text-center text-white">nama pengunjung
+            <span className='text-red-500'> {formState.nama} </span>akan dihapus  </p>
 
           </div>
          

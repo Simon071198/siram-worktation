@@ -11,13 +11,17 @@ import {
 import { AddInmateModal } from './ModalAddInmate';
 import { Alerts } from './AlertInmate';
 import { DeleteInmateModal } from './ModalDeleteInmate';
+// import Loader from 'renderer/common/Loader';
 import Loader from '../../../common/Loader';
 import SearchInputButton from '../Search';
+// import Pagination from 'renderer/components/Pagination';
 import Pagination from '../../../components/Pagination';
 import { HiDotsVertical, HiPencilAlt, HiOutlineTrash } from 'react-icons/hi';
 
 import * as xlsx from 'xlsx';
-// import ToolsTip from '../../../../components/ToolsTip';
+// import ToolsTip from 'renderer/components/ToolsTip';
+import ToolsTip from '../../../components/ToolsTip';
+// import DropdownAction from 'renderer/components/DropdownAction';
 import DropdownAction from '../../../components/DropdownAction';
 
 const InmateList = () => {
@@ -73,7 +77,7 @@ const InmateList = () => {
     );
 
     const newEditItem: any = {
-      wbp_profile_id: item?.wbp_profile_id,
+      wbp_profile_id : item?.wbp_profile_id,
       foto_wajah: item?.foto_wajah,
       nama: item?.nama,
       pangkat_id: item?.pangkat_id,
@@ -298,8 +302,8 @@ const InmateList = () => {
   useEffect(() => {
     fetchData();
     hunianData();
-
-    apiReadAllKategoriJahat()
+    let params = {}
+    apiReadAllKategoriJahat(params,token)
       .then((res) => {
         setKategoriPerkara(res);
       })
@@ -370,13 +374,13 @@ const InmateList = () => {
   };
 
   const hunianData = () => {
-    apiReadAllHunian({
-      params: {
+    let params = {
         pageSize: 1000,
         page: 1,
         filter: {},
-      },
-    })
+      }
+    
+    apiReadAllHunian(params,token)
       .then((res) => {
         setHunian(res.data.records);
       })
@@ -393,20 +397,78 @@ const InmateList = () => {
   const exportToExcel = async () => {
     const dataToExcel = [
       [
-        'Name',
-        'Ruangan Tahanan',
-        'Nomor DMAC Gelang',
-        'Tanggal diTahan',
-        // 'Kasus Perkara',
-        'Alamat',
+        'Nama',
+        'nrp',
+        'Nama pangkat',
+        'Nama Kesatuan',
+        'Lokasi Kesatuan',
+        'Provinsi',
+        'Kota',
+        'alamat',
+        'tempat lahir',
+        'tanggal lahir',
+        'nama pendidikan',
+        'keahlian',
+        'nomor tahanan',
+        'riwayat penyakit',
+        'nama hunuian wbp',
+        'nama keluarga',
+        'hubungan dengan keluarga',
+        'nomor keluarga',
+        'nama matra',
+        'nama kasus',
+        'no kasus',
+        'jenis perkara',
+        'kategori perkara',
+        'pasal',
+        'vonis tahun',
+        'vonis bulan',
+        'vonis hari',
+        'waktu kejadian',
+        'waktu kejadian',
+        'DMAC',
+        'nama gelang',
+        'tanggal pasang',
+        'tanggal aktivasi',
+        'lokasi tahanan',
       ],
       ...data.map((item: any) => [
         item.nama,
-        item.nama_hunian_wbp_otmil,
-        item.DMAC,
-        item.tanggal_ditahan_otmil,
-        // item.nama_kategori_perkara,
+        item.nrp,
+        item.nama_pangkat,
+        item.nama_kesatuan,
+        item.nama_lokasi_kesatuan,
+        item.nama_provinsi,
+        item.nama_kota,
         item.alamat,
+        item.tempat_lahir,
+        item.tanggal_lahir,
+        item.nama_agama,
+        item.nama_status_kawin,
+        item.nama_pendidikan,
+        item.nama_bidang_keahlian,
+        item.nomor_tahanan,
+        item.wbp_sickness,
+        item.nama_hunian_wbp_otmil,
+        item.nama_kontak_keluarga,
+        item.hubungan_kontak_keluarga,
+        item.nomor_kontak_keluarga,
+        item.nama_matra,
+        item.nama_kasus,
+        item.nomor_kasus,
+        item.nama_jenis_perkara,
+        item.nama_kategori_perkara,
+        item.pasal,
+        item.vonis_tahun_perkara,
+        item.vonis_bulan_perkara,
+        item.vonis_hari_perkara,
+        item.lokasi_kasus,
+        item.waktu_kejadian,
+        item.DMAC,
+        item.nama_gelang,
+        item.tanggal_pasang,
+        item.tanggal_aktivasi,
+        item.lokasi_tahanan,
       ]),
     ];
 
@@ -475,7 +537,7 @@ const InmateList = () => {
             <div className="w-full">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama binaan"
+                placehorder="Cari nama"
                 onChange={handleFilterChange}
               />
             </div>
@@ -553,8 +615,9 @@ const InmateList = () => {
 
         <div className="">
           <div
-            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
-              }`}
+            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${
+              isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
+            }`}
           >
             <div className="p-2.5 xl:p-5">
               <h5 className=" font-medium uppercase ">Nama</h5>
@@ -567,10 +630,13 @@ const InmateList = () => {
             <div className="p-2.5 xl:p-5">
               <h5 className="font-medium uppercase ">Nomor DMAC Gelang</h5>
             </div>
-
             <div className="p-2.5 xl:p-5">
-              <h5 className="font-medium uppercase ">Tanggal Ditahan</h5>
+              <h5 className="font-medium uppercase ">Nama Pangkat</h5>
             </div>
+
+            {/* <div className="p-2.5 xl:p-5">
+              <h5 className="font-medium uppercase ">Tanggal Ditahan</h5>
+            </div> */}
 
             {/* <div className="p-2.5 xl:p-5">
             <h5 className="font-medium uppercase ">Kasus Perkara</h5>
@@ -594,8 +660,9 @@ const InmateList = () => {
                 return (
                   <div>
                     <div
-                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                        }`}
+                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${
+                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      }`}
                     >
                       <div
                         onClick={() => handleDetailClick(item)}
@@ -623,15 +690,23 @@ const InmateList = () => {
                           {item.DMAC}
                         </p>
                       </div>
-
                       <div
+                        onClick={() => handleDetailClick(item)}
+                        className="p-2.5 sm:flex xl:p-5 justify-center flex t"
+                      >
+                        <p className="text-black dark:text-white truncate cursor-pointer">
+                          {item.nama_pangkat}
+                        </p>
+                      </div>
+
+                      {/* <div
                         onClick={() => handleDetailClick(item)}
                         className="p-2.5 sm:flex xl:p-5 justify-center flex  "
                       >
                         <p className="text-black dark:text-white truncate cursor-pointer">
                           {item.tanggal_ditahan_otmil}
                         </p>
-                      </div>
+                      </div> */}
 
                       {/* <div
                       onClick={() => handleDetailClick(item)}
@@ -675,10 +750,10 @@ const InmateList = () => {
                           </ToolsTip> */}
                           <div className='relative'>
 
-                            {/* <button onClick={() => toggleModal(index)}>
+                          {/* <button onClick={() => toggleModal(index)}>
                             <HiDotsVertical></HiDotsVertical>
                           </button> */}
-                            {/* <div
+                          {/* <div
                             className={`bg-boxdark rounded-lg border-1 border border-slate-600 text-white text-left px-2 py-2 absolute right-0 flex flex-col gap-2 ${
                               modalDot[index] ? 'block' : 'hidden'
                             }`}
@@ -696,9 +771,9 @@ const InmateList = () => {
                               Hapus
                             </button>
                           </div> */}
-                            <DropdownAction handleEditClick={() => handleEditClick(item)} handleDeleteClick={() => handleDeleteClick(item)}></DropdownAction>
+                          <DropdownAction handleEditClick={()=>handleEditClick(item)} handleDeleteClick={()=>handleDeleteClick(item)}></DropdownAction>
                           </div>
-
+                          
                         </div>
                       )}
                     </div>

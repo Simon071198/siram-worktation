@@ -83,8 +83,8 @@ export const DeleteInventarisModal = ({ closeModal, onSubmit, defaultValue }:any
             <p className="text-sm te  xt-black dark:text-white">
               Apakah Anda yakin ingin menghapus data ini ?
             </p>
-            <p className="text-sm text-black dark:text-white">
-             Barang <span className='text-red-400'>{formState.nama_aset} </span> ?
+            <p className="text-sm text-black text-center dark:text-white">
+             Barang <span className='text-red-400'>{formState.nama_aset} </span> akan dihapus?
             </p>
           </div>
 

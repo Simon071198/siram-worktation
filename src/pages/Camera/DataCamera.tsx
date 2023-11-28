@@ -44,20 +44,20 @@ const DataCamera = (props) => {
   // const clientFR = useRef(new W3CWebSocket('ws://localhost:4001'));
 
   useEffect(() => {
- 
+
     const fetchDataAndSendRequest = async () => {
       await fetchDeviceDetail(); // Wait for fetchDeviceDetail to complete before sending the request
 
       const date = getTodayDate();
       setState((prevState) => ({ ...prevState, endDate: date }));
 
-     
+
     };
     // fetchDataInmateRealtime();
     setInterval(fetchDataInmateRealtime, 5000);
 
 
-    
+
     fetchDataAndSendRequest(); // Call the function to initiate the process
   }, [props.id]);
 
@@ -103,7 +103,7 @@ const DataCamera = (props) => {
           },
         ],
       }));
-   
+
       // sendRequest('startLiveView', {
       //   listViewCameraData: JSON.stringify(state.listViewCamera),
       // });
@@ -150,7 +150,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url="http://192.168.1.135:4001/stream/192.168.1.63_.m3u8"
+                url="http://192.168.1.135:4002/record/Camera1/2023.11.28/121639.mv4"
                 width="100%"
                 height="100%"
                 playing={true}

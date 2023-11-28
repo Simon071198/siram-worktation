@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MenuItem from '../components/MenuItem';
 import Logo from '../images/logo/logo.png';
-import 'tailwindcss/tailwind.css';
+import { PiIdentificationCardThin } from 'react-icons/pi';
+import { VscLaw } from 'react-icons/vsc';
 
 import {
   CameraIcon,
@@ -17,9 +18,12 @@ import {
   ChatIcon,
   eventIcons,
   Pengunjung,
+  Penyidikan,
 } from '../components/Icons';
 import BackgroundSecurityImage from '../images/security-background.jpg';
-import 'tailwindcss/tailwind.css';
+// import Loader from 'renderer/common/Loader';
+import Loader from '../common/Loader';
+import { BsBriefcaseFill } from 'react-icons/bs';
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -43,8 +47,16 @@ const MainMenu = () => {
   const overlayStyle = {
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the alpha value (0.5 in this example) to make it darker or lighter
   };
+  const [loading, setLoading] = useState(true);
 
-  return (
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
+
+  return loading ? (
+    <Loader />
+  ) : (
     //   <div className="min-h-screen dark:text-bodydark bg-slate-700  " >
     //  {/* <div className="dark:text-bodydark" style={backgroundStyle}> */}
     //     {/* <div className="absolute inset-0" style={overlayStyle}></div> */}
@@ -86,8 +98,8 @@ const routes = [
   {
     id: 1,
     name: 'Penyidikan',
-    link: '/listPenyidikan',
-    icon: Pengunjung,
+    link: '/penyidikan',
+    icon: <PiIdentificationCardThin size={90} />,
   },
   {
     id: 2,
@@ -99,13 +111,13 @@ const routes = [
     id: 3,
     name: 'Daftar Sidang',
     link: '/daftar-sidang',
-    icon: DataPerkaraIcon,
+    icon: <VscLaw size={80} />,
   },
   {
     id: 4,
     name: 'Daftar Kasus',
     link: '/daftar-kasus',
-    icon: Pengunjung,
+    icon: <BsBriefcaseFill size={80} />,
   },
   {
     id: 5,
@@ -140,7 +152,7 @@ const routes = [
   {
     id: 10,
     name: 'Kamera',
-    link: '/kamera',
+    link: '/kamera-dev-test',
     icon: CameraIcon,
   },
   {

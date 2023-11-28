@@ -83,8 +83,8 @@ export const DeleteInmateModal = ({
               <p className="text-sm text-black dark:text-white">
                 Apakah Anda yakin ingin menghapus data ini?
               </p>
-              <p className="text-sm text-black dark:text-white">
-                <span className="text-red-400">{formState.nama}</span> akan
+              <p className="text-sm text-center text-black dark:text-white"> nama tersangka 
+                <span className="text-red-400"> {formState.nama}</span> akan
                 dihapus{' '}
               </p>
             </div>
