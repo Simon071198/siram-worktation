@@ -150,7 +150,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url="http://192.168.1.135:4002/record/Camera1/2023.11.28/121639.mv4"
+                url="http://192.168.1.135:4002/record/Camera1/2023.11.28/122102.mv4"
                 width="100%"
                 height="100%"
                 playing={true}
