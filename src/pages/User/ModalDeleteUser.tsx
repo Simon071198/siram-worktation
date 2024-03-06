@@ -83,8 +83,8 @@ export const DeleteUserModal = ({ closeModal, onSubmit, defaultValue }:any) => {
             <p className="text-sm te  xt-black dark:text-white">
               Apakah Anda yakin ingin menghapus data ini ?
             </p>
-            <p className="text-sm text-black dark:text-white">
-             Username <span className='text-red-400'>{formState.username} </span> ?
+            <p className="text-sm text-center text-black dark:text-white">
+             Username <span className='text-red-400'>{formState.nama} </span> akan dihapus 
             </p>
           </div>
 

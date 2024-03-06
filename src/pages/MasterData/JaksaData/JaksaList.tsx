@@ -5,7 +5,7 @@ const routeMasterData = [
   {
     id: 1,
     name: 'Data Oditur Penyidik',
-    link: '/oditur-penyidik-data',
+    link: '/jaksa-penyidik-data',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,7 @@ const routeMasterData = [
   {
     id: 2,
     name: 'Data Oditur Penuntut',
-    link: '/oditur-penuntut-data',
+    link: '/jaksa-penuntut-data',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

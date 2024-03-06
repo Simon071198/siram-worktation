@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { apiReadAllRuanganOtmil, apiReadAlllokasiOtmil, apiReadZona } from '../../../services/api';
-
+import {
+  apiReadAllRuanganOtmil,
+  apiReadAlllokasiOtmil,
+  apiReadZona,
+} from '../../../services/api';
 
 // interface
 interface AddKameraModalProps {
@@ -29,8 +32,6 @@ interface namazona {
   nama_zona: string;
 }
 
-
-
 export const AddKamera: React.FC<AddKameraModalProps> = ({
   closeModal,
   onSubmit,
@@ -38,29 +39,28 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   isDetail,
   isEdit,
 }) => {
-  const [formState, setFormState] = useState(
-    defaultValue || {
-      nama_kamera: '',
-      url_rtsp: '',
-      ip_address: '',
-      status_kamera: '',
-      merk: '',
-      model: '',
-      jumlah_kamera: 1,
-      lokasi_otmil_id: '',
-      nama_lokasi_otmil: '',
-      ruangan_otmil_id: '',
-      jenis_ruangan_otmil: '',
-      nama_ruangan_otmil: '',
-      zona_id: '',
-      nama_zona: defaultValue?.status_zona_ruangan_otmil ?? '',
+  const [formState, setFormState] = useState<any>({
+    kamera_id: defaultValue?.deviceId ?? '',
+    nama_kamera: defaultValue?.deviceName ?? '',
+    url_rtsp: defaultValue?.urlRTSP ?? '',
+    ip_address: defaultValue?.IpAddress ?? '',
+    status_kamera: defaultValue?.status_kamera ?? '',
+    merk: defaultValue?.merk ?? '',
+    model: defaultValue?.model ?? '',
+    jumlah_kamera: 1,
+    lokasi_otmil_id: defaultValue?.lokasi_otmil_id ?? '',
+    nama_lokasi_otmil: defaultValue?.nama_lokasi_otmil ?? '',
+    ruangan_otmil_id: defaultValue?.ruangan_otmil_id ?? '',
+    jenis_ruangan_otmil: defaultValue?.jenis_ruangan_otmil ?? '',
+    nama_ruangan_otmil: defaultValue?.nama_ruangan_otmil ?? '',
+    zona_id: defaultValue?.zona_id_otmil ?? '',
+    nama_zona: defaultValue?.status_zona_ruangan_otmil ?? '',
 
-      // nama_ruangan_lemasmil: '',
-      // jenis_ruangan_lemasmil: '',
-      // lokasi_lemasmil_id: '',
-      // ruangan_lemasmil_id: '',
-    }
-  );
+    // nama_ruangan_lemasmil: '',
+    // jenis_ruangan_lemasmil: '',
+    // lokasi_lemasmil_id: '',
+    // ruangan_lemasmil_id: '',
+  });
 
   //state
   const [errors, setErrors] = useState<string[]>([]);
@@ -71,9 +71,9 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   const [ruanganotmil, setruanganotmil] = useState<ruangan[]>([]);
   const [lokasiotmil, setlokasiotmil] = useState<lokasi[]>([]);
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -106,6 +106,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
         key !== 'jenis_ruangan_lemasmil' &&
         key !== 'zona_id_lemasmil' &&
         key !== 'status_zona_ruangan_lemasmil' &&
+        key !== 'kamera_id' &&
         key !== 'ruangan_lemasmi_id'
       ) {
         if (!value) {
@@ -122,10 +123,13 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
     return true;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -143,7 +147,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
 
     // Temukan data ruangan berdasarkan ID yang dipilih
     const selectedData = ruanganotmil.find(
-      (item) => item.ruangan_otmil_id === selectedRuangan
+      (item) => item.ruangan_otmil_id === selectedRuangan,
     );
     if (selectedData) {
       setFormState({
@@ -170,7 +174,6 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
     }
   };
 
-
   // fetch data
   useEffect(() => {
     const fetchData = async () => {
@@ -179,14 +182,14 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
         page: 1,
         filter: {
           nama_lokasi_otmil: 'Cimahi',
-        }
+        },
       };
       try {
         const ruangan = await apiReadAllRuanganOtmil(params, token);
         const ruanganlem = ruangan.data.records;
         setruanganotmil(ruanganlem);
 
-        const lokasi = await apiReadAlllokasiOtmil(token);
+        const lokasi = await apiReadAlllokasiOtmil(params, token);
         const lokasilem = lokasi.data.records;
         setlokasiotmil(lokasilem);
 
@@ -194,9 +197,11 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
         const zona = zone.data.records;
         setNamaZona(zona);
         setTimeout(() => {
-          setIsLoading(false)
+          setIsLoading(false);
         }, 300);
-      } catch (err) { throw err }
+      } catch (err) {
+        throw err;
+      }
     };
     fetchData();
   }, []);
@@ -285,10 +290,8 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                 </strong>
               </div>
               <form onSubmit={handleSubmit}>
-
-                <div className="mt-5 grid grid-cols-2 gap-5 justify-normal">
-
-                  <div className="form-group w-full">
+                <div className="mt-5 grid grid-cols-2 gap-x-5 gap-y-1 justify-normal">
+                  <div className="form-group h-22 w-full">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -298,21 +301,19 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="nama_kamera"
-                      placeholder='Nama Kamera'
+                      placeholder="Nama Kamera"
                       onChange={handleChange}
                       value={formState.nama_kamera}
                       disabled={isDetail}
                     />
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
-                        item === 'nama_kamera'
-                          ? 'Pilih Kamera'
-                          : ''
+                        item === 'nama_kamera' ? 'Pilih Kamera' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group h-22 w-full">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -322,21 +323,19 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="url_rtsp"
-                      placeholder='URL RSTP'
+                      placeholder="URL RSTP"
                       onChange={handleChange}
                       value={formState.url_rtsp}
                       disabled={isDetail}
                     />
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
-                        item === 'url_rtsp'
-                          ? 'Pilih URL RSTP'
-                          : ''
+                        item === 'url_rtsp' ? 'Pilih URL RSTP' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group h-22 w-full">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -346,21 +345,19 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="ip_address"
-                      placeholder='Alamat IP'
+                      placeholder="Alamat IP"
                       onChange={handleChange}
                       value={formState.ip_address}
                       disabled={isDetail}
                     />
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
-                        item === 'ip_address'
-                          ? 'Pilih Alamat IP'
-                          : ''
+                        item === 'ip_address' ? 'Pilih Alamat IP' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full ">
+                  <div className="form-group h-22 w-full ">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -377,20 +374,18 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       <option disabled value="">
                         Pilih status
                       </option>
-                      <option value="1">Aktif</option>
-                      <option value="2">Tidak Aktif</option>
-                      <option value="3">Rusak</option>
+                      <option value="aktif">Aktif</option>
+                      <option value="tidak">Tidak Aktif</option>
+                      <option value="rusak">Rusak</option>
                     </select>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'status_kamera'
-                          ? 'Pilih Status Kamera'
-                          : ''
+                        item === 'status_kamera' ? 'Pilih Status Kamera' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group h-22 w-full">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -400,21 +395,19 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="merk"
-                      placeholder='Merk'
+                      placeholder="Merk"
                       onChange={handleChange}
                       value={formState.merk}
                       disabled={isDetail}
                     />
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
-                        item === 'merk'
-                          ? 'Pilih Merk'
-                          : ''
+                        item === 'merk' ? 'Pilih Merk' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full capitalize">
+                  <div className="form-group h-22 w-full capitalize">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -424,22 +417,22 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="model"
-                      placeholder='model'
+                      placeholder="model"
                       onChange={handleChange}
                       value={formState.model}
                       disabled={isDetail}
                     />
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
-                        item === 'model'
-                          ? 'Pilih model'
-                          : ''
+                        item === 'model' ? 'Pilih model' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
-                    <label htmlFor="ruangan_otmil_id">Pilih Ruangan otmil:</label>
+                  <div className="form-group h-22 w-full">
+                    <label htmlFor="ruangan_otmil_id">
+                      Pilih Ruangan otmil:
+                    </label>
                     <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
@@ -462,12 +455,12 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'
                           ? 'Pilih Ruangan Otmil'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group h-22 w-full">
                     <label htmlFor="jenis_ruangan_otmil">Jenis Ruangan:</label>
                     <input
                       type="text"
@@ -481,13 +474,15 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       {errors.map((item) =>
                         item === 'jenis_ruangan_otmil'
                           ? 'Masukan Jenis Ruangan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
-                    <label htmlFor="nama_lokasi_otmil">Nama Lokasi otmil:</label>
+                  <div className="form-group h-22 w-full">
+                    <label htmlFor="nama_lokasi_otmil">
+                      Nama Lokasi otmil:
+                    </label>
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
@@ -500,11 +495,11 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       {errors.map((item) =>
                         item === 'nama_lokasi_otmil'
                           ? 'Masukan Nama Lokasi'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
-                  <div className="form-group w-full">
+                  <div className="form-group h-22 w-full">
                     <label htmlFor="nama_zona">Zona :</label>
                     <input
                       type="text"
@@ -518,95 +513,106 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'nama_zona'
-                          ? 'Masukan Zona'
-                          : ''
+                        item === 'nama_zona' ? 'Masukan Zona' : '',
                       )}
                     </p>
                   </div>
-
                 </div>
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {/* <br></br> */}
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Kamera
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Kamera
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
-                          .filter((item: string) => item.startsWith('INVALID_ID'))[0]
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Kamera
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Kamera
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

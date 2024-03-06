@@ -37,7 +37,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
       grup_petugas_id: '',
       nama_grup_petugas: '',
       ketua_grup_id: '',
-    }
+    },
   );
 
   //new data for update
@@ -133,7 +133,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setGrupedit({ ...grupEdit, [e.target.name]: e.target.value });
   };
@@ -186,7 +186,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   //add petugas Grup
   const handleChangeAdd = (selectedOption: any) => {
     const selectedStaff = newStaff.find(
-      (item) => item.petugas_id === selectedOption.value
+      (item) => item.petugas_id === selectedOption.value,
     );
     console.log('add:', staff);
 

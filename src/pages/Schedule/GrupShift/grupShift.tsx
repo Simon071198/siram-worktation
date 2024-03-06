@@ -71,7 +71,6 @@ const GrupShift = () => {
     };
     const dataGrup = async () => {
       try {
-
         const response = await apiReadAllGrupPetugas(params, token);
         setDataGrup(response.data.records);
         setPages(response.data.pagination.totalPages);
@@ -80,7 +79,7 @@ const GrupShift = () => {
       } catch (error: any) {
         Alerts.fire({
           icon: 'error',
-          title: (error.message)
+          title: error.message,
         });
       }
     };
@@ -204,7 +203,7 @@ const GrupShift = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         {modalAddOpen && (
           <AddDataGrup
@@ -275,7 +274,7 @@ const GrupShift = () => {
                   return (
                     <li className="my-1 flex dark:bg-meta-4" key={index}>
                       <div className="w-1/5 mr-1 flex items-center justify-center">
-                        <h2 className=" flex items-center h-full flex items-center">
+                        <h2 className=" flex items-center h-full ">
                           {itemGrup.nama_grup_petugas}
                         </h2>
                       </div>
@@ -317,7 +316,7 @@ const GrupShift = () => {
                         </ul>
                       </div>
                     </li>
-                  )
+                  );
                 })}
               </div>
             </ul>

@@ -22,7 +22,7 @@ export const AddPengadilanMiliterModal = ({
       kota_id: '',
       latitude: '',
       longitude: '',
-    }
+    },
   );
 
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -30,17 +30,16 @@ export const AddPengadilanMiliterModal = ({
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const [dataProvinsi, setDataProvinsi] = useState([])
-  const [dataKota, setDataKota] = useState([])
+  const [dataProvinsi, setDataProvinsi] = useState([]);
+  const [dataKota, setDataKota] = useState([]);
 
-  console.log(dataKota, 'kota')
-  console.log(dataProvinsi, 'Provinsi')
+  console.log(dataKota, 'kota');
+  console.log(dataProvinsi, 'Provinsi');
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-
       if (!value) {
         errorFields.push(key);
       }
@@ -82,43 +81,42 @@ export const AddPengadilanMiliterModal = ({
   };
 
   useEffect(() => {
-    Promise.all([
-      Provinsi(),
-      Kota(),
-    ]).then(() => {
-      setIsLoading(false)
-    })
-  }, [])
+    Promise.all([Provinsi(), Kota()]).then(() => {
+      setIsLoading(false);
+    });
+  }, []);
 
   const Provinsi = async () => {
     let params = {
       pageSize: 10000,
-    }
-    await apiReadProvinsi(params)
+    };
+    await apiReadProvinsi(params, token)
       .then((res) => {
-        setDataProvinsi(res.records)
+        setDataProvinsi(res.records);
       })
       .catch((err) =>
         Alerts.fire({
           icon: 'error',
           title: err.massage,
-        }))
-  }
+        }),
+      );
+  };
 
   const Kota = async () => {
     let params = {
       pageSize: 10000,
-    }
-    await apiReadKota(params)
+    };
+    await apiReadKota(params, token)
       .then((res) => {
-        setDataKota(res.records)
+        setDataKota(res.records);
       })
       .catch((err) =>
         Alerts.fire({
           icon: 'error',
           title: err.massage,
-        }))
-  }
+        }),
+      );
+  };
 
   const customStyles = {
     container: (provided: any) => ({
@@ -204,7 +202,6 @@ export const AddPengadilanMiliterModal = ({
       color: 'white',
     }),
   };
-
 
   const modalStyles: any = {
     backdrop: {
@@ -295,7 +292,7 @@ export const AddPengadilanMiliterModal = ({
 
               <form onSubmit={handleSubmit}>
                 <div>
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full mt-4 relative h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -310,15 +307,17 @@ export const AddPengadilanMiliterModal = ({
                       value={formState.nama_pengadilan_militer}
                       disabled={isDetail}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'nama_pengadilan_militer' ? 'Masukan Nama Pengadilan Militer' : ''
+                        item === 'nama_pengadilan_militer'
+                          ? 'Masukan Nama Pengadilan Militer'
+                          : '',
                       )}
                     </p>
                   </div>
 
                   {/* Provinsi */}
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full relative h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -328,13 +327,13 @@ export const AddPengadilanMiliterModal = ({
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={isEdit || isDetail ? (
-                        {
-                          value: formState.provinsi_id,
-                          label: formState.nama_provinsi
-                        })
-                        :
-                        formState.provinsi_id
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.provinsi_id,
+                              label: formState.nama_provinsi,
+                            }
+                          : formState.provinsi_id
                       }
                       placeholder={'Pilih provinsi'}
                       isClearable={true}
@@ -345,18 +344,17 @@ export const AddPengadilanMiliterModal = ({
                       options={dataProvinsi.map((item: any) => ({
                         value: item.provinsi_id,
                         label: item.nama_provinsi,
-                      }))
-                      }
+                      }))}
                       onChange={handleSelectProvinsi}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'provinsi_id' ? 'Pilih provinsi' : ''
+                        item === 'provinsi_id' ? 'Pilih provinsi' : '',
                       )}
                     </p>
                   </div>
                   {/* Kota */}
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full relative h-21">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -366,13 +364,13 @@ export const AddPengadilanMiliterModal = ({
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={isEdit || isDetail ? (
-                        {
-                          value: formState.kota_id,
-                          label: formState.nama_kota
-                        })
-                        :
-                        formState.kota_id
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.kota_id,
+                              label: formState.nama_kota,
+                            }
+                          : formState.kota_id
                       }
                       placeholder={'Pilih kota'}
                       isClearable={true}
@@ -380,29 +378,24 @@ export const AddPengadilanMiliterModal = ({
                       isDisabled={isDetail}
                       name="kota_id"
                       styles={customStyles}
-                      options={
-                        dataKota
-                          .filter((item: any) => {
-                            return (
-                              item.provinsi_id === formState.provinsi_id
-                            );
-                          })
-                          .map((item: any) => ({
-                            value: item.kota_id,
-                            label: item.nama_kota,
-                          }))
-                      }
-
+                      options={dataKota
+                        .filter((item: any) => {
+                          return item.provinsi_id === formState.provinsi_id;
+                        })
+                        .map((item: any) => ({
+                          value: item.kota_id,
+                          label: item.nama_kota,
+                        }))}
                       onChange={handleSelectKota}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'kota_id' ? 'Pilih kota' : ''
+                        item === 'kota_id' ? 'Pilih kota' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full relative h-22 ">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -417,14 +410,14 @@ export const AddPengadilanMiliterModal = ({
                       value={formState.latitude}
                       disabled={isDetail}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'latitude' ? 'Masukan Latitute' : ''
+                        item === 'latitude' ? 'Masukan Latitute' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full relative h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -439,36 +432,14 @@ export const AddPengadilanMiliterModal = ({
                       value={formState.longitude}
                       disabled={isDetail}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'longitude' ? 'Masukan Longitude' : ''
+                        item === 'longitude' ? 'Masukan Longitude' : '',
                       )}
                     </p>
                   </div>
-
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
-                {/* {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )} */}
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
                   <div className="error mt-4">
@@ -483,74 +454,100 @@ export const AddPengadilanMiliterModal = ({
                   </div>
                 )} */}
 
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                {/* <br></br> */}
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
                       }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Pengadilan Militer
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Pengadilan Militer
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
                       }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Pengadilan Militer
-                  </button>
-                )}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Pengadilan Militer
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

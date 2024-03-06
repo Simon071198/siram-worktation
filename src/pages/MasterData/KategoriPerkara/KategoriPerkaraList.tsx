@@ -12,9 +12,10 @@ import {
 import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import ToolsTip from '../../../components/ToolsTip';
+import ToolsTip from 'renderer/components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
 import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 interface Item {
   nama_kategori_perkara: string;
@@ -68,9 +69,10 @@ const KategoriPerkaraList = () => {
 
   const handleSearchClick = async () => {
     try {
-      const response = await apiReadKategoriPerkara({
+      let params = {
         filter: { nama_kategori_perkara: filter },
-      });
+      };
+      const response = await apiReadKategoriPerkara(params, token);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       if (response.status === 200) {
@@ -113,7 +115,7 @@ const KategoriPerkaraList = () => {
     };
     setIsLoading(true);
     try {
-      const response = await apiReadKategoriPerkara(param);
+      const response = await apiReadKategoriPerkara(param, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -267,7 +269,10 @@ const KategoriPerkaraList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_kategoti_perkara.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-JenisPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
   useEffect(() => {
     // Menambahkan event listener untuk tombol "Enter" pada komponen ini
@@ -282,7 +287,7 @@ const KategoriPerkaraList = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-15 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -292,7 +297,7 @@ const KategoriPerkaraList = () => {
                 placehorder="Cari kategori perkara"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
             </div>
             <button
@@ -407,7 +412,9 @@ const KategoriPerkaraList = () => {
                               <div className="relative">
                                 <DropdownAction
                                   handleEditClick={() => handleEditClick(item)}
-                                  handleDeleteClick={() => handleDeleteClick(item)}
+                                  handleDeleteClick={() =>
+                                    handleDeleteClick(item)
+                                  }
                                 ></DropdownAction>
                               </div>
                             </div>

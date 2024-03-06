@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Loader from '../../../common/Loader';
 import { Alerts } from './AlertRoom';
+import * as xlsx from 'xlsx';
 import { AddRoomModal } from './ModalAddRoom';
 import { DeleteRoomModal } from './ModalDeleteRoom';
 import SearchInputButton from '../Search';
@@ -12,7 +13,7 @@ import {
   apiUpdateAllRuanganOtmil,
 } from '../../../services/api';
 import DropdownAction from '../../../components/DropdownAction';
-import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -31,9 +32,9 @@ interface Item {
 
 const RoomList = () => {
   //get Token
-  const token = localStorage.getItem('token');
-  let tokenItem = token ? JSON.parse(token) : null
-  let Token = tokenItem.token
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -51,14 +52,13 @@ const RoomList = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState('');
-  const [filterJenisRuangan, setFilterJenisRangan] = useState('')
+  const [filterJenisRuangan, setFilterJenisRangan] = useState('');
   const [edit, setEdit] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState(0);
   const [isOperator, setIsOperator] = useState<boolean>();
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -146,7 +146,6 @@ const RoomList = () => {
     };
   }, [filter, filterJenisRuangan]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
-
   const fetchData = async () => {
     let params = {
       filter: {
@@ -196,7 +195,7 @@ const RoomList = () => {
     const ruangDel: any = {
       nama_ruangan_otmil: item.nama_ruangan_otmil,
       ruangan_otmil_id: item.ruangan_otmil_id,
-    }
+    };
     setDeleteData(ruangDel);
     setModalDeleteOpen(true);
   };
@@ -216,8 +215,9 @@ const RoomList = () => {
   };
 
   // function untuk menghapus data
-  const handleSubmitDeleteRuangan = (params: Params) => {
-    apiDeleteAllRuangan(params, Token).then((res) => {
+  const handleSubmitDeleteRuangan = () => {
+    let params = {};
+    apiDeleteAllRuangan(params, token).then((res) => {
       if (res.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -240,7 +240,7 @@ const RoomList = () => {
 
   // function untuk menambah data
   const handleSubmitAddRuangan = async (params: Params) => {
-    apiCreateAllRuanganOtmil(params, Token).then((res) => {
+    apiCreateAllRuanganOtmil(params, token).then((res) => {
       if (res.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -261,7 +261,7 @@ const RoomList = () => {
 
   // function untuk mengubah data
   const handleSubmitEditRuangan = async (params: Params) => {
-    apiUpdateAllRuanganOtmil(params, Token).then((res) => {
+    apiUpdateAllRuanganOtmil(params, token).then((res) => {
       if (res.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -291,26 +291,23 @@ const RoomList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      [
-        'Nama Ruangan Otmil',
-        'Jenis Ruangan Otmil',
-        'Zona',
-        'Nama Lokasi Otmil',
-      ],
+      ['Nama nama ruangan', 'jenis ruangan', 'nama lokasi', 'zona'],
       ...data.map((item: any) => [
         item.nama_ruangan_otmil,
         item.jenis_ruangan_otmil,
-        item.nama_zona,
         item.nama_lokasi_otmil,
+        item.nama_zona,
       ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_ruangan.xlsx');
-  }
-
+    xlsx.writeFile(
+      wb,
+      `Data-Ruangan ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+  };
 
   return isLoading ? (
     <Loader />
@@ -319,17 +316,17 @@ const RoomList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="w-full flex justify-center">
           <div className="mb-3 flex items-center px-2 justify-center rounded space-x-1 bg-slate-600 py-1">
-            <div className='w-full'>
+            <div className="w-full">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari Ruangan"
                 onChange={handleFilterChange}
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
             </div>
             <select
-              className=" text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
-              name='jenis_ruangan_otmil'
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              name="jenis_ruangan_otmil"
               value={filterJenisRuangan}
               onChange={handleFilterChangeJenisRuangan}
             >
@@ -372,17 +369,19 @@ const RoomList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Ruangan
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
         <div className="flex flex-col">
-          <div className={`grid rounded-t-md ${isOperator ? 'grid-cols-4' : 'grid-cols-5'} bg-gray-2 dark:bg-slate-600`}>
+          <div
+            className={`grid rounded-t-md ${isOperator ? 'grid-cols-4' : 'grid-cols-5'} bg-gray-2 dark:bg-slate-600`}
+          >
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nama Ruangan
@@ -403,7 +402,9 @@ const RoomList = () => {
                 Lokasi
               </h5>
             </div>
-            <div className={`p-2.5 ${isOperator ? 'hidden' : 'block'} text-center xl:p-5`}>
+            <div
+              className={`p-2.5 ${isOperator ? 'hidden' : 'block'} text-center xl:p-5`}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Aksi
               </h5>
@@ -424,31 +425,41 @@ const RoomList = () => {
                   className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'} rounded-sm bg-gray-2 dark:bg-meta-4`}
                   key={item.nama_ruangan_otmil}
                 >
-                  <div onClick={() => handleDetailClick(item)}
-                    className="flex cursor-pointer items-center gap-4 p-2.5 xl:p-5">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="flex cursor-pointer items-center gap-4 p-2.5 xl:p-5"
+                  >
                     <p className="hidden text-black dark:text-white sm:block capitalize">
                       {item.nama_ruangan_otmil}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)}
-                    className="flex cursor-pointer items-center justify-center p-2.5 xl:p-5">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="flex cursor-pointer items-center justify-center p-2.5 xl:p-5"
+                  >
                     <p className="text-white capitalize">
                       {item.jenis_ruangan_otmil}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)}
-                    className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
                     <p className={`${backgroundZona} capitalize`}>
                       {item.nama_zona}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)}
-                    className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
                     <p className="text-black dark:text-white capitalize">
                       {item.nama_lokasi_otmil}
                     </p>
                   </div>
-                  <div className={`hidden items-center ${isOperator ? 'hidden' : 'block sm:flex'} justify-center p-2.5 xl:p-5 flex-wrap lg:flex-nowrap gap-2`}>
+                  <div
+                    className={`hidden items-center ${isOperator ? 'hidden' : 'block sm:flex'} justify-center p-2.5 xl:p-5 flex-wrap lg:flex-nowrap gap-2`}
+                  >
                     <div className="relative">
                       <DropdownAction
                         handleEditClick={() => handleEditClick(item)}
@@ -493,7 +504,7 @@ const RoomList = () => {
         </div>
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

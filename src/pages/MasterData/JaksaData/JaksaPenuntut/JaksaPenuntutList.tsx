@@ -40,15 +40,15 @@ const JaksaPenuntutList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [filterJabatan, setFilterJabatan] = useState('')
-  const [filterPangkat, setFilterPangkat] = useState('')
-  const [pangkatData, setPangkatData] = useState([])
-  const [pageSize, setPageSize] = useState(10)
+  const [filterJabatan, setFilterJabatan] = useState('');
+  const [filterPangkat, setFilterPangkat] = useState('');
+  const [pangkatData, setPangkatData] = useState([]);
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -63,7 +63,6 @@ const JaksaPenuntutList = () => {
   //     navigate('/')
   //   }
   // },[])
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -116,7 +115,7 @@ const JaksaPenuntutList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -137,7 +136,7 @@ const JaksaPenuntutList = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
   // useEffect untuk fetch data dari API
   useEffect(() => {
@@ -153,7 +152,6 @@ const JaksaPenuntutList = () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
   }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
 
   const fetchData = async () => {
     let param = {
@@ -174,7 +172,7 @@ const JaksaPenuntutList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -182,17 +180,16 @@ const JaksaPenuntutList = () => {
     }
   };
 
-
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
+    console.log('detail', item);
     setDetailData(item);
     setModalDetailOpen(true);
   };
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
-    console.log('edit', item)
+    console.log('edit', item);
     setEditData(item);
     setModalEditOpen(true);
   };
@@ -222,14 +219,13 @@ const JaksaPenuntutList = () => {
     try {
       const responseDelete = await apiDeleteJaksapenuntut(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -238,7 +234,7 @@ const JaksaPenuntutList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -250,15 +246,14 @@ const JaksaPenuntutList = () => {
   const handleSubmitAddDataPetugas = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateJaksapenuntut(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreateJaksapenuntut(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -268,7 +263,7 @@ const JaksaPenuntutList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -280,15 +275,14 @@ const JaksaPenuntutList = () => {
   const handleSubmitEditDataPetugas = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateJaksapenuntut(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdateJaksapenuntut(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -298,7 +292,7 @@ const JaksaPenuntutList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -316,28 +310,17 @@ const JaksaPenuntutList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
-
-
   const exportToExcel = () => {
     const dataToExcel = [
-      [
-        'Nama Oditur',
-        'NIP',
-        'Alamat',
-      ],
-      ...data.map((item: any) => [
-        item.nama_oditur,
-        item.nip,
-        item.alamat,
-      ]),
+      ['Nama Oditur', 'NIP', 'Alamat'],
+      ...data.map((item: any) => [item.nama_oditur, item.nip, item.alamat]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(wb, 'data_oditur_Penuntut.xlsx');
-  }
-
+  };
 
   return isLoading ? (
     <Loader />
@@ -408,19 +391,17 @@ const JaksaPenuntutList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Oditur Penuntut
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
         <div className="flex flex-col">
-
-          {isOperator ?
-
+          {isOperator ? (
             <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -438,8 +419,7 @@ const JaksaPenuntutList = () => {
                 </h5>
               </div>
             </div>
-
-            :
+          ) : (
             <div className="grid grid-cols-4 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-4">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -462,11 +442,8 @@ const JaksaPenuntutList = () => {
                   Aksi
                 </h5>
               </div>
-
             </div>
-          }
-
-
+          )}
 
           {data.length == 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -475,7 +452,7 @@ const JaksaPenuntutList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ?
+                    {isOperator ? (
                       <>
                         <div
                           className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize"
@@ -483,7 +460,8 @@ const JaksaPenuntutList = () => {
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.nama_oditur}
                             </p>
@@ -491,7 +469,8 @@ const JaksaPenuntutList = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.nip}
                             </p>
@@ -499,16 +478,16 @@ const JaksaPenuntutList = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.alamat}
                             </p>
                           </div>
-
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                      :
+                    ) : (
                       <>
                         <div
                           className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
@@ -516,7 +495,8 @@ const JaksaPenuntutList = () => {
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.nama_oditur}
                             </p>
@@ -524,7 +504,8 @@ const JaksaPenuntutList = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.nip}
                             </p>
@@ -532,14 +513,14 @@ const JaksaPenuntutList = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black dark:text-white capitalize">
                               {item.alamat}
                             </p>
                           </div>
 
                           <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
                             {/* <button
                       onClick={() => handleEditClick(item)}
                       className="py-1 px-2 text-black rounded-md bg-blue-300"
@@ -555,16 +536,16 @@ const JaksaPenuntutList = () => {
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                    }
-
-
+                    )}
                   </div>
                 );
               })}
@@ -607,7 +588,7 @@ const JaksaPenuntutList = () => {
 
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

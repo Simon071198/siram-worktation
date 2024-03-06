@@ -129,7 +129,6 @@ export default function GatewayLog() {
   //   });
   // };
 
-
   // useEffect(() => {
   //   const date = getTodayDate();
   //   setEndDate(date);
@@ -164,25 +163,24 @@ export default function GatewayLog() {
   //   fetchData();
   // }, []);
   useEffect(() => {
-    getGatewayLog()
-  }, [])
+    getGatewayLog();
+  }, []);
 
   const getGatewayLog = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       let params = {
-        filter: ''
-      }
-      const responseLog = await apiGatewayLog(params)
-      setData(responseLog.data.records)
+        filter: '',
+      };
+      const responseLog = await apiGatewayLog(params);
+      setData(responseLog.data.records);
       setPages(responseLog.data.pagination.totalPages);
       setRows(responseLog.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      console.log('ERROR GATEWAY', e.message)
+      console.log('ERROR GATEWAY', e.message);
     }
-  }
-
+  };
 
   return isLoading ? (
     <Loader />
@@ -195,7 +193,6 @@ export default function GatewayLog() {
             <div className="space-y-3 ">
               <div className="grid grid-rows-2 gap-4">
                 <div className="grid grid-cols-4 gap-4">
-
                   <div className="grid grid-row-2 gap-2">
                     <label className="text-white">Pilih Analitik</label>
                     <select
@@ -217,8 +214,8 @@ export default function GatewayLog() {
                         <input
                           name="Name"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedName}
-                        // onChange={(e) => setSelectedName(e.target.value)}
+                          // value={selectedName}
+                          // onChange={(e) => setSelectedName(e.target.value)}
                         />
                       </div>
 
@@ -228,8 +225,8 @@ export default function GatewayLog() {
                           type="number"
                           name="Age"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedAge}
-                        // onChange={(e) => setSelectedAge(e.target.value)}
+                          // value={selectedAge}
+                          // onChange={(e) => setSelectedAge(e.target.value)}
                         />
                       </div>
 
@@ -238,8 +235,8 @@ export default function GatewayLog() {
                         <select
                           name="Select Gender"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedGender}
-                        // onChange={(e) => setSelectedGender(e.target.value)}
+                          // value={selectedGender}
+                          // onChange={(e) => setSelectedGender(e.target.value)}
                         >
                           <option value="">Semua Gender</option>
                           <option value="true">Pria</option>
@@ -278,7 +275,7 @@ export default function GatewayLog() {
                       name="Select Device"
                       // value={selectedDevice}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleDeviceChange}
+                      // onChange={handleDeviceChange}
                     >
                       <option value="">Semua Perangkat</option>
 
@@ -296,7 +293,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={startDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleStartDateChange}
+                      // onChange={handleStartDateChange}
                     />
                   </div>
 
@@ -306,16 +303,16 @@ export default function GatewayLog() {
                       type="date"
                       // value={endDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleEndDateChange}
+                      // onChange={handleEndDateChange}
                     />
                   </div>
                 </div>
               </div>
-              <div className='text-right'>
+              <div className="text-right">
                 <button
                   className="bg-blue-500 text-white px-2 rounded-md py-1"
                   type="button"
-                // onClick={handleExportClick}
+                  // onClick={handleExportClick}
                 >
                   Export Excel
                 </button>
@@ -333,17 +330,12 @@ export default function GatewayLog() {
 
       <div className="flex flex-col">
         <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-slate-600 sm:grid-cols-5 text-xs uppercase items-center">
-
           <div className="p-2.5 text-center xl:p-5">
-            <h5 className="font-medium uppercase">
-              Nama Prajurit Binaan
-            </h5>
+            <h5 className="font-medium uppercase">Nama Prajurit Binaan</h5>
           </div>
 
           <div className="p-2.5 text-center xl:p-5">
-            <h5 className="">
-              No DMAC Gelang{' '}
-            </h5>
+            <h5 className="">No DMAC Gelang </h5>
           </div>
 
           {/* <div className="hidden p-2.5 text-center sm:block xl:p-5">
@@ -365,20 +357,14 @@ export default function GatewayLog() {
           </div> */}
 
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="">
-              Lokasi Ruangan{' '}
-            </h5>
+            <h5 className="">Lokasi Ruangan </h5>
           </div>
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="">
-              Zonasi Gateway{' '}
-            </h5>
+            <h5 className="">Zonasi Gateway </h5>
           </div>
 
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="">
-              Time Stamp{' '}
-            </h5>
+            <h5 className="">Time Stamp </h5>
           </div>
 
           {/* <div className="hidden p-2.5 text-center sm:block xl:p-5">
@@ -386,7 +372,6 @@ export default function GatewayLog() {
               Lokasi Gedung{' '}
             </h5>
           </div> */}
-
         </div>
         {data.map((item: any) => {
           return (
@@ -410,8 +395,6 @@ export default function GatewayLog() {
                   </p>
                 </div>
 
-
-
                 <div className="p-2.5 sm:flex xl:p-5 justify-center flex  ">
                   <p className="text-black dark:text-white truncate capitalize">
                     {item.status_zona_ruangan_otmil}
@@ -431,8 +414,6 @@ export default function GatewayLog() {
                         {item.alamat}
                       </p>
                     </div> */}
-
-
               </div>
               <div className="border-t border-slate-600"></div>
             </div>
@@ -528,7 +509,6 @@ export default function GatewayLog() {
       >
 
       </div> */}
-
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
-import { Alerts } from '../AhliData/AlertAhli';
+import Loader from '../../common/Loader';
+import { Alerts } from './AlertAhli';
 import {
   apiAhliDelete,
   apiAhliInsert,
@@ -23,6 +23,7 @@ import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -107,14 +108,14 @@ const AhliList = () => {
     try {
       let params = {
         filter: {
-          nama_ahli: filter,
-          // jabatan: filterJabatan,
-          // nama_pangkat: filterPangkat,
+          nama: filter,
+          jabatan: filterJabatan,
+          nama_pangkat: filterPangkat,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiAhliRead(params, token);
+      const response = await apiReadAllStaff(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -153,15 +154,15 @@ const AhliList = () => {
     fetchData();
   }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
-  useEffect(() => {
-    // Menambahkan event listener untuk tombol "Enter" pada komponen ini
-    document.addEventListener('keypress', handleEnterKeyPress);
+  // useEffect(() => {
+  //   // Menambahkan event listener untuk tombol "Enter" pada komponen ini
+  //   document.addEventListener('keypress', handleEnterKeyPress);
 
-    // Membersihkan event listener ketika komponen di-unmount
-    return () => {
-      document.removeEventListener('keypress', handleEnterKeyPress);
-    };
-  }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
+  //   // Membersihkan event listener ketika komponen di-unmount
+  //   return () => {
+  //     document.removeEventListener('keypress', handleEnterKeyPress);
+  //   };
+  // }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
     let param = {
@@ -322,19 +323,22 @@ const AhliList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Ahli', 'Bidang Ahli', 'Bukti Keahlian'],
+      ['Nama Petugas', 'Jabatan', 'Pangkat', 'Divisi'],
       ...data.map((item: any) => [
-        item.nama_ahli,
-        item.bidang_ahli,
-        item.bukti_keahlian,
-        // item.divisi,
+        item.nama,
+        item.jabatan,
+        item.nama_pangkat,
+        item.divisi,
       ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'dataAhli.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-Ahli ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   return isLoading ? (
@@ -343,15 +347,15 @@ const AhliList = () => {
     <div className="container py-[16px]">
       <div className=" rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
-          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+          {/* <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
           <div className="w-full">
             <SearchInputButton
               value={filter}
-              placehorder="Cari nama ahli"
+              placehorder="Cari nama petugas"
               onChange={handleFilterChange}
             />
           </div>
-          {/* <div className="w-full">
+          <div className="w-full">
             <SearchInputButton
               value={filterJabatan}
               placehorder="Cari jabatan"
@@ -369,7 +373,7 @@ const AhliList = () => {
                 {item.nama_pangkat}
               </option>
             ))}
-          </select> */}
+          </select>
 
           <button
             className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
@@ -399,7 +403,7 @@ const AhliList = () => {
           >
             Export&nbsp;Excel
           </button>
-        </div>
+        </div> */}
         </div>
 
         <div className="flex justify-between items-center mb-3">
@@ -455,56 +459,58 @@ const AhliList = () => {
           ) : (
             <>
               {data.map((item: any) => {
-              return (
-                <div>
-                  {isOperator ? 
-                  <>
-                  <div
-                  className="grid grid-cols-2 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-2 capitalize"
-                  key={item.nama_ahli}
-                >
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.nama_ahli}
-                    </p>
-                  </div>
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.bidang_ahli}
-                    </p>
-                  </div>
-                 
-                </div>
-                <div className="border-t border-slate-600"></div>
-                </>
-                  : 
-                  <>
-                  <div
-                  className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                  key={item.nama_ahli}
-                >
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.nama_ahli}
-                    </p>
-                  </div>
+                return (
+                  <div>
+                    {isOperator ? (
+                      <>
+                        <div
+                          className="grid grid-cols-2 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-2 capitalize"
+                          key={item.nama_ahli}
+                        >
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black dark:text-white capitalize">
+                              {item.nama_ahli}
+                            </p>
+                          </div>
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black dark:text-white capitalize">
+                              {item.bidang_ahli}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="border-t border-slate-600"></div>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
+                          key={item.nama_ahli}
+                        >
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black dark:text-white capitalize">
+                              {item.nama_ahli}
+                            </p>
+                          </div>
 
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.bidang_ahli}
-                    </p>
-                  </div>
-                  <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-                  
-                    {/* <button
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black dark:text-white capitalize">
+                              {item.bidang_ahli}
+                            </p>
+                          </div>
+                          <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
+                            {/* <button
                       onClick={() => handleEditClick(item)}
                       className="py-1 px-2 text-black rounded-md bg-blue-300"
                     >
@@ -516,22 +522,22 @@ const AhliList = () => {
                     >
                       Hapus
                     </button> */}
-                     <div className="relative">
-                            <DropdownAction
-                              handleEditClick={() => handleEditClick(item)}
-                              handleDeleteClick={() => handleDeleteClick(item)}
-                            ></DropdownAction>
+                            <div className="relative">
+                              <DropdownAction
+                                handleEditClick={() => handleEditClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
+                              ></DropdownAction>
+                            </div>
                           </div>
+                        </div>
+                        <div className="border-t border-slate-600"></div>
+                      </>
+                    )}
                   </div>
-                </div>
-                <div className="border-t border-slate-600"></div>
-                </>
-                  }
-               
-
-                </div>
-              );
-            })}
+                );
+              })}
             </>
           )}
 

@@ -17,7 +17,7 @@ import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
-import ToolsTip from '../../../components/ToolsTip';
+import ToolsTip from 'renderer/components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
 import DropdownAction from '../../../components/DropdownAction';
 
@@ -484,7 +484,9 @@ const TipeList = () => {
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>

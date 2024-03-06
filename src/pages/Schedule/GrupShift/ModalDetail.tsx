@@ -37,7 +37,7 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
       grup_petugas_id: '',
       nama_grup_petugas: '',
       nama_ketua_grup: '',
-    }
+    },
   );
 
   const [dataPetugasGrup, setDataPetugasGrup] = useState(
@@ -45,7 +45,7 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
       nama_shift: '',
       waktu_mulai: '',
       waktu_selesai: '',
-    }
+    },
   );
 
   const [staff, setStaff] = useState<Staff[]>([]);
@@ -282,27 +282,27 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <div className="error">
-                      Please input{' '}
-                      {errors
-                        .filter((item: string) => !item.startsWith('INVALID_ID'))
-                        .join(', ')}
-                    </div>
-                  )}
+                  <div className="error">
+                    Please input{' '}
+                    {errors
+                      .filter((item: string) => !item.startsWith('INVALID_ID'))
+                      .join(', ')}
+                  </div>
+                )}
                 {isDetail ? null : (
                   <button
                     className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"

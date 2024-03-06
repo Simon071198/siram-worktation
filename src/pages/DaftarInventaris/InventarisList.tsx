@@ -14,27 +14,24 @@ import {
 } from '../../services/api';
 import { AddInventarisModal } from './ModalAddInventaris';
 import { Alerts } from './AlertInventaris';
-// import Loader from 'renderer/common/Loader';
 import Loader from '../../common/Loader';
-// import Pagination from 'renderer/components/Pagination';
 import Pagination from '../../components/Pagination';
 import { DeleteInventarisModal } from './ModalDeleteInventaris';
 import SearchInputButton from '../MasterData/Search';
 
 import * as xlsx from 'xlsx';
 import TextWithEllipsis from './truncate';
-// import DropdownAction from 'renderer/components/DropdownAction';
 import DropdownAction from '../../components/DropdownAction';
 
-const tokenItem = localStorage.getItem('token')
-  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-const token = dataToken.token
+const tokenItem = localStorage.getItem('token');
+const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+const token = dataToken.token;
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
 const InventarisList = () => {
-  const [data, setData]:any = useState([]);
+  const [data, setData]: any = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
   const [ubahPasswordData, setUbahPasswordData] = useState([]);
@@ -46,7 +43,7 @@ const InventarisList = () => {
   const [deleteData, setDeleteData] = useState(null);
   const [filter, setFilter] = useState('');
   const [filterTipe, setFilterTipe] = useState('');
-  const [tipeAset,setTipeAset]=useState([])
+  const [tipeAset, setTipeAset] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOperator, setIsOperator] = useState<boolean>();
 
@@ -56,7 +53,7 @@ const InventarisList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [pageSize ,setPageSize]=useState(10)
+  const [pageSize, setPageSize] = useState(10);
 
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
@@ -73,7 +70,6 @@ const InventarisList = () => {
     setEditData(item);
     setModalEditOpen(true);
   };
-
 
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
@@ -97,16 +93,16 @@ const InventarisList = () => {
   const handleSubmitAddInventaris = async (params: any) => {
     console.log(params, 'params submit add');
     try {
-      const responseCreate = await apiAsetInsert(params,token);
+      const responseCreate = await apiAsetInsert(params, token);
       if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-         fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'error') {
-        const errorCreate = responseCreate.data.message;  
+        const errorCreate = responseCreate.data.message;
         Alerts.fire({
           icon: 'error',
           title: errorCreate,
@@ -126,7 +122,7 @@ const InventarisList = () => {
   const handleSubmitEditInventaris = async (params: any) => {
     console.log(params, 'params submit edit');
     try {
-      const responseEdit = await apiAsetUpdate(params,token);
+      const responseEdit = await apiAsetUpdate(params, token);
       if (responseEdit.data.status === 'OK') {
         console.log('edit succes');
         Alerts.fire({
@@ -134,7 +130,7 @@ const InventarisList = () => {
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
@@ -155,7 +151,7 @@ const InventarisList = () => {
   const handleSubmitDeleteInventaris = async (params: any) => {
     console.log('DELETE', params);
     try {
-      const responseDelete = await apiAsetDelete(params,token);
+      const responseDelete = await apiAsetDelete(params, token);
       if (responseDelete.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -191,7 +187,7 @@ const InventarisList = () => {
         page: currentPage,
         pageSize: pageSize,
       };
-      const responseRead = await apiAsetRead(params,token);
+      const responseRead = await apiAsetRead(params, token);
       if (responseRead.data.status === 'OK') {
         setData(responseRead.data.records);
         setPages(responseRead.data.pagination.totalPages);
@@ -199,9 +195,8 @@ const InventarisList = () => {
       } else {
         throw new Error(responseRead.data.message);
       }
-
-    } catch (e:any){
-      const error = e.message
+    } catch (e: any) {
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -222,7 +217,7 @@ const InventarisList = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   const handleCloseEditModal = () => {
@@ -232,7 +227,7 @@ const InventarisList = () => {
   useEffect(() => {
     fetchData();
     getTipeAset();
-  }, [currentPage,pageSize]);
+  }, [currentPage, pageSize]);
 
   useEffect(() => {
     if (dataAdmin?.role_name === 'operator') {
@@ -240,9 +235,8 @@ const InventarisList = () => {
     } else {
       setIsOperator(false);
     }
-    
 
-    console.log(isOperator ,'Operator');
+    console.log(isOperator, 'Operator');
   }, [isOperator]);
 
   useEffect(() => {
@@ -253,7 +247,7 @@ const InventarisList = () => {
     return () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
-  }, [filter, filterTipe]); 
+  }, [filter, filterTipe]);
 
   let fetchData = async () => {
     setIsLoading(true);
@@ -265,13 +259,13 @@ const InventarisList = () => {
       pageSize: pageSize,
     };
     try {
-      const response = await apiAsetRead(params,token)
-      if(response.data.status === "OK"){
-      setData(response.data.records)
-      setPages(response.data.pagination.totalPages)
-      setRows(response.data.pagination.totalRecords)
+      const response = await apiAsetRead(params, token);
+      if (response.data.status === 'OK') {
+        setData(response.data.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
       } else {
-        throw new Error (response.data.message)
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       const error = e.message;
@@ -288,7 +282,7 @@ const InventarisList = () => {
       filter: '',
     };
     try {
-      const response = await apiTipeAsetRead(params,token);
+      const response = await apiTipeAsetRead(params, token);
       // console.log(response,'RUANGAN')
       setTipeAset(response.data.records);
     } catch (e: any) {
@@ -308,7 +302,7 @@ const InventarisList = () => {
         'Model',
         'Merek',
         'Asal Barang',
-        'Tanggal Masuk'
+        'Tanggal Masuk',
       ],
       ...data.map((item: any) => [
         item.nama_barang,
@@ -317,7 +311,7 @@ const InventarisList = () => {
         item.model,
         item.merek,
         item.company,
-        item.tanggal_masuk
+        item.tanggal_masuk,
       ]),
     ];
 
@@ -328,7 +322,7 @@ const InventarisList = () => {
   };
 
   document.querySelectorAll('.custom-truncate').forEach(function (element) {
-    let text:any = element.textContent;
+    let text: any = element.textContent;
     if (text.length > 5) {
       element.textContent = '...' + text.substring(text.length - 3); // Ubah 24 menjadi 21
     }
@@ -337,172 +331,183 @@ const InventarisList = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <div className="flex justify-center w-full">
-        <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-          <div className="w-full">
-            <SearchInputButton
-              value={filter}
-              placehorder="Cari nama inventaris"
-              onChange={handleFilterChange}
-            />
-          </div>
-
-          <select
-            value={filterTipe}
-            onChange={handleFilterChangeTipe}
-            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-          >
-            <option value="">Semua tipe</option>
-            {tipeAset.map((item: any) => (
-              <option value={item.nama_tipe}>
-                {item.nama_tipe}
-              </option>
-            ))}
-          </select>
-
-         
-
-          <button
-            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-            type="button"
-            onClick={handleSearchClick}
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-black"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
+    <div className="container py-[16px]">
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="flex justify-center w-full">
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+            <div className="w-full">
+              <SearchInputButton
+                value={filter}
+                placehorder="Cari nama inventaris"
+                onChange={handleFilterChange}
               />
-            </svg>
-          </button>
+            </div>
 
-          <button
-            onClick={exportToExcel}
-            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            <select
+              value={filterTipe}
+              onChange={handleFilterChangeTipe}
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+            >
+              <option value="">Semua tipe</option>
+              {tipeAset.map((item: any) => (
+                <option value={item.nama_tipe}>{item.nama_tipe}</option>
+              ))}
+            </select>
+
+            <button
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              type="button"
+              onClick={handleSearchClick}
+              id="button-addon1"
+              data-te-ripple-init
+              data-te-ripple-color="light"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 text-black"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
+              Export&nbsp;Excel
+            </button>
+          </div>
+        </div>
+        <div className="flex justify-between">
+          <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
+            Daftar Inventaris
+          </h4>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(true)}
+              className=" text-black rounded-md font-semibold bg-blue-300 w-20 h-10"
+            >
+              Tambah
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-col">
+          <div
+            className={`text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ${
+              isOperator ? 'grid grid-cols-5' : 'grid grid-cols-6'
+            }`}
           >
-            Export&nbsp;Excel
-          </button>
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
-          Daftar Inventaris
-        </h4>
-        {!isOperator && 
-        <button
-          onClick={() => setModalAddOpen(true)}
-          className=" text-black rounded-md font-semibold bg-blue-300 w-20 h-10"
-        >
-          Tambah
-        </button>
-        }
-      </div>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base ">
+                Foto Barang
+              </h5>
+            </div>
 
-      <div className="flex flex-col">
-        <div className={`text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ${isOperator ? 'grid grid-cols-5':'grid grid-cols-6'}`} >
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base ">
-              Foto Barang
-            </h5>
+            <div className="p-2.5 xl:p-5">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama Barang
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Kode SN
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Model
+              </h5>
+            </div>
+
+            <div className="p-2.5 xl:p-5 ">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Update Terakhir
+              </h5>
+            </div>
+            {!isOperator && (
+              <div className="p-2.5 xl:p-5 ">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Aksi
+                </h5>
+              </div>
+            )}
           </div>
-  
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama Barang
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 ">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Kode SN
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 ">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Model
-            </h5>
-          </div>
-        
-          <div className="p-2.5 xl:p-5 ">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Update Terakhir
-            </h5>
-          </div>
-          {!isOperator && 
-          <div className="p-2.5 xl:p-5 ">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Aksi
-            </h5>
-          </div>
-          }
-        </div>
 
-        {data.length === 0 ? (
-          <div className="flex justify-center p-4 w-ful">No Data</div>
-        ) : ( 
-           <>
-            {data.map((item: any) => {
-              return (
-                <div>
+          {data.length === 0 ? (
+            <div className="flex justify-center p-4 w-ful">No Data</div>
+          ) : (
+            <>
+              {data.map((item: any) => {
+                return (
+                  <div>
+                    <div
+                      className={` rounded-sm justify-center bg-gray-2 dark:bg-meta-4 ${
+                        isOperator ? 'grid grid-cols-5' : 'grid grid-cols-6'
+                      }`}
+                    >
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <img
+                          src={
+                            'https://dev.transforme.co.id/siram_admin_api' +
+                            item.foto_barang
+                          }
+                          alt="picture"
+                          className="w-20 h-20 object-fit border-slate-400 border"
+                        ></img>
+                      </div>
 
-                  <div
-                    className={` rounded-sm justify-center bg-gray-2 dark:bg-meta-4 ${isOperator ? 'grid grid-cols-5':'grid grid-cols-6'}`}
-                  >
-                    <div 
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <img src={
-                              'https://dev.transforme.co.id/siram_admin_api' +
-                              item.foto_barang
-                            } alt='picture' className='w-20 h-20 object-fit border-slate-400 border'> 
-                      </img>
-                    </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block truncate">
+                          {item.nama_aset}
+                        </p>
+                      </div>
 
-                    <div 
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block truncate">
-                        {item.nama_aset}
-                      </p>
-                    </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block">
+                          <TextWithEllipsis
+                            text={item.serial_number}
+                            maxLength={10}
+                          ></TextWithEllipsis>
+                        </p>
+                      </div>
 
-                    <div 
-                     onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block">
-                        <TextWithEllipsis text={item.serial_number} maxLength={10}></TextWithEllipsis>
-                      </p>
-                    </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block truncate">
+                          {item.model}
+                        </p>
+                      </div>
 
-                    <div 
-                     onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block truncate">
-                        {item.model}
-                      </p>
-                    </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className="hidden text-black dark:text-white sm:block truncate">
+                          {item.updated_at}
+                        </p>
+                      </div>
 
-
-                    <div 
-                     onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                      <p className="hidden text-black dark:text-white sm:block truncate">
-                        {item.updated_at}
-                      </p>
-                    </div>
-                
-                    {!isOperator && 
-                    <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
-                      {/* <button
+                      {!isOperator && (
+                        <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                          {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
                       >
@@ -514,81 +519,81 @@ const InventarisList = () => {
                       >
                         Hapus
                       </button> */}
-                       <div className="relative">
+                          <div className="relative">
                             <DropdownAction
                               handleEditClick={() => handleEditClick(item)}
                               handleDeleteClick={() => handleDeleteClick(item)}
                             ></DropdownAction>
                           </div>
+                        </div>
+                      )}
                     </div>
-                    }
+                    <div className="border-t border-slate-600"></div>
                   </div>
-                <div className="border-t border-slate-600"></div>
-                </div>
-              );
-            })}
-          </>
-        )}
+                );
+              })}
+            </>
+          )}
 
-        {modalDetailOpen && (
-          <AddInventarisModal
-            closeModal={() => setModalDetailOpen(false)}
-            onSubmit={handleSubmitAddInventaris}
-            defaultValue={detailData}
-            isDetail={true}
-            token = {token}
-          />
-        )}
-        {modalEditOpen && (
-          <AddInventarisModal
-            closeModal={handleCloseEditModal}
-            onSubmit={handleSubmitEditInventaris}
-            defaultValue={editData}
-            isEdit={true}
-            token = {token}
-          />
-        )}
-        {modalAddOpen && (
-          <AddInventarisModal
-            closeModal={handleCloseAddModal}
-            onSubmit={handleSubmitAddInventaris}
-            token = {token}
-          />
-        )}
-        {modalDeleteOpen && (
-          <DeleteInventarisModal
-            closeModal={handleCloseDeleteModal}
-            onSubmit={handleSubmitDeleteInventaris}
-            defaultValue={deleteData}
-          />
+          {modalDetailOpen && (
+            <AddInventarisModal
+              closeModal={() => setModalDetailOpen(false)}
+              onSubmit={handleSubmitAddInventaris}
+              defaultValue={detailData}
+              isDetail={true}
+              token={token}
+            />
+          )}
+          {modalEditOpen && (
+            <AddInventarisModal
+              closeModal={handleCloseEditModal}
+              onSubmit={handleSubmitEditInventaris}
+              defaultValue={editData}
+              isEdit={true}
+              token={token}
+            />
+          )}
+          {modalAddOpen && (
+            <AddInventarisModal
+              closeModal={handleCloseAddModal}
+              onSubmit={handleSubmitAddInventaris}
+              token={token}
+            />
+          )}
+          {modalDeleteOpen && (
+            <DeleteInventarisModal
+              closeModal={handleCloseDeleteModal}
+              onSubmit={handleSubmitDeleteInventaris}
+              defaultValue={deleteData}
+            />
+          )}
+        </div>
+
+        {data.length === 0 ? null : (
+          <div className="mt-5">
+            <div className="flex gap-4 items-center ">
+              <p>
+                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+              </p>
+              <select
+                value={pageSize}
+                onChange={handleChangePageSize}
+                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              >
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pages}
+              onChangePage={handleChagePage}
+            />
+          </div>
         )}
       </div>
-
-      {data.length === 0 ? null : (
-        <div className="mt-5">
-          <div className='flex gap-4 items-center '>
-          <p>
-            Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-          </p>
-          <select
-            value={pageSize}
-            onChange={handleChangePageSize}
-            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-          >
-            <option value="10">10</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="1000">1000</option>
-          </select>
-            </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pages}
-            onChangePage={handleChagePage}
-          />
-        </div>
-      )}
-    </div>
     </div>
   );
 };

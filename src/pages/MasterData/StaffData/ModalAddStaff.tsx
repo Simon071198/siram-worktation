@@ -79,7 +79,7 @@ export const AddStaffModal = ({
   defaultValue,
   isDetail,
   isEdit,
-  token
+  token,
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
@@ -105,7 +105,7 @@ export const AddStaffModal = ({
       nrp: '',
       lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
       nama_lokasi_otmil: dataAdmin.nama_lokasi_otmil,
-    }
+    },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -157,8 +157,8 @@ export const AddStaffModal = ({
       statusKawinData(),
       pendidikanData(),
       keahlianData(),
-      kesatuanData()
-    ]).then(() => setIsLoading(false))
+      kesatuanData(),
+    ]).then(() => setIsLoading(false));
   }, []);
 
   const validateForm = () => {
@@ -166,7 +166,11 @@ export const AddStaffModal = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'lokasi_lemasmil_id' && key !== 'foto_wajah_fr' && key !== 'nomor_petugas' && key !== 'grup_petugas_id' && key !== 'nama_grup_petugas'// Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+        key !== 'lokasi_lemasmil_id' &&
+        key !== 'foto_wajah_fr' &&
+        key !== 'nomor_petugas' &&
+        key !== 'grup_petugas_id' &&
+        key !== 'nama_grup_petugas' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
       ) {
         if (!value) {
           errorFields.push(key);
@@ -236,7 +240,8 @@ export const AddStaffModal = ({
   };
 
   const pangkatData = async () => {
-    await apiReadAllPangkat()
+    let params = {};
+    await apiReadAllPangkat(params, token)
       .then((res) => {
         setPangkat(res);
       })
@@ -244,12 +249,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const lokasiKesatuanData = async () => {
-    await apiReadAllLokasi()
+    await apiReadAllLokasi(token)
       .then((res) => {
         setLokasi(res);
       })
@@ -257,12 +262,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const kotaData = async () => {
-    await apiKota()
+    await apiKota(token)
       .then((res) => {
         setKota(res);
       })
@@ -270,18 +275,17 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const matraData = async () => {
-    await apiMatraRead({
-      params: {
-        pageSize: 1000,
-        page: 1,
-        filter: {},
-      },
-    })
+    let params = {
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+    await apiMatraRead(params, token)
       .then((res) => {
         setMatra(res.data.records);
       })
@@ -289,12 +293,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const provinsiData = async () => {
-    await apiProvinsi()
+    await apiProvinsi(token)
       .then((res) => {
         setProvinsi(res);
       })
@@ -302,7 +306,7 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -315,12 +319,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const statusKawinData = async () => {
-    await apiStatusKawin()
+    await apiStatusKawin(token)
       .then((res) => {
         setStatusKawin(res);
       })
@@ -328,12 +332,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const pendidikanData = async () => {
-    await apiPendidikan()
+    await apiPendidikan(token)
       .then((res) => {
         setPendidikan(res);
       })
@@ -341,7 +345,7 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -354,12 +358,12 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const kesatuanData = async () => {
-    await apiKesatuan()
+    await apiKesatuan(token)
       .then((res) => {
         setKesatuan(res);
       })
@@ -367,7 +371,7 @@ export const AddStaffModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -376,7 +380,7 @@ export const AddStaffModal = ({
   const handleRemoveFoto = () => {
     setFormState({ ...formState, foto_wajah: '' });
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -637,7 +641,7 @@ export const AddStaffModal = ({
                             {errors.map((item) =>
                               item === 'foto_wajah'
                                 ? 'Masukan foto petugas'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -697,16 +701,16 @@ export const AddStaffModal = ({
                             {errors.map((item) =>
                               item === 'foto_wajah'
                                 ? 'Masukan foto petugas'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-x-4">
                       {/* Nama */}
-                      <div className="form-group w-full">
+                      <div className="form-group h-22 w-full">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -723,43 +727,49 @@ export const AddStaffModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'nama' ? 'Masukan nama' : ''
+                            item === 'nama' ? 'Masukan nama' : '',
                           )}
                         </p>
                       </div>
                       {/* Pangkat */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Pangkat
                         </label>
-                        <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.pangkat_id,
+                                  label: formState.pangkat,
+                                }
+                              : formState.pangkat_id
+                          }
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Pangkat"
                           name="pangkat_id"
-                          onChange={handleChange}
-                          value={formState.pangkat_id}
-                          disabled={isDetail}
-                        >
-                          <option disabled value="">
-                            Pilih pangkat
-                          </option>
-                          {pangkat.map((item) => (
-                            <option value={item.pangkat_id}>
-                              {item.nama_pangkat}
-                            </option>
-                          ))}
-                        </select>
+                          options={pangkat.map((item: any) => ({
+                            value: item.pangkat_id,
+                            label: item.nama_pangkat,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'pangkat_id' ? 'Pilih pangkat' : ''
+                            item === 'pangkat_id' ? 'Pilih pangkat' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Matra */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -767,31 +777,37 @@ export const AddStaffModal = ({
                           Matra
                         </label>
 
-                        <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
                           name="matra_id"
-                          onChange={handleChange}
-                          value={formState.matra_id}
-                          disabled={isDetail}
-                        >
-                          <option disabled value="">
-                            Pilih matra
-                          </option>
-                          {matra.map((item: any) => (
-                            <option value={item.matra_id}>
-                              {item.nama_matra}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder="Pilih Matra"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.matra_id,
+                                  label: formState.nama_matra,
+                                }
+                              : formState.matra_id
+                          }
+                          options={matra.map((item: any) => ({
+                            value: item.matra_id,
+                            label: item.nama_matra,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'matra_id' ? 'Pilih matra' : ''
+                            item === 'matra_id' ? 'Pilih matra' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Nomor Petugas */}
-                      <div className="form-group w-full">
+                      <div className="form-group h-22 w-full">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -808,24 +824,24 @@ export const AddStaffModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'nrp' ? 'Masukan nrp' : ''
+                            item === 'nrp' ? 'Masukan nrp' : '',
                           )}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="mt-5 grid grid-cols-2 gap-4 ">
+                  <div className="grid grid-cols-1 gap-x-4">
+                    <div className="mt-5 grid grid-cols-2 gap-x-4 ">
                       {/* Kode Lokasi */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Lokasi Kesatuan
                         </label>
-                        <select
+                        {/* <select
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                           name="kode_lokasi"
                           onChange={handleChange}
@@ -840,18 +856,40 @@ export const AddStaffModal = ({
                               {item.nama_lokasi_kesatuan}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          name="lokasi_kesatuan_id"
+                          placeholder="Pilih Lokasi Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.lokasi_kesatuan_id,
+                                  label: formState.nama_lokasi_kesatuan,
+                                }
+                              : formState.lokasi_kesatuan_id
+                          }
+                          options={lokasi.map((item: any) => ({
+                            value: item.lokasi_kesatuan_id,
+                            label: item.nama_lokasi_kesatuan,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
                             item === 'kode_lokasi'
                               ? 'Pilih lokasi kesatuan'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
 
                       {/* Kesatuan */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -859,7 +897,7 @@ export const AddStaffModal = ({
                           Kesatuan
                         </label>
 
-                        <select
+                        {/* <select
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                           name="kesatuan_id"
                           onChange={handleChange}
@@ -874,16 +912,38 @@ export const AddStaffModal = ({
                               {item.nama_kesatuan}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          name="kesatuan_id"
+                          placeholder="Pilih Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.kesatuan_id,
+                                  label: formState.nama_kesatuan,
+                                }
+                              : formState.kesatuan_id
+                          }
+                          options={kesatuan.map((item: any) => ({
+                            value: item.kesatuan_id,
+                            label: item.nama_kesatuan,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'kesatuan_id' ? 'Pilih matra' : ''
+                            item === 'kesatuan_id' ? 'Pilih matra' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Jabatan */}
-                      <div className="form-group w-full">
+                      <div className="form-group h-22 w-full">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -900,12 +960,12 @@ export const AddStaffModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'jabatan' ? 'Masukan jabatan' : ''
+                            item === 'jabatan' ? 'Masukan jabatan' : '',
                           )}
                         </p>
                       </div>
                       {/* Divisi */}
-                      <div className="form-group w-full">
+                      <div className="form-group h-22 w-full">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -922,44 +982,50 @@ export const AddStaffModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'divisi' ? 'Masukan divisi' : ''
+                            item === 'divisi' ? 'Masukan divisi' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Pendidikan*/}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Pendidikan Militer
                         </label>
-                        <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
                           name="pendidikan_id"
-                          onChange={handleChange}
-                          value={formState.pendidikan_id}
-                          disabled={isDetail}
-                        >
-                          <option value="" disabled>
-                            Pilih pendidikan
-                          </option>
-                          {pendidikan.map((item) => (
-                            <option value={item.pendidikan_id}>
-                              {item.nama_pendidikan}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder="Pilih Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.pendidikan_id,
+                                  label: formState.nama_pendidikan,
+                                }
+                              : formState.pendidikan_id
+                          }
+                          options={pendidikan.map((item: any) => ({
+                            value: item.pendidikan_id,
+                            label: item.nama_pendidikan,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'pendidikan_id' ? 'Pilih pendidikan' : ''
+                            item === 'pendidikan_id' ? 'Pilih pendidikan' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Keahlian */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -967,7 +1033,7 @@ export const AddStaffModal = ({
                           Keahlian
                         </label>
 
-                        <select
+                        {/* <select
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                           name="bidang_keahlian_id"
                           onChange={handleChange}
@@ -982,18 +1048,40 @@ export const AddStaffModal = ({
                               {item.nama_bidang_keahlian}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          name="bidang_keahlian_id"
+                          placeholder="Pilih Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.bidang_keahlian_id,
+                                  label: formState.nama_bidang_keahlian,
+                                }
+                              : formState.bidang_keahlian_id
+                          }
+                          options={keahlian.map((item: any) => ({
+                            value: item.bidang_keahlian_id,
+                            label: item.nama_bidang_keahlian,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
                             item === 'bidang_keahlian_id'
                               ? 'Pilih keahlian'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
 
                       {/* Jenis Kelamin */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1017,20 +1105,20 @@ export const AddStaffModal = ({
                           {errors.map((item) =>
                             item === 'jenis_kelamin'
                               ? 'Pilih jenis kelamin'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
 
                       {/*  Agama */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Agama
                         </label>
-                        <select
+                        {/* <select
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                           name="agama_id"
                           onChange={handleChange}
@@ -1045,16 +1133,38 @@ export const AddStaffModal = ({
                               {item.nama_agama}
                             </option>
                           ))}
-                        </select>
+                        </select> */}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          name="agama_id"
+                          placeholder="Pilih Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.agama_id,
+                                  label: formState.nama_agama,
+                                }
+                              : formState.agama_id
+                          }
+                          options={agama.map((item: any) => ({
+                            value: item.agama_id,
+                            label: item.nama_agama,
+                          }))}
+                        />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'agama_id' ? 'Pilih agama' : ''
+                            item === 'agama_id' ? 'Pilih agama' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Tempat Lahir */}
-                      <div className="form-group w-full">
+                      <div className="form-group h-22 w-full">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1073,12 +1183,12 @@ export const AddStaffModal = ({
                           {errors.map((item) =>
                             item === 'tempat_lahir'
                               ? 'Masukan tempat lahir'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
                       {/* Tanggal Lahir */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1097,43 +1207,65 @@ export const AddStaffModal = ({
                           {errors.map((item) =>
                             item === 'tanggal_lahir'
                               ? 'Masukan tanggal lahir'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
-
                     </div>
 
                     <div className=" grid grid-cols-2 gap-4">
                       {/* Status Kawin */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Status Kawin
                         </label>
-                        <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="status_kawin_id"
-                          onChange={handleChange}
-                          value={formState.status_kawin_id}
-                          disabled={isDetail}
-                        >
-                          <option value="" disabled>
-                            Pilih status kawin
-                          </option>
-                          {statusKawin.map((item) => (
-                            <option value={item.status_kawin_id}>
-                              {item.nama_status_kawin}
+                        {/* <select
+                            className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                            name="status_kawin_id"
+                            onChange={handleChange}
+                            value={formState.status_kawin_id}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Pilih status kawin
                             </option>
-                          ))}
-                        </select>
+                            {statusKawin.map((item) => (
+                              <option value={item.status_kawin_id}>
+                                {item.nama_status_kawin}
+                              </option>
+                            ))}
+                          </select> */}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          name="status_kawin_id"
+                          placeholder="Pilih Status Kawin"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.status_kawin_id,
+                                  label: formState.nama_status_kawin,
+                                }
+                              : formState.status_kawin_id
+                          }
+                          options={statusKawin.map((item: any) => ({
+                            value: item.status_kawin_id,
+                            label: item.nama_status_kawin,
+                          }))}
+                        />
+
                         <p className="error-text">
                           {errors.map((item) =>
                             item === 'status_kawin_id'
                               ? 'Pilih status kawin'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
@@ -1141,7 +1273,7 @@ export const AddStaffModal = ({
 
                     <div className=" grid grid-cols-2 gap-4">
                       {/* Provinsi */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1168,13 +1300,13 @@ export const AddStaffModal = ({
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={isEdit || isDetail ? (
-                            {
-                              value: formState.provinsi_id,
-                              label: formState.nama_provinsi
-                            })
-                            :
-                            formState.provinsi_id
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.provinsi_id,
+                                  label: formState.nama_provinsi,
+                                }
+                              : formState.provinsi_id
                           }
                           placeholder={'Pilih provinsi'}
                           isClearable={true}
@@ -1185,18 +1317,17 @@ export const AddStaffModal = ({
                           options={provinsi.map((item: any) => ({
                             value: item.provinsi_id,
                             label: item.nama_provinsi,
-                          }))
-                          }
+                          }))}
                           onChange={handleSelectProvinsi}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'provinsi_id' ? 'Pilih provinsi' : ''
+                            item === 'provinsi_id' ? 'Pilih provinsi' : '',
                           )}
                         </p>
                       </div>
                       {/* Kota */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-22 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1216,7 +1347,7 @@ export const AddStaffModal = ({
                           </option>
                           {kota
                             .filter((item: any) => {
-                              return item.provinsi_id === formState.provinsi_id; 
+                              return item.provinsi_id === formState.provinsi_id;
                             })
                             .map((item) => (
                               <option value={item.kota_id}>
@@ -1227,13 +1358,13 @@ export const AddStaffModal = ({
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={isEdit || isDetail ? (
-                            {
-                              value: formState.kota_id,
-                              label: formState.nama_kota
-                            })
-                            :
-                            formState.kota_id
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.kota_id,
+                                  label: formState.nama_kota,
+                                }
+                              : formState.kota_id
                           }
                           placeholder={'Pilih kota'}
                           isClearable={true}
@@ -1241,24 +1372,19 @@ export const AddStaffModal = ({
                           isDisabled={isDetail}
                           name="kota_id"
                           styles={customStyles}
-                          options={
-                            kota
-                              .filter((item: any) => {
-                                return (
-                                  item.provinsi_id === formState.provinsi_id
-                                );
-                              })
-                              .map((item) => ({
-                                value: item.kota_id,
-                                label: item.nama_kota,
-                              }))
-                          }
-
+                          options={kota
+                            .filter((item: any) => {
+                              return item.provinsi_id === formState.provinsi_id;
+                            })
+                            .map((item) => ({
+                              value: item.kota_id,
+                              label: item.nama_kota,
+                            }))}
                           onChange={handleSelectKota}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'kota_id' ? 'Pilih kota' : ''
+                            item === 'kota_id' ? 'Pilih kota' : '',
                           )}
                         </p>
                       </div>
@@ -1266,7 +1392,7 @@ export const AddStaffModal = ({
 
                     <div>
                       {/* Alamat */}
-                      <div className="form-group w-full ">
+                      <div className="form-group h-34 w-full ">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1283,7 +1409,7 @@ export const AddStaffModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'alamat' ? 'Masukan alamat' : ''
+                            item === 'alamat' ? 'Masukan alamat' : '',
                           )}
                         </p>
                       </div>
@@ -1291,109 +1417,99 @@ export const AddStaffModal = ({
                   </div>
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Petugas
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Petugas
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
                           .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
+                            item.startsWith('INVALID_ID'),
                           )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-                {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
-                {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <div className="error mt-4">
-                    <span>Please input :</span>
-                    <p className="text-red-400">
-                      {errors
-                        .filter(
-                          (item: string) => !item.startsWith('INVALID_ID')
-                        )
-                        .join(', ')}
-                    </p>
-                  </div>
-                )} */}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Petugas
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Petugas
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { apiReadAllRuanganOtmil, apiReadAllStaff, apiReadAllWBP, apiReadAlllokasiOtmil, apiReadVisitor, apiReadZona } from '../../services/api';
+import {
+  apiReadAllRuanganOtmil,
+  apiReadAllStaff,
+  apiReadAllWBP,
+  apiReadAlllokasiOtmil,
+  apiReadVisitor,
+  apiReadZona,
+} from '../../services/api';
 import Select from 'react-select';
 
 // interface
@@ -37,15 +44,9 @@ interface namazona {
   nama_zona: string;
 }
 
-
-
-export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> = ({
-  closeModal,
-  onSubmit,
-  defaultValue,
-  isDetail,
-  isEdit,
-}) => {
+export const AddAktifitasPengunjung: React.FC<
+  AddAktifitasPengunjungModalProps
+> = ({ closeModal, onSubmit, defaultValue, isDetail, isEdit }) => {
   const [formState, setFormState] = useState(
     defaultValue || {
       lokasi_otmil_id: '',
@@ -70,7 +71,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
       // jenis_ruangan_lemasmil: '',
       // lokasi_lemasmil_id: '',
       // ruangan_lemasmil_id: '',
-    }
+    },
   );
 
   //state
@@ -85,9 +86,9 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
   const [dataWBP, setDataWBP] = useState([]);
   const [Datapengunjung, setDatapengunjung] = useState<pengunjung[]>([]);
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -137,15 +138,18 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
     return true;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
   const handleSelectStaff = (e: any) => {
     // setSelectedOption(e)
-    setFormState({ ...formState, petugas_id: e?.value });
+    setFormState({ ...formState, petugas_id: e?.value }); // untuk
   };
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -158,24 +162,39 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
     // closeModal();
   };
 
-  const handleRuanganChange = (e: any) => {
-    const selectedRuangan = e.target.value;
+  const handleRuangan = (e: any) => {
+    setFormState({ ...formState, ruangan_otmil_id: e?.value });
+  };
 
-    // Temukan data ruangan berdasarkan ID yang dipilih
-    const selectedData = ruanganotmil.find(
-      (item) => item.ruangan_otmil_id === selectedRuangan
-    );
-    if (selectedData) {
-      setFormState({
-        ...formState,
-        ruangan_otmil_id: selectedData.ruangan_otmil_id,
-        nama_ruangan_otmil: selectedData.nama_ruangan_otmil,
-        jenis_ruangan_otmil: selectedData.jenis_ruangan_otmil,
-        lokasi_otmil_id: selectedData.lokasi_otmil_id,
-        nama_lokasi_otmil: selectedData.nama_lokasi_otmil,
-        zona_id: selectedData.zona_id,
-        nama_zona: selectedData.nama_zona,
-      });
+  const handleRuanganChange = (selectedOption: any) => {
+    if (selectedOption) {
+      const selectedData = ruanganotmil.find(
+        (item) => item.ruangan_otmil_id === selectedOption.value,
+      );
+
+      if (selectedData) {
+        setFormState({
+          ...formState,
+          ruangan_otmil_id: selectedData.ruangan_otmil_id,
+          nama_ruangan_otmil: selectedData.nama_ruangan_otmil,
+          jenis_ruangan_otmil: selectedData.jenis_ruangan_otmil,
+          lokasi_otmil_id: selectedData.lokasi_otmil_id,
+          nama_lokasi_otmil: selectedData.nama_lokasi_otmil,
+          zona_id: selectedData.zona_id,
+          nama_zona: selectedData.nama_zona,
+        });
+      } else {
+        setFormState({
+          ...formState,
+          ruangan_otmil_id: '',
+          nama_ruangan_otmil: '',
+          jenis_ruangan_otmil: '',
+          lokasi_otmil_id: '',
+          nama_lokasi_otmil: '',
+          zona_id: '',
+          nama_zona: '',
+        });
+      }
     } else {
       setFormState({
         ...formState,
@@ -191,16 +210,16 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
   };
 
   const handlePengunjungChange = (e: any) => {
-
     const selectedPengunjung: any = Datapengunjung.find(
-      (item: any) => item.pengunjung_id === e?.value
+      (item: any) => item.pengunjung_id === e?.value,
     );
     setFormState({
       ...formState,
       pengunjung_id: e?.value,
-      wbp_profile_id: selectedPengunjung ? selectedPengunjung.wbp_profile_id : '',
+      wbp_profile_id: selectedPengunjung
+        ? selectedPengunjung.wbp_profile_id
+        : '',
       nama_wbp: selectedPengunjung ? selectedPengunjung.nama_wbp : '',
-      // nama_pengunjung: selectedPengunjung ? selectedPengunjung.nama_pengunjung : '',
     });
   };
 
@@ -212,15 +231,14 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
         page: 1,
         filter: {
           nama_lokasi_otmil: 'Cimahi',
-        }
+        },
       };
       try {
-
         const ruangan = await apiReadAllRuanganOtmil(params, token);
         const ruanganlem = ruangan.data.records;
         setruanganotmil(ruanganlem);
 
-        const lokasi = await apiReadAlllokasiOtmil(token);
+        const lokasi = await apiReadAlllokasiOtmil(params, token);
         const lokasilem = lokasi.data.records;
         setlokasiotmil(lokasilem);
 
@@ -229,22 +247,23 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
         setNamaZona(zona);
 
         const petugasdata = await apiReadAllStaff(params, token);
-        setDataPetugas(petugasdata.data.records)
+        setDataPetugas(petugasdata.data.records);
 
         const wbp = await apiReadAllWBP(params, token);
-        setDataWBP(wbp.data.records)
+        setDataWBP(wbp.data.records);
 
-        const pengunjung = await apiReadVisitor(params);
-        setDatapengunjung(pengunjung.data.records)
+        const pengunjung = await apiReadVisitor(params, token);
+        setDatapengunjung(pengunjung.data.records);
 
         setTimeout(() => {
-          setIsLoading(false)
+          setIsLoading(false);
         }, 300);
-      } catch (err) { throw err }
+      } catch (err) {
+        throw err;
+      }
     };
     fetchData();
   }, []);
-
 
   const customStyles = {
     container: (provided: any) => ({
@@ -415,9 +434,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                 </strong>
               </div>
               <form onSubmit={handleSubmit}>
-
                 <div className="mt-5 grid grid-cols-2 gap-5 justify-normal">
-
                   <div className="form-group w-full">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
@@ -428,7 +445,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="nama_aktivitas_pengunjung"
-                      placeholder='Nama Aktifitas'
+                      placeholder="Nama Aktifitas"
                       onChange={handleChange}
                       value={formState.nama_aktivitas_pengunjung}
                       disabled={isDetail}
@@ -437,7 +454,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       {errors.map((item) =>
                         item === 'nama_aktivitas_pengunjung'
                           ? 'Pilih Aktifitas'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -450,10 +467,10 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       Waktu Mulai Berkunjung
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="waktu_mulai_kunjungan"
-                      placeholder='waktu mulai kunjungan'
+                      placeholder="waktu mulai kunjungan"
                       onChange={handleChange}
                       value={formState.waktu_mulai_kunjungan}
                       disabled={isDetail}
@@ -462,11 +479,10 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       {errors.map((item) =>
                         item === 'waktu_mulai_kunjungan'
                           ? 'Pilih waktu mulai kunjungan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
-
 
                   <div className="form-group w-full">
                     <label
@@ -476,10 +492,10 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       Waktu Selesai Berkunjung
                     </label>
                     <input
-                      type='datetime-local'
+                      type="datetime-local"
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="waktu_selesai_kunjungan"
-                      placeholder='waktu selesai kunjungan'
+                      placeholder="waktu selesai kunjungan"
                       onChange={handleChange}
                       value={formState.waktu_selesai_kunjungan}
                       disabled={isDetail}
@@ -488,7 +504,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       {errors.map((item) =>
                         item === 'waktu_selesai_kunjungan'
                           ? 'Pilih waktu selesai kunjungan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -503,7 +519,7 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="tujuan_kunjungan"
-                      placeholder='tujuan kunjungan'
+                      placeholder="Tujuan kunjungan"
                       onChange={handleChange}
                       value={formState.tujuan_kunjungan}
                       disabled={isDetail}
@@ -512,42 +528,57 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       {errors.map((item) =>
                         item === 'tujuan_kunjungan'
                           ? 'Pilih tujuan kunjungan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
                   <div className="form-group w-full">
-                    <label htmlFor="ruangan_otmil_id">Pilih Ruangan otmil:</label>
-                    <select
-                      id="ruangan_otmil_id"
-                      name="ruangan_otmil_id"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      value={formState.ruangan_otmil_id}
-                      onChange={handleRuanganChange}
-                      disabled={isDetail}
+                    <label
+                      htmlFor="ruangan_otmil_id"
+                      className="block text-sm font-medium text-black dark:text-white"
                     >
-                      <option value="">Pilih Ruangan</option>
-                      {ruanganotmil.map((item) => (
-                        <option
-                          key={item.ruangan_otmil_id}
-                          value={item.ruangan_otmil_id}
-                        >
-                          {item.nama_ruangan_otmil}
-                        </option>
-                      ))}
-                    </select>
+                      Pilih Ruangan otmil
+                    </label>
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.ruangan_otmil_id,
+                              label: formState.nama_ruangan_otmil,
+                            }
+                          : formState.ruangan_otmil_id
+                      }
+                      placeholder={'Pilih Ruangan'}
+                      isClearable={true}
+                      isSearchable={true}
+                      isDisabled={isDetail}
+                      name="ruangan_otmil_id"
+                      styles={customStyles}
+                      options={ruanganotmil.map((item: any) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
+                      onChange={handleRuanganChange}
+                    />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'
                           ? 'Pilih Ruangan Otmil'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
                   <div className="form-group w-full">
-                    <label htmlFor="jenis_ruangan_otmil">Jenis Ruangan:</label>
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="jenis_ruangan_otmil"
+                    >
+                      Jenis Ruangan
+                    </label>
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
@@ -555,18 +586,24 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail || isEdit}
+                      placeholder="Jenis ruangan"
                     />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'jenis_ruangan_otmil'
                           ? 'Masukan Jenis Ruangan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
                   <div className="form-group w-full">
-                    <label htmlFor="nama_lokasi_otmil">Nama Lokasi otmil:</label>
+                    <label
+                      htmlFor="nama_lokasi_otmil"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Nama Lokasi otmil
+                    </label>
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
@@ -574,18 +611,24 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail || isEdit}
+                      placeholder="Nama lokasi"
                     />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'nama_lokasi_otmil'
                           ? 'Masukan Nama Lokasi'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
                   <div className="form-group w-full">
-                    <label htmlFor="nama_zona">Zona :</label>
+                    <label
+                      htmlFor="nama_zona"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Zona
+                    </label>
                     <input
                       type="text"
                       id="nama_zona"
@@ -595,12 +638,11 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       defaultValue={formState.status_zona_ruangan_otmil}
                       value={formState.nama_zona}
                       disabled={isDetail || isEdit}
+                      placeholder="Zona"
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'nama_zona'
-                          ? 'Masukan Zona'
-                          : ''
+                        item === 'nama_zona' ? 'Masukan Zona' : '',
                       )}
                     </p>
                   </div>
@@ -616,13 +658,13 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={isEdit || isDetail ? (
-                        {
-                          value: formState.petugas_id,
-                          label: formState.nama_petugas
-                        })
-                        :
-                        formState.petugas_id
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.petugas_id,
+                              label: formState.nama_petugas,
+                            }
+                          : formState.petugas_id
                       }
                       placeholder={'Pilih Petugas'}
                       isClearable={true}
@@ -633,13 +675,12 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       options={dataPetugas.map((item: any) => ({
                         value: item.petugas_id,
                         label: item.nama,
-                      }))
-                      }
+                      }))}
                       onChange={handleSelectStaff}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'petugas_id' ? 'Pilih Petugas' : ''
+                        item === 'petugas_id' ? 'Pilih Petugas' : '',
                       )}
                     </p>
                   </div>
@@ -655,13 +696,13 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
-                      defaultValue={isEdit || isDetail ? (
-                        {
-                          value: formState.pengunjung_id,
-                          label: formState.nama_pengunjung
-                        })
-                        :
-                        formState.pengunjung_id
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.pengunjung_id,
+                              label: formState.nama_pengunjung,
+                            }
+                          : formState.pengunjung_id
                       }
                       placeholder={'Pilih pengunjung'}
                       isClearable={true}
@@ -672,13 +713,12 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       options={Datapengunjung.map((item: any) => ({
                         value: item.pengunjung_id,
                         label: item.nama,
-                      }))
-                      }
+                      }))}
                       onChange={handlePengunjungChange}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'pengunjung_id' ? 'Pilih pengunjung' : ''
+                        item === 'pengunjung_id' ? 'Pilih pengunjung' : '',
                       )}
                     </p>
                   </div>
@@ -695,37 +735,39 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                       type="text"
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="nama_wbp"
-                      placeholder="nama_wbp"
+                      placeholder="Nama tersangka"
                       onChange={handleChange}
                       value={formState.nama_wbp}
                       disabled
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'nama_wbp' ? 'Pilih WBP' : ''
+                        item === 'nama_wbp' ? 'Pilih Tersangka' : '',
                       )}
                     </p>
                   </div>
-
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) => item.startsWith('INVALID_ID'))[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
 
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -757,8 +799,9 @@ export const AddAktifitasPengunjung: React.FC<AddAktifitasPengunjungModalProps> 
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

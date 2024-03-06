@@ -190,7 +190,7 @@ export default function DoorLog() {
       <div className="flex-col justify-between items-center">
         <h3 className="font-semibold mb-3 text-2xl">Log Pintu</h3>
         <div className="flex justify-between items-end space-x-4 pb-4">
-          <div className='flex gap-4 flex-wrap'>
+          <div className="flex gap-4 flex-wrap">
             <div className="">
               <div className="w-full">
                 <label
@@ -223,7 +223,7 @@ export default function DoorLog() {
                   </label>
                   <input
                     id="name-input"
-                    placeholder='Masukan Nama'
+                    placeholder="Masukan Nama"
                     type="text"
                     name="Name"
                     className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
@@ -244,7 +244,7 @@ export default function DoorLog() {
                     Usia
                   </label>
                   <input
-                    placeholder='Masukan Usia'
+                    placeholder="Masukan Usia"
                     id="age-input"
                     type="text"
                     name="Age"
@@ -366,14 +366,11 @@ export default function DoorLog() {
         </div>
       </div>
 
-
       <div className="flex flex-col">
         <div className="grid grid-cols-9 rounded-t-md bg-gray-2 dark:bg-meta-4 sm:grid-cols-9 dark:bg-slate-600">
-
-
           <div className="py-2.5 text-center xl:py-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama{' '}Prajurit Binaan
+              Nama Prajurit Binaan
             </h5>
           </div>
           <div className="py-2.5 text-center xl:py-5">
@@ -422,13 +419,19 @@ export default function DoorLog() {
           return (
             <div className="grid grid-cols-9 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-9">
               <div className="flex items-center justify-center py-2.5 xl:py-5">
-                <p className="text-meta-2">{item.visitor_name == 'unrecognized' ? 'Tidak Dikenal' : item.visitor_name}</p>
+                <p className="text-meta-2">
+                  {item.visitor_name == 'unrecognized'
+                    ? 'Tidak Dikenal'
+                    : item.visitor_name}
+                </p>
               </div>
               <div className="flex items-center justify-center py-2.5 xl:py-5">
-                <p className="text-meta-2">{item.visitor_name == 'unrecognized' ? 'DMAC 1234' : "iDMAC 1234"}</p>
+                <p className="text-meta-2">
+                  {item.visitor_name == 'unrecognized'
+                    ? 'DMAC 1234'
+                    : 'iDMAC 1234'}
+                </p>
               </div>
-
-
 
               <div className="flex items-center justify-center py-2.5 xl:py-5">
                 <p className="text-meta-2">
@@ -449,23 +452,22 @@ export default function DoorLog() {
               </div>
 
               <div className="hidden items-center justify-center py-2.5 sm:flex xl:py-5">
-                <p className="text-black dark:text-white">
-                  {item.device_name}
-                </p>
+                <p className="text-black dark:text-white">{item.device_name}</p>
               </div>
               <div className="hidden items-center justify-center py-2.5 sm:flex xl:py-5">
-                {item.visitor_name == 'unrecognized'
-                  ? <p className="text-red-500 dark:text-red-500">
-                    Zona Merah </p>
-                  : item.isemployee == true
-                    ? <p className="text-yellow-500 dark:text-yellow-500">
-                      Zona Kuning </p>
-                    : item.isdpo == true
-                      ? <p className="text-red-500 dark:text-red-500">
-                        Zona Merah </p>
-                      : <p className="text-green-500 dark:text-green-500">
-                        Zona Hijau </p>}
-
+                {item.visitor_name == 'unrecognized' ? (
+                  <p className="text-red-500 dark:text-red-500">Zona Merah </p>
+                ) : item.isemployee == true ? (
+                  <p className="text-yellow-500 dark:text-yellow-500">
+                    Zona Kuning{' '}
+                  </p>
+                ) : item.isdpo == true ? (
+                  <p className="text-red-500 dark:text-red-500">Zona Merah </p>
+                ) : (
+                  <p className="text-green-500 dark:text-green-500">
+                    Zona Hijau{' '}
+                  </p>
+                )}
               </div>
               <div className="hidden items-center justify-center px-1 py-2.5 sm:flex xl:py-5">
                 <p className="text-black dark:text-white">{item.timestamp}</p>
@@ -479,7 +481,6 @@ export default function DoorLog() {
           );
         })}
       </div>
-
     </>
   );
 }

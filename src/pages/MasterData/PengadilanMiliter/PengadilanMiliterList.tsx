@@ -12,6 +12,8 @@ import { DeletePengadilanMiliterModal } from './ModalDeletePengadilanMiliter';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
+import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -37,16 +39,15 @@ const PengadilanMiliter = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -87,12 +88,11 @@ const PengadilanMiliter = () => {
         setData(result);
         // setPages(response.data.pagination.totalPages);
         // setRows(response.data.pagination.totalRecords);
-      }
-      else {
+      } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -113,7 +113,7 @@ const PengadilanMiliter = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
   // useEffect untuk fetch data dari API
   useEffect(() => {
@@ -129,7 +129,6 @@ const PengadilanMiliter = () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
 
   const fetchData = async () => {
     let params = {
@@ -150,7 +149,7 @@ const PengadilanMiliter = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -158,17 +157,16 @@ const PengadilanMiliter = () => {
     }
   };
 
-
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
+    console.log('detail', item);
     setDetailData(item);
     setModalDetailOpen(true);
   };
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
-    console.log('edit', item)
+    console.log('edit', item);
     setEditData(item);
     setModalEditOpen(true);
   };
@@ -198,14 +196,13 @@ const PengadilanMiliter = () => {
     try {
       const responseDelete = await apiDeletePengadilanMiliter(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -214,7 +211,7 @@ const PengadilanMiliter = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -226,15 +223,14 @@ const PengadilanMiliter = () => {
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreatePengadilanMiliter(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreatePengadilanMiliter(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -244,7 +240,7 @@ const PengadilanMiliter = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -256,15 +252,14 @@ const PengadilanMiliter = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdatePengadilanMiliter(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdatePengadilanMiliter(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -274,7 +269,7 @@ const PengadilanMiliter = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -291,8 +286,6 @@ const PengadilanMiliter = () => {
 
     console.log(isOperator, 'Operator');
   }, [isOperator]);
-
-
 
   const exportToExcel = () => {
     const dataToExcel = [
@@ -315,14 +308,16 @@ const PengadilanMiliter = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'dataPengadilan-Militer.xlsx');
-  }
-
+    xlsx.writeFile(
+      wb,
+      `Data-PengadilanMiliter ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+  };
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -388,19 +383,17 @@ const PengadilanMiliter = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Pengadilan Militer
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
         <div className="flex flex-col">
-
-          {isOperator ?
-
+          {isOperator ? (
             <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -428,8 +421,7 @@ const PengadilanMiliter = () => {
                 </h5>
               </div>
             </div>
-
-            :
+          ) : (
             <div className="grid grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -462,9 +454,8 @@ const PengadilanMiliter = () => {
                   Aksi
                 </h5>
               </div>
-
             </div>
-          }
+          )}
           {data.length == 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
           ) : (
@@ -472,7 +463,7 @@ const PengadilanMiliter = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ?
+                    {isOperator ? (
                       <>
                         <div
                           className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 capitalize"
@@ -480,7 +471,8 @@ const PengadilanMiliter = () => {
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_pengadilan_militer}
                             </p>
@@ -488,7 +480,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_provinsi}
                             </p>
@@ -496,7 +489,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_kota}
                             </p>
@@ -504,7 +498,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.latitude}
                             </p>
@@ -512,16 +507,16 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.longitude}
                             </p>
                           </div>
-
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                      :
+                    ) : (
                       <>
                         <div
                           className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
@@ -529,7 +524,8 @@ const PengadilanMiliter = () => {
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_pengadilan_militer}
                             </p>
@@ -537,7 +533,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_provinsi}
                             </p>
@@ -545,7 +542,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.nama_kota}
                             </p>
@@ -553,7 +551,8 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.latitude}
                             </p>
@@ -561,32 +560,26 @@ const PengadilanMiliter = () => {
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
                             <p className=" text-black truncate text-center dark:text-white capitalize">
                               {item.longitude}
                             </p>
                           </div>
                           <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
-                            <button
-                              onClick={() => handleEditClick(item)}
-                              className="py-1 px-2 text-black rounded-md bg-blue-300"
-                            >
-                              Ubah
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(item)}
-                              className="py-1 px-2 text-white rounded-md bg-red-400"
-                            >
-                              Hapus
-                            </button>
+                            <div className="relative">
+                              <DropdownAction
+                                handleEditClick={() => handleEditClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
+                              ></DropdownAction>
+                            </div>
                           </div>
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                    }
-
-
+                    )}
                   </div>
                 );
               })}
@@ -629,7 +622,7 @@ const PengadilanMiliter = () => {
 
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

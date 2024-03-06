@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { apiReadAllWBP, apiReadKota, apiReadProvinsi } from '../../../services/api';
+import {
+  apiReadAllWBP,
+  apiReadKota,
+  apiReadProvinsi,
+} from '../../services/api';
 import Select from 'react-select';
 
 interface AddVisitorModalProps {
@@ -25,7 +29,6 @@ interface namawbp {
   wbp_profile_id: string;
 }
 
-
 export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   closeModal,
   onSubmit,
@@ -46,7 +49,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
       hubungan_wbp: '',
       wbp_profile_id: '',
       nik: '',
-    }
+    },
   );
   const [kota, setkota] = useState<Kota[]>([]);
   const [provinsi, setprovinsi] = useState<Pronvisi[]>([]);
@@ -56,10 +59,9 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -113,7 +115,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
     setButtonLoad(true);
 
     onSubmit(formState);
-    console.log(onSubmit)
+    console.log(onSubmit);
     // closeModal();
   };
 
@@ -131,7 +133,6 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
     // setSelectedOption(e)
     setFormState({ ...formState, kota_id: e?.value });
   };
-
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -155,15 +156,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       let params = {
-        pagination: {
-          pageSize: 5,
-        }
-      }
+        pageSize: 1000,
+      };
       try {
-        const kotanama = await apiReadKota(params);
+        const kotanama = await apiReadKota(params, token);
         setkota(kotanama.records);
 
-        const dataProvici = await apiReadProvinsi(params);
+        const dataProvici = await apiReadProvinsi(params, token);
         setprovinsi(dataProvici.records);
 
         const wbp = await apiReadAllWBP(params, token);
@@ -188,10 +187,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
       setResults([]);
     } else {
       try {
-        const response = await apiReadAllWBP({
-          filter: { nama: query },
-          pagination: { pageSize: pageSize, page: 1 }, // Menggunakan pageSize tetap, halaman pertama
-        }, token);
+        const response = await apiReadAllWBP(
+          {
+            filter: { nama: query },
+            pagination: { pageSize: pageSize, page: 1 }, // Menggunakan pageSize tetap, halaman pertama
+          },
+          token,
+        );
 
         if (response.data.status === 'OK') {
           const result = response.data;
@@ -205,12 +207,10 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
     }
   }
 
-
-
   const handleRemoveFoto = () => {
     setFormState({ ...formState, foto_wajah: '' });
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -385,10 +385,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                 </strong>
               </div>
               <form onSubmit={handleSubmit}>
-
-                <div className='flex flex-col gap-4'>
-                  <div className='flex flex-col gap-4'>
-
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4">
                     <div className=" grid grid-cols-2 gap-2 items-start">
                       {/* Gambar */}
                       {isDetail && (
@@ -397,7 +395,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             <img
                               className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
                               src={
-                                'https://dev.transforme.co.id/siram_admin_api/' + formState.foto_wajah
+                                'https://dev.transforme.co.id/siram_admin_api/' +
+                                formState.foto_wajah
                               }
                               alt="Image Preview"
                             />
@@ -419,7 +418,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                                 <img
                                   className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
                                   src={
-                                    'https://dev.transforme.co.id/siram_admin_api/' + formState.foto_wajah
+                                    'https://dev.transforme.co.id/siram_admin_api/' +
+                                    formState.foto_wajah
                                   }
                                   alt="Image Preview"
                                 />
@@ -468,9 +468,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'foto_wajah'
-                                ? 'Masukan foto wbp'
-                                : ''
+                              item === 'foto_wajah' ? 'Masukan foto wbp' : '',
                             )}
                           </p>
                         </div>
@@ -528,17 +526,15 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             </div>
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'foto_wajah'
-                                  ? 'Masukan foto wbp'
-                                  : ''
+                                item === 'foto_wajah' ? 'Masukan foto wbp' : '',
                               )}
                             </p>
                           </div>
                         </div>
                       )}
 
-                      <div className="flex flex-col gap-3 ">
-                        <div className="form-group w-full flex flex-col">
+                      <div className="flex flex-col ">
+                        <div className="form-group h-22 w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -550,20 +546,18 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             name="nama"
                             onChange={handleChange}
                             value={formState.nama}
-                            placeholder='Nama Pengunjung'
+                            placeholder="Nama Pengunjung"
                             disabled={isDetail}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'nama'
-                                ? 'Masukan nama'
-                                : ''
+                              item === 'nama' ? 'Masukan nama' : '',
                             )}
                           </p>
                         </div>
 
                         {/* jenis kelamin */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="form-group h-22 w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -587,13 +581,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             {errors.map((item) =>
                               item === 'jenis_kelamin'
                                 ? 'Pilih Jenis Kelamin'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
 
                         {/* nik */}
-                        <div className="form-group w-full">
+                        <div className="form-group h-22 w-full">
                           <label
                             className="block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -604,23 +598,20 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             type="text"
                             className="w-full rounded border border-stroke   py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                             name="nik"
-                            placeholder='NIK'
+                            placeholder="NIK"
                             onChange={handleChange}
                             value={formState.nik}
                             disabled={isDetail}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'nik'
-                                ? 'Masukan NIK'
-                                : ''
+                              item === 'nik' ? 'Masukan NIK' : '',
                             )}
                           </p>
                         </div>
 
-
                         {/* Alamat */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="form-group h-30 w-full flex flex-col">
                           <label
                             className=" block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -631,28 +622,24 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             className="w-full max-h-[94px] min-h-[100px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                             name="alamat"
                             onChange={handleChange}
-                            placeholder='Alamat'
+                            placeholder="Alamat"
                             value={formState.alamat}
                             disabled={isDetail}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'alamat'
-                                ? 'Masukan Alamat'
-                                : ''
+                              item === 'alamat' ? 'Masukan Alamat' : '',
                             )}
                           </p>
                         </div>
-
-
                       </div>
                     </div>
                   </div>
 
-                  <div className='grid grid-cols-2 gap-4 items-start'>
+                  <div className="grid grid-cols-2 mt-2 gap-x-4 items-start">
                     {/* wbp yg di kunjungi
             {isDetail && (
-          <div className="form-group w-full">
+          <div className="form-group h-22 w-full">
             <label className="block text-sm font-medium text-black dark:text-white" htmlFor="id">
               WBP Yang DiKunjungi
             </label>
@@ -699,7 +686,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
           )}
 
           {isEdit && (
-          <div className="form-group w-full">
+          <div className="form-group h-22 w-full">
             <label className="block text-sm font-medium text-black dark:text-white" htmlFor="id">
               WBP Yang DiKunjungi
             </label>
@@ -753,7 +740,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
           )}
 
           {!isEdit && !isDetail && (
-          <div className="form-group w-full">
+          <div className="form-group h-22 w-full">
             <label className="block text-sm font-medium text-black dark:text-white" htmlFor="id">
               WBP Yang DiKunjungi
             </label>
@@ -798,9 +785,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
           </div>
           )} */}
 
-
                     {/* Hubungan WBP */}
-                    <div className="form-group w-full">
+                    <div className="form-group h-22 w-full">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -811,22 +797,20 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                         type="text"
                         className="w-full rounded border border-stroke   py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                         name="hubungan_wbp"
-                        placeholder='Hubungan'
+                        placeholder="Hubungan"
                         onChange={handleChange}
                         value={formState.hubungan_wbp}
                         disabled={isDetail}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'hubungan_wbp'
-                            ? 'Masukan Hubungan'
-                            : ''
+                          item === 'hubungan_wbp' ? 'Masukan Hubungan' : '',
                         )}
                       </p>
                     </div>
 
                     {/* wbp yg di kunjungi */}
-                    <div className="form-group w-full ">
+                    <div className="form-group h-22 w-full ">
                       <label
                         className="  block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -836,13 +820,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={isEdit || isDetail ? (
-                          {
-                            value: formState.wbp_profile_id,
-                            label: formState.nama_wbp
-                          })
-                          :
-                          formState.wbp_profile_id
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.wbp_profile_id,
+                                label: formState.nama_wbp,
+                              }
+                            : formState.wbp_profile_id
                         }
                         placeholder={'Pilih wbp yang dikunjungi'}
                         isClearable={true}
@@ -853,19 +837,20 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                         options={nameWBP.map((item: any) => ({
                           value: item.wbp_profile_id,
                           label: item.nama,
-                        }))
-                        }
+                        }))}
                         onChange={handleSelectWBP}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'wbp_profile_id' ? 'Pilih WBP Yang DiKunjungi' : ''
+                          item === 'wbp_profile_id'
+                            ? 'Pilih WBP Yang DiKunjungi'
+                            : '',
                         )}
                       </p>
                     </div>
 
                     {/* Provinsi */}
-                    <div className="form-group w-full ">
+                    <div className="form-group h-22 w-full ">
                       <label
                         className="  block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -892,13 +877,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={isEdit || isDetail ? (
-                          {
-                            value: formState.provinsi_id,
-                            label: formState.nama_provinsi
-                          })
-                          :
-                          formState.provinsi_id
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.provinsi_id,
+                                label: formState.nama_provinsi,
+                              }
+                            : formState.provinsi_id
                         }
                         placeholder={'Pilih provinsi'}
                         isClearable={true}
@@ -909,18 +894,17 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                         options={provinsi.map((item: any) => ({
                           value: item.provinsi_id,
                           label: item.nama_provinsi,
-                        }))
-                        }
+                        }))}
                         onChange={handleSelectProvinsi}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'provinsi_id' ? 'Pilih provinsi' : ''
+                          item === 'provinsi_id' ? 'Pilih provinsi' : '',
                         )}
                       </p>
                     </div>
                     {/* Kota */}
-                    <div className="form-group w-full ">
+                    <div className="form-group h-22 w-full ">
                       <label
                         className="  block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -951,13 +935,13 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                       <Select
                         className="basic-single"
                         classNamePrefix="select"
-                        defaultValue={isEdit || isDetail ? (
-                          {
-                            value: formState.kota_id,
-                            label: formState.nama_kota
-                          })
-                          :
-                          formState.kota_id
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.kota_id,
+                                label: formState.nama_kota,
+                              }
+                            : formState.kota_id
                         }
                         placeholder={'Pilih kota'}
                         isClearable={true}
@@ -965,31 +949,25 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                         isDisabled={isDetail}
                         name="kota_id"
                         styles={customStyles}
-                        options={
-                          kota
-                            .filter((item: any) => {
-                              return (
-                                item.provinsi_id === formState.provinsi_id
-                              );
-                            })
-                            .map((item) => ({
-                              value: item.kota_id,
-                              label: item.nama_kota,
-                            }))
-                        }
-
+                        options={kota
+                          .filter((item: any) => {
+                            return item.provinsi_id === formState.provinsi_id;
+                          })
+                          .map((item) => ({
+                            value: item.kota_id,
+                            label: item.nama_kota,
+                          }))}
                         onChange={handleSelectKota}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'kota_id' ? 'Pilih kota' : ''
+                          item === 'kota_id' ? 'Pilih kota' : '',
                         )}
                       </p>
                     </div>
 
-
                     {/* Tempat Lahir */}
-                    <div className="form-group w-full">
+                    <div className="form-group h-22 w-full">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -1000,22 +978,20 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                         type="text"
                         className="w-full rounded border border-stroke   py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                         name="tempat_lahir"
-                        placeholder='Tempat Lahir'
+                        placeholder="Tempat Lahir"
                         onChange={handleChange}
                         value={formState.tempat_lahir}
                         disabled={isDetail}
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'tempat_lahir'
-                            ? 'Masukan Tempat Lahir'
-                            : ''
+                          item === 'tempat_lahir' ? 'Masukan Tempat Lahir' : '',
                         )}
                       </p>
                     </div>
 
                     {/* Tanggal Lahir */}
-                    <div className="form-group w-full ">
+                    <div className="form-group h-22 w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -1032,107 +1008,106 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'tanggal_lahir'
-                            ? 'Pilih Tanggal Lahir'
-                            : ''
+                          item === 'tanggal_lahir' ? 'Pilih Tanggal Lahir' : '',
                         )}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Pengunjung
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Pengunjung
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
-                          .filter((item: string) => item.startsWith('INVALID_ID'))[0]
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-                {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-              .length > 0 && (
-                <div className="error mt-3">
-                <span>Please input :</span>
-                <p className="text-red-400">
-                  {errors
-                    .filter((item: string) => !item.startsWith('INVALID_ID'))
-                    .join(', ')}
-                </p>
-              </div>
-            )} */}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Pengunjung
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Pengunjung
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

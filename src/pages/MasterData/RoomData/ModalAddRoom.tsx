@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  apiReadAllLokasi,
   apiReadAllRuanganSummary,
-  apiReadAllWBP,
   apiReadAlllokasiOtmil,
   apiReadZona,
 } from '../../../services/api';
@@ -47,7 +45,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       lokasi_otmil_id: '',
       zona_id: '',
       // nama_lokasi_otmil:''
-    }
+    },
   );
   //state
   const [errors, setErrors] = useState({
@@ -65,9 +63,9 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     total_kamera: '',
     total_wbp: '',
   });
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -94,7 +92,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         ruangan_otmil_id: formState.ruangan_otmil_id,
       },
     };
-    let params = {}
+    let params = {};
 
     apiReadAlllokasiOtmil(params, token).then((res: any) => {
       setLokasi(res.data.records);
@@ -102,7 +100,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     apiReadZona(token).then((res: any) => {
       setZona(res.data.records);
     });
-    apiReadAllRuanganSummary(parameter).then((res: any) => {
+    apiReadAllRuanganSummary(parameter, token).then((res: any) => {
       setTotalWbp(res.data.records);
     });
   };
@@ -125,7 +123,12 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       lokasi: '',
     };
 
-    if (formState.nama_ruangan_otmil && formState.jenis_ruangan_otmil && formState.zona_id && formState.lokasi_otmil_id) {
+    if (
+      formState.nama_ruangan_otmil &&
+      formState.jenis_ruangan_otmil &&
+      formState.zona_id &&
+      formState.lokasi_otmil_id
+    ) {
       // Menghapus semua kesalahan jika kondisi ini terpenuhi
       setErrors({ ...errors, nama: '', jenis: '', zona: '', lokasi: '' });
       return true;
@@ -150,11 +153,10 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     }
   };
 
-
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -163,8 +165,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     e.preventDefault();
     if (validateForm()) {
       onSubmit(formState);
-    };
-
+    }
   };
 
   const modalStyles: any = {
@@ -187,7 +188,6 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     },
   };
 
-
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -197,13 +197,15 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] w-1/2 overflow-y-scroll bg-slate-600 border border-slate-800 rounded-md"
       >
         <div
-          className={`modal rounded-sm border border-slate-600 bg-slate-600 shadow-default w-full ${isDetail ? 'h-full' : 'h-full'
-            }`}
+          className={`modal rounded-sm border border-slate-600 bg-slate-600 shadow-default w-full ${
+            isDetail ? 'h-full' : 'h-full'
+          }`}
         >
           {isLoading ? (
             <div
-              className={`justify-center flex items-center ${isDetail ? 'py-50' : 'py-40'
-                }`}
+              className={`justify-center flex items-center ${
+                isDetail ? 'py-50' : 'py-40'
+              }`}
             >
               <svg
                 className="animate-spin h-20 w-20 text-white"
@@ -328,14 +330,15 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                       {isDetail ? (
                         <div className="w-full flex items-center">
                           <h1
-                            className={`py-3 capitalize w-full border rounded-md flex justify-center items-center text-sm ${formState.nama_zona === 'Merah'
-                              ? 'bg-red-500 text-white' // jika zona adalah 'Mera', latar belakang merah dan teks putih
-                              : formState.nama_zona === 'Hijau'
-                                ? 'bg-green-500 text-white' // jika zona adalah 'Hijau', latar belakang hijau dan teks putih
-                                : formState.nama_zona === 'Kuning'
-                                  ? 'bg-yellow-500 text-black' // jika zona adalah 'Kuning', latar belakang kuning dan teks hitam
-                                  : 'bg-gray-2 text-black '
-                              }`}
+                            className={`py-3 capitalize w-full border rounded-md flex justify-center items-center text-sm ${
+                              formState.nama_zona === 'Merah'
+                                ? 'bg-red-500 text-white' // jika zona adalah 'Mera', latar belakang merah dan teks putih
+                                : formState.nama_zona === 'Hijau'
+                                  ? 'bg-green-500 text-white' // jika zona adalah 'Hijau', latar belakang hijau dan teks putih
+                                  : formState.nama_zona === 'Kuning'
+                                    ? 'bg-yellow-500 text-black' // jika zona adalah 'Kuning', latar belakang kuning dan teks hitam
+                                    : 'bg-gray-2 text-black '
+                            }`}
                           >
                             {formState.nama_zona}
                           </h1>
@@ -353,7 +356,9 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                               Pilih Zona Ruangan
                             </option>
                             {zona.map((item) => (
-                              <option value={item.zona_id}>{item.nama_zona}</option>
+                              <option value={item.zona_id}>
+                                {item.nama_zona}
+                              </option>
                             ))}
                           </select>
                           {errors.zona ? (

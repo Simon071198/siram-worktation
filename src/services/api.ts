@@ -20,8 +20,8 @@ function removeBase64Prefix(base64String: string) {
   return base64String;
 }
 
-// api realtime 
-export async function apiRealtimeLog(params: any,token:any) {
+// api realtime
+export async function apiRealtimeLog(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -41,11 +41,15 @@ export async function apiRealtimeLog(params: any,token:any) {
 }
 
 // API status wbp start
-export async function apiReadStatusWBP() {
+export async function apiReadStatusWBP(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
       url: newwebserviceurl + 'siram_api/status_wbp_kasus_read.php',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -1093,7 +1097,7 @@ export async function apiCreateAktifitasPengunjung(params: any, token: any) {
 // aktifitas Pengunjung end
 
 // api kamera
-export async function apiReadKamera(params: any) {
+export async function apiReadKamera(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -1101,7 +1105,7 @@ export async function apiReadKamera(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization' : `Bearer ${params.token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response);
@@ -1170,7 +1174,7 @@ export async function apiCreateKamera(params: any, token: any) {
 }
 
 // api Gateway start
-export async function apiReadGateway(params: any) {
+export async function apiReadGateway(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -1178,7 +1182,7 @@ export async function apiReadGateway(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization' : `Bearer ${params.token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(params);
@@ -1248,7 +1252,7 @@ export async function apiCreateGateway(params: any, token: any) {
 // api Gateway end
 
 // api Gelang start
-export async function apiReadGelang(params: any) {
+export async function apiReadGelang(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -1256,7 +1260,7 @@ export async function apiReadGelang(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization' : `Bearer ${params.token}`
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(params);
@@ -1384,12 +1388,16 @@ export async function apiCreateKategoriPerkara(params: any, token: any) {
 }
 // api kategori Perkara end
 
-export async function apiReadKota(params: any) {
+export async function apiReadKota(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response.data);
     return response.data.records;
@@ -1399,12 +1407,16 @@ export async function apiReadKota(params: any) {
   }
 }
 
-export async function apiReadProvinsi(params: any) {
+export async function apiReadProvinsi(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
       url: newwebserviceurl + 'siram_api/provinsi_read.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log('hallo', response.data);
     return response.data;
@@ -1471,7 +1483,7 @@ export async function apiReadjenisperkara(params: any, token: any) {
 }
 
 // Visitor API
-export async function apiReadVisitor(params: any) {
+export async function apiReadVisitor(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -1479,7 +1491,7 @@ export async function apiReadVisitor(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data);
@@ -1602,12 +1614,16 @@ export async function apiReadAllGelang(params: any) {
 }
 
 // Event API
-export async function apiReadAllEvent(params: any) {
+export async function apiReadAllEvent(params: any, token: any) {
   try {
     const response = await axios({
       method: 'POST',
       url: newwebserviceurl + 'siram_api/kegiatan_read.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -2079,12 +2095,16 @@ export async function apiDeletePenugasanShift(params: any, token: string) {
 }
 
 //Read Ruangan summary
-export async function apiReadAllRuanganSummary(params: any) {
+export async function apiReadAllRuanganSummary(params: any, token: any) {
   try {
     const response = await axios({
       method: 'POST',
       url: newwebserviceurl + 'siram_api/ruangan_summary.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -2149,6 +2169,22 @@ export async function apiReadZona(token: any) {
   }
 }
 
+// api version
+export async function apiversion(params: any) {
+  try {
+    const response = await axios({
+      method: 'POST',
+      url: newwebserviceurl + 'siram_api/version_check.php',
+      data: params,
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // api ruangan lemasmil
 export async function apiReadAllRuanganLemasmil(params: any) {
   try {
@@ -2184,7 +2220,7 @@ export async function apiReadAllRuanganOtmil(params: any, token: any) {
   try {
     const response = await axios({
       method: 'POST',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_read.php',
+      url: newwebserviceurl + 'siram_api/ruangan_otmil_read.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2342,7 +2378,7 @@ export async function apiDeleteJenisJahat(params: any, token: any) {
   }
 }
 
-export async function apiReadKategoriPerkara(params: any) {
+export async function apiReadKategoriPerkara(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -2350,6 +2386,7 @@ export async function apiReadKategoriPerkara(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data);
@@ -2677,7 +2714,7 @@ export async function apiLocationDeviceStatusTotalSummary(params: any) {
   }
 }
 export async function apiLocationDeviceStatusTotalSummaryByLocation(
-  params: any
+  params: any,
 ) {
   try {
     const response = await axios({
@@ -3210,7 +3247,7 @@ export async function apiVisitorSearch(params: any) {
       {
         ...body,
         imageData: image,
-      }
+      },
     );
 
     console.log(response.data.code);
@@ -3220,7 +3257,7 @@ export async function apiVisitorSearch(params: any) {
         webserviceurl + 'gema_admin_api/visitor/readOne.php',
         {
           visitorId: response.data.data.imageID,
-        }
+        },
       );
 
       console.log(visitorResponse.data.data.records);
@@ -3365,7 +3402,7 @@ export function faceCompareChina(params: any) {
           axios
             .post(
               webserviceurl + 'gema_admin_api/visitor_log/insert.php',
-              paramApiLocal
+              paramApiLocal,
             )
             .then((result) => {
               console.log('result', result);
@@ -3418,7 +3455,7 @@ export function apiUserLogin(params: any) {
 
 // new api
 
-export async function apiReadAllLokasi() {
+export async function apiReadAllLokasi(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3426,6 +3463,7 @@ export async function apiReadAllLokasi() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3436,14 +3474,16 @@ export async function apiReadAllLokasi() {
   }
 }
 
-export async function apiReadAllPangkat() {
+export async function apiReadAllPangkat(params: any, token: any) {
+  console.log(params, token, '6666 ');
   try {
     const response = await axios({
       method: 'post',
       url: newWebservice + 'siram_api/pangkat_read.php',
-      data: {},
+      data: params,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3454,7 +3494,7 @@ export async function apiReadAllPangkat() {
   }
 }
 
-export async function apiKota() {
+export async function apiKota(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3462,6 +3502,7 @@ export async function apiKota() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3472,7 +3513,7 @@ export async function apiKota() {
   }
 }
 
-export async function apiProvinsi() {
+export async function apiProvinsi(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3480,6 +3521,7 @@ export async function apiProvinsi() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3509,7 +3551,7 @@ export async function apiAgama(token: any) {
   }
 }
 
-export async function apiStatusKawin() {
+export async function apiStatusKawin(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3517,6 +3559,7 @@ export async function apiStatusKawin() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3527,7 +3570,7 @@ export async function apiStatusKawin() {
   }
 }
 
-export async function apiPendidikan() {
+export async function apiPendidikan(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3535,6 +3578,7 @@ export async function apiPendidikan() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3564,7 +3608,7 @@ export async function apiKeahlian(token: any) {
   }
 }
 
-export async function apiKesatuan() {
+export async function apiKesatuan(token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3572,6 +3616,7 @@ export async function apiKesatuan() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3582,7 +3627,7 @@ export async function apiKesatuan() {
   }
 }
 
-export async function apiReadAllKategoriJahat() {
+export async function apiReadAllKategoriJahat(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3590,6 +3635,7 @@ export async function apiReadAllKategoriJahat() {
       data: {},
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);
@@ -3695,12 +3741,16 @@ export async function apiUpdateAllStaff(params: any, token: any) {
   }
 }
 
-export async function apiReadAllHunian(params: any) {
+export async function apiReadAllHunian(params: any, token: any) {
   try {
     const response = await axios({
       method: 'POST',
       url: newWebservice + 'siram_api/hunian_wbp_otmil_read.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -3710,12 +3760,16 @@ export async function apiReadAllHunian(params: any) {
   }
 }
 
-export async function apiGelang(params: any) {
+export async function apiGelang(params: any, token: any) {
   try {
     const response = await axios({
       method: 'POST',
       url: newWebservice + 'siram_api/dashboard_gelang_read.php',
       data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -4086,7 +4140,7 @@ export async function apiAsetDelete(params: any, token: any) {
   }
 }
 
-export async function apiMatraRead(params: any) {
+export async function apiMatraRead(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -4094,6 +4148,7 @@ export async function apiMatraRead(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response);
@@ -4498,7 +4553,7 @@ export async function allKameraOtmil() {
   }
 }
 
-export async function allKameraOtmilByLocation() {
+export async function allKameraOtmilByLocation(token: any) {
   const otmil = {
     lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
   };
@@ -4509,6 +4564,7 @@ export async function allKameraOtmilByLocation() {
       data: otmil,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data.records);

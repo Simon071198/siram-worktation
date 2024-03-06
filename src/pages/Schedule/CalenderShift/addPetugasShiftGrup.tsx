@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   apiReadAllPenugasanShift,
+  apiReadAllPetugasShift,
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
@@ -9,12 +10,10 @@ import { Alerts } from '../GrupShift/Alert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { BiLoaderAlt } from 'react-icons/bi';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
 
-
-interface Schedule {
-  schedule_id: any;
-  shif_id: any;
-}
 interface Shift {
   shift_id: any;
   nama_shift: any;
@@ -50,9 +49,22 @@ const AddPetugasShiftGrup = ({
       tanggal: '',
       bulan: '',
       tahun: '',
-    }
+    },
   );
   const [staff, setStaff] = useState<Staff[]>([]);
+
+  // //DatePicker
+  const tanggal = dayjs(
+    `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
+    {
+      locale: 'id',
+    },
+  ).format('YYYY MM DD');
+  const [selectedDate, setSelectedDate] = useState(dayjs(tanggal));
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    dayjs(tanggal).add(4, 'day'),
+  );
+  console.log('time', selectedDate, 'end', selectedEndDate, 'defaul', tanggal);
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
@@ -70,7 +82,7 @@ const AddPetugasShiftGrup = ({
     };
   }, [closeModal]);
 
-  const [schedule, setSchedule] = useState<Schedule[]>([]);
+  const [schedule, setSchedule] = useState<any[]>([]);
   const [shift, setShift] = useState<Shift[]>([]);
   const [waktu, setWaktu] = useState({
     waktu_mulai: shift[0]?.waktu_mulai,
@@ -82,10 +94,7 @@ const AddPetugasShiftGrup = ({
       nama_penugasan: '',
     },
   ]);
-  const [addShift, setAddShift] = useState({
-    shift_id: '',
-    schedule_id: '',
-  });
+
   const [petugasShiftAdd, setPetugasShiftAdd] = useState([
     {
       shift_id: '',
@@ -103,13 +112,30 @@ const AddPetugasShiftGrup = ({
     },
   ]);
 
+  const [startDate, setStartDate] = useState({
+    tanggal: parseInt(dayjs(selectedDate).format('D')),
+    bulan: parseInt(dayjs(selectedDate).format('M')),
+    tahun: parseInt(dayjs(selectedDate).format('YYYY')),
+  });
+
+  const [endDate, setEndDate] = useState({
+    tanggal: parseInt(dayjs(selectedEndDate).format('D')),
+    bulan: parseInt(dayjs(selectedEndDate).format('M')),
+    tahun: parseInt(dayjs(selectedEndDate).format('YYYY')),
+  });
+
+  const [shiftSelect, setShiftSelect] = useState<any>({
+    shift_id: '',
+    nama_shift: '',
+  });
+
   useEffect(() => {
     const addEntriesForStaff = () => {
       const newEntries = staff.map((staffItem: any) => {
         return {
-          shift_id: addShift.shift_id, // Isi dengan shift_id yang sesuai
+          shift_id: '', // Isi dengan shift_id yang sesuai
           petugas_id: staffItem.petugas_id,
-          schedule_id: addShift.schedule_id,
+          schedule_id: '',
           status_kehadiran: '0',
           jam_kehadiran: '',
           status_izin: '',
@@ -129,7 +155,7 @@ const AddPetugasShiftGrup = ({
       return [...petugasShiftAdd, ...newEntries];
     };
     addEntriesForStaff();
-  }, [staff, addShift]);
+  }, [staff]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -141,37 +167,11 @@ const AddPetugasShiftGrup = ({
           grup_petugas_id: dataPetugasShift.grup_petugas_id,
         },
       };
-      const filter = {
-        filter: {
-          tanggal: dataPetugasShift.tanggal,
-          bulan: dataPetugasShift.bulan,
-          tahun: dataPetugasShift.tahun,
-        },
-      };
       try {
-        const schedule = await apiReadAllScheduleShift(filter, token);
         const shift = await apiReadAllShift(data, token);
         const staff = await apiReadAllStaff(params, token);
         const penugasan = await apiReadAllPenugasanShift(data, token);
-        const selectedScheduleId = schedule.data.records.find(
-          (item: any) => item.schedule_id === defaultValue?.schedule_id
-        );
-        const selectedShiftId = shift.data.records.find(
-          (item: any) => item.shif_id === selectedScheduleId?.shif_id
-        );
-
-        setSchedule(schedule.data.records);
         setShift(shift.data.records);
-        setAddShift({
-          ...addShift,
-          shift_id: selectedScheduleId?.shift_id,
-          schedule_id: defaultValue?.schedule_id,
-        });
-        setWaktu({
-          ...waktu,
-          waktu_mulai: selectedShiftId?.waktu_mulai,
-          waktu_selesai: selectedShiftId?.waktu_selesai,
-        });
         setStaff(staff.data.records);
         setPenugasan(penugasan.data.records);
         setIsLoading(false);
@@ -185,59 +185,169 @@ const AddPetugasShiftGrup = ({
     fetchSchedule();
   }, []);
 
+  const shiftOptions = shift.filter((item: any) =>
+    schedule.some((jadwal: any) => jadwal.shift_id === item.shift_id),
+  );
+
+  // const [dataAddScedule,setDataAddScedule]=useState<any[]>([])
+  const [petugasShift, setPetugasShift] = useState<any[]>([]);
+  const [sceduleAvail, setSceduleAvail] = useState<any[]>([]);
+
+  useEffect(() => {
+    const filterSchedule = {
+      pageSize: Number.MAX_SAFE_INTEGER,
+      filter: {
+        tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
+        bulan: startDate.bulan,
+        tahun: startDate.tahun,
+      },
+    };
+    const fetchSchedule = async () => {
+      try {
+        const petugasShift = await apiReadAllPetugasShift(
+          filterSchedule,
+          token,
+        );
+        const schedule = await apiReadAllScheduleShift(filterSchedule, token);
+        const filterPetugas = petugasShift.data.records?.filter(
+          (item: any) => item.grup_petugas_id === defaultValue?.grup_petugas_id,
+        );
+        setPetugasShift(filterPetugas);
+        setSchedule(schedule.data.records);
+        setShiftSelect({
+          ...shiftSelect,
+          shift_id: '',
+          nama_shift: '',
+        });
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
+    };
+    fetchSchedule();
+  }, [selectedEndDate]);
+
   const handleChangeShift = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedShiftId = e.target.value;
     const jamKerja = shift.find(
-      (item: any) => item.shift_id === selectedShiftId
+      (item: any) => item.shift_id === selectedShiftId,
     );
-    const selectedSchedule = schedule.find(
-      (item: any) => item.shift_id === selectedShiftId
+    const selectedSchedule = schedule?.filter(
+      (item: any) => item.shift_id === selectedShiftId,
     );
+    const sceduleAvail = selectedSchedule?.filter(
+      (item: any) =>
+        !petugasShift.some(
+          (items: any) => item.schedule_id === items.schedule_id,
+        ),
+    );
+    setSceduleAvail(sceduleAvail);
+
     setWaktu({
       ...waktu,
       waktu_mulai: jamKerja?.waktu_mulai,
       waktu_selesai: jamKerja?.waktu_selesai,
     });
-    setAddShift({
-      ...addShift,
+    setShiftSelect({
+      ...shiftSelect,
       shift_id: e.target.value,
-      schedule_id: selectedSchedule?.schedule_id,
+      nama_shift: selectedSchedule[0]?.nama_shift,
     });
   };
 
   const handleChangePenugasan = (e: any, petugas: any) => {
     const petugasId = petugasShiftAdd.findIndex(
-      (item) => item.petugas_id === petugas
+      (item) => item.petugas_id === petugas,
     );
     const updatedPetugasShiftAdd = [...petugasShiftAdd];
     updatedPetugasShiftAdd[petugasId].penugasan_id = e;
     setPetugasShiftAdd(updatedPetugasShiftAdd);
   };
-  console.log('adad:', petugasShiftAdd);
 
-  const handleSubmit = () => {
-    setButtonLoad(true);
-    onSubmit(petugasShiftAdd).then(() => setButtonLoad(false));
+  const [errors, setErrors] = useState<string[]>([]);
+  const validateForm = () => {
+    let errorFields = [];
+
+    // Reset pesan kesalahan sebelum memeriksa kondisi
+    setErrors([]);
+
+    if (!shiftSelect.shift_id) {
+      errorFields.push('shift_id');
+    }
+
+    setErrors(errorFields);
+
+    if (errorFields.length > 0) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
-  const tanggal = dayjs(`${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`, {
-    locale: 'id'
-  }).format('DD MMMM YYYY')
-  console.log(defaultValue.bulan);
+  const handleSubmit = () => {
+    const addData = sceduleAvail?.flatMap((item: any) =>
+      petugasShiftAdd?.map((items: any) => ({
+        shift_id: item.shift_id,
+        petugas_id: items.petugas_id,
+        schedule_id: item.schedule_id,
+        status_kehadiran: '0',
+        jam_kehadiran: items.jam_kehadiran,
+        status_izin: '',
+        penugasan_id: items.penugasan_id,
+        ruangan_otmil_id: '',
+        ruangan_lemasmil_id: '',
+        status_pengganti: items.status_pengganti,
+        created_at: '',
+        updated_at: '',
+      })),
+    );
+    if (!validateForm()) return;
+    setButtonLoad(true);
+    onSubmit(addData).then(() => setButtonLoad(false));
+  };
 
+  const handleDateChange = (date: any) => {
+    const end = dayjs(date).add(4, 'day');
+    setSelectedDate(dayjs(date));
+    setStartDate({
+      ...startDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+    setSelectedEndDate(dayjs(date).add(4, 'day'));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(end).format('D')),
+      bulan: parseInt(dayjs(end).format('M')),
+      tahun: parseInt(dayjs(end).format('YYYY')),
+    });
+  };
+
+  const handleDateChangeEndDate = (date: any) => {
+    setSelectedEndDate(dayjs(date));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+  };
 
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
       <div
-        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[90vh]`}
+        className={`modal rounded-md border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-[90vh] h-[90vh] overflow-y-auto`}
         ref={modalContainerRef}
       >
         {isLoading ? (
-          <div className={`justify-center flex items-center`}>
+          <div className={`flex justify-center  items-center h-full w-full`}>
             <svg
               className="animate-spin h-20 w-20 text-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +373,7 @@ const AddPetugasShiftGrup = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Data Schedule Shift {tanggal}
+                Tambah Jadwal Shift Kerja
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "
@@ -275,7 +385,40 @@ const AddPetugasShiftGrup = ({
             <div>
               <div className="m-4">
                 <div className="">
-                  <div className="form-group w-full ">
+                  <div className="w-full">
+                    <label
+                      className="block text-md font-medium text-black dark:text-white "
+                      htmlFor="nama_grup_petugas"
+                    >
+                      Tanggal
+                    </label>
+                    <div className="w-full flex items-center space-x-1">
+                      <div className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
+                        <DatePicker
+                          className="dark:text-gray dark:bg-slate-800"
+                          selected={selectedDate.toDate()}
+                          onChange={handleDateChange}
+                          dateFormat="dd MMMM yyyy"
+                          placeholderText="Pilih tanggal"
+                          locale="id"
+                        />
+                      </div>
+                      <h1>s/d</h1>
+                      <div className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
+                        <DatePicker
+                          className="dark:text-gray dark:bg-slate-800"
+                          selected={selectedEndDate.toDate()}
+                          onChange={handleDateChangeEndDate}
+                          dateFormat="dd MMMM yyyy"
+                          placeholderText="Pilih tanggal"
+                          locale="id"
+                          minDate={dayjs(selectedDate).endOf('day').toDate()} // Set minDate to the selected start date
+                          maxDate={dayjs(selectedDate).endOf('month').toDate()}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group w-full mt-3">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -284,27 +427,28 @@ const AddPetugasShiftGrup = ({
                     </label>
                     <select
                       name="shift_id"
+                      value={shiftSelect.shift_id}
                       onChange={handleChangeShift}
-                      value={addShift.shift_id}
                       className="capitalize w-full rounded dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:text-white dark:focus-border-primary"
                     >
-                      <option value="" disabled>
-                        Pilih Shift
-                      </option>
-                      {schedule.map((schedule: any) => {
-                        const matchingShift = shift.find(
-                          (item) => item.shift_id === schedule.shift_id
-                        );
-
+                      <option value="">Pilih Shift</option>
+                      {shiftOptions?.map((schedule: any) => {
                         return (
                           <>
-                            <option value={matchingShift?.shift_id}>
-                              {matchingShift?.nama_shift}
+                            <option value={schedule?.shift_id}>
+                              {schedule?.nama_shift}
                             </option>
                           </>
                         );
                       })}
                     </select>
+                    <div className="h-5">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'shift_id' ? 'Pilih Shift kerja !!' : '',
+                        )}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <div className="form-group w-1/2 ">
@@ -336,31 +480,33 @@ const AddPetugasShiftGrup = ({
                       />
                     </div>
                   </div>
-                  <div className="form-group w-full ">
-                    <label
-                      className="block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Nama Grup
-                    </label>
-                    <input
-                      value={dataPetugasShift.nama_grup_petugas}
-                      name="grup_petuas_id"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                    />
-                  </div>
-                  <div className="form-group w-full mt-2">
-                    <label
-                      className="block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Ketua Grup
-                    </label>
-                    <input
-                      value={dataPetugasShift.nama_ketua_grup}
-                      name="nama_ketua_grup"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                    />
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    <div className="form-group w-full">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Nama Grup
+                      </label>
+                      <input
+                        value={dataPetugasShift.nama_grup_petugas}
+                        name="grup_petuas_id"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      />
+                    </div>
+                    <div className="form-group w-full">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Ketua Grup
+                      </label>
+                      <input
+                        value={dataPetugasShift.nama_ketua_grup}
+                        name="nama_ketua_grup"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      />
+                    </div>
                   </div>
                   <label
                     className="block text-sm font-semibold text-black dark:text-white mt-2 "
@@ -386,7 +532,7 @@ const AddPetugasShiftGrup = ({
                       </label>
                     </div>
                   </div>
-                  <div className="w-full h-48 overflow-y-auto">
+                  <div className="w-full h-36 overflow-y-auto mb-3">
                     {staff.map((item: any) => {
                       return (
                         <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke my-1 dark:text-gray dark:bg-slate-800 ">
@@ -403,7 +549,7 @@ const AddPetugasShiftGrup = ({
                               onChange={(e) =>
                                 handleChangePenugasan(
                                   e.target.value,
-                                  item.petugas_id
+                                  item.petugas_id,
                                 )
                               }
                               className="capitalize w-full rounded  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:focus-border-primary"
@@ -426,13 +572,19 @@ const AddPetugasShiftGrup = ({
                 {isDetail ? null : (
                   <button
                     onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
-                    {buttonLoad ? (<>
-                      <BiLoaderAlt className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' /></>) : (<></>)}
+                    {buttonLoad ? (
+                      <>
+                        <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                     Submit
                   </button>
                 )}

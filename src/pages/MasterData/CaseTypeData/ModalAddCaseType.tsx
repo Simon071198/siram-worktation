@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Select from 'react-select/dist/declarations/src/Select';
 import { apiReadKategoriPerkara } from '../../../services/api';
-
 
 // interface
 interface AddCaseTypeModalProps {
@@ -26,15 +26,19 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
       // vonis_bulan_perkara: '',
       // vonis_hari_perkara : '',
       // vonis_tahun_perkara: '',
-    }
+    },
   );
 
   //state
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const [kategori_perkara, setkategoriperkara] = useState([])
+  const [kategori_perkara, setkategoriperkara] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   // useEffect(() => {
@@ -77,10 +81,13 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     return true;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,23 +100,23 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     // closeModal();
   };
 
-
   useEffect(() => {
     const fetchDataKategori = async () => {
       let params = {
         pageSize: 1000,
-      }
+      };
       try {
-        const perka = await apiReadKategoriPerkara(params)
-        const kategori = perka.data.records
+        const perka = await apiReadKategoriPerkara(params, token);
+        const kategori = perka.data.records;
         setkategoriperkara(kategori);
 
         setTimeout(() => {
-          setIsLoading(false)
+          setIsLoading(false);
         }, 500);
-
-      } catch (err) { throw err }
-    }
+      } catch (err) {
+        throw err;
+      }
+    };
     fetchDataKategori();
   }, []);
 
@@ -186,10 +193,8 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                 </strong>
               </div>
               <form onSubmit={handleSubmit}>
-
-                <div className="mt-5 grid grid-cols-1 gap-4 justify-normal">
-
-                  <div className="form-group w-full">
+                <div className="mt-5 grid grid-cols-1 justify-normal">
+                  <div className="form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -199,7 +204,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="nama_jenis_perkara"
-                      placeholder='Nama Jenis Perkara'
+                      placeholder="Nama Jenis Perkara"
                       onChange={handleChange}
                       value={formState.nama_jenis_perkara}
                       disabled={isDetail}
@@ -208,12 +213,12 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                       {errors.map((item) =>
                         item === 'nama_jenis_perkara'
                           ? 'Pilih Jenis Perkara'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -223,22 +228,20 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     <input
                       className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="pasal"
-                      placeholder='pasal'
+                      placeholder="pasal"
                       onChange={handleChange}
                       value={formState.pasal}
                       disabled={isDetail}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'pasal'
-                          ? 'Pilih Pasal'
-                          : ''
+                        item === 'pasal' ? 'Pilih Pasal' : '',
                       )}
                     </p>
                   </div>
 
                   {/* kategori perkara id start */}
-                  <div className="form-group w-full flex flex-col">
+                  <div className="form-group w-full flex flex-col h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -265,12 +268,12 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                       {errors.map((item) =>
                         item === 'kategori_perkara_id'
                           ? 'Pilih Kategori Perkara'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
                 </div>
-                <div className='grid grid-cols-3 gap-3 mt-4'>
+                <div className="grid grid-cols-3 gap-3">
                   {/* <div className="form-group w-full">
                 <label
                   className="block text-sm font-medium text-black dark:text-white"
@@ -341,98 +344,101 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                 </p>
               </div> */}
                 </div>
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {/* <br></br> */}
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Jenis Perkara
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Jenis Perkara
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
-                          .filter((item: string) => item.startsWith('INVALID_ID'))[0]
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-                {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-              .length > 0 && (
-                <div className="error mt-3">
-                <span>Please input :</span>
-                <p className="text-red-400">
-                  {errors
-                    .filter((item: string) => !item.startsWith('INVALID_ID'))
-                    .join(', ')}
-                </p>
-              </div>
-            )} */}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Jenis Perkara
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Jenis Perkara
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

@@ -1,45 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  apiReadAllGrupPetugas,
-  apiReadAllPenugasanShift,
-  apiReadAllPetugasShift,
-  apiReadAllScheduleShift,
-  apiReadAllShift,
-  apiReadAllStaff,
-} from '../../../services/api';
+import { apiReadAllPetugasShift } from '../../../services/api';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'dayjs/locale/id';
 import { Alerts } from '../GrupShift/Alert';
 import dayjs from 'dayjs';
 import { BiLoaderAlt } from 'react-icons/bi';
 
-interface grupPetugas {
-  grup_petugas_id: any;
-  nama_grup_petugas: any;
-  // tambahkan atribut lain sesuai kebutuhan
-}
-
-interface Schedule {
-  schedule_id: any;
-  shif_id: any;
-}
-interface Shift {
-  shift_id: any;
-  nama_shift: any;
-  waktu_mulai: any;
-  waktu_selesai: any;
-}
-
-interface Staff {
-  petugas_id: number;
-  nama: string;
-  // tambahkan atribut lain sesuai kebutuhan
-}
-const DeletePetugasShift = ({
-  closeModal,
-  onSubmit,
-  defaultValue,
-}: any) => {
+const DeletePetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -48,10 +16,11 @@ const DeletePetugasShift = ({
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
-  const [dataPetugasShift, setDataPetugasShift] = useState([{
-    petugas_shift_id: '',
-  }]);
-  const [staff, setStaff] = useState<Staff[]>([]);
+  const [dataPetugasShift, setDataPetugasShift] = useState([
+    {
+      petugas_shift_id: '',
+    },
+  ]);
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
@@ -69,104 +38,51 @@ const DeletePetugasShift = ({
     };
   }, [closeModal]);
 
-  const [schedule, setSchedule] = useState<Schedule[]>([]);
-  const [shift, setShift] = useState<Shift[]>([]);
-  const [waktu, setWaktu] = useState({
-    waktu_mulai: shift[0]?.waktu_mulai,
-    waktu_selesai: shift[0]?.waktu_selesai,
-  });
-  const [penugasan, setPenugasan] = useState([
+  const tanggal = dayjs(
+    `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
     {
-      penugasan_id: '',
-      nama_penugasan: '',
+      locale: 'id',
     },
-  ]);
-  const [addShift, setAddShift] = useState({
-    shift_id: '',
-    schedule_id: '',
+  ).format('YYYY MM DD');
+
+  const [selectedDate, setSelectedDate] = useState(dayjs(tanggal));
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    dayjs(tanggal).add(4, 'day'),
+  );
+
+  const [startDate, setStartDate] = useState({
+    tanggal: parseInt(dayjs(selectedDate).format('D')),
+    bulan: parseInt(dayjs(selectedDate).format('M')),
+    tahun: parseInt(dayjs(selectedDate).format('YYYY')),
   });
-  const [petugasShiftAdd, setPetugasShiftAdd] = useState([
-    {
-      petugas_shift_id: '',
-    },
-  ]);
-  console.log(petugasShiftAdd);
 
+  const [endDate, setEndDate] = useState({
+    tanggal: parseInt(dayjs(selectedEndDate).format('D')),
+    bulan: parseInt(dayjs(selectedEndDate).format('M')),
+    tahun: parseInt(dayjs(selectedEndDate).format('YYYY')),
+  });
 
-
-  useEffect(() => {
-    setIsLoading(true)
-    const addEntriesForStaff = () => {
-      const newEntries = staff.map((staffItem: any) => {
-        const penugasanId = dataPetugasShift?.find((itemNa: any) => itemNa.petugas_id === staffItem.petugas_id)
-        return {
-          petugas_shift_id: penugasanId?.petugas_shift_id || '',
-        };
-      });
-
-      // Mengatur ulang nilai petugasShiftAdd
-      setPetugasShiftAdd([...newEntries]);
-      setIsLoading(false)
-
-      // Mengembalikan nilai yang diatur ulang
-      return [...petugasShiftAdd, ...newEntries];
-    };
-    addEntriesForStaff();
-  }, [staff, addShift]);
+  console.log('papap:', dataPetugasShift);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchSchedule = async () => {
-      const data = {};
-      const params = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: defaultValue.grup_petugas_id,
-        },
-      };
-      const filter = {
-        filter: {
-          tanggal: defaultValue.tanggal,
-          bulan: defaultValue.bulan,
-          tahun: defaultValue.tahun,
-        },
-      };
       const filterPetugasShift = {
         pageSize: Number.MAX_SAFE_INTEGER,
         filter: {
-          schedule_id: defaultValue.schedule_id,
-          // grup_petugas_id:defaultValue.grup_petugas_id,
-          tanggal: defaultValue.tanggal,
+          grup_petugas_id: defaultValue?.grup_petugas_id,
+          tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
           bulan: defaultValue.bulan,
           tahun: defaultValue.tahun,
         },
       };
 
       try {
-        const schedule = await apiReadAllScheduleShift(filter, token);
-        const shift = await apiReadAllShift(data, token);
-        const staff = await apiReadAllStaff(params, token);
-        const penugasan = await apiReadAllPenugasanShift(data, token);
         const petugasShift = await apiReadAllPetugasShift(
           filterPetugasShift,
-          token
+          token,
         );
-
-        setDataPetugasShift(petugasShift.data.records)
-        setSchedule(schedule.data.records);
-        setShift(shift.data.records);
-        setAddShift({
-          ...addShift,
-          shift_id: defaultValue.shift_id,
-          schedule_id: defaultValue.schedule_id,
-        });
-        setWaktu({
-          ...waktu,
-          waktu_mulai: defaultValue?.waktu_mulai,
-          waktu_selesai: defaultValue?.waktu_selesai,
-        });
-        setStaff(staff.data.records);
-        setPenugasan(penugasan.data.records);
+        setDataPetugasShift(petugasShift.data.records);
         setIsLoading(false);
       } catch (error: any) {
         Alerts.fire({
@@ -178,12 +94,44 @@ const DeletePetugasShift = ({
     fetchSchedule();
   }, []);
 
-
-  const handleSubmit = () => {
-    setIsLoading(true)
-    onSubmit(petugasShiftAdd).then(() => setButtonLoad(false));
+  const handleDateChange = (date: any) => {
+    const end = dayjs(date).add(4, 'day');
+    setSelectedDate(dayjs(date));
+    setStartDate({
+      ...startDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+    setSelectedEndDate(dayjs(date).add(4, 'day'));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(end).format('D')),
+      bulan: parseInt(dayjs(end).format('M')),
+      tahun: parseInt(dayjs(end).format('YYYY')),
+    });
   };
 
+  const handleDateChangeEndDate = (date: any) => {
+    setSelectedEndDate(dayjs(date));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+  };
+  console.log('1234:', dataPetugasShift);
+
+  const handleSubmit = () => {
+    const deleteData = dataPetugasShift?.map((item: any) => ({
+      petugas_shift_id: item.petugas_shift_id,
+    }));
+    console.log('deleteData', deleteData);
+
+    setIsLoading(true);
+    onSubmit(dataPetugasShift).then(() => setButtonLoad(false));
+  };
 
   return (
     <div
@@ -219,7 +167,7 @@ const DeletePetugasShift = ({
             <div className="w-full flex justify-between">
               <div>
                 <h3 className="text-xl font-semibold text-black dark:text-white">
-                  Konfirmasi Hapus Data
+                  Hapus Data Jadwal Petugas Shift Kerja
                 </h3>
               </div>
               <strong
@@ -230,12 +178,33 @@ const DeletePetugasShift = ({
               </strong>
             </div>
             <div className="pt-6">
-              <p className="text-sm te  xt-black dark:text-white">
-                Apakah Anda yakin ingin menghapus data ini?
-              </p>
-              <p className="text-sm text-black dark:text-white">
-
-              </p>
+              <label
+                className="block text-md font-medium text-black dark:text-white "
+                htmlFor="nama_grup_petugas"
+              >
+                Tanggal
+              </label>
+              <div className="w-full flex items-center space-x-1">
+                <DatePicker
+                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                  selected={selectedDate.toDate()}
+                  onChange={handleDateChange}
+                  dateFormat="dd MMMM yyyy"
+                  placeholderText="Pilih tanggal"
+                  locale="id"
+                />
+                <h1>s/d</h1>
+                <DatePicker
+                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                  selected={selectedEndDate.toDate()}
+                  onChange={handleDateChangeEndDate}
+                  dateFormat="dd MMMM yyyy"
+                  placeholderText="Pilih tanggal"
+                  locale="id"
+                  minDate={dayjs(selectedDate).endOf('day').toDate()} // Set minDate to the selected start date
+                  maxDate={dayjs(selectedDate).endOf('month').toDate()}
+                />
+              </div>
             </div>
 
             <br></br>
@@ -250,19 +219,25 @@ const DeletePetugasShift = ({
               </button>
               <button
                 onClick={handleSubmit}
-                className={`btn hover:bg-blue-500 flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                  }`}
+                className={`btn hover:bg-blue-500 flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                  buttonLoad ? 'bg-slate-400' : ''
+                }`}
                 type="submit"
                 disabled={buttonLoad}
               >
-                {buttonLoad ? (<>
-                  <BiLoaderAlt className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' /></>) : (<></>)}
-
+                {buttonLoad ? (
+                  <>
+                    <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                  </>
+                ) : (
+                  <></>
+                )}
                 Hapus
               </button>
             </div>
           </div>
-        </div>)}
+        </div>
+      )}
     </div>
   );
 };

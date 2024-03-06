@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
 import { Alerts } from './AlertStaff';
 import {
   apiCreateAllStaff,
@@ -11,17 +10,13 @@ import {
 import { AddStaffModal } from './ModalAddStaff';
 import { DeleteStaffModal } from './ModalDeleteStaff';
 import SearchInputButton from '../Search';
-import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
-import ToolsTip from '../../../../components/ToolsTip';
-import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
+import dayjs from 'dayjs';
+import Loader from '../../../common/Loader';
+import Pagination from '../../../components/Pagination';
 import DropdownAction from '../../../components/DropdownAction';
 
 // Interface untuk objek 'params' dan 'item'
-interface Params {
-  filter: string;
-}
 
 interface Item {
   nama: string;
@@ -46,7 +41,6 @@ const StaffList = () => {
   const [rows, setRows] = useState(1);
   const [filterJabatan, setFilterJabatan] = useState('');
   const [filterPangkat, setFilterPangkat] = useState('');
-  const [jabatanData, setJabatanData] = useState([]);
   const [pangkatData, setPangkatData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
@@ -187,7 +181,8 @@ const StaffList = () => {
   };
 
   const fetchPangkat = async () => {
-    await apiReadAllPangkat()
+    let params = {};
+    await apiReadAllPangkat(params, token)
       .then((res) => {
         setPangkatData(res);
       })
@@ -195,7 +190,7 @@ const StaffList = () => {
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -343,9 +338,11 @@ const StaffList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'dataPetugas.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-Petugas ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
-
   return isLoading ? (
     <Loader />
   ) : (
@@ -537,7 +534,6 @@ const StaffList = () => {
                             </p>
                           </div>
                           <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}

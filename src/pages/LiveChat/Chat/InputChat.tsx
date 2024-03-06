@@ -19,6 +19,18 @@ const InputChat: React.FC<InputProps> = ({ onSendMessage, setMessage, setFile, m
   //   setMessage('')
   // };
 
+  const handleGambar = (e:any) => {
+    const selectedFile = e.target.files?.[0];
+    
+    if (selectedFile) {
+      if (selectedFile.type.startsWith('image/')) {
+        setFile(selectedFile);
+      } else {
+        alert('Hanya gambar yang diizinkan!');
+      }
+    }
+  };
+
   // Agar tidak bisa enter untuk menambah baru baru , harus shift+enter 
   const handleKeyDown = (event:any) => {
     if (event.key === 'Enter' && event.shiftKey) {
@@ -84,7 +96,7 @@ const InputChat: React.FC<InputProps> = ({ onSendMessage, setMessage, setFile, m
         accept="image/*" 
         ref={imgInputRef} 
         className='hidden' 
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
+        onChange={handleGambar}
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -11,17 +11,13 @@ import {
 import { AddInmateModal } from './ModalAddInmate';
 import { Alerts } from './AlertInmate';
 import { DeleteInmateModal } from './ModalDeleteInmate';
-// import Loader from 'renderer/common/Loader';
 import Loader from '../../../common/Loader';
 import SearchInputButton from '../Search';
-// import Pagination from 'renderer/components/Pagination';
 import Pagination from '../../../components/Pagination';
 import { HiDotsVertical, HiPencilAlt, HiOutlineTrash } from 'react-icons/hi';
 
 import * as xlsx from 'xlsx';
-// import ToolsTip from 'renderer/components/ToolsTip';
 import ToolsTip from '../../../components/ToolsTip';
-// import DropdownAction from 'renderer/components/DropdownAction';
 import DropdownAction from '../../../components/DropdownAction';
 
 const InmateList = () => {
@@ -73,11 +69,11 @@ const InmateList = () => {
 
     const newAksesRuangOtmil: any = [];
     item?.akses_ruangan_otmil.map((item: any) =>
-      newAksesRuangOtmil.push(item?.ruangan_otmil_id)
+      newAksesRuangOtmil.push(item?.ruangan_otmil_id),
     );
 
     const newEditItem: any = {
-      wbp_profile_id : item?.wbp_profile_id,
+      wbp_profile_id: item?.wbp_profile_id,
       foto_wajah: item?.foto_wajah,
       nama: item?.nama,
       pangkat_id: item?.pangkat_id,
@@ -260,7 +256,7 @@ const InmateList = () => {
         let temp = responseRead.data.records;
         temp.forEach((obj: any) => {
           obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
-            (item: any) => item.ruangan_otmil_id
+            (item: any) => item.ruangan_otmil_id,
           );
         });
         setData(temp);
@@ -302,8 +298,8 @@ const InmateList = () => {
   useEffect(() => {
     fetchData();
     hunianData();
-    let params = {}
-    apiReadAllKategoriJahat(params,token)
+    let params = {};
+    apiReadAllKategoriJahat(params, token)
       .then((res) => {
         setKategoriPerkara(res);
       })
@@ -311,7 +307,7 @@ const InmateList = () => {
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   }, [currentPage, pageSize]);
 
@@ -349,7 +345,7 @@ const InmateList = () => {
         let temp = responseRead.data.records;
         temp.forEach((obj: any) => {
           obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
-            (item: any) => item.ruangan_otmil_id
+            (item: any) => item.ruangan_otmil_id,
           );
         });
         setData(temp);
@@ -375,12 +371,12 @@ const InmateList = () => {
 
   const hunianData = () => {
     let params = {
-        pageSize: 1000,
-        page: 1,
-        filter: {},
-      }
-    
-    apiReadAllHunian(params,token)
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+
+    apiReadAllHunian(params, token)
       .then((res) => {
         setHunian(res.data.records);
       })
@@ -388,7 +384,7 @@ const InmateList = () => {
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -748,12 +744,11 @@ const InmateList = () => {
                               <HiOutlineTrash className="w-5 h-5" />
                             </button>
                           </ToolsTip> */}
-                          <div className='relative'>
-
-                          {/* <button onClick={() => toggleModal(index)}>
+                          <div className="relative">
+                            {/* <button onClick={() => toggleModal(index)}>
                             <HiDotsVertical></HiDotsVertical>
                           </button> */}
-                          {/* <div
+                            {/* <div
                             className={`bg-boxdark rounded-lg border-1 border border-slate-600 text-white text-left px-2 py-2 absolute right-0 flex flex-col gap-2 ${
                               modalDot[index] ? 'block' : 'hidden'
                             }`}
@@ -771,9 +766,11 @@ const InmateList = () => {
                               Hapus
                             </button>
                           </div> */}
-                          <DropdownAction handleEditClick={()=>handleEditClick(item)} handleDeleteClick={()=>handleDeleteClick(item)}></DropdownAction>
+                            <DropdownAction
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            ></DropdownAction>
                           </div>
-                          
                         </div>
                       )}
                     </div>

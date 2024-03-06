@@ -153,7 +153,7 @@ export const AddJenisPersidanganModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="form-group w-full mt-4">
+                <div className="form-group w-full mt-4 h-22">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -210,7 +210,7 @@ export const AddJenisPersidanganModal = ({
                   </div>
                 )} */}
 
-                <br></br>
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
                 {isDetail ? null : isEdit ? (
                   <button
                     className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
@@ -243,7 +243,7 @@ export const AddJenisPersidanganModal = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Jenis Persidangan
+                    Ubah Jenis Persidangan
                   </button>
                 ) : (
                   <button
@@ -277,9 +277,31 @@ export const AddJenisPersidanganModal = ({
                     ) : (
                       ''
                     )}
-                    Tambah Data Jenis Persidangan
+                    Tambah Jenis Persidangan
                   </button>
                 )}
+                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
+                  .length > 0 && (
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID')
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
+                {errors.length > 0 && (
+                  <div className="error text-center">
+                    <p className="text-red-400">
+                      Ada data yang masih belum terisi !
+                    </p>
+                  </div>
+                )}
+                </div>
               </form>
             </div>
           )}

@@ -105,8 +105,9 @@ export default function DatabaseSearch() {
             <div className="w-full flex flex-col gap-2">
               <div className="flex justify-center">
                 <div
-                  className={`w-[500px] h-70 items-center flex justify-center  rounded border border-blue-500 bg-gray p-1 dark:bg-meta-4 ${imagePreview ? '' : 'mb-4'
-                    }`}
+                  className={`w-[500px] h-70 items-center flex justify-center  rounded border border-blue-500 bg-gray p-1 dark:bg-meta-4 ${
+                    imagePreview ? '' : 'mb-4'
+                  }`}
                 >
                   <input
                     type="file"
@@ -268,7 +269,7 @@ export default function DatabaseSearch() {
               </div>
             </div>
 
-
+          
           </div>
         </div>
       </div>

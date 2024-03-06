@@ -14,6 +14,7 @@ import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -303,7 +304,10 @@ const JenisPersidanganList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_jenis_sidang.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-JenisPersidangan ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   return isLoading ? (
@@ -444,7 +448,9 @@ const JenisPersidanganList = () => {
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>

@@ -450,7 +450,11 @@ const UserList = () => {
                         >
                           Hapus
                         </button> */}
-                        <DropdownActionWithPass handleUbahPassword={() => handleUbahPassword(item)} handleEditClick={() => handleEditClick(item)} handleDeleteClick={() => handleDeleteClick(item)}></DropdownActionWithPass>
+                        <DropdownActionWithPass
+                          handleUbahPassword={() => handleUbahPassword(item)}
+                          handleEditClick={() => handleEditClick(item)}
+                          handleDeleteClick={() => handleDeleteClick(item)}
+                        ></DropdownActionWithPass>
                       </div>
                     </div>
                     <div className="border-t border-slate-600"></div>

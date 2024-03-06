@@ -7,7 +7,7 @@ import {
   apiReadAktifitasPengunjung,
   apiDeleteAktifitasPengunjung,
   apiCreateAktifitasPengunjung,
-  apiUpdateAktifitasPengunjung
+  apiUpdateAktifitasPengunjung,
 } from '../../services/api';
 import Pagination from '../../components/Pagination';
 import SearchInputButton from '../Device/Search';
@@ -15,22 +15,23 @@ import * as xlsx from 'xlsx';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import DropdownAction from '../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
-  nama_aktivitas_pengunjung: string,
-  waktu_mulai_kunjungan: string,
-  waktu_selesai_kunjungan: string,
-  tujuan_kunjungan: string,
-  lokasi_otmil_id: string,
-  ruangan_otmil_id: string,
-  jenis_ruangan_otmil: string,
-  petugas_id: string,
-  nama_petugas: string,
-  pengunjung_id: string,
-  nama_pengunjung: string,
-  wbp_profile_id: string,
-  nama_wbp: string,
+  nama_aktivitas_pengunjung: string;
+  waktu_mulai_kunjungan: string;
+  waktu_selesai_kunjungan: string;
+  tujuan_kunjungan: string;
+  lokasi_otmil_id: string;
+  ruangan_otmil_id: string;
+  jenis_ruangan_otmil: string;
+  petugas_id: string;
+  nama_petugas: string;
+  pengunjung_id: string;
+  nama_pengunjung: string;
+  wbp_profile_id: string;
+  nama_wbp: string;
 }
 
 const AktifitasPengunjungList = () => {
@@ -49,18 +50,17 @@ const AktifitasPengunjungList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [dataExcel, setDataExcel] = useState([]);
 
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -110,18 +110,18 @@ const AktifitasPengunjungList = () => {
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleSearchClick();
-      console.log('ENTER DIPNCET')
+      console.log('ENTER DIPNCET');
     }
   };
 
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
-  }
+  };
 
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   // useEffect untuk fetch data dari API
@@ -191,14 +191,13 @@ const AktifitasPengunjungList = () => {
     try {
       const responseDelete = await apiDeleteAktifitasPengunjung(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -207,7 +206,7 @@ const AktifitasPengunjungList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -219,15 +218,14 @@ const AktifitasPengunjungList = () => {
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateAktifitasPengunjung(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreateAktifitasPengunjung(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -237,7 +235,7 @@ const AktifitasPengunjungList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -249,15 +247,14 @@ const AktifitasPengunjungList = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateAktifitasPengunjung(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdateAktifitasPengunjung(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -267,7 +264,7 @@ const AktifitasPengunjungList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -316,9 +313,11 @@ const AktifitasPengunjungList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, `data-.xlsx`);
-  }
-
+    xlsx.writeFile(
+      wb,
+      `Data-Aktifitas-Pengunjung ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+  };
 
   useEffect(() => {
     // Menambahkan event listener untuk tombol "Enter" pada komponen ini
@@ -330,11 +329,10 @@ const AktifitasPengunjungList = () => {
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
-
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -344,7 +342,7 @@ const AktifitasPengunjungList = () => {
                 placehorder="Cari nama Aktifitas"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
               {/* <DatePicker
               selected={selectedMonth}
@@ -357,7 +355,6 @@ const AktifitasPengunjungList = () => {
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
-
               id="button-addon1"
               data-te-ripple-init
               data-te-ripple-color="light"
@@ -377,7 +374,8 @@ const AktifitasPengunjungList = () => {
             </button>
             <button
               onClick={exportToExcelByMonth}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium">
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
               Export&nbsp;Excel
             </button>
           </div>
@@ -386,19 +384,18 @@ const AktifitasPengunjungList = () => {
           <h4 className="ext-xl font-semibold text-black dark:text-white">
             Data Aktifitas Pengunjung
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
 
         <div className="flex flex-col">
-          {isOperator ?
-
+          {isOperator ? (
             <div className="grid items-center grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6 ">
               <div className="p-2.5 text-center col-span-1 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -431,7 +428,7 @@ const AktifitasPengunjungList = () => {
                 </h5>
               </div>
             </div>
-            :
+          ) : (
             <div className="grid items-center grid-cols-7 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-7 ">
               <div className="p-2.5 text-center col-span-1 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -469,7 +466,7 @@ const AktifitasPengunjungList = () => {
                 </h5>
               </div>
             </div>
-          }
+          )}
 
           {data.length === 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -478,39 +475,59 @@ const AktifitasPengunjungList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    <div className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-sm bg-gray-2 dark:bg-meta-4`}>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-start p-2.5 sm:flex xl:p-5">
+                    <div
+                      className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-sm bg-gray-2 dark:bg-meta-4`}
+                    >
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-start p-2.5 sm:flex xl:p-5"
+                      >
                         <p className="text-black text-start dark:text-white">
                           {item.nama_aktivitas_pengunjung}
                         </p>
                       </div>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
+                      >
                         <p className="text-black text-center dark:text-white">
                           {item.waktu_mulai_kunjungan}
                         </p>
                       </div>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
+                      >
                         <p className="text-black dark:text-white">
                           {item.waktu_selesai_kunjungan}
                         </p>
                       </div>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-3">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-3"
+                      >
                         <p className="text-black dark:text-white">
                           {item.tujuan_kunjungan}
                         </p>
                       </div>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-5">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-5"
+                      >
                         <p className="text-black dark:text-white">
                           {item.nama_petugas}
                         </p>
                       </div>
-                      <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-5">
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-5"
+                      >
                         <p className="text-black dark:text-white">
                           {item.nama_wbp}
                         </p>
                       </div>
 
-                      {!isOperator &&
+                      {!isOperator && (
                         <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
                           {/* <button
                       onClick={() => handleDetailClick(item)}
@@ -538,7 +555,7 @@ const AktifitasPengunjungList = () => {
                             ></DropdownAction>
                           </div>
                         </div>
-                      }
+                      )}
                     </div>
                     <div className="border-t border-slate-600"></div>
                   </div>
@@ -578,7 +595,7 @@ const AktifitasPengunjungList = () => {
         </div>
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

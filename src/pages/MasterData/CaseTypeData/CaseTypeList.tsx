@@ -16,6 +16,7 @@ import * as xlsx from 'xlsx';
 import ToolsTip from '../../../components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
 import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -134,8 +135,8 @@ const CaseTypeList = () => {
   // useEffect untuk fetch data dari API
   useEffect(() => {
     fetchData();
-
-    apiReadAllKategoriJahat()
+    let params = {};
+    apiReadAllKategoriJahat(params, token)
       .then((res) => {
         setKategoriPerkara(res);
       })
@@ -143,7 +144,7 @@ const CaseTypeList = () => {
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
@@ -323,7 +324,10 @@ const CaseTypeList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'Jenis Perkara.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-JenisPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   return isLoading ? (
@@ -339,7 +343,7 @@ const CaseTypeList = () => {
                 placehorder="Cari nama jenis perkara"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
             </div>
             <select
@@ -386,9 +390,9 @@ const CaseTypeList = () => {
         </div>
 
         <div className="flex justify-between items-center mb-3">
-          <h1 className="ext-xl font-bold text-black dark:text-white">
+          <h4 className="ext-xl font-semibold text-black dark:text-white">
             Jenis Perkara
-          </h1>
+          </h4>
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
@@ -458,7 +462,7 @@ const CaseTypeList = () => {
                           onClick={() => handleDetailClick(item)}
                           className="flex items-center p-2.5 xl:p-5"
                         >
-                          <p className="cursor-pointer hidden text-black dark:text-white sm:block">
+                          <p className="cursor-pointer truncate hidden text-black dark:text-white sm:block">
                             {item.nama_jenis_perkara}
                           </p>
                         </div>
@@ -474,7 +478,7 @@ const CaseTypeList = () => {
                           onClick={() => handleDetailClick(item)}
                           className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                         >
-                          <p className="text-black dark:text-white">
+                          <p className="text-black truncate dark:text-white">
                             {item.nama_kategori_perkara}
                           </p>
                         </div>
@@ -485,7 +489,7 @@ const CaseTypeList = () => {
                           onClick={() => handleDetailClick(item)}
                           className="flex items-center p-2.5 xl:p-5"
                         >
-                          <p className="cursor-pointer hidden text-black dark:text-white sm:block">
+                          <p className="cursor-pointer truncate hidden text-black dark:text-white sm:block">
                             {item.nama_jenis_perkara}
                           </p>
                         </div>
@@ -501,7 +505,7 @@ const CaseTypeList = () => {
                           onClick={() => handleDetailClick(item)}
                           className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                         >
-                          <p className="text-black dark:text-white">
+                          <p className="text-black truncate dark:text-white">
                             {item.nama_kategori_perkara}
                           </p>
                         </div>

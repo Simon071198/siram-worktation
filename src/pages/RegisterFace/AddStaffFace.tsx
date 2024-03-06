@@ -22,9 +22,9 @@ const AddInnmateFace = () => {
   const handleInsertVisitor = async () => {
     try {
       setLoading(true);
-      console.log(formValues, 'formValues formValues');
+console.log(formValues, 'formValues formValues');
 
-      // console.log(imagePreview, 'imagePreview imagePreview');
+// console.log(imagePreview, 'imagePreview imagePreview');
 
       const response = await apiVisitorInsert(formValues);
 
@@ -43,14 +43,14 @@ const AddInnmateFace = () => {
     if (file) {
       const reader = new FileReader();
       console.log(reader.result, 'reader reader');
-
+      
       reader.onloadend = () => {
         console.log(reader.result, 'reader.result reader.result');
         setFormValues({ ...formValues, image: reader.result })
 
         // setImagePreview(reader.result);
         console.log(formValues.image, 'imagePreview imagePreview');
-
+        
       };
       reader.readAsDataURL(file);
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
   faceCompareChina,
   apiVisitorLogList,
@@ -34,30 +34,47 @@ const DataCamera = (props) => {
     deviceDetail: {},
     startDate: '',
     endDate: '',
-    // isWebSocketConnected: false,
+    isWebSocketConnected: false,
     dataVisitorLog: [],
   });
 
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  // const client = useRef(new W3CWebSocket('ws://localhost:4000'));
-  // const clientFR = useRef(new W3CWebSocket('ws://localhost:4001'));
+  const client = useRef(new W3CWebSocket('ws://localhost:4000'));
+  const clientFR = useRef(new W3CWebSocket('ws://localhost:4001'));
 
   useEffect(() => {
-
+    client.current.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+    clientFR.current.onopen = () => {
+      console.log('WebSocket FR Connected');
+    };
+    clientFR.current.onmessage = (message) => {
+      const dataFromServer = message;
+      console.log('got reply! ', dataFromServer);
+      if (dataFromServer.data.id == state.deviceDetail.kamera_id) {
+        fetchDataInmateRealtime();
+      }
+    };
     const fetchDataAndSendRequest = async () => {
       await fetchDeviceDetail(); // Wait for fetchDeviceDetail to complete before sending the request
 
       const date = getTodayDate();
       setState((prevState) => ({ ...prevState, endDate: date }));
 
-
+      return () => {
+        // clearInterval(fetchInterval);
+        sendRequest('disconnectedLive', {
+          status: 'disconnected',
+        });
+      };
     };
     // fetchDataInmateRealtime();
     setInterval(fetchDataInmateRealtime, 5000);
 
 
-
+    
     fetchDataAndSendRequest(); // Call the function to initiate the process
   }, [props.id]);
 
@@ -103,7 +120,26 @@ const DataCamera = (props) => {
           },
         ],
       }));
-
+      sendRequest('startLiveView', {
+        listViewCameraData: JSON.stringify([
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ]),
+      });
+      sendRequestFR('startFR', {
+        listViewCameraData: JSON.stringify([
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ]),
+      });
       // sendRequest('startLiveView', {
       //   listViewCameraData: JSON.stringify(state.listViewCamera),
       // });
@@ -138,6 +174,34 @@ const DataCamera = (props) => {
     return `${day} ${month} ${year} ${time}`;
   };
 
+  const sendRequest = (method, params) => {
+    client.current.send(JSON.stringify({ method: method, params: params }));
+  };
+  const sendRequestFR = (method, params) => {
+    clientFR.current.send(JSON.stringify({ method: method, params: params }));
+  };
+
+  const destroyCamera = (data) => {
+    console.log('destroy streaming');
+    playerRef.current.stop();
+    setState((prevState) => ({
+      ...prevState,
+      cameraplayer: null,
+    }));
+  };
+
+  const reset = () => {
+    setState((prevState) => ({
+      ...prevState,
+      selectOptionGroup: null,
+      viewListData: [],
+      listViewCamera: [],
+    }));
+  };
+
+  const pause = () => {
+    playerRef.current.stop();
+  };
 
   const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);
@@ -150,7 +214,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url="http://192.168.1.135:4002/record/Camera1/2023.11.28/121639.mv4"
+                url='http://192.168.1.135:5000/stream/192.168.1.63_.m3u8'
                 width="100%"
                 height="100%"
                 playing={true}

@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { useParams, useOutletContext, useRoutes, useLocation } from 'react-router-dom';
 import {
-  apiDeviceDetail,
-  apiVisitorRealtimeLogList,
-} from '../../services/api';
+  useParams,
+  useOutletContext,
+  useRoutes,
+  useLocation,
+} from 'react-router-dom';
+import { apiDeviceDetail, apiVisitorRealtimeLogList } from '../../services/api';
 
 const KameraDetail = (props: any) => {
   const { sidebarKamera } = props;
@@ -39,7 +41,10 @@ const KameraDetail = (props: any) => {
       await fetchDeviceDetail();
       const date = getTodayDate();
       setState((prevState) => ({ ...prevState, endDate: date }));
-  
+
+      const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
+      fetchDataAndSendRequest();
+
       return () => {
         // Membersihkan interval atau langganan WebSocket
         clearInterval(fetchInterval);
@@ -48,11 +53,12 @@ const KameraDetail = (props: any) => {
         });
       };
     };
-  
-    const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
-    fetchDataAndSendRequest();
   }, [id]);
-  
+
+  useEffect(() => {
+    fetchDataInmateRealtime();
+    fetchDeviceDetail();
+  }, [id]);
 
   const fetchDataInmateRealtime = async () => {
     const data = {
@@ -76,7 +82,6 @@ const KameraDetail = (props: any) => {
       setTimeout(fetchDataInmateRealtime, 5000);
     }
   };
-  
 
   const fetchDeviceDetail = async () => {
     try {
@@ -105,29 +110,6 @@ const KameraDetail = (props: any) => {
           },
         ],
       }));
-      // sendRequest('startLiveView', {
-      //   listViewCameraData: JSON.stringify([
-      //     {
-      //       IpAddress: res.ip_address,
-      //       urlRTSP: res.url_rtsp,
-      //       deviceName: res.nama_kamera,
-      //       deviceId: res.kamera_id,
-      //     },
-      //   ]),
-      // });
-      // sendRequestFR('startFR', {
-      //   listViewCameraData: JSON.stringify([
-      //     {
-      //       IpAddress: res.ip_address,
-      //       urlRTSP: res.url_rtsp,
-      //       deviceName: res.nama_kamera,
-      //       deviceId: res.kamera_id,
-      //     },
-      //   ]),
-      // });
-      // sendRequest('startLiveView', {
-      //   listViewCameraData: JSON.stringify(state.listViewCamera),
-      // });
     } catch (error) {
       console.error(error);
     }
@@ -138,7 +120,7 @@ const KameraDetail = (props: any) => {
       fetchDataInmateRealtime();
       fetchDeviceDetail();
     }
-  };  
+  };
 
   const getTodayDate = () => {
     const today = new Date();
@@ -152,7 +134,7 @@ const KameraDetail = (props: any) => {
     const dateObj = new Date(timestamp);
     const day = dateObj.getDate();
     const month = new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(
-      dateObj
+      dateObj,
     );
     const year = dateObj.getFullYear();
     const time = dateObj.toLocaleTimeString('id-ID', { hour12: false });
@@ -189,7 +171,7 @@ const KameraDetail = (props: any) => {
   const pause = () => {
     playerRef.current.stop();
   };
-  
+
   const renderStream1 = (obj: any, index: any) => {
     console.log('render stream 1', obj);
     var urlStream = state.baseUrl + obj.IpAddress + state.extenstion;
@@ -199,7 +181,6 @@ const KameraDetail = (props: any) => {
         <div className="">
           <div className="">
             <div className="">
-
               <ReactPlayer
                 className="react-player"
                 url={urlStream}
@@ -224,20 +205,20 @@ const KameraDetail = (props: any) => {
 
   const { deviceDetail, dataVisitorLog } = state;
   const unrecognizedRows = dataVisitorLog.filter(
-    (row:any) => row.visitor_name === 'unrecognized'
+    (row: any) => row.visitor_name === 'unrecognized',
   );
   const faceDetectionRows = dataVisitorLog.filter(
-    (row:any) => row.visitor_name !== 'unrecognized'
+    (row: any) => row.visitor_name !== 'unrecognized',
   );
 
   const tidakDikenal = faceDetectionRows.filter(
-    (item: any) => item.keterangan === 'Tidak Dikenal'
+    (item: any) => item.keterangan === 'Tidak Dikenal',
   );
   const terdeteksi = faceDetectionRows.filter(
-    (item: any) => item.keterangan !== 'Tidak Dikenal'
+    (item: any) => item.keterangan !== 'Tidak Dikenal',
   );
-  // console.log('datatata:', faceDetectionRows);
-    
+  console.log('datatata:', faceDetectionRows);
+
   return (
     <div className="mx-6 h-auto box-border my-1">
       <div
@@ -245,7 +226,9 @@ const KameraDetail = (props: any) => {
           rightKamera ? 'grid grid-cols-1' : 'grid grid-cols-3'
         } gap-4`}
       >
-        <div className={`flex-col py-1 col-span-2 relative rounded-md shadow-sm `}>
+        <div
+          className={`flex-col py-1 col-span-2 relative rounded-md shadow-sm `}
+        >
           <div>
             <div>
               <p className="text-white ml-1">
@@ -254,41 +237,41 @@ const KameraDetail = (props: any) => {
               </p>
             </div>
             <div className="w-full mt-2 h-full">
-              <div
-                className={`p-1 ${
-                  bottomKamera ? 'h-full' : 'h-full'
-                }`}
-              >
+              <div className={`p-1 ${bottomKamera ? 'h-full' : 'h-full'}`}>
                 <div className="w-full h-full">
                   {state.listViewCamera.map((obj, index) => (
-                    <div className='p-1 bg-slate-900 rounded-sm' key={index}>{renderStream1(obj, index)}</div>
+                    <div className="p-1 bg-slate-900 rounded-sm" key={index}>
+                      {renderStream1(obj, index)}
+                    </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className={` mx-1 mt-2 box-border ${bottomKamera ? 'hidden' : ''}`}>
+          <div
+            className={` mx-1 mt-2 box-border ${bottomKamera ? 'hidden' : ''}`}
+          >
             <p>Kamera Terdeteksi : {faceDetectionRows.length}</p>
             <div className="">
               <div className="w-full flex box-border gap-x-3 overflow-x-scroll ">
-              {faceDetectionRows?.map((row:any, index) => (
-                    <div key={index} className="bg-slate-900 w-40 rounded mt-1">
-                      <div className="w-30 h-20 flex items-center">
-                        <img
-                          src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
-                          alt="Person"
-                          className="w-full h-full p-1 pb-2"
-                        />
-                        {/* <img
+                {faceDetectionRows?.map((row: any, index) => (
+                  <div key={index} className="bg-slate-900 w-40 rounded mt-1">
+                    <div className="w-30 h-20 flex items-center">
+                      <img
+                        src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
+                        alt="Person"
+                        className="w-full h-full p-1 pb-2"
+                      />
+                      {/* <img
                           src={`https://dev.transforme.co.id/siram_admin_api${row.face_pics}`}
                           alt="Person"
                           className="w-16 h-16 rounded-5"
                         /> */}
-                      </div>
-                      <div className="w-full pl-2 pb-2">
-                        <p className="text-xs font-semibold">{row.nama_wbp}</p>
-                        {/* <p className="text-xs">
+                    </div>
+                    <div className="w-full pl-2 pb-2">
+                      <p className="text-xs font-semibold">{row.nama_wbp}</p>
+                      {/* <p className="text-xs">
                           {row.gender === true
                             ? 'Pria'
                             : row.gender === false
@@ -298,13 +281,13 @@ const KameraDetail = (props: any) => {
                             : null}{' '}
                           - {row.age} Years Old
                         </p> */}
-                        <p className="text-xs">{row.nationality}</p>
-                        <p className="text-xs">
-                          {formatTimestamp(row.timestamp)}
-                        </p>
-                      </div>
+                      <p className="text-xs">{row.nationality}</p>
+                      <p className="text-xs">
+                        {formatTimestamp(row.timestamp)}
+                      </p>
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -313,9 +296,11 @@ const KameraDetail = (props: any) => {
           <div className="grid grid-cols-1">
             <div className="grid grid-cols-2 gap-4 py-2">
               <div className="grid grid-cols-1 ">
-                  <p>Terdeteksi : {terdeteksi.length}</p>
-                <div className={`flex-col h-[87vh] content-start justify-items-start align-top overflow-y-scroll px-1`}>
-                  {terdeteksi?.map((row:any, index) => (
+                <p>Terdeteksi : {terdeteksi.length}</p>
+                <div
+                  className={`flex-col h-[87vh] content-start justify-items-start align-top overflow-y-scroll px-1`}
+                >
+                  {terdeteksi?.map((row: any, index) => (
                     <div key={index} className="bg-slate-900 rounded mt-2">
                       <div className="w-full">
                         <img
@@ -351,9 +336,9 @@ const KameraDetail = (props: any) => {
                 </div>
               </div>
               <div className="grid grid-cols-1 h-[90vh] relative  ">
-                  <p>Tidak Terdeteksi : {tidakDikenal.length}</p>
+                <p>Tidak Terdeteksi : {tidakDikenal.length}</p>
                 <div className=" h-[87vh] align-top overflow-y-scroll px-1">
-                  {tidakDikenal?.map((row:any, index) => (
+                  {tidakDikenal?.map((row: any, index) => (
                     <div key={index} className="bg-slate-900 rounded mt-2">
                       <div className="w-full flex align-top">
                         <img
@@ -400,7 +385,6 @@ const KameraDetail = (props: any) => {
 };
 
 export default KameraDetail;
-function sendRequest(arg0: string, arg1: { status: string; }) {
+function sendRequest(arg0: string, arg1: { status: string }) {
   throw new Error('Function not implemented.');
 }
-

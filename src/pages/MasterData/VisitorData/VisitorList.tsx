@@ -5,17 +5,18 @@ import {
   apiUpdateVisitor,
   apiDeletePengunjung,
   apiDeleteVisitor,
-} from '../../../services/api';
+} from '../../services/api';
 import { AddVisitorModal } from './ModalAddVisitor';
 import { Alerts } from './AlertVisitor';
-import Loader from '../../../common/Loader';
+import Loader from '../../common/Loader';
 import { DeleteVisitorModal } from './ModalDeleteVisitor';
 import SearchInputButton from '../Search';
-import Pagination from '../../../components/Pagination';
+import Pagination from '../../components/Pagination';
 import * as xlsx from 'xlsx';
-import ToolsTip from '../../../components/ToolsTip';
+import ToolsTip from 'renderer/components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
-import DropdownAction from '../../../components/DropdownAction';
+import DropdownAction from '../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 interface Item {
   nama: string;
@@ -81,7 +82,7 @@ const VisitorList = () => {
       pageSize: pageSize,
     };
     try {
-      const response = await apiReadVisitor(params);
+      const response = await apiReadVisitor(params, token);
       if (response.status === 200) {
         const result = response.data;
         setData(result.records);
@@ -131,7 +132,7 @@ const VisitorList = () => {
     };
     setIsLoading(true);
     try {
-      const response = await apiReadVisitor(param);
+      const response = await apiReadVisitor(param, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -307,7 +308,10 @@ const VisitorList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'dataPengunjung.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-Pengunjung ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   return isLoading ? (
@@ -323,7 +327,7 @@ const VisitorList = () => {
                 placehorder="Cari nama"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
             </div>
             <button
@@ -564,7 +568,7 @@ const VisitorList = () => {
               onSubmit={handleSubmitAddUser}
               defaultValue={detailData}
               isDetail={true}
-            // token={token}
+              // token={token}
             />
           )}
           {modalEditOpen && (
@@ -573,14 +577,14 @@ const VisitorList = () => {
               onSubmit={handleSubmitEditUser}
               defaultValue={editData}
               isEdit={true}
-            // token={token}
+              // token={token}
             />
           )}
           {modalAddOpen && (
             <AddVisitorModal
               closeModal={handleCloseAddModal}
               onSubmit={handleSubmitAddUser}
-            // token={token}
+              // token={token}
             />
           )}
           {modalDeleteOpen && (

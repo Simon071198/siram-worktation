@@ -5,7 +5,7 @@ import { AiOutlineUserSwitch } from 'react-icons/ai';
 const routeSettingList = [
   {
     id: 1,
-    name: 'User Management',
+    name: 'Manajement Pengguna',
     link: '/manajemen-pengguna',
     icon: <AiOutlineUserSwitch size={25} />,
   },

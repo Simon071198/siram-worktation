@@ -1,36 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import ReactPlayer from 'react-player';
-import axios from 'axios';
-import { set } from 'react-hook-form';
 import { useOutletContext, useParams } from 'react-router-dom';
+import { apiDeviceDetail } from '../../services/api';
+import dayjs from 'dayjs';
 
-const PlaybackDetail = (props:any) => {
+const PlaybackDetail = (props: any) => {
   const { id } = useParams();
   const [bottomKamera]: any = useOutletContext();
-  // const [baseUrl] = useState('http://192.168.1.135:4002/record/');
-  // const [extension] = useState('.mp4');
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [dataAllCamera, setDataAllCamera] = useState([]);
-  const [selectedCamera, setSelectedCamera] = useState(null);
-
-  const [date, setDate] = useState('2023-11-20');
-  const [timeStart, setTimeStart] = useState('15:04:00');
-  const [timeFinish, setTimeFinish] = useState('18:05:00');
-
-  const [playlistPlayback, setPlaylistPlayback] = useState([]);
-
-  const videoRef = useRef(null);
-  const playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.135:4002/record/'));
+  const [filePayback, setFilePlayback] = useState('');
 
   const [state, setState] = useState({
     groupId: '',
     groupShow: [],
     ffmpegIP: 'localhost',
     baseUrl: 'http://192.168.1.135:4002/record/',
-    extenstion: '.mp4',
     girdView: 1,
     isFullscreenEnabled: false,
     selectOptionGroup: null,
@@ -45,230 +32,251 @@ const PlaybackDetail = (props:any) => {
     dataVisitorLog: [],
   });
 
+  const [cameraData, setCameraData] = useState({
+    deviceName: '',
+    fullPath: '',
+    files: [],
+  });
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    const time = dayjs(now).format('HH:mm');
+    const waktu = time.includes(':') ? `${time}:00` : `${time}:00`;
+    return waktu;
+  };
+
+  const getStartTime = () => {
+    const now = dayjs();
+    const startTime = now.subtract(30, 'minute').format('HH:mm');
+    const waktu = startTime.includes(':')
+      ? `${startTime}:00`
+      : `${startTime}:00`;
+    return waktu;
+  };
+
+  const [defaultDate, setDefaultDate] = useState(getTodayDate());
+  const [defaultFinishTime, setDefaultFinishTime] = useState(getCurrentTime());
+  const [defaultStartTime, setDefaultStartTime] = useState(getStartTime());
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = event.target.value;
+    setDefaultDate(newDate);
+  };
+
+  const handleTimeStartChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newTimeStart = event.target.value;
+    const formattedTimeStart = newTimeStart.includes(':')
+      ? `${newTimeStart}:00`
+      : `${newTimeStart}:00`;
+    setDefaultStartTime(formattedTimeStart);
+  };
+
+  const handleTimeFinishChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newTimeFinish = event.target.value;
+    const formattedTimeFinish = newTimeFinish.includes(':')
+      ? `${newTimeFinish}:00`
+      : `${newTimeFinish}:00`;
+    setDefaultFinishTime(formattedTimeFinish);
+  };
+
+  const handleFilePlayback = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.value;
+    setFilePlayback(newFile);
+  };
 
   useEffect(() => {
-    // Fetch camera data when the component mounts.
-    axios
-      .get('https://dev.transforme.co.id/siram_admin_api/siram_api/dashboard_kamera_read.php')
-      .then((response) => {
-        setDataAllCamera(response.data.records);
-      });
+    const fetchDataAndSendRequest = async () => {
+      await fetchDeviceDetail();
+      const date = getTodayDate();
+      setState((prevState) => ({ ...prevState, endDate: date }));
 
-    // WebSocket logic
-    client.current.onopen = () => {
-      console.log('WebSocket Client Connected');
-      // No need to send a request here; it will be sent when the camera is selected.
+      return () => {
+        sendRequest('disconnectedPlayback', {
+          status: 'disconnected',
+        });
+      };
     };
 
-    // Handle WebSocket messages (response from the server)
-    client.current.onmessage = async (message:any) => {
-      const dataFromServer = JSON.parse(message.data);
-      // await setDeviceName(dataFromServer.deviceName);
-      
-      if (dataFromServer.message === 'GET FILE FROM DIRECTORY PATH') {
-        let formattedDate = date.split('-').join('.');
-        let formattedDeviceName = dataFromServer.deviceName.split(' ').join('');
-        let playlist = dataFromServer.files.map(
-          (file:any) => {
-            console.log(baseUrl+formattedDeviceName+'/'+formattedDate+'/'+file);
-            
-            return baseUrl+formattedDeviceName+'/'+formattedDate+'/'+file
-          }
-        
-        )
-        setPlaylistPlayback(playlist);
-      } else if (dataFromServer.message === 'FILE FROM DIRECTORY EMPTY') {
-        console.log('Got reply from the server:', dataFromServer);
-        setPlaylistPlayback([]);
-      }
-    };
+    fetchDataAndSendRequest();
+  }, [id, defaultDate, defaultFinishTime, defaultStartTime]);
 
-    // WebSocket close and error handling
-    client.current.onclose = (event:any) => {
-      console.log('WebSocket Client Closed:', event);
-    };
+  const fetchDeviceDetail = async () => {
+    try {
+      const res = await apiDeviceDetail(id);
 
-    client.current.onerror = (error:any) => {
-      console.error('WebSocket Error:', error);
-    };
-  }, [date,selectedCamera]);
+      setState((prevState: any) => ({
+        ...prevState,
+        deviceDetail: res,
+        viewListData: [
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ],
+        listViewCamera: [
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ],
+      }));
 
-  // Function to send a request to the WebSocket server
-  const sendRequest = (method:any, params:any) => {
-    client.current.send(JSON.stringify({ method, params }));
-  };
+      const client = new W3CWebSocket('ws://192.168.1.135:4002');
+      client.onopen = () => {
+        const playbackRequest = {
+          method: 'getPlayback',
+          params: {
+            dataCamera: [
+              {
+                deviceName: res.nama_kamera,
+                timeStart: defaultStartTime,
+                timeFinish: defaultFinishTime,
+                date: defaultDate,
+              },
+            ],
+          },
+        };
 
-  // Handle camera change
-  const handleCameraChange = async (e:any) => {
-    const selectedIndex = e.target.value;
-    const selectedCam = dataAllCamera[selectedIndex];
-    console.log(selectedCam);
+        // Mengirim permintaan getPlayback
+        console.log('playback', playbackRequest);
+        client?.send(JSON.stringify(playbackRequest)); // Use optional chaining here
+      };
 
-  await  setSelectedCamera(selectedCam);
-  // await setDeviceName(selectedCam.nama_kamera.split(' ').join('_'));
-    // Send a request when a camera is selected
-    await sendRequest('getPlayback', {
-      dataCamera: [
-        {
-          deviceName: "Camera 1",
-          // deviceName: selectedCam.nama_kamera,
-          urlRTSP: selectedCam.url_rtsp,
-          IpAddress: selectedCam.ip_address,
-          timeStart,
-          timeFinish,
-          date,
-        },
-      ],
-    });
-  };
+      // Event listener ketika pesan diterima dari server
+      client.onmessage = (message: any) => {
+        const response = JSON.parse(message.data);
+        console.log('Received response:', response);
 
-  const handleDateChange = async (e:any) => {
-    await setDate(e.target.value);
-    await sendRequest('getPlayback', {
-      dataCamera: [
-        {
-          deviceName: "Camera 1",
-          // deviceName: selectedCamera?.nama_kamera,
-          urlRTSP: selectedCamera?.url_rtsp,
-          IpAddress: selectedCamera?.ip_address,
-          timeStart,
-          timeFinish,
-          date : e.target.value,
-        },
-      ],
-    });
-  }
+        // Proses respons dan simpan ke dalam state
+        const { deviceName, fullPath, files } = response;
+        setCameraData({
+          deviceName,
+          fullPath,
+          files,
+        });
+      };
 
-  const handleTimeStartChange = async (e:any) => {
-    let formattedTime = e.target.value+":00"
-    console.log(formattedTime);
-    await setTimeStart(formattedTime);
-    await sendRequest('getPlayback', {
-      dataCamera: [
-        {
-          deviceName: "Camera 1",
-          // deviceName: selectedCamera?.nama_kamera,
-          urlRTSP: selectedCamera?.url_rtsp,
-          IpAddress: selectedCamera?.ip_address,
-          timeStart : formattedTime,
-          timeFinish,
-          date,
-        },
-      ],
-    });
-  }
+      // Event listener ketika koneksi ditutup
+      client.onclose = () => {
+        console.log('WebSocket Client Closed');
+      };
 
-  const handleTimeFinishChange = async (e:any) => {
-    let formattedTime = e.target.value+":00"
-    console.log(formattedTime);
-    await setTimeFinish(formattedTime);
-    await sendRequest('getPlayback', {
-      dataCamera: [
-        {
-          deviceName: "Camera 1",
-          // deviceName: selectedCamera?.nama_kamera,
-          urlRTSP: selectedCamera?.url_rtsp,
-          IpAddress: selectedCamera?.ip_address,
-          timeStart,
-          timeFinish : formattedTime,
-          date,
-        },
-      ],
-    });
-  }
-
-  // Handle video playback errors
-  // const handleVideoError = (error) => {
-  //   console.error('Video playback error:', error);
-  //   console.error('Error object:', error.target.error);
-
-  //   setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlistPlayback.length);
-  //   playerRef.current.seekTo(0);
-  // };
-
-  // Handle video playback ended
-  const handleVideoEnded = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlistPlayback.length);
-    playerRef.current.seekTo(0);
-  };
-
-  // Load the video URL when the current video index changes
-  useEffect(() => {
-    if (playlistPlayback[currentVideoIndex]) {
-      playerRef.current.url = playlistPlayback[currentVideoIndex];
+      return () => {
+        // Pindahkan client.close() ke sini agar koneksi ditutup setelah selesai menggunakan WebSocket
+        client?.close();
+      };
+    } catch (error) {
+      console.error(error);
     }
-  }, [currentVideoIndex]);
+  };
 
-  const videoUrl = 'http://192.168.1.135:4002/record/Camera1/2023.11.26/144151.mp4';
-  const videoUrl1 = 'http://www.w3schools.com/html/mov_bbb.mp4';
+  const componentDidUpdate = (prevProps: any) => {
+    if (props.id !== prevProps.id) {
+      fetchDeviceDetail();
+    }
+  };
+
+  const { deviceDetail } = state;
+
+  const selectedCamera: any = state.listViewCamera[0];
+  const cameraName = selectedCamera?.deviceName || 'DefaultCameraName';
+
+  // Build the URL for the stream
+  const urlStream = `${state.baseUrl}${cameraName}/${dayjs(defaultDate).format(
+    'YYYY.MM.DD',
+  )}/${filePayback}`;
+  console.log('urlplayback', urlStream);
 
   return (
-    <div className={`p-1 ${
-      bottomKamera ? 'h-full' : 'h-full'
-    }`}>
-      {/* <div className="flex flex-col items-center justify-center"> */}
-      {/* {selectedCamera ? (
-        <h1 className="text-2xl font-bold mb-4">
-          {selectedCamera.nama_kamera} -{' '}
-          {selectedCamera.nama_lokasi_lemasmil
-            ? selectedCamera.nama_lokasi_lemasmil
-            : selectedCamera.nama_lokasi_otmil}
-        </h1>
-      ) : (
-        <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
-      )} */}
-      {/* <div className="flex justify-around gap-4 mb-4">
-        <select onChange={handleCameraChange}>
-          <option value="">Select a Camera</option>
-          {dataAllCamera.map((data, index) => (
-            <option key={data.kamera_id} value={index}>
-              {data.nama_kamera}
-            </option>
-          ))}
-        </select>
-
-        <input type="date" value={date} onChange={handleDateChange} />
-        <input type="time" value={timeStart} onChange={handleTimeStartChange} />
-        <input type="time" value={timeFinish} onChange={handleTimeFinishChange} />
-      </div> */}
-      <div className='flex p-5 gap-x-5 h-full box-border'>
-        <div className="player-wrapper w-full">
-          <div className='mt-2'>
-            <h1 className='text-base font-semibold py-2 capitalize pl-1'>playback kamera</h1>
+    <div className={` ${bottomKamera ? 'h-full' : 'h-full'}`}>
+      <div className="flex p-5  gap-x-5 ">
+        <div className="player-wrapper w-full ">
+          <div className="mt-2">
+            <h1 className="text-base font-semibold py-2 capitalize pl-1">
+              playback kamera {deviceDetail.nama_kamera}
+            </h1>
           </div>
-          <ReactPlayer
-            className="react-player"
-            width='100%'
-            height='100%'
-            url="https://playback.galangsakti.com/record/Camera1/2023.11.26/144151.mp4"
-            playing={true}
-            loop={true}
-            volume={0.8} 
-            controls={true}
-            // ref={playerRef}
-            onEnded={handleVideoEnded}
-            onError={(e) => console.log('Error playing video', e)}
-            key={currentVideoIndex}
-          />
-
-        </div>
-
-        <div className='items-center gap-2 flex-col box-border rounded-sm'>
-          <div className='flex flex-nowrap mb-2 box-border gap-x-2 rounded-lg'>
-            <input type="date" className='py-2 rounded-md pl-2 box-border bg-slate-500' value={date} onChange={handleDateChange} />
-            <input type="time" className='py-2 rounded-md box-border pl-1 bg-slate-500' value={timeStart} onChange={handleTimeStartChange} />
-            <input type="time" className='py-2 rounded-md box-border pl-1 bg-slate-500' value={timeFinish} onChange={handleTimeFinishChange} />
-          </div>
-          <div className='bg-slate-500 box-border p-2 w-full h-full rounded-md'>
-
+          <div className="p-1 bg-slate-800">
+            <ReactPlayer
+              className="react-player"
+              width="100%"
+              height="100%"
+              url={urlStream}
+              playing={true}
+              loop={true}
+              volume={0.8}
+              controls={true}
+              // ref={playerRef}
+              // onEnded={handleVideoEnded}
+              onError={(e) => console.log('Error playing video', e)}
+              key={currentVideoIndex}
+            />
           </div>
         </div>
 
+        <div className="relative">
+          <div className="flex flex-nowrap pb-1 box-border gap-x-2 rounded-lg">
+            <input
+              type="date"
+              className="py-2 rounded-md pl-2 box-border bg-slate-500"
+              onChange={handleDateChange}
+              value={defaultDate}
+            />
+            <input
+              type="time"
+              className="py-2 rounded-md box-border pl-1 bg-slate-500"
+              onChange={handleTimeStartChange}
+              value={defaultStartTime}
+            />
+            <input
+              type="time"
+              className="py-2 rounded-md box-border pl-1 bg-slate-500"
+              onChange={handleTimeFinishChange}
+              value={defaultFinishTime}
+            />
+          </div>
+          <h2 className="font-semibold flex bg-slate-800 p-1 rounded-t-md ">
+            {cameraData.deviceName}
+          </h2>
+          <div className="overflow-y-scroll bg-slate-800 p-1 rounded-b-md h-[80vh] ">
+            <ul className="grid grid-cols-2 gap-2 justify-between truncate">
+              {cameraData.files.map((file, index) => (
+                <button onClick={() => setFilePlayback(file)}>
+                  <li
+                    className="bg-slate-500 rounded-md pl-1 py-1 truncate"
+                    value={filePayback}
+                    key={index}
+                  >
+                    {file}
+                  </li>
+                </button>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
       {/* </div> */}
     </div>
-
   );
 };
 
 export default PlaybackDetail;
+function sendRequest(arg0: string, arg1: { status: string }) {
+  throw new Error('Function not implemented.');
+}

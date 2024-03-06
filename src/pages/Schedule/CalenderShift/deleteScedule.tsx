@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  apiReadAllScheduleShift,
-} from '../../../services/api';
+import { apiReadAllScheduleShift } from '../../../services/api';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'dayjs/locale/id';
 import { Alerts } from '../GrupShift/Alert';
@@ -22,6 +21,57 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const tanggal = dayjs(
+    `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
+    {
+      locale: 'id',
+    },
+  ).format('YYYY MM DD');
+
+  const [selectedDate, setSelectedDate] = useState(dayjs(tanggal));
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    dayjs(tanggal).add(4, 'day'),
+  );
+
+  const [startDate, setStartDate] = useState({
+    tanggal: parseInt(dayjs(selectedDate).format('D')),
+    bulan: parseInt(dayjs(selectedDate).format('M')),
+    tahun: parseInt(dayjs(selectedDate).format('YYYY')),
+  });
+
+  const [endDate, setEndDate] = useState({
+    tanggal: parseInt(dayjs(selectedEndDate).format('D')),
+    bulan: parseInt(dayjs(selectedEndDate).format('M')),
+    tahun: parseInt(dayjs(selectedEndDate).format('YYYY')),
+  });
+
+  const handleDateChange = (date: any) => {
+    const end = dayjs(date).add(4, 'day');
+    setSelectedDate(dayjs(date));
+    setStartDate({
+      ...startDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+    setSelectedEndDate(dayjs(date).add(4, 'day'));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(end).format('D')),
+      bulan: parseInt(dayjs(end).format('M')),
+      tahun: parseInt(dayjs(end).format('YYYY')),
+    });
+  };
+
+  const handleDateChangeEndDate = (date: any) => {
+    setSelectedEndDate(dayjs(date));
+    setEndDate({
+      ...endDate,
+      tanggal: parseInt(dayjs(date).format('D')),
+      bulan: parseInt(dayjs(date).format('M')),
+      tahun: parseInt(dayjs(date).format('YYYY')),
+    });
+  };
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
@@ -49,7 +99,7 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
 
   const handledelete = (item: any) => {
     const newScheduleDeleteData = scheduleDeleteData.filter(
-      (schedule) => schedule.schedule_id !== ''
+      (schedule) => schedule.schedule_id !== '',
     );
 
     newScheduleDeleteData.push({ schedule_id: item });
@@ -60,10 +110,19 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
   const handleCancel = (item: any) => {
     const updatedItemIds = activeDeleteItemIds.filter((id) => id !== item);
     const updatedataDelete = scheduleDeleteData.filter(
-      (id) => id.schedule_id !== item
+      (id) => id.schedule_id !== item,
     );
     setActiveDeleteItemIds(updatedItemIds);
     setScheduleDeleteData(updatedataDelete);
+  };
+  const handleDeleteAll = () => {
+    const deleteAll = schedule?.map((item: any) => ({
+      schedule_id: item.schedule_id,
+    }));
+    const deleteAlll = schedule?.map((item: any) => item.schedule_id);
+
+    setScheduleDeleteData(deleteAll);
+    setActiveDeleteItemIds(deleteAlll);
   };
 
   useEffect(() => {
@@ -71,7 +130,7 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
     const fetchSchedule = async () => {
       const filter = {
         filter: {
-          tanggal: defaultValue.tanggal,
+          tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
           bulan: defaultValue.bulan,
           tahun: defaultValue.tahun,
         },
@@ -91,13 +150,38 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
     fetchSchedule();
   }, []);
 
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      const filter = {
+        filter: {
+          tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
+          bulan: defaultValue.bulan,
+          tahun: defaultValue.tahun,
+        },
+      };
+
+      try {
+        const schedule = await apiReadAllScheduleShift(filter, token);
+        setSchedule(schedule.data.records);
+        setScheduleDeleteData([{ ...scheduleDeleteData, schedule_id: '' }]);
+        setActiveDeleteItemIds([]);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
+    };
+    fetchSchedule();
+  }, [selectedEndDate]);
+
   const [errors, setErrors] = useState('');
   const validate = () => {
     if (
       scheduleDeleteData[0]?.schedule_id == '' ||
       scheduleDeleteData.length === 0
     ) {
-      setErrors('Silahkan pilih data!');
+      setErrors('Silahkan pilih shift!');
       return false;
     } else {
       return true;
@@ -105,17 +189,11 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
   };
 
   const handleSubmit = () => {
-    setButtonLoad(true);
     if (!validate()) return;
+    setButtonLoad(true);
     onSubmit(scheduleDeleteData).then(() => setButtonLoad(false));
   };
 
-  const tanggal = dayjs(
-    `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
-    {
-      locale: 'id',
-    }
-  ).format('DD MMMM YYYY');
   return (
     <div
       ref={modalContainerRef}
@@ -150,7 +228,7 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
             <div className="w-full flex justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-black dark:text-white mr-6">
-                  Hapus Data Schedule {tanggal}
+                  Hapus Data Jadwal Shift Kerja
                 </h3>
               </div>
               <strong
@@ -161,57 +239,109 @@ const DeleteSchedule = ({ closeModal, onSubmit, defaultValue }: any) => {
               </strong>
             </div>
             <div className="pt-6 ">
-              <div className="w-full pb-2 flex justify-between">
+              <label
+                className="block text-md font-medium text-black dark:text-white "
+                htmlFor="nama_grup_petugas"
+              >
+                Tanggal
+              </label>
+              <div className="w-full flex items-center space-x-1">
+                <DatePicker
+                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                  selected={selectedDate.toDate()}
+                  onChange={handleDateChange}
+                  dateFormat="dd MMMM yyyy"
+                  placeholderText="Pilih tanggal"
+                  locale="id"
+                />
+                <h1>s/d</h1>
+                <DatePicker
+                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                  selected={selectedEndDate.toDate()}
+                  onChange={handleDateChangeEndDate}
+                  dateFormat="dd MMMM yyyy"
+                  placeholderText="Pilih tanggal"
+                  locale="id"
+                  minDate={dayjs(selectedDate).endOf('day').toDate()} // Set minDate to the selected start date
+                  maxDate={dayjs(selectedDate).endOf('month').toDate()}
+                />
+              </div>
+              <div className="w-full pb-2 flex justify-between mt-4  bg-slate-700 rounded-t">
                 <h1 className="text-sm font-semibold  xt-black dark:text-white w-2/3">
                   Nama Shift
+                </h1>
+                <h1 className="text-sm font-semibold  xt-black dark:text-white w-2/3">
+                  Tanggal
                 </h1>
                 <h1 className="text-sm font-semibold  xt-black dark:text-white w-1/3 flex justify-center">
                   Aksi
                 </h1>
               </div>
-              {schedule.map((item: any) => {
-                const isDeleteVisible = activeDeleteItemIds.includes(
-                  item.schedule_id
-                );
+              <div className="h-36 overflow-y-auto bg-slate-800 rounded-b-md">
+                {schedule.map((item: any) => {
+                  const isDeleteVisible = activeDeleteItemIds.includes(
+                    item.schedule_id,
+                  );
 
-                return (
-                  <div className="flex justify-between pb-2">
-                    <h1
-                      className={`w-2/3 capitalize ${!isDeleteVisible ? 'text-white' : ''
+                  return (
+                    <div className="flex justify-between pb-2">
+                      <h1
+                        className={`w-2/3 capitalize ${
+                          !isDeleteVisible ? 'text-white' : ''
                         }`}
-                    >
-                      {item.nama_shift}
-                    </h1>
-                    <div className="w-1/3 flex justify-center ">
-                      {!isDeleteVisible ? (
-                        <button
-                          onClick={() => handledelete(item.schedule_id)}
-                          className="flex items-center space-x-2 rounded bg-red-500 px-2 text-white"
-                        >
-                          <BsTrash size={10} />{' '}
-                          <h2 className="text-sm">Hapus</h2>{' '}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleCancel(item.schedule_id)}
-                          className="flex items-center space-x-2 rounded bg-blue-500 px-2 text-white"
-                        >
-                          <BsX size={10} /> <h2 className="text-sm">Cancel</h2>
-                        </button>
-                      )}
+                      >
+                        {item.nama_shift}{' '}
+                      </h1>
+                      <h1
+                        className={`w-2/3 capitalize ${
+                          !isDeleteVisible ? 'text-white' : ''
+                        }`}
+                      >
+                        {` ${item.tanggal}/${item.bulan}/${item.tahun} `}
+                      </h1>
+                      <div className="w-1/3 flex justify-center ">
+                        {!isDeleteVisible ? (
+                          <button
+                            onClick={() => handledelete(item.schedule_id)}
+                            className="flex items-center space-x-2 rounded bg-red-500 px-2 text-white"
+                          >
+                            <BsTrash size={10} />{' '}
+                            <h2 className="text-sm">Hapus</h2>{' '}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleCancel(item.schedule_id)}
+                            className="flex items-center space-x-2 rounded bg-blue-500 px-2 text-white"
+                          >
+                            <BsX size={10} />{' '}
+                            <h2 className="text-sm">Cancel</h2>
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-            <div className="h-3">
-              <h1 className="text-red-600 text-sm">{errors}</h1>
+            <div className="flex justify-between mt-3">
+              <div className="h-3">
+                <h1 className="text-red-600 text-sm">{errors}</h1>
+              </div>
+              <div>
+                <button
+                  onClick={handleDeleteAll}
+                  className="flex items-center space-x-2 rounded bg-red-500 px-2 text-white"
+                >
+                  <BsTrash size={10} /> <h2 className="text-sm">Hapus Semua</h2>{' '}
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-center mt-5">
               <button
-                className={` ${buttonLoad ? 'bg-slate-600' : 'bg-primary hover:bg-blue-500'
-                  }btn w-full flex justify-center rounded  py-2 px-6 font-medium text-gray hover:shadow-1`}
+                className={` ${
+                  buttonLoad ? 'bg-slate-600' : 'bg-primary hover:bg-blue-500'
+                }btn w-full flex justify-center rounded  py-2 px-6 font-medium text-gray hover:shadow-1`}
                 type="submit"
                 onClick={handleSubmit}
               >

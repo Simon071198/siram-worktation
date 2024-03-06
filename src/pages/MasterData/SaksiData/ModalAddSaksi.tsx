@@ -21,10 +21,9 @@ export const AddSaksiModal = ({
       nama_saksi: '',
       no_kontak: '',
       alamat: '',
-      keterangan: '',
-      kasus_id: '',
-      // nama_kasus:'',
-    }
+      jenis_kelamin: '',
+      // keterangan:'',
+    },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -34,25 +33,27 @@ export const AddSaksiModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const [dataKasus, setDataKasus] = useState([])
-
+  const [dataKasus, setDataKasus] = useState([]);
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-
-      if (!value) {
-        errorFields.push(key);
+      if (
+        key !== 'kasus_id' &&
+        key !== 'nama_kasus'
+        // key !== '
+      ) {
+        if (!value) {
+          errorFields.push(key);
+        }
       }
     }
-
     if (errorFields.length > 0) {
       console.log(errorFields);
       setErrors(errorFields);
       return false;
     }
-
     setErrors([]);
     return true;
   };
@@ -79,26 +80,26 @@ export const AddSaksiModal = ({
 
   useEffect(() => {
     Promise.all([
-      Kasusdata()
+      // Kasusdata()
     ]).then(() => {
-      setIsLoading(false)
-    })
-  }, [])
+      setIsLoading(false);
+    });
+  }, []);
 
-  const Kasusdata = async () => {
-    let params = {
+  // const Kasusdata = async () => {
+  //   let params = {
 
-    }
-    await apiReadKasus(params, token)
-      .then((res) => {
-        setDataKasus(res.data.records)
-      })
-      .catch((err) =>
-        Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }))
-  }
+  //   }
+  //   await apiReadKasus(params,token)
+  //   .then((res) => {
+  //     setDataKasus(res.data.records)
+  //   })
+  //   .catch((err)=>
+  //   Alerts.fire({
+  //     icon:'error',
+  //     title: err.massage,
+  //   }))
+  // }
 
   const customStyles = {
     container: (provided: any) => ({
@@ -273,9 +274,8 @@ export const AddSaksiModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className='grid grid-cols-2 gap-x-5 items-center'>
-
-                  <div className="form-group w-full mt-4">
+                <div className="grid grid-cols-2 gap-x-5 items-center">
+                  <div className="form-group w-full h-22 mt-5">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -292,12 +292,12 @@ export const AddSaksiModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'nama_saksi' ? 'Masukan Nama Saksi' : ''
+                        item === 'nama_saksi' ? 'Masukan Nama Saksi' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full mt-4">
+                  <div className="form-group w-full h-22 mt-5">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -314,74 +314,41 @@ export const AddSaksiModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'no_kontak' ? 'Masukan No Kontak' : ''
+                        item === 'no_kontak' ? 'Masukan No Kontak' : '',
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full mt-4">
+                  {/* jenis kelamin */}
+                  <div className="form-group h-22 w-full flex flex-col">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Keterangan
+                      Jenis Kelamin
                     </label>
-                    <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="keterangan"
-                      placeholder="Keterangan"
+                    <select
+                      className="w-full rounded border border-stroke   py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      name="jenis_kelamin"
                       onChange={handleChange}
-                      value={formState.keterangan}
+                      value={formState.jenis_kelamin}
                       disabled={isDetail}
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'keterangan' ? 'Masukan Keterangan' : ''
-                      )}
-                    </p>
-                  </div>
-
-                  {/* Kasus */}
-                  <div className="form-group w-full mt-4">
-                    <label
-                      className="block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
                     >
-                      Kasus
-                    </label>
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      defaultValue={isEdit || isDetail ? (
-                        {
-                          value: formState.kasus_id,
-                          label: formState.nama_kasus
-                        })
-                        :
-                        formState.kasus_id
-                      }
-                      placeholder={'Pilih Kasus'}
-                      isClearable={true}
-                      isSearchable={true}
-                      isDisabled={isDetail}
-                      name="kasus_id"
-                      styles={customStyles}
-                      options={dataKasus.map((item: any) => ({
-                        value: item.kasus_id,
-                        label: item.nama_kasus,
-                      }))
-                      }
-                      onChange={handleChangeKasus}
-                    />
+                      <option disabled value="">
+                        Pilih Jenis Kelamin
+                      </option>
+                      <option value="0">Laki-laki</option>
+                      <option value="1">Perempuan</option>
+                    </select>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'kasus_id' ? 'Pilih Kasus' : ''
+                        item === 'jenis_kelamin' ? 'Pilih Jenis Kelamin' : '',
                       )}
                     </p>
                   </div>
                 </div>
 
-                <div className="form-group w-full mt-4">
+                <div className="form-group w-full h-35 relative">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -389,124 +356,112 @@ export const AddSaksiModal = ({
                     Alamat
                   </label>
                   <textarea
-                    className="w-full  max-h-[94px] min-h-[94px] rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    className="w-full h-25 m-0 rounded border border-stroke box-border py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                     name="alamat"
                     onChange={handleChange}
                     value={formState.alamat}
                     disabled={isDetail}
                   />
-                  <p className="error-text">
+                  <p className="error-text absolute bottom-1">
                     {errors.map((item) =>
-                      item === 'alamat' ? 'Masukan Alamat' : ''
+                      item === 'alamat' ? 'Masukan Alamat' : '',
                     )}
                   </p>
                 </div>
 
-
-
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+                <div className={`mt-3 ${isDetail ? 'h-full' : 'h-15'}`}>
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Tipe
+                    </button>
+                  ) : (
+                    <button
+                      className={` items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Tipe
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
                           .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
+                            item.startsWith('INVALID_ID'),
                           )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-                {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
-                {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <div className="error mt-4">
-                    <span>Please input :</span>
-                    <p className="text-red-400">
-                      {errors
-                        .filter(
-                          (item: string) => !item.startsWith('INVALID_ID')
-                        )
-                        .join(', ')}
-                    </p>
-                  </div>
-                )} */}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Tipe
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Tipe
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error">
+                      <p className="text-red-400 text-center">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

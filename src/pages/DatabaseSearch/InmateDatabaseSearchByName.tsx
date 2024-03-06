@@ -20,7 +20,7 @@ export default function InmateDatabaseSearchByName() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
 
-  const handleClose = (event: any, reason: any) => {
+  const handleClose = (event:any, reason:any) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -28,7 +28,7 @@ export default function InmateDatabaseSearchByName() {
     setIsFound(false);
     setIsNotFound(false);
   };
-  const handleCardClick = async (data: any) => {
+  const handleCardClick = async (data:any) => {
     await setSelectedCard(data);
     console.log(data);
     await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(

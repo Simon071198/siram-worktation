@@ -131,14 +131,14 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
           const staff = await apiReadAllStaff(filter, token);
           const petugasShift = await apiReadAllPetugasShift(
             filterPetugasShift,
-            token
+            token,
           );
 
           const statusPengganti = petugasShift.data.records.map(
-            (item: any) => item.status_pengganti
+            (item: any) => item.status_pengganti,
           );
           const availableStaff = staff.data.records.filter(
-            (item: any) => !statusPengganti.includes(item.petugas_id)
+            (item: any) => !statusPengganti.includes(item.petugas_id),
           );
           setStaff(availableStaff);
         } catch (error: any) {
@@ -169,7 +169,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
         try {
           const staff = await apiReadAllStaff(filter, token);
           const staffFilter = staff.data.records.filter(
-            (item: any) => item.petugas_id === dataEdit.status_pengganti
+            (item: any) => item.petugas_id === dataEdit.status_pengganti,
           );
           const filter2 = {
             filter: {
@@ -178,7 +178,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
           };
           const staff2 = await apiReadAllStaff(filter2, token);
           const staffValue = staff2.data.records.filter(
-            (item: any) => item.petugas_id === defaultValue.status_pengganti
+            (item: any) => item.petugas_id === defaultValue.status_pengganti,
           );
           setStaffDeafaultValue({
             ...staffDeafaultValue,
@@ -203,7 +203,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
       try {
         const grupPetugas = await apiReadAllGrupPetugas(filter, token);
         const filterGrup = grupPetugas.data.records.filter(
-          (item: any) => item.grup_petugas_id !== defaultValue.grup_petugas_id
+          (item: any) => item.grup_petugas_id !== defaultValue.grup_petugas_id,
         );
         setGrupPetugas(filterGrup);
       } catch (error: any) {
@@ -236,7 +236,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
   };
 
   const handleSubmit = () => {
-    setButtonLoad(true)
+    setButtonLoad(true);
     onSubmit(dataEdit).then(() => setButtonLoad(false));
   };
 
@@ -244,7 +244,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
     `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
     {
       locale: 'id',
-    }
+    },
   ).format('dddd MMMM YYYY');
 
   return (
@@ -280,7 +280,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Data Schedule Shift {tanggal}
+                Data Jadwal Shift Kerja{tanggal}
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "
@@ -436,13 +436,19 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
                 <div className="flex space-x-4">
                   <button
                     onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
-                    {buttonLoad ? (<>
-                      <BiLoaderAlt className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' /></>) : (<></>)}
+                    {buttonLoad ? (
+                      <>
+                        <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                     Submit
                   </button>
                 </div>

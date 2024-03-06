@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export const DeleteJaksaPenyidik = ({ closeModal, onSubmit, defaultValue }:any) => {
+export const DeleteOditurPenyidik = ({ closeModal, onSubmit, defaultValue }:any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
     
@@ -83,7 +83,7 @@ export const DeleteJaksaPenyidik = ({ closeModal, onSubmit, defaultValue }:any) 
               Apakah Anda yakin ingin menghapus data ini? 
             </p>
             <p className="text-sm text-center text-black dark:text-white">
-            Nama Jaksa <span className='text-red-400'>{formState.nama_jaksa}</span> akan dihapus
+            Nama Oditur <span className='text-red-400'>{formState.nama_oditur}</span> akan dihapus
             </p>
           </div>
 
