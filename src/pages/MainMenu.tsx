@@ -182,13 +182,7 @@ const routes = [
     name: 'Log',
     link: '/log-riwayat',
     icon: LogIcon,
-  },
-  {
-    id: 15,
-    name: 'Version',
-    link: '/version',
-    icon: LogIcon,
-  },
+  }
 ];
 
 // const MainMenu = () => {
