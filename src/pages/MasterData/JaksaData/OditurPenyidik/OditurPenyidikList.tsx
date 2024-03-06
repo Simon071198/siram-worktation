@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../../common/Loader';
 import { Alerts } from './AlertOditurPenyidik';
 import {
   apiReadOditurPenyidik,
   apiDeleteOditurPenyidik,
   apiCreateOditurPenyidik,
   apiUpdateOditurPenyidik,
-} from '../../services/api';
+} from '../../../../services/api';
 import { AddOditurPenyidikModal } from './ModalAddOditurPenyidik';
 import { DeleteOditurPenyidik } from './ModalDeleteOditurPenyidik';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../../components/Pagination';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../../Search';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../../components/DropdownAction';
 import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'

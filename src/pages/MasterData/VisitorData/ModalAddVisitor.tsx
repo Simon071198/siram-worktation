@@ -3,7 +3,7 @@ import {
   apiReadAllWBP,
   apiReadKota,
   apiReadProvinsi,
-} from '../../services/api';
+} from '../../../services/api';
 import Select from 'react-select';
 
 interface AddVisitorModalProps {
