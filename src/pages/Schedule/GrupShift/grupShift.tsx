@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import AddDataGrup from './modalAad';
 import { Alerts } from './Alert';
 import {
@@ -8,11 +8,11 @@ import {
   apiReadAllGrupPetugas,
   apiReadAllStaff,
   apiUpdateGrupPetugas,
-} from '../../services/api';
+} from '../../../services/api';
 import DetailGrup from './ModalDetail';
 import { DeleteGrupModal } from './deleteGrupShift';
 import EditGrup from './editGrup';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';

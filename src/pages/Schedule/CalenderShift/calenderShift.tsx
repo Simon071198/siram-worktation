@@ -18,7 +18,7 @@ import {
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
-} from '../../services/api';
+} from '../../../services/api';
 import AddDataSchedule from './ModalAddSchedule';
 import EditPetugasShift from './DetailPetugasShift';
 import AddPetugasShiftGrup from './addPetugasShiftGrup';

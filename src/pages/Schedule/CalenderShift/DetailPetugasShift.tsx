@@ -5,7 +5,7 @@ import {
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
-} from '../../services/api';
+} from '../../../services/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';

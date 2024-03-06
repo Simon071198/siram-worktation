@@ -15,6 +15,7 @@
     "url": "https://tailadmin.com"
   },
   "dependencies": {
+    "@types/react-datepicker": "^6.0.3",
     "@windmill/react-ui": "^0.6.0",
     "angular": "^1.6.10",
     "apexcharts": "^3.41.0",
@@ -29,7 +30,7 @@
     "nebular": "^0.0.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
-    "react-datepicker": "^4.21.0",
+    "react-datepicker": "^4.25.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
     "react-hot-toast": "^2.4.1",

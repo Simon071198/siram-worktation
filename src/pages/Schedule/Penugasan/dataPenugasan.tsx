@@ -4,9 +4,9 @@ import {
   apiDeletePenugasanShift,
   apiEditPenugasanShift,
   apiReadAllPenugasanShift,
-} from '../../services/api';
+} from '../../../services/api';
 import { Alerts } from '../GrupShift/Alert';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import ModalAddPenugasan from './modalAddPenugasan';
 import ModalEditPenugasan from './modalEditPenugasan';
 import { DeleteModal } from './modalDeletePenugasan';

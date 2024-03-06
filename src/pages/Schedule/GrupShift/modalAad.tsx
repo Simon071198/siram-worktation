@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiReadAllStaff } from '../../services/api';
+import { apiReadAllStaff } from '../../../services/api';
 import { Alerts } from './Alert';
 
 interface AddRoomModalProps {

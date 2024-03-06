@@ -5,9 +5,9 @@ import {
   apiDeleteShift,
   apiEditShift,
   apiReadAllShift,
-} from '../../services/api';
+} from '../../../services/api';
 import { Alerts } from './Alert';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { DeleteShiftModal } from './deleteDataShift';
 
 interface Item {

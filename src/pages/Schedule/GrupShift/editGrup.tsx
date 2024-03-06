@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { BsTrash } from 'react-icons/bs';
 import Select from 'react-select';
-import { apiReadAllStaff, apiUpdateAllStaff } from '../../services/api';
+import { apiReadAllStaff, apiUpdateAllStaff } from '../../../services/api';
 import { Alerts } from '../SceduleShift/Alert';
 
 interface AddRoomModalProps {

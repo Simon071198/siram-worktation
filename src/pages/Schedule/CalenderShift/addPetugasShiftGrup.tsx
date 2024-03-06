@@ -5,7 +5,7 @@ import {
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
-} from '../../services/api';
+} from '../../../services/api';
 import { Alerts } from '../GrupShift/Alert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
