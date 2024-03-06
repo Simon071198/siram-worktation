@@ -5,7 +5,7 @@ import {
   apiDeletePenyidikan,
   apiCreatePenyidikan,
   apiUpdatePenyidikan,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddPenyidikanModal } from './ModalAddHistoryPenyidikan';
 import { DeletePenyidikanModal } from './ModalDeleteHistoryPenyidikan';
 import * as xlsx from 'xlsx';

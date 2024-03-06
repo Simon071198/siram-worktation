@@ -16,7 +16,7 @@ import Pagination from '../../components/Pagination';
 import { DeleteUserModal } from './ModalDeleteUser';
 import { UbahPasswordModal } from './ModalUbahPassword';
 import SearchInputButton from '../MasterData/Search';
-import DropdownActionWithPass from 'renderer/components/DropdownActionWithPass';
+import DropdownActionWithPass from '../../components/DropdownActionWithPass';
 
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;

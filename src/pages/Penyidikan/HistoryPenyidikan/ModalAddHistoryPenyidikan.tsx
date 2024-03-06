@@ -5,7 +5,7 @@ import {
   apiReadJaksaPenyidik,
   apiReadKasus,
   apiReadSaksi,
-} from '../../services/api';
+} from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 
