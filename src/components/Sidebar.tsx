@@ -4,6 +4,7 @@ import Logo from '../images/logo/logo.png';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import { boolean } from 'yup';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
+import { IoDocumentText } from 'react-icons/io5';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -23,7 +24,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
 
   const handleNavLinkClick = () => {
@@ -269,7 +270,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/penyidikan"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('penyidikan') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('penyidikan') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -308,7 +310,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/pencatatan-bap"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('pencatatan-bap') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('pencatatan-bap') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -337,7 +340,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/daftar-sidang"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('daftar-sidang') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('daftar-sidang') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -366,10 +370,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/daftar-kasus"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('daftar-kasus') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('daftar-kasus') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                  <HiOutlineDocumentSearch size={20}/>
+                  <HiOutlineDocumentSearch size={20} />
                   Daftar Kasus
                 </NavLink>
               </li>
@@ -381,24 +386,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/pengunjung"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('pengunjung') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('pengunjung') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      width="20"
-                      height="20"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-                      />
-                    </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    width="20"
+                    height="20"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                    />
+                  </svg>
                   Aktifitas Pengunjung
                 </NavLink>
               </li>
@@ -514,7 +520,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Data Penugasan
                             </NavLink>
-                            </li>
+                          </li>
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
@@ -750,7 +756,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Data Oditur Penuntut{' '}
                             </NavLink>
-                          </li> 
+                          </li>
                           <li>
                             <NavLink
                               to="/saksi-data"
@@ -762,7 +768,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Data Saksi{' '}
                             </NavLink>
-                          </li> 
+                          </li>
                           <li>
                             <NavLink
                               to="/ahli-data"
@@ -774,7 +780,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Data Ahli{' '}
                             </NavLink>
-                          </li> 
+                          </li>
                           <li>
                             <NavLink
                               to="/jenis-persidangan-data"
@@ -786,7 +792,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             >
                               Data Jenis Persidangan{' '}
                             </NavLink>
-                          </li> 
+                          </li>
                           <li>
                             <NavLink
                               to="/barang-bukti"
@@ -808,10 +814,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 (isActive && '!text-white')
                               }
                             >
-                               Pengadilan Militer{' '}
+                              Pengadilan Militer{' '}
                             </NavLink>
-                          </li> 
-                          
+                          </li>
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
@@ -827,7 +832,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/event-data"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('event-data') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('event-data') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -855,7 +861,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   to="/daftar-inventaris"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('daftar-inventaris') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('daftar-inventaris') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -1105,11 +1112,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
               {/* <!-- Menu Item Live chat end --> */}
-              
+
               {/* <!-- Menu Item Pengaturan --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === '/setting-list' || pathname.includes('setting-list')
+                  pathname === '/setting-list' ||
+                  pathname.includes('setting-list')
                 }
               >
                 {(handleClick, open) => {
@@ -1171,20 +1179,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                            {isSuperAdmin && 
-                              <li>
-                                <NavLink
-                                  to="/manajemen-pengguna"
-                                  onClick={handleNavLinkClick}
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                    (isActive && '!text-white')
-                                  }
-                                >
-                                  Manajemen Pengguna
-                                </NavLink>
-                              </li>
-                            }
+                          {isSuperAdmin && (
+                            <li>
+                              <NavLink
+                                to="/manajemen-pengguna"
+                                onClick={handleNavLinkClick}
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Manajemen Pengguna
+                              </NavLink>
+                            </li>
+                          )}
                           <li>
                             <NavLink
                               to="/perangkat-gelang"
@@ -1228,7 +1236,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
-              {/* <!-- Menu Item Pelacakan --> */}      
+              {/* <!-- Menu Item Pelacakan --> */}
 
               {/* <!-- Menu Item Log Pengenalan Wajah --> */}
               <SidebarLinkGroup
@@ -1732,7 +1740,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li> */}
 
-              
               {/* {isSuperAdmin && (
                 <li>
                   <NavLink
@@ -1787,6 +1794,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     />
                   </svg>
                   Kemera Dev Test
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/tutorial-data"
+                  onClick={handleNavLinkClick}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('tutorial-data') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  <IoDocumentText size={20} />
+                  Tutorial
                 </NavLink>
               </li>
             </ul>

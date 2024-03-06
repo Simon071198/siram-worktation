@@ -97,6 +97,7 @@ const InmateList = () => {
       is_sick: item?.is_sick,
       wbp_sickness: item?.wbp_sickness,
       tanggal_ditahan_otmil: item?.tanggal_ditahan_otmil,
+      tanggal_masa_penahanan_otmil: item?.tanggal_masa_penahanan_otmil,
       bidang_keahlian_id: item?.bidang_keahlian_id,
       gelang_id: item?.gelang_id,
       DMAC: item?.DMAC,

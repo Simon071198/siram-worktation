@@ -4,6 +4,7 @@ import MenuItem from '../components/MenuItem';
 import Logo from '../images/logo/logo.png';
 import { PiIdentificationCardThin } from 'react-icons/pi';
 import { VscLaw } from 'react-icons/vsc';
+import { IoDocumentText } from 'react-icons/io5';
 
 import {
   CameraIcon,
@@ -188,6 +189,12 @@ const routes = [
     name: 'Version',
     link: '/version',
     icon: LogIcon,
+  },
+  {
+    id: 16,
+    name: 'Tutorial',
+    link: '/tutorial-data',
+    icon: <IoDocumentText size={80} />,
   },
 ];
 
