@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alerts } from '../GrupShift/Alert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
-import { BsFilter, BsPlusSquareDotted, BsTrash } from 'react-icons/bs';
+import {  BsPlusSquareDotted, BsTrash } from 'react-icons/bs';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
