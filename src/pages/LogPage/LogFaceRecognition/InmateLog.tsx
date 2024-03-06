@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import axios from 'axios';
-import { apiVisitorLogList } from '../../../services/api';
-import { webserviceurl } from '../../../services/api';
-import Loader from '../../../common/Loader';
+import { apiVisitorLogList } from '../../services/api';
+import { webserviceurl } from '../../services/api';
+import Loader from '../../common/Loader';
 import { NavLink } from 'react-router-dom';
 
 const DataNotFoundModal = ({ onClose, message }) => {
@@ -66,7 +66,6 @@ export default function VisitorLog() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
     setSelectedDevice('');
@@ -76,7 +75,7 @@ export default function VisitorLog() {
     setSelectedDevice(event.target.value);
   };
   const selectedLocationEntry = jsonData.find(
-    (entry) => entry.location === selectedLocation
+    (entry) => entry.location === selectedLocation,
   );
   const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
 
@@ -224,7 +223,7 @@ export default function VisitorLog() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.post(
-        webserviceurl + 'gema_admin_api/location/readOnline.php'
+        webserviceurl + 'gema_admin_api/location/readOnline.php',
       );
       console.log(result.data.data.records);
       setJsonData(result.data.data.records);
@@ -247,18 +246,16 @@ export default function VisitorLog() {
       <div>
         <h3 className="text-2xl font-semibold mb-4"> Log Prajurit Binaan</h3>
         <div className="flex-col w-full gap-4">
-          <div className='flex items-end mb-4 justify-between'>
-            <div className='flex gap-4 flex-wrap'>
+          <div className="flex items-end mb-4 justify-between">
+            <div className="flex gap-4 flex-wrap">
               <form>
-                <div className='items-center'>
-                  <h1 className=''>Pilih Analitik</h1>
+                <div className="items-center">
+                  <h1 className="">Pilih Analitik</h1>
                   <select
                     className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                     name="Select Analytics"
                     value={selectedAnalytics}
-                    onChange={
-                      handleAnalyticsChange
-                    }
+                    onChange={handleAnalyticsChange}
                   >
                     <option value="">Semua Analitik</option>
                     <option value="unrecognized">Unrecognized</option>
@@ -268,12 +265,12 @@ export default function VisitorLog() {
               </form>
               {selectedAnalytics == 'unrecognized' ? null : (
                 <form>
-                  <div className='flex-col'>
+                  <div className="flex-col">
                     <h1>Nama</h1>
                     <input
                       className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       name="Name"
-                      placeholder='Nama'
+                      placeholder="Nama"
                       value={selectedName}
                       onChange={(e) => setSelectedName(e.target.value)}
                     />
@@ -282,12 +279,12 @@ export default function VisitorLog() {
               )}
               {selectedAnalytics == 'unrecognized' ? null : (
                 <form>
-                  <div className='flex-col'>
+                  <div className="flex-col">
                     <h1>Usia</h1>
                     <input
                       className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       type="number"
-                      placeholder='Usia'
+                      placeholder="Usia"
                       name="Age"
                       value={selectedAge}
                       onChange={(e) => setSelectedAge(e.target.value)}
@@ -372,7 +369,7 @@ export default function VisitorLog() {
       </div>
       <div className="flex justify-between w-full gap-4 py-4">
         <div className="flex items-center">
-          <h1 className='w-full'>Tanggal Awal</h1>
+          <h1 className="w-full">Tanggal Awal</h1>
           <input
             className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
             type="date"
@@ -381,10 +378,13 @@ export default function VisitorLog() {
           />
         </div>
         <div className="flex items-center">
-          <h1 className='w-full'>Tanggal Akhir</h1>
+          <h1 className="w-full">Tanggal Akhir</h1>
           <input
             className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-            type="date" value={endDate} onChange={handleEndDateChange} />
+            type="date"
+            value={endDate}
+            onChange={handleEndDateChange}
+          />
         </div>
       </div>
       {selectedAnalytics == 'unrecognized' ? (
@@ -577,7 +577,11 @@ export default function VisitorLog() {
           page={currentPage}
           onChange={handlePageChange}
         /> */}
-        <Pagination totalPages={totalPages} onPageChange={handlePageChange} currentPage={currentPage} />
+        <Pagination
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          currentPage={currentPage}
+        />
       </div>
     </>
   );

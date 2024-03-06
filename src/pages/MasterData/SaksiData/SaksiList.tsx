@@ -14,6 +14,7 @@ import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -41,15 +42,15 @@ const SaksiList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [filterJabatan, setFilterJabatan] = useState('')
-  const [filterPangkat, setFilterPangkat] = useState('')
-  const [pangkatData, setPangkatData] = useState([])
-  const [pageSize, setPageSize] = useState(10)
+  const [filterJabatan, setFilterJabatan] = useState('');
+  const [filterPangkat, setFilterPangkat] = useState('');
+  const [pangkatData, setPangkatData] = useState([]);
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -64,7 +65,6 @@ const SaksiList = () => {
   //     navigate('/')
   //   }
   // },[])
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -117,7 +117,7 @@ const SaksiList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -138,7 +138,7 @@ const SaksiList = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
   // useEffect untuk fetch data dari API
   useEffect(() => {
@@ -154,7 +154,6 @@ const SaksiList = () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
   }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
 
   const fetchData = async () => {
     let params = {
@@ -175,7 +174,7 @@ const SaksiList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -183,17 +182,16 @@ const SaksiList = () => {
     }
   };
 
-
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
+    console.log('detail', item);
     setDetailData(item);
     setModalDetailOpen(true);
   };
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
-    console.log('edit', item)
+    console.log('edit', item);
     setEditData(item);
     setModalEditOpen(true);
   };
@@ -223,14 +221,13 @@ const SaksiList = () => {
     try {
       const responseDelete = await apiDeleteSaksi(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -239,7 +236,7 @@ const SaksiList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -251,15 +248,14 @@ const SaksiList = () => {
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateSaksi(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreateSaksi(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -269,7 +265,7 @@ const SaksiList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -281,15 +277,14 @@ const SaksiList = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateSaksi(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdateSaksi(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -299,7 +294,7 @@ const SaksiList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -317,22 +312,14 @@ const SaksiList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
-
-
   const exportToExcel = () => {
     const dataToExcel = [
-      [
-        'Nama saksi',
-        'NO Kontak',
-        'Alamat',
-        'jenis_kelamin',
-        'nama kasus',
-      ],
+      ['Nama saksi', 'NO Kontak', 'Alamat', 'keterangan', 'nama kasus'],
       ...data.map((item: any) => [
         item.nama_saksi,
         item.no_kontak,
         item.alamat,
-        item.jenis_kelamin,
+        item.keterangan,
         item.nama_kasus,
       ]),
     ];
@@ -340,9 +327,11 @@ const SaksiList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_saksi.xlsx');
-  }
-
+    xlsx.writeFile(
+      wb,
+      `Data-Saksi ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+  };
 
   return isLoading ? (
     <Loader />
@@ -413,20 +402,18 @@ const SaksiList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Saksi
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
         <div className="flex flex-col">
-
-          {isOperator ?
-
-            <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+          {isOperator ? (
+            <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Nama Saksi
@@ -437,25 +424,19 @@ const SaksiList = () => {
                   Kontak
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Alamat
-                </h5>
-              </div>
+              {/* <div className="p-2.5 xl:p-5 justify-center flex">
+           <h5 className="text-sm font-medium uppercase xsm:text-base">
+             Alamat
+           </h5>
+         </div> */}
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Jenis Kelamin
-                </h5>
-              </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama kasus
                 </h5>
               </div>
             </div>
-
-            :
-            <div className="grid grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6">
+          ) : (
+            <div className="grid grid-cols-4 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-4">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Nama Saksi
@@ -466,19 +447,14 @@ const SaksiList = () => {
                   Kontak
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Alamat
-                </h5>
-              </div>
+              {/* <div className="p-2.5 xl:p-5 justify-center flex">
+           <h5 className="text-sm font-medium uppercase xsm:text-base">
+             Alamat
+           </h5>
+         </div> */}
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Jenis Kelamin
-                </h5>
-              </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama kasus
                 </h5>
               </div>
 
@@ -487,11 +463,8 @@ const SaksiList = () => {
                   Aksi
                 </h5>
               </div>
-
             </div>
-          }
-
-
+          )}
 
           {data.length == 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -500,136 +473,116 @@ const SaksiList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ?
+                    {isOperator ? (
                       <>
                         <div
-                          className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 capitalize"
+                          className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize"
                           key={item.nama_saksi}
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
                               {item.nama_saksi}
                             </p>
                           </div>
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
                               {item.no_kontak}
                             </p>
                           </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 truncate xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              {item.alamat}
-                            </p>
-                          </div>
+                          {/* <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 truncate xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.alamat}
+                    </p>
+                  </div> */}
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              {item.jenis_kelamin}
-                            </p>
+                            className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                          >
+                            {item.jenis_kelamin === '0' ? (
+                              <p className="text-white">laki-laki</p>
+                            ) : item.jenis_kelamin === '1' ? (
+                              <p className="text-white">Perempuan</p>
+                            ) : (
+                              <p className="text-black dark:text-white">
+                                jenis Tidak Dikenali
+                              </p>
+                            )}
                           </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
-                          </div>
-
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                      :
+                    ) : (
                       <>
                         <div
-                          className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
+                          className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
                           key={item.nama_saksi}
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
                               {item.nama_saksi}
                             </p>
                           </div>
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
                               {item.no_kontak}
                             </p>
                           </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              {item.alamat}
-                            </p>
-                          </div>
+                          {/* <div 
+                  onClick={() => handleDetailClick(item)}
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                    <p className=" text-black truncate dark:text-white capitalize">
+                      {item.alamat}
+                    </p>
+                  </div> */}
 
                           <div
                             onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                                {item.jenis_kelamin === '0' ? (
-                                  <p className="text-white">Laki-laki</p>
-                                ) : item.jenis_kelamin === '1' ? (
-                                  <p className="text-white">Perempuan</p>
-                                ) : (
-                                  <p className="text-black dark:text-white">jenis Tidak Dikenali</p>
-                                )}
-                              </div>
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
+                            className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                          >
+                            {item.jenis_kelamin === '0' ? (
+                              <p className="text-white">laki-laki</p>
+                            ) : item.jenis_kelamin === '1' ? (
+                              <p className="text-white">Perempuan</p>
+                            ) : (
+                              <p className="text-black dark:text-white">
+                                jenis Tidak Dikenali
+                              </p>
+                            )}
                           </div>
 
                           <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
-                            {/* <button
-                      onClick={() => handleEditClick(item)}
-                      className="py-1 px-2 text-black rounded-md bg-blue-300"
-                    >
-                      Ubah
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(item)}
-                      className="py-1 px-2 text-white rounded-md bg-red-400"
-                    >
-                      Hapus
-                    </button> */}
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>
                         </div>
                         <div className="border-t border-slate-600"></div>
                       </>
-                    }
-
-
+                    )}
                   </div>
                 );
               })}
@@ -672,7 +625,7 @@ const SaksiList = () => {
 
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

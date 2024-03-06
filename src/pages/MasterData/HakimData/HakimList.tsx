@@ -570,7 +570,9 @@ const HakimList = () => {
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>

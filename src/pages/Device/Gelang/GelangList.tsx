@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
+import Loader from '../../common/Loader';
 import { AddGelang } from './ModalAddGelang';
 import { DeleteGelangModal } from './ModalDeleteGelang';
 import { Alerts } from './AlertGelang';
@@ -7,25 +7,26 @@ import {
   apiReadGelang,
   apiDeleteGelang,
   apiCreateGelang,
-  apiUpdateGelang
-} from '../../../services/api';
-import Pagination from '../../../components/Pagination';
+  apiUpdateGelang,
+} from '../../services/api';
+import Pagination from '../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import DropdownAction from '../../../components/DropdownAction';
+import DropdownAction from '../../components/DropdownAction';
+import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
-  dmac: string,
-  nama_gelang: string,
-  tanggal_pasang: Date,
-  tanggal_aktivasi: Date,
-  baterai: string,
-  lokasi_otmil_id: string,
-  nama_lokasi_otmil: string,
-  ruangan_otmil_id: string,
-  jenis_ruangan_otmil: string,
-  nama_ruangan_otmil: string,
+  dmac: string;
+  nama_gelang: string;
+  tanggal_pasang: Date;
+  tanggal_aktivasi: Date;
+  baterai: string;
+  lokasi_otmil_id: string;
+  nama_lokasi_otmil: string;
+  ruangan_otmil_id: string;
+  jenis_ruangan_otmil: string;
+  nama_ruangan_otmil: string;
 }
 
 const GelangList = () => {
@@ -44,19 +45,18 @@ const GelangList = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState(0);
   const [dataExcel, setDataExcel] = useState([]);
 
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -83,13 +83,12 @@ const GelangList = () => {
         nama_gelang: filter,
         // nama_lokasi_otmil: 'Cimahi',
         lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
-
       },
       page: currentPage,
       pageSize: pageSize,
     };
     try {
-      const response = await apiReadGelang(params);
+      const response = await apiReadGelang(params, token);
       if (response.status === 200) {
         const result = response.data;
         setData(result.records);
@@ -106,18 +105,18 @@ const GelangList = () => {
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleSearchClick();
-      console.log('ENTER DIPNCET')
+      console.log('ENTER DIPNCET');
     }
   };
 
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
-  }
+  };
 
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   // useEffect untuk fetch data dari API
@@ -136,12 +135,12 @@ const GelangList = () => {
     };
     setIsLoading(true);
     try {
-      const response = await apiReadGelang(params);
+      const response = await apiReadGelang(params, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
       const result = response.data.records;
-      console.log(result, 'data gelang')
+      console.log(result, 'data gelang');
       setData(result);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
@@ -153,9 +152,6 @@ const GelangList = () => {
       });
     }
   };
-
-
-
 
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
@@ -194,14 +190,13 @@ const GelangList = () => {
     try {
       const responseDelete = await apiDeleteGelang(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -210,7 +205,7 @@ const GelangList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -222,15 +217,14 @@ const GelangList = () => {
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateGelang(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreateGelang(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -240,7 +234,7 @@ const GelangList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -252,15 +246,14 @@ const GelangList = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateGelang(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdateGelang(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -270,7 +263,7 @@ const GelangList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -288,33 +281,37 @@ const GelangList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
-
   const exportToExcel = async () => {
-
     const dataToExcel = [
-      ['Nama Gelang',
+      [
+        'Nama Gelang',
         'DMAC',
         'Tanggal Pasang',
         'Tanggal aktivasi',
         'Batrai',
         'Nama Lokasi Otmil',
         'Nama Ruangan Otmil',
-        'Zona'],
-      ...dataExcel.map((item: any) =>
-        [item.nama_gelang,
+        'Zona',
+      ],
+      ...dataExcel.map((item: any) => [
+        item.nama_gelang,
         item.dmac,
         item.tanggal_pasang,
         item.tanggal_aktivasi,
         item.baterai,
         item.nama_lokasi_otmil,
         item.nama_ruangan_otmil,
-        item.status_zona_ruangan_otmil]),
+        item.status_zona_ruangan_otmil,
+      ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-Gelang ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   useEffect(() => {
@@ -327,11 +324,10 @@ const GelangList = () => {
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
-
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -341,7 +337,7 @@ const GelangList = () => {
                 placehorder="Cari nama Gelang"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
               {/* <select
             className="w-3/6 text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
@@ -359,7 +355,6 @@ const GelangList = () => {
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
-
               id="button-addon1"
               data-te-ripple-init
               data-te-ripple-color="light"
@@ -380,7 +375,8 @@ const GelangList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium">
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
               Export&nbsp;Excel
             </button>
           </div>
@@ -389,18 +385,20 @@ const GelangList = () => {
           <h4 className="ext-xl font-semibold text-black dark:text-white capitalize">
             data perangkat gelang
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
               className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
 
         <div className="flex flex-col">
-          <div className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-t-md capitalize bg-gray-2 dark:bg-slate-600 `}>
+          <div
+            className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-t-md capitalize bg-gray-2 dark:bg-slate-600 `}
+          >
             <div className="p-2.5 text-center xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nama Gelang
@@ -431,7 +429,9 @@ const GelangList = () => {
                 Nama Lokasi
               </h5>
             </div>
-            <div className={`hidden ${isOperator ? 'hidden' : 'sm:block'} p-2.5 text-center xl:p-5`}>
+            <div
+              className={`hidden ${isOperator ? 'hidden' : 'sm:block'} p-2.5 text-center xl:p-5`}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Aksi
               </h5>
@@ -441,39 +441,61 @@ const GelangList = () => {
           {data.map((item: any) => {
             return (
               <div>
-                <div className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-sm bg-gray-2 dark:bg-meta-4`}>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                <div
+                  className={`grid ${isOperator ? 'grid-cols-6' : 'grid-cols-7'} rounded-sm bg-gray-2 dark:bg-meta-4`}
+                >
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.nama_gelang}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.dmac}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.tanggal_pasang}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.tanggal_aktivasi}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.baterai}
                     </p>
                   </div>
-                  <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-                    <p className="text-black dark:text-white">
+                  <div
+                    onClick={() => handleDetailClick(item)}
+                    className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
+                  >
+                    <p className="text-black truncate dark:text-white">
                       {item.nama_lokasi_otmil}
                     </p>
                   </div>
 
-                  <div className={`hidden items-center ${isOperator ? 'hidden' : 'block sm:flex'} sm:flex justify-center p-2.5 xl:p-5 flex-wrap lg:flex-nowrap gap-2`}>
+                  <div
+                    className={`hidden items-center ${isOperator ? 'hidden' : 'block sm:flex'} justify-center p-2.5 xl:p-5 flex-wrap lg:flex-nowrap gap-2`}
+                  >
                     <div className="relative">
                       <DropdownAction
                         handleEditClick={() => handleEditClick(item)}
@@ -518,7 +540,7 @@ const GelangList = () => {
         </div>
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

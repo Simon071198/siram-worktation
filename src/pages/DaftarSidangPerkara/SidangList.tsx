@@ -1,11 +1,6 @@
-import { NavLink } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  apiChangePassword,
-  apiCreateUser,
-  apiEditUser,
-  apiNewDeleteUser,
-  apiReadAllUser,
+  apiJenisSidangRead,
   apiSidangDelete,
   apiSidangInsert,
   apiSidangRead,
@@ -13,16 +8,14 @@ import {
 } from '../../services/api';
 import { AddSidangModal } from './ModalAddSidang';
 import { Alerts } from './AlertSidang';
-// import Loader from 'renderer/common/Loader';
 import Loader from '../../common/Loader';
-// import Pagination from 'renderer/components/Pagination';
-import Pagination from '../../components/Pagination';
 import { DeleteSidangModal } from './ModalDeleteSidang';
 import * as xlsx from 'xlsx';
-// import DropdownAction from 'renderer/components/DropdownAction';
-import DropdownAction from '../../components/DropdownAction';
+
 import SearchInputButton from '../Device/Search';
 import dayjs from 'dayjs';
+import Pagination from '../../components/Pagination';
+import DropdownAction from '../../components/DropdownAction';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -31,6 +24,7 @@ const token = dataToken.token;
 const SidangList = () => {
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
+  const [jenisSidang, setJenisSidang] = useState([]);
   const [editData, setEditData] = useState([]);
   const [ubahPasswordData, setUbahPasswordData] = useState([]);
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
@@ -39,7 +33,10 @@ const SidangList = () => {
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [modalUbahPasswordOpen, setModalUbahPasswordOpen] = useState(false);
   const [deleteData, setDeleteData] = useState(null);
-  const [searchData, setSearchData] = useState<string>('');
+  const [searchData, setSearchData] = useState({
+    namaWBP: '',
+    jenisSidang: '',
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const [alertIsAdded, setAlertIsAdded] = useState(false);
@@ -48,8 +45,10 @@ const SidangList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
-
+  const [pageSize, setPageSize] = useState(10);
   const handleChagePage = (pageNumber: any) => {
+    console.log(currentPage, 'currentPage');
+    console.log(pageNumber, 'pageNumber');
     setCurrentPage(pageNumber);
   };
 
@@ -64,7 +63,7 @@ const SidangList = () => {
       newArrayJaksa?.push({
         oditur_penuntut_id: item?.oditur_penuntut_id,
         nama_oditur: item?.nama_oditur,
-      })
+      }),
     );
 
     item?.sidang_ahli.map((item: any) =>
@@ -72,28 +71,28 @@ const SidangList = () => {
         ahli_id: item?.ahli_id,
         nama_ahli: item?.nama_ahli,
         bidang_ahli: item?.bidang_ahli,
-      })
+      }),
     );
 
     item?.sidang_saksi.map((item: any) =>
       newArraySaksi.push({
         saksi_id: item?.saksi_id,
         nama_saksi: item?.nama_saksi,
-      })
+      }),
     );
 
     item?.sidang_hakim.map((item: any) =>
       newArrayHakim.push({
         hakim_id: item?.hakim_id ?? '',
         nama_hakim: item?.nama_hakim ?? '',
-      })
+      }),
     );
 
     const hakimKetua = item?.sidang_hakim.find(
-      (item: any) => item.ketua_hakim === '1'
+      (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.ketua_oditur === '1'
+      (item: any) => item.ketua_oditur === '1',
     );
 
     const detailItem: any = {
@@ -146,7 +145,7 @@ const SidangList = () => {
       newArrayJaksa?.push({
         oditur_penuntut_id: item?.oditur_penuntut_id,
         nama_oditur: item?.nama_oditur,
-      })
+      }),
     );
 
     item?.sidang_ahli.map((item: any) =>
@@ -154,14 +153,14 @@ const SidangList = () => {
         ahli_id: item?.ahli_id,
         nama_ahli: item?.nama_ahli,
         bidang_ahli: item?.bidang_ahli,
-      })
+      }),
     );
 
     item?.sidang_saksi.map((item: any) =>
       newArraySaksi.push({
         saksi_id: item?.saksi_id,
         nama_saksi: item?.nama_saksi,
-      })
+      }),
     );
 
     // item?.sidang_pengacara.map((item: any) =>
@@ -172,14 +171,14 @@ const SidangList = () => {
       newArrayHakim.push({
         hakim_id: item?.hakim_id,
         nama_hakim: item?.nama_hakim,
-      })
+      }),
     );
 
     const hakimKetua = item?.sidang_hakim.find(
-      (item: any) => item.ketua_hakim === '1'
+      (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.ketua_oditur === '1'
+      (item: any) => item.ketua_oditur === '1',
     );
     // console.log('HAKIM KETUA', hakimKetua);
 
@@ -328,20 +327,34 @@ const SidangList = () => {
   const handleCloseEditModal = () => {
     setModalEditOpen(false);
   };
-
+  const handleChangePageSize = async (e: any) => {
+    const size = e.target.value;
+    setPageSize(size);
+    setCurrentPage(1);
+  };
   useEffect(() => {
     fetchData();
-  }, []);
+    getAllJenisSidang();
+  }, [currentPage, pageSize]);
 
+  useEffect(() => {
+    // Menambahkan event listener untuk tombol "Enter" pada komponen ini
+    document.addEventListener('keypress', handleEnterKeyPress);
+
+    // Membersihkan event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener('keypress', handleEnterKeyPress);
+    };
+  }, [searchData]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
-      // filter: '',
-      // currentPage: currentPage,
-      // pageSize: 10,
+      filter: '',
+      page: currentPage,
+      pageSize: pageSize,
     };
     try {
-      const response = await apiSidangRead(params);
+      const response = await apiSidangRead(params, token);
       if (response.data.status === 'OK') {
         setData(response.data.records);
         setPages(response.data.pagination.totalPages);
@@ -357,6 +370,35 @@ const SidangList = () => {
       });
     }
     setIsLoading(false);
+  };
+
+  const getAllJenisSidang = async () => {
+    let params = {
+      filter: '',
+      pageSize: 1000,
+    };
+    try {
+      const response = await apiJenisSidangRead(params, token);
+      console.log('JENIS SIDANG', response.data.data);
+      const data = response.data.data;
+      const uniqueData: any[] = [];
+      const trackedNames: any[] = [];
+
+      data.forEach((item: any) => {
+        if (!trackedNames.includes(item.nama_jenis_persidangan)) {
+          trackedNames.push(item.nama_jenis_persidangan);
+          uniqueData.push(item);
+        }
+      });
+
+      console.log('uniqueData', uniqueData);
+      setJenisSidang(uniqueData);
+    } catch (e: any) {
+      Alerts.fire({
+        icon: 'error',
+        title: e.message,
+      });
+    }
   };
 
   const flattenObject = (obj: any, prefix = ''): any => {
@@ -403,7 +445,7 @@ const SidangList = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `DataSidang${dayjs(new Date()).format('DDMMYYYY-HHmmss')}.xlsx`
+      `DataSidang${dayjs(new Date()).format('DDMMYYYY-HHmmss')}.xlsx`,
     );
   };
 
@@ -411,30 +453,29 @@ const SidangList = () => {
     nama_wbp: string;
     nama_jenis_persidangan: string;
   }
-  const handleSearchSidang = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleSearchSidang = async () => {
+    // console.log('searchData', searchData);
     try {
-      e.preventDefault();
       let params = {
         filter: {
-          nama_wbp: searchData,
-          // nama_jenis_persidangan: searchData,
+          nama_wbp: searchData.namaWBP,
+          nama_jenis_persidangan: searchData.jenisSidang,
         },
         currentPage: currentPage,
         pageSize: 10,
       };
-      const response = await apiSidangRead(params);
+      const response = await apiSidangRead(params, token);
       if (response.data.status === 'OK') {
         const result = response.data.records;
+        // console.log('result', result);
         setData(result);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else if (response.data.status === 'No Data') {
         const result = response.data.records;
         setData(result);
-        // setPages(response.data.pagination.totalPages);
-        // setRows(response.data.pagination.totalRecords);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
@@ -446,7 +487,11 @@ const SidangList = () => {
       });
     }
   };
-
+  const handleEnterKeyPress = (event: any) => {
+    if (event.key === 'Enter') {
+      handleSearchSidang();
+    }
+  };
   return isLoading ? (
     <Loader />
   ) : (
@@ -456,23 +501,27 @@ const SidangList = () => {
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="w-full">
               <SearchInputButton
-                value={searchData}
+                value={searchData.namaWBP}
                 placehorder="Cari nama binaan"
-                onChange={(e) => setSearchData(e.target.value)}
+                onChange={(e) =>
+                  setSearchData({ ...searchData, namaWBP: e.target.value })
+                }
               />
             </div>
 
             <select
-              // value={filterHunian}
-              // onChange={handleFilterChangeHunian}
+              value={searchData.jenisSidang}
+              onChange={(e) =>
+                setSearchData({ ...searchData, jenisSidang: e.target.value })
+              }
               className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
             >
-              <option value="">Semua perkara</option>
-              {/* {hunian.map((item: any) => (
-              <option value={item.hunian_wbp_otmil}>
-                {item.nama_hunian_wbp_otmil}
-              </option>
-            ))} */}
+              <option value="">Semua jenis sidang</option>
+              {jenisSidang.map((item: any) => (
+                <option value={item.nama_jenis_persidangan}>
+                  {item.nama_jenis_persidangan}
+                </option>
+              ))}
             </select>
 
             <button
@@ -590,7 +639,7 @@ const SidangList = () => {
                         <p className="hidden text-black dark:text-white sm:block text-center">
                           {item?.sidang_oditur && item.sidang_oditur.length > 0
                             ? item?.sidang_oditur?.find(
-                                (item: any) => item.ketua_oditur === '1'
+                                (item: any) => item.ketua_oditur === '1',
                               )?.nama_oditur || ''
                             : ''}
                         </p>
@@ -675,9 +724,21 @@ const SidangList = () => {
 
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <p>
-              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-            </p>
+            <div className="flex gap-4 items-center ">
+              <p>
+                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+              </p>
+              <select
+                value={pageSize}
+                onChange={handleChangePageSize}
+                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              >
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
             <Pagination
               currentPage={currentPage}
               totalPages={pages}

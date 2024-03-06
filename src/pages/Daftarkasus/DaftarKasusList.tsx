@@ -6,6 +6,7 @@ import {
   apiReadDaftarKasus,
   apiUpdateDaftarKasus,
   apiDeleteDaftarKasus,
+  apiCreateBarangBukti,
 } from '../../services/api';
 import { AddDaftarKasusModal } from './ModalAddDaftarKasus';
 import { DeleteDaftarKasusModal } from './ModalDeleteDaftarKasus';
@@ -13,14 +14,13 @@ import Pagination from '../../components/Pagination';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../Device/Search';
 import DropdownAction from '../../components/DropdownAction';
-
-// Interface untuk objek 'params' dan 'item'
-interface Params {
-  filter: string;
-}
+import dayjs from 'dayjs';
+import { EditDaftarKasusModal } from './modalEditdaftarKasus';
+import { AddBarangBuktiModal } from '../MasterData/BarangBukti/ModalAddBarangBukti';
 
 interface Item {
   nama_kasus: string;
+  nomor_kasus: string;
 }
 
 const DaftarKasus = () => {
@@ -32,18 +32,19 @@ const DaftarKasus = () => {
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [modalAddOpen, setModalAddOpen] = useState(false);
+  const [modalAddBarangBukti, setModalAddBarangBukti] = useState(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -59,24 +60,9 @@ const DaftarKasus = () => {
   //   }
   // },[])
 
-
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
-    // try {
-    //   const response = await apiReadAllStaff({ filter: { nama: newFilter } });
-
-    //   if (response.data.status === 'OK') {
-    //     const result = response.data;
-    //     setData(result.records);
-    //     setPages(response.data.pagination.totalPages);
-    //     setRows(response.data.pagination.totalRecords);
-    //   } else {
-    //     throw new Error('Terjadi kesalahan saat mencari data.');
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
 
   const handleSearchClick = async () => {
@@ -98,14 +84,11 @@ const DaftarKasus = () => {
       } else if (response.data.status === 'No Data') {
         const result = response.data.records;
         setData(result);
-        // setPages(response.data.pagination.totalPages);
-        // setRows(response.data.pagination.totalRecords);
-      }
-      else {
+      } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -126,7 +109,7 @@ const DaftarKasus = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -141,8 +124,7 @@ const DaftarKasus = () => {
     return () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
-  }, [filter,]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
+  }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
     let param = {
@@ -163,7 +145,7 @@ const DaftarKasus = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -171,19 +153,21 @@ const DaftarKasus = () => {
     }
   };
 
-
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
     setDetailData(item);
     setModalDetailOpen(true);
   };
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
-    console.log('edit', item)
     setEditData(item);
     setModalEditOpen(true);
+  };
+
+  const handleAddBarangBuktiClick = (item: Item) => {
+    setDetailData(item);
+    setModalAddBarangBukti(true);
   };
 
   // function untuk menampilkan modal delete
@@ -193,17 +177,11 @@ const DaftarKasus = () => {
   };
 
   // function untuk menutup modal
-  const handleCloseDeleteModal = () => {
+  const handleCloseModal = () => {
     setModalDeleteOpen(false);
-  };
-
-  // function untuk menutup modal
-  const handleCloseAddModal = () => {
     setModalAddOpen(false);
-  };
-
-  const handleCloseEditModal = () => {
     setModalEditOpen(false);
+    setModalAddBarangBukti(false);
   };
 
   // function untuk menghapus data
@@ -211,14 +189,13 @@ const DaftarKasus = () => {
     try {
       const responseDelete = await apiDeleteDaftarKasus(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -227,7 +204,7 @@ const DaftarKasus = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -237,17 +214,16 @@ const DaftarKasus = () => {
 
   // function untuk menambah data
   const handleSubmitAdd = async (params: any) => {
-    console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateDaftarKasus(params, token)
-      if (responseCreate.data.status === "OK") {
+      const responseCreate = await apiCreateDaftarKasus(params, token);
 
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -257,7 +233,7 @@ const DaftarKasus = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -267,17 +243,16 @@ const DaftarKasus = () => {
 
   // function untuk mengubah data
   const handleSubmitEdit = async (params: any) => {
-    console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateDaftarKasus(params, token)
-      if (responseEdit.data.status === "OK") {
+      const responseEdit = await apiUpdateDaftarKasus(params, token);
 
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -287,7 +262,7 @@ const DaftarKasus = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -301,11 +276,77 @@ const DaftarKasus = () => {
     } else {
       setIsOperator(false);
     }
-
-    console.log(isOperator, 'Operator');
   }, [isOperator]);
 
+  const [nomorKasus, setNomorKasus] = useState({
+    nomor_kasus: '',
+  });
 
+  const handleModalAddOpen = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+
+    data.forEach((item) => {
+      const nomorKasus = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+      const angka = parseInt(nomorKasus, 10);
+
+      if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
+        angkaTerbesar = Math.max(angkaTerbesar, angka);
+      }
+    });
+
+    // Increment the largest number by 1 if the date is the same
+    if (angkaTerbesar === 0) {
+      // No matching cases for the current date
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+
+    setNomorKasus({
+      ...nomorKasus,
+      nomor_kasus: `${angkaTerbesar}/${type}/${currentDate}/${lokasi}`,
+    });
+
+    setModalAddOpen(true);
+  };
 
   const exportToExcel = () => {
     const dataToExcel = [
@@ -316,10 +357,11 @@ const DaftarKasus = () => {
         'nama',
         'nama kategori perkara',
         'nama jenis perkara',
-        'lokasi kasus',
-        'waktu kejadian',
-        'tanggal pelimpahan kasus',
-        'waktu pelaporan kasus',
+        'tanggal registrasi kasus',
+        'tanggal penutupan kasus',
+        'tanggal mulai penyidikan',
+        'tanggal mulai sidang',
+        'nama oditur',
       ],
       ...data.map((item: any) => [
         item.nama_kasus,
@@ -328,24 +370,55 @@ const DaftarKasus = () => {
         item.nama,
         item.nama_kategori_perkara,
         item.nama_jenis_perkara,
-        item.lokasi_kasus,
-        item.waktu_kejadian,
-        item.tanggal_pelimpahan_kasus,
-        item.waktu_pelaporan_kasus,
+        item.tanggal_registrasi_kasus,
+        item.tanggal_penutupan_kasus,
+        item.tanggal_mulai_penyidikan,
+        item.tanggal_mulai_sidang,
+        item.nama_oditur,
       ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_jenis_sidang.xlsx');
-  }
+    xlsx.writeFile(
+      wb,
+      `DataKasus${dayjs(new Date()).format('DDMMYYYY-HHmmss')}.xlsx`,
+    );
+  };
 
+  //AddBarang bukti
+  const handleSubmitAddBarangBukti = async (params: any) => {
+    try {
+      const responseCreate = await apiCreateBarangBukti(params, token);
+      if (responseCreate.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        handleCloseModal();
+        fetchData();
+      } else if (responseCreate.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseCreate.data.message);
+      }
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
+  };
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -392,129 +465,53 @@ const DaftarKasus = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Daftar Kasus
           </h4>
-          {!isOperator &&
+          {!isOperator && (
             <button
-              onClick={() => setModalAddOpen(true)}
+              onClick={handleModalAddOpen}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>
-          }
+          )}
         </div>
-        <div className="flex flex-col">
-
-          {isOperator ?
-
-            <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Kasus
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nomer Kasus
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama WBP
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  NRP
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Kategori Perkara
-                </h5>
-              </div>
-
-              {/* <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Jenis Perkara
-            </h5>
-          </div> */}
-
-              {/* <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Tanggal Mulai Penyidikan
-            </h5>
-          </div>
-
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Tanggal Mulai Sidang
-            </h5>
-          </div> */}
+        <div className="">
+          <div
+            className={`${
+              isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          >
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nomer Kasus
+              </h5>
             </div>
 
-            :
-            <div className="grid grid-cols-11 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-11">
-              <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Kasus
-                </h5>
-              </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama Kasus
+              </h5>
+            </div>
 
-              <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nomer Kasus
-                </h5>
-              </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Pelaporan
+              </h5>
+            </div>
 
-              <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama WBP
-                </h5>
-              </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Kejadian
+              </h5>
+            </div>
 
-              <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  NRP
-                </h5>
-              </div>
-
-              <div className="p-2.5 xl:py-5 px-2 col-span-2 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Kategori Perkara
-                </h5>
-              </div>
-
-              {/* <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Jenis Perkara
-            </h5>
-          </div> */}
-
-              {/* <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Tanggal Mulai Penyidikan
-            </h5>
-          </div>
-
-          <div className="p-2.5 xl:p-5 col-span-2 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-            Tanggal Mulai Sidang
-            </h5>
-          </div> */}
-
+            {isOperator ? null : (
               <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Aksi
                 </h5>
               </div>
-
-            </div>
-          }
-
-
+            )}
+          </div>
 
           {data.length === 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -523,163 +520,71 @@ const DaftarKasus = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ?
-                      <>
-                        <div
-                          className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 capitalize"
-                          key={item.nama_kasus}
-                        >
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
-                          </div>
+                    <div
+                      className={`${
+                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                      key={item.nama_kasus}
+                    >
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className=" text-black truncate dark:text-white capitalize">
+                          {item.nomor_kasus}
+                        </p>
+                      </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nomor_kasus}
-                            </p>
-                          </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className=" text-black truncate dark:text-white capitalize">
+                          {item.nama_kasus}
+                        </p>
+                      </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama}
-                            </p>
-                          </div>
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className=" text-black truncate dark:text-white capitalize">
+                          {item.waktu_pelaporan_kasus}
+                        </p>
+                      </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nrp}
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate text-center dark:text-white capitalize">
-                              {item.nama_kategori_perkara}
-                            </p>
-                          </div>
-
-                          {/* <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate text-center dark:text-white capitalize">
-                      {item.nama_jenis_perkara}
-                    </p>
-                  </div> */}
-
-                          {/* <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate dark:text-white capitalize">
-                      {item.tanggal_mulai_penyidikan}
-                    </p>
-                  </div>
-                 
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate dark:text-white capitalize">
-                      {item.tanggal_mulai_sidang}
-                    </p>
-                  </div> */}
-
-                        </div>
-                        <div className="border-t border-slate-600"></div>
-                      </>
-                      :
-                      <>
-                        <div
-                          className="grid grid-cols-11 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                          key={item.nama_kasus}
-                        >
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama_kasus}
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nomor_kasus}
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nama}
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate dark:text-white capitalize">
-                              {item.nrp}
-                            </p>
-                          </div>
-
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                            <p className=" text-black truncate text-center dark:text-white capitalize">
-                              {item.nama_kategori_perkara}
-                            </p>
-                          </div>
-
-                          {/* <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate text-center dark:text-white capitalize">
-                      {item.nama_jenis_perkara}
-                    </p>
-                  </div> */}
-
-                          {/* <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate dark:text-white capitalize">
-                      {item.tanggal_mulai_penyidikan}
-                    </p>
-                  </div>
-                 
-                  <div 
-                  onClick={() => handleDetailClick(item)}
-                  className="flex items-center col-span-2 justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
-                    <p className=" text-black truncate dark:text-white capitalize">
-                      {item.tanggal_mulai_sidang}
-                    </p>
-                  </div> */}
-                          <div className="hidden items-center col-span-1 justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
+                      <div
+                        onClick={() => handleDetailClick(item)}
+                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                      >
+                        <p className=" text-black truncate text-center dark:text-white capitalize">
+                          {item.waktu_kejadian}
+                        </p>
+                      </div>
+                      {isOperator ? (
+                        <></>
+                      ) : (
+                        <>
+                          <div className="hidden items-center  justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
                             <div className="relative">
                               <DropdownAction
+                                kasus={true}
+                                handleAddClick={() =>
+                                  handleAddBarangBuktiClick(item)
+                                }
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
-                              ></DropdownAction>
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
+                              >
+                                <button></button>
+                              </DropdownAction>
                             </div>
                           </div>
-                        </div>
-                        <div className="border-t border-slate-600"></div>
-                      </>
-                    }
-
-
+                        </>
+                      )}
+                    </div>
+                    <div className="border-t border-slate-600"></div>
                   </div>
                 );
               })}
@@ -687,7 +592,7 @@ const DaftarKasus = () => {
           )}
 
           {modalDetailOpen && (
-            <AddDaftarKasusModal
+            <EditDaftarKasusModal
               closeModal={() => setModalDetailOpen(false)}
               onSubmit={handleSubmitAdd}
               defaultValue={detailData}
@@ -696,24 +601,34 @@ const DaftarKasus = () => {
             />
           )}
           {modalEditOpen && (
-            <AddDaftarKasusModal
-              closeModal={handleCloseEditModal}
+            <EditDaftarKasusModal
+              closeModal={handleCloseModal}
               onSubmit={handleSubmitEdit}
               defaultValue={editData}
               isEdit={true}
               token={token}
             />
           )}
+          {modalAddBarangBukti && (
+            <AddBarangBuktiModal
+              isKasus={true}
+              defaultValue={detailData}
+              closeModal={handleCloseModal}
+              onSubmit={handleSubmitAddBarangBukti}
+              token={token}
+            />
+          )}
           {modalAddOpen && (
             <AddDaftarKasusModal
-              closeModal={handleCloseAddModal}
+              closeModal={handleCloseModal}
               onSubmit={handleSubmitAdd}
+              defaultValue={nomorKasus}
               token={token}
             />
           )}
           {modalDeleteOpen && (
             <DeleteDaftarKasusModal
-              closeModal={handleCloseDeleteModal}
+              closeModal={handleCloseModal}
               onSubmit={handleSubmitDelete}
               defaultValue={deleteData}
             />
@@ -722,7 +637,7 @@ const DaftarKasus = () => {
 
         {data.length === 0 ? null : (
           <div className="mt-5">
-            <div className='flex gap-4 items-center '>
+            <div className="flex gap-4 items-center ">
               <p>
                 Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
               </p>

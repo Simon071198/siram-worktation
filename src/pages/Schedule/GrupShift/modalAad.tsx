@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiReadAllStaff } from '../../../services/api';
+import { apiReadAllStaff } from '../../services/api';
 import { Alerts } from './Alert';
 
 interface AddRoomModalProps {
@@ -35,7 +35,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     defaultValue || {
       nama_grup_petugas: '',
       ketua_grup: '',
-    }
+    },
   );
   const [staff, setStaff] = useState<Staff[]>([]); // Staff[] adalah tipe array dari objek Staff
 
@@ -109,7 +109,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setDataShift({ ...dataGrup, [e.target.name]: e.target.value });
   };
@@ -188,7 +188,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                             (error, index) =>
                               error === 'Isi Nama Grup' && (
                                 <div key={index}>{error}</div>
-                              )
+                              ),
                           )}
                         </div>
                       )}
@@ -230,7 +230,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                             (error, index) =>
                               error === 'Isi Ketua Grup' && (
                                 <div key={index}>{error}</div>
-                              )
+                              ),
                           )}
                         </div>
                       )}

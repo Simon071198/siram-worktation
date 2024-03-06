@@ -425,7 +425,7 @@ export default function InmateFaceDB() {
                   src={
                     data.face_pics
                       ? 'https://dev.transforme.co.id/gema_admin_api' +
-                      data.face_pics
+                        data.face_pics
                       : 'https://via.placeholder.com/200x300'
                   }
                   alt={data.name}
@@ -467,26 +467,27 @@ export default function InmateFaceDB() {
                   </div>
                   <div className="mb-2">
                     <p
-                      className={`text-lg ${data.status_vaksin === 0
-                        ? 'text-red-500'
-                        : data.status_vaksin === 1
+                      className={`text-lg ${
+                        data.status_vaksin === 0
+                          ? 'text-red-500'
+                          : data.status_vaksin === 1
                           ? 'text-orange-500'
                           : data.status_vaksin === 2
-                            ? 'text-yellow-500'
-                            : 'text-green-500'
-                        }`}
+                          ? 'text-yellow-500'
+                          : 'text-green-500'
+                      }`}
                     >
                       {data.status_vaksin === 0
                         ? 'Not Vaccinated'
                         : data.status_vaksin === 1
-                          ? 'Vaccine 1'
-                          : data.status_vaksin === 2
-                            ? 'Vaccine 2'
-                            : data.status_vaksin === 3
-                              ? 'Booster 1'
-                              : data.status_vaksin === 4
-                                ? 'Booster 2'
-                                : ''}
+                        ? 'Vaccine 1'
+                        : data.status_vaksin === 2
+                        ? 'Vaccine 2'
+                        : data.status_vaksin === 3
+                        ? 'Booster 1'
+                        : data.status_vaksin === 4
+                        ? 'Booster 2'
+                        : ''}
                     </p>
                   </div>
                   <div className="flex justify-between items-center">
@@ -517,51 +518,54 @@ export default function InmateFaceDB() {
           ))}
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-700">
-            {data.length > 0 ? (
-              <>
-                Showing{' '}
-                {data.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{' '}
-                {currentPage === totalPages
-                  ? totalItemPage
-                  : Math.min(currentPage * itemsPerPage, totalItemPage)}{' '}
-                of {totalItemPage} data
-              </>
-            ) : (
-              'No data found'
-            )}
-          </p>
-          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
-                } relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium focus:outline-none`}
-            >
-              Previous
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => handlePageChange(i + 1)}
-                className={`${currentPage === i + 1
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-                  } relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium focus:z-10 focus:outline-none`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
-                } relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium focus:outline-none`}
-            >
-              Next
-            </button>
-          </nav>
-        </div>
+  <p className="text-sm text-gray-700">
+    {data.length > 0 ? (
+      <>
+        Showing{' '}
+        {data.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{' '}
+        {currentPage === totalPages
+          ? totalItemPage
+          : Math.min(currentPage * itemsPerPage, totalItemPage)}{' '}
+        of {totalItemPage} data
+      </>
+    ) : (
+      'No data found'
+    )}
+  </p>
+  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+    <button
+      onClick={() => handlePageChange(currentPage - 1)}
+      disabled={currentPage === 1}
+      className={`${
+        currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
+      } relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium focus:outline-none`}
+    >
+      Previous
+    </button>
+    {Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i}
+        onClick={() => handlePageChange(i + 1)}
+        className={`${
+          currentPage === i + 1
+            ? 'bg-blue-500 text-white'
+            : 'bg-white text-gray-700 hover:bg-gray-50'
+        } relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium focus:z-10 focus:outline-none`}
+      >
+        {i + 1}
+      </button>
+    ))}
+    <button
+      onClick={() => handlePageChange(currentPage + 1)}
+      disabled={currentPage === totalPages}
+      className={`${
+        currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
+      } relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium focus:outline-none`}
+    >
+      Next
+    </button>
+  </nav>
+</div>
 
       </div>
 
@@ -725,7 +729,7 @@ export default function InmateFaceDB() {
                       src={
                         selectedCard.face_pics
                           ? 'https://dev.transforme.co.id/gema_admin_api' +
-                          selectedCard.face_pics
+                            selectedCard.face_pics
                           : 'https://via.placeholder.com/200x300'
                       }
                       alt={selectedCard.name}
@@ -790,14 +794,14 @@ export default function InmateFaceDB() {
                   {detailDpo.map((data, index) => (
                     <div
                       className="group cursor-pointer border border-gray-200 hover:border-blue-500 rounded-lg shadow-lg p-4"
-                    //  onClick={() => handleCardClick(data)}
+                      //  onClick={() => handleCardClick(data)}
                     >
                       <img
                         className="w-full h-48 object-cover"
                         src={
                           selectedCard.face_pics
                             ? 'https://dev.transforme.co.id/gema_admin_api' +
-                            data.image
+                              data.image
                             : 'https://via.placeholder.com/200x300'
                         }
                         alt={selectedCard.name}

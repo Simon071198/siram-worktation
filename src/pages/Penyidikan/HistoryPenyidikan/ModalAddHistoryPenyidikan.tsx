@@ -5,10 +5,9 @@ import {
   apiReadJaksaPenyidik,
   apiReadKasus,
   apiReadSaksi,
-} from '../../../services/api';
+} from '../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
-const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
 export const AddPenyidikanModal = ({
   closeModal,
@@ -33,10 +32,9 @@ export const AddPenyidikanModal = ({
       role_ketua_jaksa_id: '',
       jaksa_penyidik: [],
       saksi: [],
-    }
+    },
   );
   console.log('formstate', formState);
-
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,15 +62,17 @@ export const AddPenyidikanModal = ({
 
   const [dataJaksaPenyidik, setDataJaksaPenyidik] = useState([
     {
-      oditur_penyidik_id: '',
-      nama_oditur: '',
+      jaksa_penyidik_id: '',
+      nama_jaksa: '',
     },
   ]);
 
-  const [dataSaksi, setdataSaksi] = useState([{
-    saksi_id: '',
-    nama_saksi: ''
-  }])
+  const [dataSaksi, setdataSaksi] = useState([
+    {
+      saksi_id: '',
+      nama_saksi: '',
+    },
+  ]);
 
   useEffect(() => {
     const params = {
@@ -82,11 +82,11 @@ export const AddPenyidikanModal = ({
       const Wbp = await apiReadAllWBP(params, token);
       const kasus = await apiReadKasus(params, token);
       const jaksaPenyidik = await apiReadJaksaPenyidik(params, token);
-      const saksi = await apiReadSaksi(params, token)
+      const saksi = await apiReadSaksi(params, token);
       setDataWbp(Wbp.data.records);
       setDataKasus(kasus.data.records);
       setDataJaksaPenyidik(jaksaPenyidik.data.records);
-      setdataSaksi(saksi.data.records)
+      setdataSaksi(saksi.data.records);
     };
     fetchData();
   }, []);
@@ -99,14 +99,13 @@ export const AddPenyidikanModal = ({
 
   const wbpOptionsValue = {
     value: defaultValue?.wbp_profile_id,
-    label: defaultValue?.nama_wbp
-  }
+    label: defaultValue?.nama_wbp,
+  };
   console.log('opstions', wbpOptionsValue);
 
-
   const onChangeWbp = (e: any) => {
-    setFormState({ ...formState, wbp_profile_id: e.value })
-  }
+    setFormState({ ...formState, wbp_profile_id: e.value });
+  };
 
   //select kasus
   const kasusOptions = dataKasus.map((item: any) => ({
@@ -117,44 +116,45 @@ export const AddPenyidikanModal = ({
   const kasusOptionsValue = {
     value: defaultValue.kasus_id,
     label: defaultValue.nama_kasus,
-  }
+  };
 
   //select jenis perkara
   const jaksaPenyidikOptions = dataJaksaPenyidik.map((item: any) => ({
-    value: item.oditur_penyidik_id,
-    label: item.nama_oditur,
+    value: item.jaksa_penyidik_id,
+    label: item.nama_jaksa,
   }));
 
-  const [jaksaPenyidikKetua, setJaksaPenyidikKetua] = useState([{
-    value: '',
-    label: ''
-  }])
+  const [jaksaPenyidikKetua, setJaksaPenyidikKetua] = useState([
+    {
+      value: '',
+      label: '',
+    },
+  ]);
 
   const jaksaPenyidikKetuaOptions = jaksaPenyidikKetua.map((item: any) => ({
     value: item.value,
-    label: item.label
-  }))
+    label: item.label,
+  }));
   const handleSelectJaksa = (e: any) => {
     let arrayTemp: any = [];
-    let arrayAnggota: any = []
+    let arrayAnggota: any = [];
     for (let i = 0; i < e?.length; i++) {
       arrayTemp.push(e[i].value);
-      arrayAnggota.push(e[i])
+      arrayAnggota.push(e[i]);
     }
     setFormState({ ...formState, jaksa_penyidik: arrayTemp });
-    setJaksaPenyidikKetua(arrayAnggota)
-
+    setJaksaPenyidikKetua(arrayAnggota);
   };
 
   const handleSelectKetuaJaksa = (e: any) => {
-    setFormState({ ...formState, role_ketua_jaksa_id: e.value })
-  }
+    setFormState({ ...formState, role_ketua_jaksa_id: e.value });
+  };
 
   //select saksi
   const saksiOpstions = dataSaksi.map((item: any) => ({
     value: item.saksi_id,
-    label: item.nama_saksi
-  }))
+    label: item.nama_saksi,
+  }));
 
   const handleSelectSaksi = (e: any) => {
     let arrayTemp: any = [];
@@ -162,12 +162,11 @@ export const AddPenyidikanModal = ({
       arrayTemp.push(e[i].value);
     }
     setFormState({ ...formState, saksi: arrayTemp });
-
   };
 
   const onChangeKasus = (e: any) => {
     const kasusFilter = dataKasus.filter(
-      (item: any) => item.kasus_id === e.value
+      (item: any) => item.kasus_id === e.value,
     );
     setFormState({
       ...formState,
@@ -188,7 +187,10 @@ export const AddPenyidikanModal = ({
       }
     }
 
-    if (!Array.isArray(formState.jaksa_penyidik) || formState.jaksa_penyidik.length === 0) {
+    if (
+      !Array.isArray(formState.jaksa_penyidik) ||
+      formState.jaksa_penyidik.length === 0
+    ) {
       errorFields.push('jaksa_penyidik');
     }
     if (!Array.isArray(formState.saksi) || formState.saksi.length === 0) {
@@ -203,7 +205,6 @@ export const AddPenyidikanModal = ({
     return true;
   };
   console.log('erros', errors);
-
 
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
@@ -268,7 +269,7 @@ export const AddPenyidikanModal = ({
     input: (provided: any) => ({
       ...provided,
       color: 'white',
-      height: '35px'
+      height: '35px',
     }),
     menu: (provided: any) => ({
       ...provided,
@@ -411,7 +412,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'nomor_penyidikan'
                           ? 'Masukan Nomor Penyidikan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -432,9 +433,7 @@ export const AddPenyidikanModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'wbp_profile_id'
-                          ? 'Masukan Nama Wbp'
-                          : ''
+                        item === 'wbp_profile_id' ? 'Masukan Nama Wbp' : '',
                       )}
                     </p>
                   </div>
@@ -457,9 +456,7 @@ export const AddPenyidikanModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'kasus_id'
-                          ? 'Masukan Nama Kasus'
-                          : ''
+                        item === 'kasus_id' ? 'Masukan Nama Kasus' : '',
                       )}
                     </p>
                   </div>
@@ -484,7 +481,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'nama_jenis_perkara'
                           ? 'Masukan Jenis Perkara'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -507,7 +504,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'nama_kategori_perkara'
                           ? 'Masukan Kategori Perkara'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -533,7 +530,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'agenda_penyidikan'
                           ? 'Masukan Agenda Penyidikan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -557,7 +554,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'waktu_penyidikan'
                           ? 'Masukan Waktu Penyidikan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -581,7 +578,7 @@ export const AddPenyidikanModal = ({
                     {errors.map((item) =>
                       item === 'lokasi_penyidikan'
                         ? 'Masukan Lokasi Penyidikan'
-                        : ''
+                        : '',
                     )}
                   </p>
                 </div>
@@ -606,7 +603,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'alasan_penyidikan'
                           ? 'Masukan Alasan Penyidikan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -631,7 +628,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'hasil_penyidikan'
                           ? 'Masukan Hasil Penyidikan'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -657,7 +654,7 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'jaksa_penyidik'
                           ? 'Masukan Jaksa Penyidik'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -680,11 +677,10 @@ export const AddPenyidikanModal = ({
                       {errors.map((item) =>
                         item === 'role_ketua_jaksa_id'
                           ? 'Masukan Ketua Jaksa Penyidik'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
-
                 </div>
                 <div className="form-group w-full mt-4">
                   <label
@@ -726,13 +722,13 @@ export const AddPenyidikanModal = ({
                   )}
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'saksi'
-                        ? 'Masukan Saksi'
-                        : ''
+                      item === 'saksi' ? 'Masukan Saksi' : '',
                     )}
                   </p>
                 </div>
-                <div className={`form-group w-full mt-4 ${!isDetail ? 'hidden' : ''}`}>
+                <div
+                  className={`form-group w-full mt-4 ${!isDetail ? 'hidden' : ''}`}
+                >
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -765,31 +761,32 @@ export const AddPenyidikanModal = ({
                     {errors.map((item) =>
                       item === 'nomor_penyidikan'
                         ? 'Masukan Nomor Penyidikan'
-                        : ''
+                        : '',
                     )}
                   </p>
                 </div>
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
 
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -821,8 +818,9 @@ export const AddPenyidikanModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

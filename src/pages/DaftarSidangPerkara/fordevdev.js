@@ -18,7 +18,7 @@
     "nomor_kasus": "324223",
     "wbp_profile_id_kasus": "dv3tfa03-9jdy-sb1c-g5vg-vrrhwsva9b4n",
     "jenis_perkara_id_kasus": "wmik6vny-h4dq-35ws-ev1n-p3r9h6z5p3os",
-    // "tanggal_registrasi_kasus": "2023-10-27 15:30:00",
+    "tanggal_registrasi_kasus": "2023-10-27 15:30:00",
     "oditur_id_kasus": "fnx62ik7-b3hn-6hs2-d5p6-m0lfmfln7jo7",
     "created_at_kasus": "0000-00-00 00:00:00",
     "updated_at_kasus": "0000-00-00 00:00:00",

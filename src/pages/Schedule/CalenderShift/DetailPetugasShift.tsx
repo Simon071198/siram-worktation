@@ -5,7 +5,7 @@ import {
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
-} from '../../../services/api';
+} from '../../services/api';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
@@ -110,7 +110,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     const addEntriesForStaff = () => {
       const newEntries = staff.map((staffItem: any) => {
         const penugasanId = dataPetugasShift?.find(
-          (itemNa: any) => itemNa.petugas_id === staffItem.petugas_id
+          (itemNa: any) => itemNa.petugas_id === staffItem.petugas_id,
         );
         return {
           petugas_shift_id: penugasanId?.petugas_shift_id || '',
@@ -173,7 +173,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
         const penugasan = await apiReadAllPenugasanShift(data, token);
         const petugasShift = await apiReadAllPetugasShift(
           filterPetugasShift,
-          token
+          token,
         );
 
         setDataPetugasShift(petugasShift.data.records);
@@ -205,14 +205,14 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
   const handleChangeShift = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedShiftId = e.target.value;
     const jamKerja = shift.find(
-      (item: any) => item.shift_id === selectedShiftId
+      (item: any) => item.shift_id === selectedShiftId,
     );
     const selectedSchedule = schedule.find(
-      (item: any) => item.shift_id === selectedShiftId
+      (item: any) => item.shift_id === selectedShiftId,
     );
     setWaktu({
       ...waktu,
@@ -228,7 +228,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
 
   const handleChangePenugasan = (e: any, petugas: any) => {
     const petugasId = petugasShiftAdd.findIndex(
-      (item) => item.petugas_id === petugas
+      (item) => item.petugas_id === petugas,
     );
     const updatedPetugasShiftAdd = [...petugasShiftAdd];
     updatedPetugasShiftAdd[petugasId].penugasan_id = e;
@@ -275,7 +275,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Ubah Data Schedule Shift Kerja
+                Ubah Data Jadwal Shift Kerja
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "
@@ -320,7 +320,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                         </option>
                         {schedule.map((schedule: any) => {
                           const matchingShift = shift.find(
-                            (item) => item.shift_id === schedule.shift_id
+                            (item) => item.shift_id === schedule.shift_id,
                           );
 
                           return (
@@ -417,7 +417,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                   <div className="w-full h-48 overflow-y-auto">
                     {staff.map((item: any) => {
                       const penugasanId = dataPetugasShift.find(
-                        (itemNa: any) => itemNa.petugas_id === item.petugas_id
+                        (itemNa: any) => itemNa.petugas_id === item.petugas_id,
                       );
                       return (
                         <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke my-1 dark:text-gray dark:bg-slate-800 ">
@@ -434,7 +434,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                               onChange={(e) =>
                                 handleChangePenugasan(
                                   e.target.value,
-                                  item.petugas_id
+                                  item.petugas_id,
                                 )
                               }
                               defaultValue={penugasanId?.penugasan_id}
@@ -458,8 +458,9 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                 <div className="flex space-x-4">
                   <button
                     onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

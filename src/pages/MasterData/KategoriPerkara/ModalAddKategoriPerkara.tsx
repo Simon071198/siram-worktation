@@ -184,7 +184,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
 
             <div className="mt-5 grid grid-cols-1 gap-5 justify-normal">
              
-              <div className="form-group w-full">
+              <div className="form-group w-full h-22">
                 <label
                   className="block text-sm text-start mb-1 font-medium text-black dark:text-white"
                   htmlFor="id"
@@ -208,20 +208,10 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                 </p>
               </div>
             </div>
-            {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-              .length > 0 && (
-              <>
-                <br />
-                <div className="error">
-                  {errors
-                    .filter((item: string) => item.startsWith('INVALID_ID'))[0]
-                    .replace('INVALID_ID_', '')}{' '}
-                  is not a valid bond
-                </div>
-              </>
-            )}
 
-            <br></br>
+
+            <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+            {/* <br></br> */}
             {isDetail ? null : isEdit ? (
               <button
               className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
@@ -254,7 +244,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
               ) : (
                 ''
               )}
-              Ubah Data Kategori Perkara
+              Ubah Kategori Perkara
             </button>
             ) : (
               <button
@@ -288,9 +278,31 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                   ) : (
                     ''
                   )}
-                  Tambah Data Kategori Perkara
+                  Tambah Kategori Perkara
                 </button>
                 )}
+            {errors.filter((item: string) => item.startsWith('INVALID_ID'))
+              .length > 0 && (
+              <>
+                <br />
+                <div className="error">
+                  {errors
+                    .filter((item: string) =>
+                      item.startsWith('INVALID_ID')
+                    )[0]
+                    .replace('INVALID_ID_', '')}{' '}
+                  is not a valid bond
+                </div>
+              </>
+            )}
+            {errors.length > 0 && (
+              <div className="error text-center">
+                <p className="text-red-400">
+                  Ada data yang masih belum terisi !
+                </p>
+              </div>
+            )}
+            </div>
           </form>
         </div>
         )}

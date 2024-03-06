@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
 import { Alerts } from './AlertPenyidikan';
 import {
   apiReadPenyidikan,
   apiDeletePenyidikan,
   apiCreatePenyidikan,
   apiUpdatePenyidikan,
-} from '../../../services/api';
+} from '../../services/api';
 import { AddPenyidikanModal } from './ModalAddHistoryPenyidikan';
 import { DeletePenyidikanModal } from './ModalDeleteHistoryPenyidikan';
-import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../../MasterData/Search';
 import { log } from 'console';
+import Loader from '../../../common/Loader';
+import Pagination from '../../../components/Pagination';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -406,8 +406,9 @@ const PenyidikanList = () => {
       </div>
       <div className="flex flex-col">
         <div
-          className={`grid ${isOperator ? 'grid-cols-3' : 'grid-cols-4'
-            }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
+          className={`grid ${
+            isOperator ? 'grid-cols-3' : 'grid-cols-4'
+          }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
         >
           <div className="p-2.5 xl:p-5 justify-center flex">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -439,10 +440,13 @@ const PenyidikanList = () => {
         ) : (
           <>
             <div
-              className={`grid ${isOperator ? 'grid-cols-1' : 'grid-cols-1'
-                } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+              className={`grid ${
+                isOperator ? 'grid-cols-1' : 'grid-cols-1'
+              } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
             >
-              <h1 className='font-bold text-xl justify-center flex py-5'>No Data</h1>
+              <h1 className="font-bold text-xl justify-center flex py-5">
+                No Data
+              </h1>
             </div>
             {/* {data.map((item: any) => {
               return (

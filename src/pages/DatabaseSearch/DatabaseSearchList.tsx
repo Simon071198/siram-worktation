@@ -39,7 +39,7 @@ const routeSearchList = [
 const DatabaseSearchList = () => {
   return (
     <>
-    <div className='container'>
+    <div className='container py-[16px]'>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
         {routeSearchList.map((data) => (
           <NavLink to={data.link}>

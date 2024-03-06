@@ -13,28 +13,26 @@ import {
   LogIcon,
   ShiftIcon,
   BAPIcon,
-  DataPerkaraIcon,
   DaftarInventarisIcon,
   ChatIcon,
   eventIcons,
   Pengunjung,
-  Penyidikan,
 } from '../components/Icons';
 import BackgroundSecurityImage from '../images/security-background.jpg';
-// import Loader from 'renderer/common/Loader';
-import Loader from '../common/Loader';
 import { BsBriefcaseFill } from 'react-icons/bs';
+import Loader from '../common/Loader';
 
 const MainMenu = () => {
   const navigate = useNavigate();
 
-  // useEffect(()=>{
-  // const ls_username = localStorage.getItem('username')
-  // if(!ls_username){
-  //   navigate('/auth/signin')
-  // }
+  useEffect(() => {
+    const dataUserItem = localStorage.getItem('dataUser');
+    const dataUser = dataUserItem ? JSON.parse(dataUserItem) : null;
 
-  // },[])
+    if (!dataUser) {
+      navigate('/auth/signin');
+    }
+  }, []);
 
   const backgroundStyle = {
     backgroundImage: `url(${BackgroundSecurityImage})`,
@@ -151,8 +149,14 @@ const routes = [
   },
   {
     id: 10,
-    name: 'Kamera',
+    name: 'Kamera Live',
     link: '/kamera-dev-test',
+    icon: CameraIcon,
+  },
+  {
+    id: 10,
+    name: 'Kamera Playback',
+    link: '/kamera-playback',
     icon: CameraIcon,
   },
   {
@@ -177,6 +181,12 @@ const routes = [
     id: 14,
     name: 'Log',
     link: '/log-riwayat',
+    icon: LogIcon,
+  },
+  {
+    id: 15,
+    name: 'Version',
+    link: '/version',
     icon: LogIcon,
   },
 ];

@@ -13,6 +13,7 @@ export const AddBarangBuktiModal = ({
   onSubmit,
   defaultValue,
   isDetail,
+  isKasus,
   isEdit,
   token,
 }: any) => {
@@ -27,26 +28,31 @@ export const AddBarangBuktiModal = ({
       keterangan: '',
       pdf_file_base64: '',
       tanggal_diambil: '',
-    }
+    },
   );
+  console.log('formsate', formState);
+
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
   //state
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dataKasus, setDataKasus] = useState([])
+  const [dataKasus, setDataKasus] = useState([]);
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'dokumen_barang_bukti'
+        key !== 'dokumen_barang_bukti' &&
+        key !== 'tanggal_pelimpahan_kasus' &&
+        key !== 'nama_dokumen_barang_bukti' &&
+        key !== 'longitude' &&
+        key !== 'pdf_file_base64'
       ) {
         if (!value) {
           errorFields.push(key);
@@ -63,6 +69,25 @@ export const AddBarangBuktiModal = ({
     setErrors([]);
     return true;
   };
+  // console.log('erreo', errors);
+
+  // useEffect(() => {
+  //   if (isEdit || isDetail) {
+  //     setFormState({
+  //       ...formState,
+  //       pdf_file_base64: formState.dokumen_barang_bukti,
+  //     });
+  //   }
+  // }, [formState.dokumen_barang_bukti]);
+
+  useEffect(() => {
+    if (isDetail || isEdit) {
+      setFormState((prevFormState: any) => ({
+        ...prevFormState,
+        pdf_file_base64: prevFormState.dokumen_barang_bukti,
+      }));
+    }
+  }, [formState.dokumen_barang_bukti]);
 
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
@@ -80,32 +105,26 @@ export const AddBarangBuktiModal = ({
     }
   };
 
-  const handleDownloadDoc = () => {
-    const url = `/proxy?url=https://dev.transforme.co.id/siram_admin_api${formState.dokumen_barang_bukti}`;
+  const openNewWindow = () => {
+    // URL to be opened in the new window
+    const url = `https://dev.transforme.co.id${formState.dokumen_barang_bukti}`;
 
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const filename: any = url.split('/').pop()
-        a.href = blobUrl;
-        a.download = `${filename}`;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        // document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch((error) => {
-        console.error('Gagal mengunduh file:', error);
-      });
+    // Specify window features (optional)
+    const windowFeatures = 'width=600,height=400';
+
+    // Open the new window
+    window.open(url, '_blank', windowFeatures);
   };
 
   const handleRemoveDoc = () => {
-    setFormState({ ...formState, dokumen_barang_bukti: '' });
+    setFormState({
+      ...formState,
+      pdf_file_base64: '',
+      ...formState,
+      dokumen_barang_bukti: '',
+    });
     const inputElement = document.getElementById(
-      'fileUpload'
+      'fileUpload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -147,7 +166,7 @@ export const AddBarangBuktiModal = ({
   const handleRemoveFoto = () => {
     setFormState({ ...formState, gambar_barang_bukti: '' });
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -160,27 +179,26 @@ export const AddBarangBuktiModal = ({
   };
 
   useEffect(() => {
-    Promise.all([
-      kasus()
-    ]).then(() => {
-      setIsLoading(false)
-    })
-  }, [])
+    Promise.all([kasus()]).then(() => {
+      setIsLoading(false);
+    });
+  }, []);
 
   const kasus = async () => {
     let params = {
       pageSize: 1000,
-    }
+    };
     await apiReadKasus(params, token)
       .then((res) => {
-        setDataKasus(res.data.records)
+        setDataKasus(res.data.records);
       })
       .catch((err) =>
         Alerts.fire({
           icon: 'error',
           title: err.massage,
-        }))
-  }
+        }),
+      );
+  };
 
   const customStyles = {
     container: (provided: any) => ({
@@ -375,7 +393,9 @@ export const AddBarangBuktiModal = ({
                       <div className="orm-group w-full h-[330px] ">
                         <div className="mt-4 flex flex-col items-center relative h-64">
                           {formState.gambar_barang_bukti ? (
-                            formState.gambar_barang_bukti.startsWith('data:image/') ? (
+                            formState.gambar_barang_bukti.startsWith(
+                              'data:image/',
+                            ) ? (
                               <img
                                 className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
                                 src={formState.gambar_barang_bukti}
@@ -413,7 +433,7 @@ export const AddBarangBuktiModal = ({
                               </div>
                             </label>
                             <button
-                              type='button'
+                              type="button"
                               onClick={handleRemoveFoto}
                               className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                             >
@@ -435,7 +455,9 @@ export const AddBarangBuktiModal = ({
                           </div>
                           <p className="error-text absolute bottom-0">
                             {errors.map((item) =>
-                              item === 'gambar_barang_bukti' ? 'Masukan foto barang' : ''
+                              item === 'gambar_barang_bukti'
+                                ? 'Masukan foto barang'
+                                : '',
                             )}
                           </p>
                         </div>
@@ -472,7 +494,7 @@ export const AddBarangBuktiModal = ({
                             </label>
 
                             <button
-                              type='button'
+                              type="button"
                               onClick={handleRemoveFoto}
                               className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                             >
@@ -494,7 +516,9 @@ export const AddBarangBuktiModal = ({
                           </div>
                           <p className="error-text bottom-0 absolute">
                             {errors.map((item) =>
-                              item === 'gambar_barang_bukti' ? 'Masukan foto barang bukti' : ''
+                              item === 'gambar_barang_bukti'
+                                ? 'Masukan foto barang bukti'
+                                : '',
                             )}
                           </p>
                         </div>
@@ -502,9 +526,8 @@ export const AddBarangBuktiModal = ({
                     )}
 
                     <div className="flex flex-col">
-
                       {/* Kasus */}
-                      <div className="form-group w-full  h-24 relative mt-4">
+                      <div className="form-group w-full  h-24 relative">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -514,53 +537,29 @@ export const AddBarangBuktiModal = ({
                         <Select
                           className="basic-single"
                           classNamePrefix="select"
-                          defaultValue={isEdit || isDetail ? (
-                            {
-                              value: formState.kasus_id,
-                              label: formState.nama_kasus
-                            })
-                            :
-                            formState.kasus_id
+                          defaultValue={
+                            isEdit || isDetail || isKasus
+                              ? {
+                                  value: formState.kasus_id,
+                                  label: formState.nama_kasus,
+                                }
+                              : formState.kasus_id
                           }
                           placeholder={'Pilih Kasus'}
                           isClearable={true}
                           isSearchable={true}
-                          isDisabled={isDetail}
+                          isDisabled={isDetail || isKasus}
                           name="kasus_id"
                           styles={customStyles}
                           options={dataKasus.map((item: any) => ({
                             value: item.kasus_id,
                             label: item.nama_kasus,
-                          }))
-                          }
+                          }))}
                           onChange={handleChangeKasus}
                         />
                         <p className="error-text absolute">
                           {errors.map((item) =>
-                            item === 'kasus_id' ? 'Pilih Kasus' : ''
-                          )}
-                        </p>
-                      </div>
-
-                      {/* Nama Bukti Kasus */}
-                      <div className="form-group w-full  h-24 relative">
-                        <label
-                          className="block text-sm font-medium text-black dark:text-white"
-                          htmlFor="id"
-                        >
-                          Nama Bukti Kasus
-                        </label>
-                        <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                          onChange={handleChange}
-                          name="nama_bukti_kasus"
-                          placeholder="Nama Bukti Kasus"
-                          value={formState.nama_bukti_kasus}
-                          disabled={isDetail}
-                        />
-                        <p className="error-text absolute">
-                          {errors.map((item) =>
-                            item === 'nama_bukti_kasus' ? 'Masukan Nama Bukti Kasus' : ''
+                            item === 'kasus_id' ? 'Pilih Kasus' : '',
                           )}
                         </p>
                       </div>
@@ -583,15 +582,41 @@ export const AddBarangBuktiModal = ({
                         />
                         <p className="error-text absolute">
                           {errors.map((item) =>
-                            item === 'nomor_barang_bukti' ? 'Masukan Nomer Barang Bukti' : ''
+                            item === 'nomor_barang_bukti'
+                              ? 'Masukan Nomer Barang Bukti'
+                              : '',
+                          )}
+                        </p>
+                      </div>
+
+                      {/* Nama Bukti Kasus */}
+                      <div className="form-group w-full  h-24 relative">
+                        <label
+                          className="block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Nama Barang Bukti
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          onChange={handleChange}
+                          name="nama_bukti_kasus"
+                          placeholder="Nama Bukti Kasus"
+                          value={formState.nama_bukti_kasus}
+                          disabled={isDetail}
+                        />
+                        <p className="error-text absolute">
+                          {errors.map((item) =>
+                            item === 'nama_bukti_kasus'
+                              ? 'Masukan Nama Bukti Kasus'
+                              : '',
                           )}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className='grid grid-cols-2 gap-x-5'>
-
+                  <div className="grid grid-cols-2 gap-x-5">
                     {/* keterangan */}
                     <div className="form-group w-full  h-24 relative">
                       <label
@@ -610,7 +635,7 @@ export const AddBarangBuktiModal = ({
                       />
                       <p className="error-text absolute">
                         {errors.map((item) =>
-                          item === 'keterangan' ? 'Masukan keterangan' : ''
+                          item === 'keterangan' ? 'Masukan keterangan' : '',
                         )}
                       </p>
                     </div>
@@ -624,7 +649,7 @@ export const AddBarangBuktiModal = ({
                         Tanggal Di Ambil
                       </label>
                       <input
-                        type='date'
+                        type="date"
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
                         name="tanggal_diambil"
@@ -634,19 +659,25 @@ export const AddBarangBuktiModal = ({
                       />
                       <p className="error-text absolute">
                         {errors.map((item) =>
-                          item === 'tanggal_diambil' ? 'Masukan Tanggal Di Ambil' : ''
+                          item === 'tanggal_diambil'
+                            ? 'Masukan Tanggal Di Ambil'
+                            : '',
                         )}
                       </p>
                     </div>
-
                   </div>
 
                   {/* Dokumentasi */}
-                  <h1 className='mt-3'>Dokumen Barang Bukti</h1>
-                  <div className="grid grid-cols-1 relative w-full h-46 box-border">
+                  <div className="grid grid-cols-1">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Barang Bukti Kasus
+                    </label>
                     <div
                       // id="FileUpload"
-                      className="relative h-40 block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
+                      className="relative  block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
                     >
                       <input
                         type="file"
@@ -656,17 +687,14 @@ export const AddBarangBuktiModal = ({
                         // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
-                      {formState.dokumen_barang_bukti ? (
+                      {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
-                              }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                              isDetail ? 'hidden' : 'block'
+                            }`}
                           >
-                            <button
-                              className="p-[2px]"
-                              type='button'
-                              onClick={handleRemoveDoc}
-                            >
+                            <p className="p-[2px]" onClick={handleRemoveDoc}>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -679,7 +707,7 @@ export const AddBarangBuktiModal = ({
                                   clip-rule="evenodd"
                                 />
                               </svg>
-                            </button>
+                            </p>
                           </div>
                           <div className="flex justify-center">
                             <svg
@@ -693,21 +721,26 @@ export const AddBarangBuktiModal = ({
                               <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
                             </svg>
                           </div>
-                          <p className={`text-center text-sm text-blue-500`}>
+                          <p className="text-center text-sm text-blue-500">
                             Dokumen terupload !
                           </p>
-                          <div className={`flex justify-center mt-3  ${isDetail ? 'block' : 'hidden'} `}>
+                          <div
+                            className={`flex justify-center mt-3 ${
+                              isDetail ? 'block' : 'hidden'
+                            }`}
+                          >
                             <button
-                              type='button'
-                              onClick={handleDownloadDoc}
+                              type="button"
+                              onClick={openNewWindow}
                               className="bg-blue-500 px-3 py-1 rounded-xl text-white duration-300 ease-in-out  hover:scale-105 "
                             >
+                              {/* <a href={`https://dev.transforme.co.id/siram_admin_api/siram_api/document_barang_bukti_kasus/93ebb49614702b6caeca86ea9ac5ea59.pdf`} download=''>Unduh Dokumen</a> */}
                               Unduh Dokumen
                             </button>
                           </div>
                         </div>
                       ) : (
-                        <div className={`flex ${isDetail || isEdit ? 'block' : 'block'} flex-col items-center justify-center space-y-3`}>
+                        <div className="flex flex-col items-center justify-center space-y-3">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                             <svg
                               width="16"
@@ -745,112 +778,114 @@ export const AddBarangBuktiModal = ({
                               Klik untuk unggah
                             </span>
                           </label>
-                          <p className="mt-1.5">Pdf,doc dan docx </p>
+                          <p className="mt-1.5">PDF</p>
                         </div>
                       )}
                     </div>
-                    <p className="error-text bottom-0 left-0 right-0 text-center absolute">
+                    <p className="error-text">
                       {errors.map((item) =>
                         item === 'pdf_file_base64'
                           ? 'Masukan dokumen sidang'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
-
-
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
+                <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
+                  {/* <br></br> */}
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Barang Bukti
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Barang Bukti
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
                     <>
                       <br />
                       <div className="error">
                         {errors
                           .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
+                            item.startsWith('INVALID_ID'),
                           )[0]
                           .replace('INVALID_ID_', '')}{' '}
                         is not a valid bond
                       </div>
                     </>
                   )}
-                {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
-
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Barang Bukti
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Barang Bukti
-                  </button>
-                )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
+                    </div>
+                  )}
+                </div>
               </form>
             </div>
           )}

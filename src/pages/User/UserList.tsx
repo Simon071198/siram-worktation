@@ -16,7 +16,7 @@ import Pagination from '../../components/Pagination';
 import { DeleteUserModal } from './ModalDeleteUser';
 import { UbahPasswordModal } from './ModalUbahPassword';
 import SearchInputButton from '../MasterData/Search';
-import DropdownActionWithPass from '../../components/DropdownActionWithPass';
+import DropdownActionWithPass from 'renderer/components/DropdownActionWithPass';
 
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -450,7 +450,11 @@ const UserList = () => {
                         >
                           Hapus
                         </button> */}
-                        <DropdownActionWithPass handleUbahPassword={() => handleUbahPassword(item)} handleEditClick={() => handleEditClick(item)} handleDeleteClick={() => handleDeleteClick(item)}></DropdownActionWithPass>
+                        <DropdownActionWithPass
+                          handleUbahPassword={() => handleUbahPassword(item)}
+                          handleEditClick={() => handleEditClick(item)}
+                          handleDeleteClick={() => handleDeleteClick(item)}
+                        ></DropdownActionWithPass>
                       </div>
                     </div>
                     <div className="border-t border-slate-600"></div>

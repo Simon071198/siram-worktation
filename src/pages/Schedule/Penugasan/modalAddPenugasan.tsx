@@ -120,7 +120,7 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
                       onChange={handleChange}
                       value={dataAddPenugasan.nama_penugasan}
                       name="nama_penugasan"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                     />
                     <div className="h-3">
                       <h1 className="pl-2 text-xs text-red-500">{error}</h1>

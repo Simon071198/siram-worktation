@@ -18,7 +18,7 @@ import {
   apiReadAllScheduleShift,
   apiReadAllShift,
   apiReadAllStaff,
-} from '../../../services/api';
+} from '../../services/api';
 import AddDataSchedule from './ModalAddSchedule';
 import EditPetugasShift from './DetailPetugasShift';
 import AddPetugasShiftGrup from './addPetugasShiftGrup';
@@ -92,7 +92,7 @@ const shiftJaga = () => {
   const [year, setYear] = useState(parseInt(dayjs(new Date()).format('YYYY'))); // Ganti tahun sesuai kebutuhan Anda
   const [month, setMonth] = useState(parseInt(dayjs(new Date()).format('MM'))); // Ganti bulan (0-11) sesuai kebutuhan Anda, 0 = Januari, 11 = Desember
   const [startDate, setStartDate] = useState(
-    parseInt(dayjs(new Date()).format('D'))
+    parseInt(dayjs(new Date()).format('D')),
   ); // Tanggal awal rentang
   const [endDate, setEndDate] = useState(0); // Tanggal akhir rentang
   const [tanggal, setTanggal] = useState<number[]>([]);
@@ -247,6 +247,8 @@ const shiftJaga = () => {
   const [dataPetugasShift, setDataPetugasShift] = useState({});
   const [dataDetailPetugasShift, setDataDetailPetugasShift] = useState();
   const handleOpenAddModal = (data: any) => {
+    console.log('data1', data);
+
     setModalAddOpen(!modalAddOpen);
     setDataPetugasShift(data);
   };
@@ -306,7 +308,7 @@ const shiftJaga = () => {
 
   const handleFilterPegawai = (e: any) => {
     const filter = staffFilter.filter(
-      (item: any) => item.petugas_id === e.value
+      (item: any) => item.petugas_id === e.value,
     );
     if (e.value === '1') {
       setStaff(staffFilter);
@@ -317,8 +319,8 @@ const shiftJaga = () => {
 
   const grup = grupPetugas?.filter((item: any) =>
     staff.some(
-      (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id
-    )
+      (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id,
+    ),
   );
 
   //Schedule Create
@@ -374,8 +376,8 @@ const shiftJaga = () => {
             });
             setModalAddOpen(!modalAddOpen);
             setTimeout(() => {
-            setLoadSchedule(!loadSchedule);
-            },500)
+              setLoadSchedule(!loadSchedule);
+            }, 500);
           }
         }
       }
@@ -451,7 +453,7 @@ const shiftJaga = () => {
         const singleData = data[i];
         const deletePetugasShift = await apiDeleteScheduleShift(
           singleData,
-          token
+          token,
         );
 
         if (deletePetugasShift.data.status === 'OK') {
@@ -495,7 +497,7 @@ const shiftJaga = () => {
         const singleData = data[i];
         const deletePetugasShift = await apiDeletePetugasShift(
           singleData,
-          token
+          token,
         );
 
         if (deletePetugasShift.data.status === 'OK') {
@@ -554,10 +556,10 @@ const shiftJaga = () => {
         ...hari.map((itemtgl: any) => {
           // Mencari petugasShift yang sesuai dengan tanggal dan petugas_id
           const petugas = dataExcel.filter(
-            (data: any) => data.petugas_id === item.petugas_id
+            (data: any) => data.petugas_id === item.petugas_id,
           );
           const petugasShiftItem = petugas.find(
-            (itemoo) => itemoo.tanggal === itemtgl.tanggal
+            (itemoo) => itemoo.tanggal === itemtgl.tanggal,
           );
 
           // Jika ditemukan, mengambil nama_shift, jika tidak, mengembalikan string kosong
@@ -575,7 +577,7 @@ const shiftJaga = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `ScheduleShift${dayjs(selectedDate).format('DDMMYYYY-HHmmss')}.xlsx`
+      `ScheduleShift${dayjs(selectedDate).format('DDMMYYYY-HHmmss')}.xlsx`,
     );
   }
 
@@ -636,10 +638,10 @@ const shiftJaga = () => {
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -868,19 +870,19 @@ const shiftJaga = () => {
             {grup?.map((itemNama: any) => {
               const jadwal = petugasShift.filter(
                 (itemJadwal: any) =>
-                  itemJadwal.grup_petugas_id === itemNama.grup_petugas_id
+                  itemJadwal.grup_petugas_id === itemNama.grup_petugas_id,
               );
               const jumlahIzin = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Izin'
+                (pegawai: any) => pegawai.status_izin === 'Izin',
               ).length;
               const jumlahSakit = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Sakit'
+                (pegawai: any) => pegawai.status_izin === 'Sakit',
               ).length;
               const jumlahAbsen = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Absen'
+                (pegawai: any) => pegawai.status_izin === 'Absen',
               ).length;
               const jumlahCuti = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Cuti'
+                (pegawai: any) => pegawai.status_izin === 'Cuti',
               ).length;
               return (
                 <div className={`flex my-1 ${!openGrup ? '' : 'hidden'}`}>
@@ -900,16 +902,17 @@ const shiftJaga = () => {
                         const jadwal = petugasShift.filter(
                           (itemJadwal: any) =>
                             itemJadwal.grup_petugas_id ===
-                            itemNama.grup_petugas_id
+                            itemNama.grup_petugas_id,
                         );
                         const jadwalPegawai = jadwal.find(
                           (itemJadwal: any) =>
-                            parseInt(itemJadwal.tanggal) === item
+                            parseInt(itemJadwal.tanggal) === item,
                         );
 
                         //Schedule
                         const scheduleShift = schedule.find(
-                          (schedule: any) => parseInt(schedule.tanggal) === item
+                          (schedule: any) =>
+                            parseInt(schedule.tanggal) === item,
                         );
                         const dataAdd = {
                           grup_petugas_id: itemNama.grup_petugas_id,
@@ -1101,20 +1104,20 @@ const shiftJaga = () => {
             {staff.map((itemNama: any) => {
               const jadwal = petugasShift.filter(
                 (itemJadwal: any) =>
-                  itemJadwal.petugas_id === itemNama.petugas_id
+                  itemJadwal.petugas_id === itemNama.petugas_id,
               );
 
               const jumlahIzin = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Izin'
+                (pegawai: any) => pegawai.status_izin === 'Izin',
               ).length;
               const jumlahSakit = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Sakit'
+                (pegawai: any) => pegawai.status_izin === 'Sakit',
               ).length;
               const jumlahAbsen = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Absen'
+                (pegawai: any) => pegawai.status_izin === 'Absen',
               ).length;
               const jumlahCuti = jadwal?.filter(
-                (pegawai: any) => pegawai.status_izin === 'Cuti'
+                (pegawai: any) => pegawai.status_izin === 'Cuti',
               ).length;
               return (
                 <div className={`flex my-1 ${openGrup ? '' : 'hidden'}`}>
@@ -1136,16 +1139,17 @@ const shiftJaga = () => {
                         //Apii
                         const jadwal = petugasShift.filter(
                           (itemJadwal: any) =>
-                            itemJadwal.petugas_id === itemNama.petugas_id
+                            itemJadwal.petugas_id === itemNama.petugas_id,
                         );
 
                         const jadwalPegawai = jadwal.find(
                           (itemJadwal: any) =>
-                            parseInt(itemJadwal.tanggal) === item
+                            parseInt(itemJadwal.tanggal) === item,
                         );
                         //Schedule
                         const scheduleShift = schedule.find(
-                          (schedule: any) => parseInt(schedule.tanggal) === item
+                          (schedule: any) =>
+                            parseInt(schedule.tanggal) === item,
                         );
 
                         const statuIzin = jadwalPegawai?.status_izin;

@@ -5,9 +5,9 @@ import {
   apiDeleteShift,
   apiEditShift,
   apiReadAllShift,
-} from '../../../services/api';
+} from '../../services/api';
 import { Alerts } from './Alert';
-import Loader from '../../../common/Loader';
+import Loader from '../../common/Loader';
 import { DeleteShiftModal } from './deleteDataShift';
 
 interface Item {
@@ -43,16 +43,15 @@ const DataSceduleShift = () => {
     setModalEditOpen(true);
   };
 
-
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
-    setModalEditOpen(false)
+    setModalEditOpen(false);
   };
 
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
-  let token = tokens.token
+  let token = tokens.token;
 
   useEffect(() => {
     const data = async () => {
@@ -132,10 +131,8 @@ const DataSceduleShift = () => {
     setModalDeleteOpen(false);
   };
 
-
   const handleSubmitDeleteShift = async (params: any) => {
-    const data = {
-    };
+    const data = {};
     const AddData = await apiDeleteShift(params, token);
     if (AddData.data.status === 'OK') {
       handleCloseDeleteModal();
@@ -158,7 +155,7 @@ const DataSceduleShift = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         {modalAddOpen && (
           <AddDataShiftKerja

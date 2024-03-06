@@ -159,8 +159,8 @@ export const AddAhliModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 gap-4 mt-4">
-                  <div className="form-group w-full">
+                <div className="grid grid-cols-1 mt-4">
+                  <div className="form-group w-full relative h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -175,14 +175,14 @@ export const AddAhliModal = ({
                       value={formState.nama_ahli}
                       disabled={isDetail}
                     />
-                    <p className="error-text">
+                    <p className="error-text bottom-0">
                       {errors.map((item) =>
                         item === 'nama_ahli' ? 'Masukan nama' : ''
                       )}
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group w-full relative h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -204,7 +204,7 @@ export const AddAhliModal = ({
                     </p>
                   </div>
 
-                  <div className="form-group w-full">
+                  <div className="form-group w-full h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -227,27 +227,7 @@ export const AddAhliModal = ({
                   </div>
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
-                {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
+                
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
                   <div className="error mt-4">
@@ -262,7 +242,8 @@ export const AddAhliModal = ({
                   </div>
                 )} */}
 
-                <br></br>
+                <div className={` ${isDetail ? 'h-full' : 'h-15'} mt-4`}>
+                {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
                     className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
@@ -332,6 +313,28 @@ export const AddAhliModal = ({
                     Tambah Data Ahli
                   </button>
                 )}
+                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
+                  .length > 0 && (
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID')
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
+                {errors.length > 0 && (
+                  <div className="error text-center">
+                    <p className="text-red-400">
+                      Ada data yang masih belum terisi !
+                    </p>
+                  </div>
+                )}
+                </div>
               </form>
             </div>
           )}

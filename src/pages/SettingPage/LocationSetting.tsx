@@ -9,7 +9,6 @@ const GatewayList = () => {
 
   useEffect(() => {
     let fetchData = async () => {
-
       // await setIsLoading(true);
       let params = {
         filter: ' ',
@@ -20,7 +19,7 @@ const GatewayList = () => {
         setData(res);
       });
       setIsLoading(false);
-    }
+    };
     fetchData();
   }, []);
 
@@ -123,7 +122,8 @@ const GatewayList = () => {
                 </button>
                 <button
                   // onClick={() => handleDeleteClick(item)}
-                  className="p-1 text-black rounded-sm bg-blue-300">
+                  className="p-1 text-black rounded-sm bg-blue-300"
+                >
                   Delete
                 </button>
               </div>

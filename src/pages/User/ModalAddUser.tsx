@@ -43,7 +43,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
       lokasi_lemasmil_id: '',
       image: '',
       expiry_date: '',
-    }
+    },
   );
 
   const modalContainerRef = useRef(null);
@@ -138,7 +138,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
     // setSelectedOption(e)
     // console.log(e);
     const selectedPetugas: any = staffData.find(
-      (item: any) => item.petugas_id === e?.value
+      (item: any) => item.petugas_id === e?.value,
     );
     setFormState({
       ...formState,
@@ -163,7 +163,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
   const getAllPetugas = async () => {
     try {
       let params = {
-        filter: '',
+        pageSize: 1000,
       };
       const response = await apiReadAllStaff(params, token);
       if (response.data.status !== 'OK') {
@@ -173,7 +173,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
       const result = response.data.records;
       const dataUserIds = dataUser.map((user: any) => user.petugas_id);
       let filter = result.filter(
-        (item: any) => !dataUserIds.includes(item.petugas_id)
+        (item: any) => !dataUserIds.includes(item.petugas_id),
       );
       // console.log('TEST FILTER',filter)
       if (isDetail) {
@@ -405,7 +405,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'petugas_id' ? 'Pilih petugas' : ''
+                          item === 'petugas_id' ? 'Pilih petugas' : '',
                         )}
                       </p>
                     </div>
@@ -437,7 +437,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     </select>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'user_role_id' ? 'Pilih role' : ''
+                        item === 'user_role_id' ? 'Pilih role' : '',
                       )}
                     </p>
                   </div>
@@ -533,7 +533,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'email' ? 'Masukan email' : ''
+                        item === 'email' ? 'Masukan email' : '',
                       )}
                     </p>
                   </div>
@@ -556,7 +556,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'phone' ? 'Masukan nomor handphone' : ''
+                        item === 'phone' ? 'Masukan nomor handphone' : '',
                       )}
                     </p>
                   </div>
@@ -581,7 +581,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'password' ? 'Masukan password' : ''
+                          item === 'password' ? 'Masukan password' : '',
                         )}
                       </p>
                     </div>
@@ -610,7 +610,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     </select>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'is_suspended' ? 'Pilih suspended (?)' : ''
+                        item === 'is_suspended' ? 'Pilih suspended (?)' : '',
                       )}
                     </p>
                   </div>
@@ -633,7 +633,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'expiry_date' ? 'Pilih tanggal' : ''
+                        item === 'expiry_date' ? 'Pilih tanggal' : '',
                       )}
                     </p>
                   </div>
@@ -641,18 +641,18 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -674,8 +674,9 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -707,8 +708,9 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

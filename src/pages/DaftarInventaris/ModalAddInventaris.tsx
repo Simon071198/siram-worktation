@@ -41,9 +41,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       tanggal_masuk: '',
       foto_barang: '',
       garansi: '',
-      merek: ''
-
-    }
+      merek: '',
+    },
   );
 
   const modalContainerRef = useRef(null);
@@ -73,7 +72,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   const handleRemoveFoto = () => {
     setFormState({ ...formState, foto_barang: '' });
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -95,6 +94,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
         key !== 'status_zona_lemasmil' &&
         key !== 'updated_at' &&
         key !== 'garansi' &&
+        key !== 'nama_tipe' &&
         key !== 'ruangan_lemasmil_id'
       ) {
         if (!value) {
@@ -134,7 +134,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       pageSize: 1000,
     };
     try {
-      const response = await apiReadAllRuanganOtmil(params);
+      const response = await apiReadAllRuanganOtmil(params, token);
       // console.log(response,'RUANGAN')
       setRuangan(response.data.records);
       setIsLoading(false);
@@ -247,7 +247,6 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col mt-4">
-
                   <div className="grid grid-cols-2 gap-4 -mb-8 ">
                     {isDetail && (
                       <div className="form-group w-full h-[330px]">
@@ -285,7 +284,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             ) // Don't render anything if the image format is not as expected
                           ) : (
                             <img
-                              className="w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                              className="w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
                               src="https://via.placeholder.com/200x200"
                               alt="Placeholder"
                             />
@@ -306,7 +305,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             </label>
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer0 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +325,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'foto_barang' ? 'Masukan foto barang' : ''
+                              item === 'foto_barang'
+                                ? 'Masukan foto barang'
+                                : '',
                             )}
                           </p>
                         </div>
@@ -364,7 +365,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer0 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -384,16 +385,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'foto_barang' ? 'Masukan foto barang' : ''
+                              item === 'foto_barang'
+                                ? 'Masukan foto barang'
+                                : '',
                             )}
                           </p>
                         </div>
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-4 ">
+                    <div className="flex flex-col gap-5 ">
                       {/* Nama barang */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -408,15 +411,15 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.nama_aset}
                           disabled={isDetail}
                         />
-                        <p className="error-text">
+                        <p className="error-text absolute -bottom-5">
                           {errors.map((item) =>
-                            item === 'nama_aset' ? 'Masukan nama barang' : ''
+                            item === 'nama_aset' ? 'Masukan nama barang' : '',
                           )}
                         </p>
                       </div>
 
                       {/* Serial number */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -431,17 +434,17 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.serial_number}
                           disabled={isDetail}
                         />
-                        <p className="error-text">
+                        <p className="error-text absolute -bottom-5">
                           {errors.map((item) =>
                             item === 'serial_number'
                               ? 'Masukan serial number'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
 
                       {/* Tipe barang*/}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -464,19 +467,19 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             </option>
                           ))}
                         </select>
-                        <p className="error-text">
+                        <p className="error-text absolute -bottom-5">
                           {errors.map((item) =>
-                            item === 'tipe_aset_id' ? 'Pilih tipe' : ''
+                            item === 'tipe_aset_id' ? 'Pilih tipe' : '',
                           )}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1  gap-4 ">
-                    <div className="grid grid-cols-2  gap-4 ">
+                  <div className="grid grid-cols-1 ">
+                    <div className="grid grid-cols-2 gap-x-4">
                       {/* Merek */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative h-22 ">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -491,14 +494,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.merek}
                           disabled={isDetail}
                         />
-                        <p className="error-text">
+                        <p className="error-text absolute bottom-0">
                           {errors.map((item) =>
-                            item === 'merek' ? 'Masukan merek' : ''
+                            item === 'merek' ? 'Masukan merek' : '',
                           )}
                         </p>
                       </div>
                       {/* Model */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative h-22">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -513,14 +516,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.model}
                           disabled={isDetail}
                         />
-                        <p className="error-text">
+                        <p className="error-text absolute bottom-0">
                           {errors.map((item) =>
-                            item === 'model' ? 'Masukan model' : ''
+                            item === 'model' ? 'Masukan model' : '',
                           )}
                         </p>
                       </div>
                       {/* Ruangan */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full h-22 relative">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -543,9 +546,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             </option>
                           ))}
                         </select>
-                        <p className="error-text">
+                        <p className="error-text bottom-0 absolute">
                           {errors.map((item) =>
-                            item === 'ruangan_otmil_id' ? 'Pilih ruangan' : ''
+                            item === 'ruangan_otmil_id' ? 'Pilih ruangan' : '',
                           )}
                         </p>
                       </div>
@@ -574,7 +577,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     </div> */}
 
                       {/* Kondisi */}
-                      <div className="form-group w-full ">
+                      <div className="form-group w-full relative h-22">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -595,16 +598,16 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           <option value="Rusak">Rusak</option>
                           <option value="Perbaikan">Dalam perbaikan</option>
                         </select>
-                        <p className="error-text">
+                        <p className="error-text absolute bottom-0">
                           {errors.map((item) =>
-                            item === 'kondisi' ? 'Pilih kondisi' : ''
+                            item === 'kondisi' ? 'Pilih kondisi' : '',
                           )}
                         </p>
                       </div>
                     </div>
 
                     {/* Keterangan */}
-                    <div className="form-group w-full ">
+                    <div className="form-group w-full relative h-34">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -619,16 +622,16 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         value={formState.keterangan}
                         disabled={isDetail}
                       />
-                      <p className="error-text">
+                      <p className="error-text absolute bottom-0">
                         {errors.map((item) =>
-                          item === 'keterangan' ? 'Masukan keterangan' : ''
+                          item === 'keterangan' ? 'Masukan keterangan' : '',
                         )}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2  gap-4 ">
+                    <div className="grid grid-cols-2 gap-4 ">
                       {/* Tanggal masuk */}
-                      <div className="form-group w-full">
+                      <div className="form-group w-full relative h-22">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -643,19 +646,19 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.tanggal_masuk}
                           disabled={isDetail}
                         />
-                        <p className="error-text">
+                        <p className="error-text absolute bottom-0">
                           {errors.map((item) =>
                             item === 'tanggal_masuk'
                               ? 'Masukan tanggal masuk'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
 
                       {/* Tanggal garansi */}
-                      <div className="form-group w-full">
+                      <div className="form-group w-full relative h-22">
                         <label
-                          className="  block text-sm font-medium text-black dark:text-white"
+                          className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
                           Masa garansi
@@ -668,7 +671,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           value={formState.garansi}
                           disabled={isDetail}
                         />
-                        {/* <p className="error-text">
+                        {/* <p className="error-text absolute bottom-0">
                           {errors.map((item) =>
                             item === 'garansi'
                               ? 'Masukan garansi'
@@ -682,20 +685,20 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID')
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
-                  <div className="error mt-4">
+                  <div className="error mt-4 text-center">
                     <p className="text-red-400">
                       Ada data yang masih belum terisi !
                     </p>
@@ -712,11 +715,12 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 </p>
               </div>
             )} */}
-                <br></br>
+                {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -748,8 +752,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

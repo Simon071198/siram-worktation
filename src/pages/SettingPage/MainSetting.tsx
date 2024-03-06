@@ -62,9 +62,9 @@ Longitude          </h5>
               <div className="flex items-center justify-center space-x-2">
                 <button
                   className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-green-500 hover:bg-green-400 text-white text-sm font-medium"
-                // onClick={() => {
-                //   handleEdit(item);
-                // }}
+                  // onClick={() => {
+                  //   handleEdit(item);
+                  // }}
                 >
                   <svg
                     fill="none"
@@ -86,9 +86,9 @@ Longitude          </h5>
 
                 <button
                   className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-red-500 hover:bg-red-400 text-white text-sm font-medium"
-                // onClick={() => {
-                //   handleEdit(item);
-                // }}
+                  // onClick={() => {
+                  //   handleEdit(item);
+                  // }}
                 >
                   <svg
                     fill="none"
@@ -111,9 +111,9 @@ Longitude          </h5>
                 <NavLink
                   to="/manajemen-pengguna"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-blue-500 hover:bg-blue-400 text-white text-sm font-medium"
-                // onClick={() => {
-                //   handleEdit(item);
-                // }}
+                  // onClick={() => {
+                  //   handleEdit(item);
+                  // }}
                 >
                   <svg
                     fill="none"
@@ -136,9 +136,9 @@ Longitude          </h5>
                 <NavLink
                   to="/pengaturan-perangkat/:id"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-purple-500 hover:bg-purple-400 text-white text-sm font-medium"
-                // onClick={() => {
-                //   handleEdit(item);
-                // }}
+                  // onClick={() => {
+                  //   handleEdit(item);
+                  // }}
                 >
                   <svg
                     fill="none"

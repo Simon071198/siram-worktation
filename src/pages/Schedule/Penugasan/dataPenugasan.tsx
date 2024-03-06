@@ -4,9 +4,9 @@ import {
   apiDeletePenugasanShift,
   apiEditPenugasanShift,
   apiReadAllPenugasanShift,
-} from '../../../services/api';
+} from '../../services/api';
 import { Alerts } from '../GrupShift/Alert';
-import Loader from '../../../common/Loader';
+import Loader from '../../common/Loader';
 import ModalAddPenugasan from './modalAddPenugasan';
 import ModalEditPenugasan from './modalEditPenugasan';
 import { DeleteModal } from './modalDeletePenugasan';
@@ -68,24 +68,24 @@ const Penugasan = () => {
   };
   const handleCloseModalEdit = () => {
     setModalDetailOpen(false);
-    setModalEditOpen(false)
-    setModalDeleteOpen(false)
+    setModalEditOpen(false);
+    setModalDeleteOpen(false);
   };
 
   const handleDetail = (item: any) => {
-    setdataEditPenugasan(item)
-    setModalDetailOpen(true)
-  }
+    setdataEditPenugasan(item);
+    setModalDetailOpen(true);
+  };
 
   const handleEdit = (item: any) => {
-    setdataEditPenugasan(item)
-    setModalEditOpen(true)
-  }
+    setdataEditPenugasan(item);
+    setModalEditOpen(true);
+  };
 
   const handleDelete = (item: any) => {
-    setdataDeletePenugasan({ penugasan_id: item })
-    setModalDeleteOpen(true)
-  }
+    setdataDeletePenugasan({ penugasan_id: item });
+    setModalDeleteOpen(true);
+  };
   //create penugasan
   const handleSubmitPenugasan = async (param: any) => {
     const addData = await apiCreatePenugasanShift(param, token);
@@ -148,7 +148,7 @@ const Penugasan = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className='container py-[16px]'>
+    <div className="container py-[16px]">
       <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         {modalAddOpen && (
           <ModalAddPenugasan
@@ -194,7 +194,7 @@ const Penugasan = () => {
             <ul>
               <li className="py-2.5 flex rounded-t-md bg-gray-2 dark:bg-slate-600">
                 <ul className="w-full py-2.5">
-                  <li className="flex items-center justify-center grid grid-cols-2">
+                  <li className=" items-center justify-center grid grid-cols-2">
                     <div className="flex items-center justify-center text-sm font-medium uppercase xsm:text-base">
                       Nama Penugasan
                     </div>
@@ -208,18 +208,27 @@ const Penugasan = () => {
                 <ul className="w-full py-2.5 space-y-4">
                   {dataPenugasan.map((item: any) => {
                     return (
-                      <li className="flex items-center justify-center grid grid-cols-2">
+                      <li className="items-center justify-center grid grid-cols-2">
                         <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
                           {item.nama_penugasan}
                         </div>
                         <div className="flex items-center justify-center space-x-1 text-sm font-medium uppercase xsm:text-base ">
-                          <button onClick={() => handleDetail(item)} className="py-1 text-sm px-2 text-black rounded-md bg-blue-300">
+                          <button
+                            onClick={() => handleDetail(item)}
+                            className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                          >
                             Detail
                           </button>
-                          <button onClick={() => handleEdit(item)} className="py-1 text-sm px-2 text-black rounded-md bg-blue-300">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                          >
                             Edit
                           </button>
-                          <button onClick={() => handleDelete(item.penugasan_id)} className="py-1 text-sm px-2 text-white rounded-md bg-red-500">
+                          <button
+                            onClick={() => handleDelete(item.penugasan_id)}
+                            className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                          >
                             Delete
                           </button>
                         </div>

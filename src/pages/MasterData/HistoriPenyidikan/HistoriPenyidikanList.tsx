@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { Alerts } from './AlertHistoriPenyidikan';
 import {
   apiReadPenyidikan,
   apiDeletePenyidikan,
   apiCreatePenyidikan,
   apiUpdatePenyidikan,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddHistoriPenyidikanModal } from './ModalAddHistoriPenyidikan';
 import { DeleteHistoriPenyidikanModal } from './ModalDeleteHistoriPenyidikan';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../Search';
 
@@ -37,16 +37,15 @@ const HistoriPenyidikanList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -87,12 +86,11 @@ const HistoriPenyidikanList = () => {
         setData(result);
         // setPages(response.data.pagination.totalPages);
         // setRows(response.data.pagination.totalRecords);
-      }
-      else {
+      } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -113,7 +111,7 @@ const HistoriPenyidikanList = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
   // useEffect untuk fetch data dari API
   useEffect(() => {
@@ -129,7 +127,6 @@ const HistoriPenyidikanList = () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
 
   const fetchData = async () => {
     let params = {
@@ -150,7 +147,7 @@ const HistoriPenyidikanList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -158,17 +155,16 @@ const HistoriPenyidikanList = () => {
     }
   };
 
-
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
+    console.log('detail', item);
     setDetailData(item);
     setModalDetailOpen(true);
   };
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
-    console.log('edit', item)
+    console.log('edit', item);
     setEditData(item);
     setModalEditOpen(true);
   };
@@ -198,14 +194,13 @@ const HistoriPenyidikanList = () => {
     try {
       const responseDelete = await apiDeletePenyidikan(params, token);
       if (responseDelete.data.status === 'OK') {
-
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+        fetchData();
+      } else if (responseDelete.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -214,7 +209,7 @@ const HistoriPenyidikanList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -226,15 +221,14 @@ const HistoriPenyidikanList = () => {
   const handleSubmitAdd = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreatePenyidikan(params, token)
-      if (responseCreate.data.status === "OK") {
-
+      const responseCreate = await apiCreatePenyidikan(params, token);
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -244,7 +238,7 @@ const HistoriPenyidikanList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -256,15 +250,14 @@ const HistoriPenyidikanList = () => {
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdatePenyidikan(params, token)
-      if (responseEdit.data.status === "OK") {
-
+      const responseEdit = await apiUpdatePenyidikan(params, token);
+      if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-        fetchData()
+        fetchData();
       } else if (responseEdit.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
@@ -274,7 +267,7 @@ const HistoriPenyidikanList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -291,8 +284,6 @@ const HistoriPenyidikanList = () => {
 
     console.log(isOperator, 'Operator');
   }, [isOperator]);
-
-
 
   const exportToExcel = () => {
     const dataToExcel = [
@@ -324,8 +315,7 @@ const HistoriPenyidikanList = () => {
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(wb, 'data-penyidikan.xlsx');
-  }
-
+  };
 
   return isLoading ? (
     <Loader />
@@ -395,19 +385,17 @@ const HistoriPenyidikanList = () => {
         <h4 className="text-xl font-semibold text-black dark:text-white">
           Data Penyidikan
         </h4>
-        {!isOperator &&
+        {!isOperator && (
           <button
             onClick={() => setModalAddOpen(true)}
             className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
           >
             Tambah
           </button>
-        }
+        )}
       </div>
       <div className="flex flex-col">
-
-        {isOperator ?
-
+        {isOperator ? (
           <div className="grid grid-cols-1 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -415,8 +403,7 @@ const HistoriPenyidikanList = () => {
               </h5>
             </div>
           </div>
-
-          :
+        ) : (
           <div className="grid grid-cols-2 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-2">
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -429,11 +416,8 @@ const HistoriPenyidikanList = () => {
                 Aksi
               </h5>
             </div>
-
           </div>
-        }
-
-
+        )}
 
         {data.length == 0 ? (
           <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -442,7 +426,7 @@ const HistoriPenyidikanList = () => {
             {data.map((item: any) => {
               return (
                 <div>
-                  {isOperator ?
+                  {isOperator ? (
                     <>
                       <div
                         className="grid grid-cols-1 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-1 capitalize"
@@ -450,16 +434,16 @@ const HistoriPenyidikanList = () => {
                       >
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
                           <p className=" text-black dark:text-white capitalize">
                             {item.nomor_penyidikan}
                           </p>
                         </div>
-
                       </div>
                       <div className="border-t border-slate-600"></div>
                     </>
-                    :
+                  ) : (
                     <>
                       <div
                         className="grid grid-cols-2 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
@@ -467,13 +451,13 @@ const HistoriPenyidikanList = () => {
                       >
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
                           <p className=" text-black dark:text-white capitalize">
                             {item.nomor_penyidikan}
                           </p>
                         </div>
                         <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-
                           <button
                             onClick={() => handleEditClick(item)}
                             className="py-1 px-2 text-black rounded-md bg-blue-300"
@@ -490,9 +474,7 @@ const HistoriPenyidikanList = () => {
                       </div>
                       <div className="border-t border-slate-600"></div>
                     </>
-                  }
-
-
+                  )}
                 </div>
               );
             })}
@@ -535,7 +517,7 @@ const HistoriPenyidikanList = () => {
 
       {data.length === 0 ? null : (
         <div className="mt-5">
-          <div className='flex gap-4 items-center '>
+          <div className="flex gap-4 items-center ">
             <p>
               Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
             </p>

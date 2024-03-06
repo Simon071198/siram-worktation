@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
+import Loader from '../../common/Loader';
 import {
   apiJenisSidangInsert,
   apiJenisSidangRead,
   apiJenisSidangUpdate,
   apiJenisSidangDelete,
-} from '../../../services/api';
-import Pagination from '../../../components/Pagination';
+  apiRealtimeLog,
+  apiReadKamera,
+} from '../../services/api';
+import Pagination from '../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
+import { Alerts } from 'renderer/pages/User/AlertUser';
+import SearchInputButton from 'renderer/pages/Device/Search';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -16,30 +20,29 @@ interface Params {
 }
 
 interface Item {
-  nama_jenis_persidangan: string;
+  timestamp: any;
+  nama_kamera: string;
+  tipe_lokasi: string;
+  nama_lokasi: string;
+  keterangan: string;
 }
 
-const JenisPersidanganList = () => {
+const LogRealtime = () => {
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
-  const [detailData, setDetailData] = useState<Item | null>(null);
-  const [editData, setEditData] = useState<Item | null>(null);
-  const [deleteData, setDeleteData] = useState<Item | null>(null);
-  const [modalDetailOpen, setModalDetailOpen] = useState(false);
-  const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [dataKamera, setDataKamera] = useState<Item[]>([]);
   const [modalAddOpen, setModalAddOpen] = useState(false);
-  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
 
-  const tokenItem = localStorage.getItem('token')
+  const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token
+  const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -53,12 +56,12 @@ const JenisPersidanganList = () => {
     try {
       const params = {
         filter: {
-          nama_jenis_persidangan: filter,
+          nama_kamera: filter,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiJenisSidangRead(params, token);
+      const response = await apiRealtimeLog(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -69,7 +72,7 @@ const JenisPersidanganList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -90,26 +93,31 @@ const JenisPersidanganList = () => {
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
+  }, [currentPage, pageSize]);
 
   useEffect(() => {
-    // Menambahkan event listener untuk tombol "Enter" pada komponen ini
+    const fetchDataInterval = setInterval(() => {
+      fetchData1();
+    }, 1000);
+    return () => clearInterval(fetchDataInterval);
+  });
+
+  useEffect(() => {
     document.addEventListener('keypress', handleEnterKeyPress);
 
     // Membersihkan event listener ketika komponen di-unmount
     return () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
-  }, [filter,]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
-
+  }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
-    let param = {
+    let params = {
       filter: ' ',
       page: currentPage,
       pageSize: pageSize,
@@ -117,17 +125,17 @@ const JenisPersidanganList = () => {
 
     setIsLoading(true);
     try {
-      const response = await apiJenisSidangRead(param, token);
+      const response = await apiRealtimeLog(params, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
-      const result = response.data.data;
+      const result = response.data.records;
       setData(result);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message
+      const error = e.message;
       Alerts.fire({
         icon: 'error',
         title: error,
@@ -135,128 +143,42 @@ const JenisPersidanganList = () => {
     }
   };
 
-
-  // function untuk menampilkan modal detail
-  const handleDetailClick = (item: Item) => {
-    console.log('detail', item)
-    setDetailData(item);
-    setModalDetailOpen(true);
-  };
-
-  // function untuk menampilkan modal edit
-  const handleEditClick = (item: Item) => {
-    console.log('edit', item)
-    setEditData(item);
-    setModalEditOpen(true);
-  };
-
-  // function untuk menampilkan modal delete
-  const handleDeleteClick = (item: Item) => {
-    setDeleteData(item);
-    setModalDeleteOpen(true);
-  };
-
-  // function untuk menutup modal
-  const handleCloseDeleteModal = () => {
-    setModalDeleteOpen(false);
-  };
-
-  // function untuk menutup modal
-  const handleCloseAddModal = () => {
-    setModalAddOpen(false);
-  };
-
-  const handleCloseEditModal = () => {
-    setModalEditOpen(false);
-  };
-
-  // function untuk menghapus data
-  const handleSubmitDeleteDataPetugas = async (params: any) => {
+  const fetchData1 = async () => {
+    let params = {
+      filter: ' ',
+      page: currentPage,
+      pageSize: pageSize,
+    };
     try {
-      const responseDelete = await apiJenisSidangDelete(params, token);
-      if (responseDelete.data.status === 'OK') {
+      const response = await apiRealtimeLog(params, token);
+      if (response.data.status !== 'OK') {
+        throw new Error(response.data.message);
+      }
+      const result = response.data.records;
+      setData(result);
+    } catch (e: any) {
+      const error = e.message;
+      Alerts.fire({
+        icon: 'error',
+        title: error,
+      });
+    }
+  };
 
-        Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil menghapus data',
-        });
-        setModalDeleteOpen(false);
-        fetchData()
-      } else if (responseDelete.data.status === "NO") {
+  const kasus = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadKamera(params, token)
+      .then((res) => {
+        setDataKamera(res.data.records);
+      })
+      .catch((err) =>
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal hapus data',
-        });
-      } else {
-        throw new Error(responseDelete.data.message);
-      }
-    } catch (e: any) {
-      const error = e.message
-      Alerts.fire({
-        icon: 'error',
-        title: error,
-      });
-    }
-  };
-
-  // function untuk menambah data
-  const handleSubmitAddDataPetugas = async (params: any) => {
-    console.log('DATA DARI LIST', params);
-    try {
-      const responseCreate = await apiJenisSidangInsert(params, token)
-      if (responseCreate.data.status === "Ok") {
-
-        Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil menambah data',
-        });
-        setModalAddOpen(false);
-        fetchData()
-      } else if (responseCreate.data.status === 'NO') {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal membuat data',
-        });
-      } else {
-        throw new Error(responseCreate.data.message);
-      }
-    } catch (e: any) {
-      const error = e.message
-      Alerts.fire({
-        icon: 'error',
-        title: error,
-      });
-    }
-  };
-
-  // function untuk mengubah data
-  const handleSubmitEditDataPetugas = async (params: any) => {
-    console.log(params, 'edit');
-    try {
-      const responseEdit = await apiJenisSidangUpdate(params, token)
-      if (responseEdit.data.status === "OK") {
-
-        Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil mengubah data',
-        });
-        setModalEditOpen(false);
-        fetchData()
-      } else if (responseEdit.data.status === 'NO') {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal mengubah data',
-        });
-      } else {
-        throw new Error(responseEdit.data.message);
-      }
-    } catch (e: any) {
-      const error = e.message
-      Alerts.fire({
-        icon: 'error',
-        title: error,
-      });
-    }
+          title: err.massage,
+        }),
+      );
   };
 
   useEffect(() => {
@@ -269,24 +191,23 @@ const JenisPersidanganList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
-
-
   const exportToExcel = () => {
     const dataToExcel = [
-      [
-        'nama jenis persidangan',
-      ],
+      ['waktu', 'nama kamera', 'tipe lokasi', 'nama lokasi', 'keterangan'],
       ...data.map((item: any) => [
-        item.nama_jenis_persidangan,
+        item.timestamp,
+        item.nama_kamera,
+        item.tipe_lokasi,
+        item.nama_lokasi,
+        item.keterangan,
       ]),
     ];
 
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_jenis_sidang.xlsx');
-  }
-
+    xlsx.writeFile(wb, 'data_Log_Realtime.xlsx');
+  };
 
   return isLoading ? (
     <Loader />
@@ -297,7 +218,7 @@ const JenisPersidanganList = () => {
           <div className="w-full">
             <SearchInputButton
               value={filter}
-              placehorder="Cari jenis persidangan"
+              placehorder="Cari log"
               onChange={handleFilterChange}
             />
           </div>
@@ -324,160 +245,209 @@ const JenisPersidanganList = () => {
             </svg>
           </button>
 
-          <button
+          {/* <button
             onClick={exportToExcel}
             className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
           >
             Export&nbsp;Excel
-          </button>
+          </button> */}
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-3">
         <h4 className="text-xl font-semibold text-black dark:text-white">
-          Data Jenis Persidangan
+          Data Log Realtime
         </h4>
-        {!isOperator &&
-          <button
-            onClick={() => setModalAddOpen(true)}
-            className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
-        }
+        {/* {!isOperator && 
+        <button
+          onClick={() => setModalAddOpen(true)}
+          className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+        >
+          Tambah
+        </button>
+        } */}
       </div>
       <div className="flex flex-col">
-
-        {isOperator ?
-
+        {isOperator ? (
           <div className="grid grid-cols-1 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Jenis Persidangan
+                gambar kamera
               </h5>
             </div>
-          </div>
-
-          :
-          <div className="grid grid-cols-2 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-2">
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Jenis Persidangan
+                nama kamera
               </h5>
             </div>
-
-            <div className=" p-2.5 text-center xl:p-5 justify-center flex">
+            <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Aksi
+                tipe lokasi
               </h5>
             </div>
-
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama lokasi
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                keterangan
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                waktu
+              </h5>
+            </div>
           </div>
-        }
+        ) : (
+          <div className="grid grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6">
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                gambar kamera
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama kamera
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                tipe lokasi
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                nama lokasi
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                keterangan
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                waktu
+              </h5>
+            </div>
+          </div>
+        )}
 
-
-
-        {data.length === 0 ? (
+        {data.length == 0 ? (
           <div className="flex justify-center p-4 w-ful">No Data</div>
         ) : (
           <>
             {data.map((item: any) => {
               return (
                 <div>
-                  {isOperator ?
+                  {isOperator ? (
                     <>
                       <div
-                        className="grid grid-cols-1 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-1 capitalize"
-                        key={item.nama_jenis_persidangan}
+                        className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-6 capitalize"
+                        key={item.nama_kamera}
                       >
-                        <div
-                          onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <img
+                            src={
+                              'https://dev.transforme.co.id/siram_admin_api' +
+                              item.image
+                            }
+                            alt="picture"
+                            className="w-20 h-20 object-fit border-slate-400 border"
+                          ></img>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
                           <p className=" text-black dark:text-white capitalize">
-                            {item.nama_jenis_persidangan}
+                            {item.nama_kamera}
                           </p>
                         </div>
 
-                      </div>
-                      <div className="border-t border-slate-600"></div>
-                    </>
-                    :
-                    <>
-                      <div
-                        className="grid grid-cols-2 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                        key={item.nama_jenis_persidangan}
-                      >
-                        <div
-                          onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
                           <p className=" text-black dark:text-white capitalize">
-                            {item.nama_jenis_persidangan}
+                            {item.tipe_lokasi}
                           </p>
                         </div>
-                        <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
 
-                          <button
-                            onClick={() => handleEditClick(item)}
-                            className="py-1 px-2 text-black rounded-md bg-blue-300"
-                          >
-                            Ubah
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(item)}
-                            className="py-1 px-2 text-white rounded-md bg-red-400"
-                          >
-                            Hapus
-                          </button>
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.nama_lokasi}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.keterangan}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.timestamp}
+                          </p>
                         </div>
                       </div>
                       <div className="border-t border-slate-600"></div>
                     </>
-                  }
+                  ) : (
+                    <>
+                      <div
+                        className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
+                        key={item.timestamp}
+                      >
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <img
+                            src={
+                              'https://dev.transforme.co.id/siram_admin_api' +
+                              item.image
+                            }
+                            alt="picture"
+                            className="w-20 h-20 object-fit border-slate-400 border"
+                          ></img>
+                        </div>
 
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.nama_kamera}
+                          </p>
+                        </div>
 
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.tipe_lokasi}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.nama_lokasi}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.keterangan}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer">
+                          <p className=" text-black dark:text-white capitalize">
+                            {item.timestamp}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="border-t border-slate-600"></div>
+                    </>
+                  )}
                 </div>
               );
             })}
           </>
         )}
-
-        {modalDetailOpen && (
-          <AddJenisPersidanganModal
-            closeModal={() => setModalDetailOpen(false)}
-            onSubmit={handleSubmitAddDataPetugas}
-            defaultValue={detailData}
-            isDetail={true}
-            token={token}
-          />
-        )}
-        {modalEditOpen && (
-          <AddJenisPersidanganModal
-            closeModal={handleCloseEditModal}
-            onSubmit={handleSubmitEditDataPetugas}
-            defaultValue={editData}
-            isEdit={true}
-            token={token}
-          />
-        )}
-        {modalAddOpen && (
-          <AddJenisPersidanganModal
-            closeModal={handleCloseAddModal}
-            onSubmit={handleSubmitAddDataPetugas}
-            token={token}
-          />
-        )}
-        {modalDeleteOpen && (
-          <DeleteJenisPersidanganModal
-            closeModal={handleCloseDeleteModal}
-            onSubmit={handleSubmitDeleteDataPetugas}
-            defaultValue={deleteData}
-          />
-        )}
       </div>
 
       {data.length === 0 ? null : (
         <div className="mt-5">
-          <div className='flex gap-4 items-center '>
+          <div className="flex gap-4 items-center ">
             <p>
               Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
             </p>
@@ -503,4 +473,4 @@ const JenisPersidanganList = () => {
   );
 };
 
-export default JenisPersidanganList;
+export default LogRealtime;

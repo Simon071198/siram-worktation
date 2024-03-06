@@ -7,7 +7,7 @@ import { BiTask } from 'react-icons/bi';
 const routeMasterData = [
   {
     id: 1,
-    name: 'Calendar Shift',
+    name: 'Jadwal Shift Kerja',
     link: '/CalendarShift',
     icon: <MdOutlinePermContactCalendar size={26} />,
   },
@@ -25,7 +25,7 @@ const routeMasterData = [
   },
   {
     id: 4,
-    name: 'Penugasan',
+    name: 'Data Penugasan',
     link: '/Penugasan',
     icon: <BiTask size={25} />,
   },

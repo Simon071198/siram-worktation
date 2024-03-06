@@ -1,17 +1,21 @@
-"use client";
-import React, { useState } from "react";
-import IconProfile from '../../../images/logo/logo.png'
+'use client';
+import React, { useState } from 'react';
+import IconProfile from '../../../../../assets/icon.png';
 import SearchChat from './SearchChat';
 
 interface SidebarLiveChatProps {
   roomList: any[];
   selectedRoom: string | null;
-  onRoomClick: (roomID: string) => void;
+  onRoomClick: (roomID: string, namaLokasi: string) => void;
 }
 
-function SidebarLiveChat({ roomList, selectedRoom, onRoomClick }: SidebarLiveChatProps) {
+function SidebarLiveChat({
+  roomList,
+  selectedRoom,
+  onRoomClick,
+}: SidebarLiveChatProps) {
   const [isActiveButton, setIsActiveButton] = useState<number | null>(null);
-  const [isActiveChat, setIsActiveChat] = useState(false);
+  // const [isActiveChat, setIsActiveChat] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,9 +54,12 @@ function SidebarLiveChat({ roomList, selectedRoom, onRoomClick }: SidebarLiveCha
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    onRoomClick(data.lokasi_lemasmil_id);
+                    onRoomClick(
+                      data.lokasi_lemasmil_id,
+                      data.nama_lokasi_lemasmil
+                    );
                     setIsActiveButton(index);
-                    setIsActiveChat(true);
+                    // setIsActiveChat(true);
                   }}
                   className={`w-full hover:bg-slate-400  rounded-lg text-white hover:text-black  ${
                     isActiveButton === index ? 'bg-slate-400' : ''
@@ -66,7 +73,9 @@ function SidebarLiveChat({ roomList, selectedRoom, onRoomClick }: SidebarLiveCha
                     />
                     <div className="ml-4 items-center">
                       <div className="flex items-center">
-                        <label className="font-semibold ">{data.nama_lokasi_lemasmil}</label>
+                        <label className="font-semibold ">
+                          {data.nama_lokasi_lemasmil}
+                        </label>
                       </div>
                     </div>
                   </div>

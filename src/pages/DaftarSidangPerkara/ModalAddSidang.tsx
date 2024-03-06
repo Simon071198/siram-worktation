@@ -16,7 +16,7 @@ import {
 import Select from 'react-select';
 import { Alerts } from './AlertSidang';
 import { CiGlass } from 'react-icons/ci';
-// import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';]
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -45,6 +45,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jadwal_sidang: '',
       perubahan_jadwal_sidang: '',
       kasus_id: '',
+      nama_kasus: '',
+      nomor_kasus: '',
       masa_tahanan_tahun: '',
       masa_tahanan_bulan: '',
       masa_tahanan_hari: '',
@@ -64,7 +66,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
       role_ketua_oditur: '',
-    }
+    },
   );
 
   const modalContainerRef = useRef(null);
@@ -166,12 +168,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     console.log('jaksa');
     if (isEdit || isDetail) {
       const jaksaMap = formState?.oditurHolder?.map(
-        (item: any) => item?.oditur_penuntut_id
+        (item: any) => item?.oditur_penuntut_id,
       );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
       const pengacaraMap = formState.pengacaraHolder.map(
-        (item: any) => item.nama_pengacara
+        (item: any) => item.nama_pengacara,
       );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
       const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
@@ -210,9 +212,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState((prevFormState: any) => ({
       ...prevFormState,
       saksi: selectedValues.map((valueItem: any) => valueItem.value),
+      saksiHolder: selectedValues.map((valueItem: any) => ({
+        saksi_id: valueItem.value,
+        nama_saksi: valueItem.label,
+      })),
     }));
 
     setGetSaksi(selectedValues);
+    // console.log('getSaksi', getSaksi);
   };
 
   const handleSelectAhli = (e: any) => {
@@ -263,7 +270,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
   const handleRemovePengacara = (index: any) => {
     const newArrayPasal = formState.pengacara.filter(
-      (_: any, i: any) => i !== index
+      (_: any, i: any) => i !== index,
     );
     setFormState({
       ...formState,
@@ -288,29 +295,66 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const handleRemoveDoc = () => {
     setFormState({ ...formState, pdf_file_base64: '' });
     const inputElement = document.getElementById(
-      'fileUpload'
+      'fileUpload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
     }
   };
 
-  const handleKasus = async (e: any) => {
-    setFormState({ ...formState, kasus_id: e.target.value });
-    const saksiFilter = kasus.filter(
-      (item: any) => item.kasus_id == e.target.value
-    )[0];
-    if (saksiFilter) {
-      const saksiMap = saksiFilter.saksi.map((item: any) => ({
-        label: item.nama_saksi,
-        value: item.saksi_id,
-      }));
-      setGetSaksi(saksiMap);
-      console.log('getSaksi', getSaksi);
+  const handlePenadilanMiliter = (e: any) => {
+    setFormState({ ...formState, pengadilan_militer_id: e?.value });
+  };
+
+  const handleJenisPersidangan = (e: any) => {
+    setFormState({ ...formState, jenis_persidangan_id: e?.value });
+  };
+
+  // const handleChange = (e: any) => {
+  //   setFormState({ ...formState, [e.target.name]: e.target.value });
+  // };
+
+  // const handleKasus = async (e: any) => {
+  //   setFormState({ ...formState, kasus_id: e.target.value });
+  //   const saksiFilter = kasus.filter(
+  //     (item: any) => item.kasus_id == e.target.value
+  //   )[0];
+  //   if (saksiFilter) {
+  //     const saksiMap = saksiFilter.saksi.map((item: any) => ({
+  //       label: item.nama_saksi,
+  //       value: item.saksi_id,
+  //     }));
+  //     setGetSaksi(saksiMap);
+  //     console.log('getSaksi', getSaksi);
+  //   } else {
+  //     setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+  //   }
+  // };
+  const handleKasus = async (selectedOption: any) => {
+    if (selectedOption) {
+      setFormState({ ...formState, kasus_id: selectedOption.value });
+      const saksiFilter = kasus.filter(
+        (item: any) => item.kasus_id === selectedOption.value,
+      )[0];
+
+      if (saksiFilter) {
+        const saksiMap = saksiFilter.saksi.map((item: any) => ({
+          label: item.nama_saksi,
+          value: item.saksi_id,
+        }));
+        setGetSaksi(saksiMap);
+
+        setFormState({ ...formState, nomor_kasus: saksiFilter.nomor_kasus });
+        console.log('getSaksi', getSaksi);
+      } else {
+        setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+      }
     } else {
-      setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+      setFormState({ ...formState, kasus_id: '' });
+      setGetSaksi([]);
     }
   };
+
   useEffect(() => {
     Promise.all([
       getAllJenisSidang(),
@@ -330,7 +374,17 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     };
     try {
       const response = await apiJenisSidangRead(params, token);
-      setJenisSidang(response.data.data);
+      const data = response.data.data;
+      const uniqueData: any[] = [];
+      const trackedNames: any[] = [];
+
+      data.forEach((item: any) => {
+        if (!trackedNames.includes(item.nama_jenis_persidangan)) {
+          trackedNames.push(item.nama_jenis_persidangan);
+          uniqueData.push(item);
+        }
+      });
+      setJenisSidang(uniqueData);
     } catch (e: any) {
       Alerts.fire({
         icon: 'error',
@@ -517,10 +571,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -598,7 +652,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     //   });
     window.open(
       `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
-      '_blank'
+      '_blank',
     );
 
     // Optional: Customize the new window (size, position, etc.)
@@ -658,8 +712,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     {isDetail
                       ? 'Detail Data Sidang'
                       : isEdit
-                      ? 'Edit Data Sidang'
-                      : 'Tambah Data Sidang'}
+                        ? 'Edit Data Sidang'
+                        : 'Tambah Data Sidang'}
                   </h3>
                 </div>
                 <strong
@@ -684,7 +738,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <select
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
-                        placeholder="Tahap sidang"
+                        // placeholder="Tahap sidang"
                         name="nama_sidang"
                         value={formState.nama_sidang}
                         disabled={isDetail}
@@ -699,13 +753,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'nama_sidang' ? 'Masukan nama sidang' : ''
+                          item === 'nama_sidang' ? 'Masukan nama sidang' : '',
                         )}
                       </p>
                     </div>
 
                     {/* Jenis persidangan */}
-                    <div className="form-group w-full ">
+                    {/* <div className="form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -735,6 +789,43 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             : ''
                         )}
                       </p>
+                    </div> */}
+                    <div className="form-group w-full">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Pilih Jenis Sidang
+                      </label>
+                      <Select
+                        className="basic-single"
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.jenis_persidangan_id,
+                                label: formState.nama_jenis_persidangan,
+                              }
+                            : formState.jenis_persidangan_id
+                        }
+                        name="jenis_persidangan_id"
+                        isClearable={true}
+                        isSearchable={true}
+                        isDisabled={isDetail}
+                        placeholder="Pilih jenis sidang"
+                        styles={customStyles}
+                        options={jenisSidang.map((item: any) => ({
+                          value: item.jenis_persidangan_id,
+                          label: item.nama_jenis_persidangan,
+                        }))}
+                        onChange={handleJenisPersidangan}
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_jenis_persidangan'
+                            ? 'Masukan jenis sidang'
+                            : '',
+                        )}
+                      </p>
                     </div>
                   </div>
 
@@ -762,7 +853,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
-                      name="oditur_penuntut_id"
+                      name="jaksa_penuntut_id"
                       styles={customStyles}
                       options={jaksa?.map((item: any) => ({
                         value: item.oditur_penuntut_id,
@@ -772,7 +863,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'oditur_penuntut_id' ? 'Pilih jaksa' : ''
+                        item === 'jaksa_penuntut_id' ? 'Pilih jaksa' : '',
                       )}
                     </p>
                   </div>
@@ -874,60 +965,60 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                                value:
-                                  formState?.role_ketua_oditur_holder
-                                    ?.oditur_penuntut_id,
-                                label:
-                                  formState?.role_ketua_oditur_holder
-                                    ?.nama_oditur,
+                                value: formState.oditur_penuntut_id,
+                                label: formState.nama_oditur,
                               }
-                            : //   ? formState?.sidang_jaksa
-                              //       .filter((item: any) => item.ketua_jaksa=== '1')
-                              //       .map((obj: any) => ({
-                              //         value: obj.jaksa_penuntut_id,
-                              //         label: obj.nama_jaksa,
-                              //       }))
-                              // ''
-                              formState.oditur_penuntut_id
+                            : formState.oditur_penuntut_id
                         }
                         placeholder={'Pilih ketua oditur'}
                         isClearable={true}
                         isSearchable={true}
                         isDisabled={isDetail}
-                        name="role_ketua_jaksa"
+                        name="odi_penuntut_id"
                         styles={customStyles}
-                        options={
-                          // isEdit ?
-                          // jaksa
-                          // .filter((jaksa: any) =>
-                          //   formState.jaksa_penuntut_id_holder.includes(
-                          //     jaksa.jaksa_penuntut_id)).map((item: any) => ({
-                          //   value: item.jaksa_penuntut_id,
-                          //   label: item.nama_jaksa,
-                          // }))
-                          // ? formState.sidang_jaksa.map((item: any) => ({
-                          //     value: item.jaksa_id,
-                          //     label: item.nama_jaksa,
-                          //   }))
-                          // :
-                          jaksa
-                            ?.filter((jaksa: any) =>
-                              formState?.oditur_penuntut_id?.includes(
-                                jaksa.oditur_penuntut_id
-                              )
-                            )
-                            ?.map((item: any) => ({
-                              value: item.oditur_penuntut_id,
-                              label: item.nama_oditur,
-                            }))
-                        }
-                        onChange={handleSelectKetuaJaksa}
+                        options={jaksa.map((item: any) => ({
+                          value: item.oditur_penuntut_id,
+                          label: item.nama_oditur,
+                        }))}
                       />
+                      {/* <Select
+                          className="basic-select"
+                          classNamePrefix="select"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
+                                }
+                              : {
+                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
+                                }
+                          }
+                          placeholder={'Pilih ketua oditur'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="role_ketua_jaksa"
+                          styles={customStyles}
+                          options={
+                            jaksa
+                              ?.filter((jaksa: any) =>
+                                formState?.oditur_penuntut_id?.includes(jaksa.oditur_penuntut_id)
+                              )
+                              ?.map((item: any) => ({
+                                value: item.oditur_penuntut_id,
+                                label: item.nama_oditur,
+                              }))
+                          }
+                          onChange={handleSelectKetuaJaksa}
+                        /> */}
+
                       <p className="error-text">
                         {errors.map((item) =>
                           item === 'role_ketua_jaksa'
                             ? 'Pilih ketua oditur'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -939,7 +1030,36 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       >
                         Kasus
                       </label>
-                      <select
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.kasus_id,
+                                label: formState.nama_kasus,
+                              }
+                            : formState.kasus_id
+                        }
+                        placeholder={'Pilih kasus'}
+                        isClearable={true}
+                        isSearchable={true}
+                        isDisabled={isDetail}
+                        name="kasus_id"
+                        styles={customStyles}
+                        options={kasus.map((item: any) => ({
+                          value: item.kasus_id,
+                          label: item.nama_kasus,
+                        }))}
+                        onChange={handleKasus}
+                      />
+                      {/* <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'kasus_id' ? 'Pilih kasus' : ''
+                        )}
+                      </p> */}
+                      {/* </div> */}
+                      {/* <select
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleKasus}
                         name="kasus_id"
@@ -954,35 +1074,35 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             {item.nama_kasus}
                           </option>
                         ))}
-                      </select>
+                      </select> */}
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'kasus_id' ? 'Pilih kasus' : ''
+                          item === 'kasus_id' ? 'Pilih kasus' : '',
                         )}
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 justify-normal">
-                    {/* juru sita */}
+                    {/* nomor kasus */}
                     <div className="form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
                       >
-                        Juru sita
+                        Nomor Kasus
                       </label>
                       <input
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         onChange={handleChange}
-                        placeholder="Juru sita"
-                        name="juru_sita"
-                        value={formState.juru_sita}
-                        disabled={isDetail}
+                        placeholder="Nomor Kasus"
+                        name="nomor_kasus"
+                        value={formState?.nomor_kasus}
+                        disabled
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'juru_sita' ? 'Masukan juru sita' : ''
+                          item === 'nomor_kasus' ? 'Masukan nomor kasus' : '',
                         )}
                       </p>
                     </div>
@@ -995,32 +1115,62 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       >
                         Pengadilan militer
                       </label>
-                      <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                        onChange={handleChange}
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        defaultValue={
+                          isEdit || isDetail
+                            ? {
+                                value: formState.pengadilan_militer_id,
+                                label: formState.nama_pengadilan_militer,
+                              }
+                            : formState.pengadilan_militer_id
+                        }
+                        isClearable={true}
+                        isSearchable={true}
+                        placeholder={'Pilih pengadilan militer'}
+                        // onChange={handleChange}
                         name="pengadilan_militer_id"
-                        value={formState.pengadilan_militer_id}
-                        disabled={isDetail}
-                      >
-                        <option value="" disabled>
-                          Pilih pengadilan militer
-                        </option>
-                        {pengadilanMiliter.map((item: any) => (
-                          <option value={item.pengadilan_militer_id}>
-                            {item.nama_pengadilan_militer}
-                          </option>
-                        ))}
-                      </select>
+                        isDisabled={isDetail}
+                        styles={customStyles}
+                        options={pengadilanMiliter.map((item: any) => ({
+                          value: item.pengadilan_militer_id,
+                          label: item.nama_pengadilan_militer,
+                        }))}
+                        onChange={handlePenadilanMiliter}
+                      />
                       <p className="error-text">
                         {errors.map((item) =>
                           item === 'pengadilan_militer_id'
                             ? 'Pilih pengadilan militer'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
 
                     {/* Pengawas Peradilan */}
+                    <div className="form-group w-full ">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Juru Sita
+                      </label>
+                      <input
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        onChange={handleChange}
+                        placeholder="Juru sita"
+                        name="juru_sita"
+                        value={formState.juru_sita}
+                        disabled={isDetail}
+                      />
+
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'juru_sita' ? 'Masukan Juru Sita' : '',
+                        )}
+                      </p>
+                    </div>
                     <div className="form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
@@ -1041,7 +1191,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         {errors.map((item) =>
                           item === 'pengawas_peradilan_militer'
                             ? 'Masukan pengawas'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1065,7 +1215,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'agenda_sidang' ? 'Masukan agenda sidang' : ''
+                        item === 'agenda_sidang' ? 'Masukan agenda sidang' : '',
                       )}
                     </p>
                   </div>
@@ -1091,7 +1241,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         {errors.map((item) =>
                           item === 'jadwal_sidang'
                             ? 'Masukan jadwal sidang'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1116,7 +1266,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         {errors.map((item) =>
                           item === 'perubahan_jadwal_sidang'
                             ? 'Masukan perubahan jadwal'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1141,7 +1291,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         {errors.map((item) =>
                           item === 'waktu_mulai_sidang'
                             ? 'Masukan tanggal mulai'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1166,7 +1316,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         {errors.map((item) =>
                           item === 'waktu_selesai_sidang'
                             ? 'Masukan tanggal selesai'
-                            : ''
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1212,7 +1362,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'ahli' ? 'Pilih ahli' : ''
+                        item === 'ahli' ? 'Pilih ahli' : '',
                       )}
                     </p>
                   </div>
@@ -1235,26 +1385,19 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               value: item.saksi_id,
                               label: item.nama_saksi,
                             }))
-                          : //   ? formState?.sidang_saksi.map((item: any) => ({
-                            //       value: item.saksi_id,
-                            //       label: item.nama_saksi,
-                            //     }))
-                            // formState.kasus_id
-                            // ? formState.saksi.saksi.map((item: any) => ({
-                            //     value: item.saksi_id,
-                            //     label: item.nama_saksi,
-                            //   }))
-                            // getSaksi.length > 0
-                            // ? getSaksi.map((item: any) => ({
-                            //     value: item.value,
-                            //     label: item.label,
-                            //   })) :
-                            formState.saksi_id
+                          : formState.saksi_id
                       }
-                      value={getSaksi.map((item: any) => ({
-                        value: item.value,
-                        label: item.label,
-                      }))}
+                      value={
+                        isEdit || isDetail
+                          ? formState.saksiHolder.map((item: any) => ({
+                              value: item.saksi_id,
+                              label: item.nama_saksi,
+                            }))
+                          : getSaksi.map((item: any) => ({
+                              value: item.value,
+                              label: item.label,
+                            }))
+                      }
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
@@ -1276,7 +1419,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'saksi' ? 'Pilih saksi' : ''
+                        item === 'saksi' ? 'Pilih saksi' : '',
                       )}
                     </p>
                   </div>
@@ -1427,7 +1570,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           {errors.map((item) =>
                             item === 'masa_tahanan_tahun'
                               ? 'Masukan vonis tahun'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
@@ -1445,7 +1588,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           {errors.map((item) =>
                             item === 'masa_tahanan_bulan'
                               ? 'Masukan vonis bulan'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
@@ -1463,7 +1606,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           {errors.map((item) =>
                             item === 'masa_tahanan_hari'
                               ? 'Masukan vonis hari'
-                              : ''
+                              : '',
                           )}
                         </p>
                       </div>
@@ -1490,7 +1633,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {errors.map((item) =>
                         item === 'nama_dokumen_persidangan'
                           ? 'Masukan nama dokumen'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -1610,7 +1753,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {errors.map((item) =>
                         item === 'pdf_file_base64'
                           ? 'Masukan dokumen sidang'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
@@ -1633,7 +1776,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'hasil_vonis' ? 'Masukan hasil vonis' : ''
+                        item === 'hasil_vonis' ? 'Masukan hasil vonis' : '',
                       )}
                     </p>
                   </div>
@@ -1646,7 +1789,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond

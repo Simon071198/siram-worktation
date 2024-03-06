@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import axios from 'axios';
-import { apiVisitorRealtimeLogList } from '../../../services/api';
+import { apiVisitorRealtimeLogList } from '../../services/api';
 
-import { webserviceurl } from '../../../services/api';
+import { webserviceurl } from '../../services/api';
 import { NavLink } from 'react-router-dom';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
@@ -189,12 +189,10 @@ export default function Realtime() {
       </NavLink> */}
       <div className="flex-col items-center">
         <div className="grid grid-cols-5 gap-4 mb-4 items-end">
-          <div className='grid grid-cols-3 col-span-4 gap-x-7 flex-wrap'>
+          <div className="grid grid-cols-3 col-span-4 gap-x-7 flex-wrap">
             <div className="">
               <div className="items-center">
-                <h1
-                  className="block text-sm font-medium truncate text-gray-700"
-                >
+                <h1 className="block text-sm font-medium truncate text-gray-700">
                   Pilih Analitik
                 </h1>
                 <select
@@ -211,16 +209,13 @@ export default function Realtime() {
               </div>
             </div>
             {selectedAnalytics !== 'unrecognized' && (
-
               <div className="">
                 <div className="items-center">
-                  <h1
-                    className="w-full block text-sm font-medium text-gray-700"
-                  >
+                  <h1 className="w-full block text-sm font-medium text-gray-700">
                     Nama
                   </h1>
                   <input
-                    placeholder='Masukan Nama'
+                    placeholder="Masukan Nama"
                     id="name-input"
                     type="text"
                     name="Name"
@@ -235,13 +230,11 @@ export default function Realtime() {
             {selectedAnalytics !== 'unrecognized' && (
               <div className="">
                 <div className="items-center">
-                  <h1
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <h1 className="block text-sm font-medium text-gray-700">
                     Usia
                   </h1>
                   <input
-                    placeholder='Masukan Usia'
+                    placeholder="Masukan Usia"
                     id="age-input"
                     type="text"
                     name="Age"
@@ -276,9 +269,7 @@ export default function Realtime() {
             {selectedAnalytics !== 'unrecognized' && (
               <div className="">
                 <div className="items-center">
-                  <h1
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <h1 className="block text-sm font-medium text-gray-700">
                     Pilih Gender
                   </h1>
                   <select
@@ -298,9 +289,7 @@ export default function Realtime() {
 
             <div className="">
               <div className="items-center">
-                <h1
-                  className="w-full block text-sm font-medium text-gray-700"
-                >
+                <h1 className="w-full block text-sm font-medium text-gray-700">
                   Pilih Lokasi
                 </h1>
                 <select
@@ -321,9 +310,7 @@ export default function Realtime() {
             </div>
             <div className="">
               <div className="items-center">
-                <h1
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <h1 className="block text-sm font-medium text-gray-700">
                   Pilih Kamera
                 </h1>
                 <select
@@ -343,7 +330,6 @@ export default function Realtime() {
               </div>
             </div>
           </div>
-
 
           <button
             onClick={handleExportClick}
@@ -517,7 +503,11 @@ export default function Realtime() {
                 </div>
 
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
-                  <p className="text-meta-3">{item.visitor_name == 'unrecognized' ? 'Tidak Dikenal' : item.visitor_name}</p>
+                  <p className="text-meta-3">
+                    {item.visitor_name == 'unrecognized'
+                      ? 'Tidak Dikenal'
+                      : item.visitor_name}
+                  </p>
                 </div>
                 <div className="flex items-center justify-center p-2.5 xl:p-5">
                   <p className="text-meta-3">

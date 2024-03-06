@@ -3,12 +3,16 @@ import Message from './Message';
 import { time } from 'console';
 
 interface ChatMessagesProps {
-    roomMessages: any[];
-    selectedRoom: string | null;
-    messagesRef: React.RefObject<HTMLDivElement>;
-  }
+  roomMessages: any[];
+  selectedRoom: string | null;
+  messagesRef: React.RefObject<HTMLDivElement>;
+}
 
-const Messages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, messagesRef }) => {
+const Messages: React.FC<ChatMessagesProps> = ({
+  roomMessages,
+  selectedRoom,
+  messagesRef,
+}) => {
   useEffect(() => {
     if (selectedRoom) {
       // Fetch or listen for messages for the selected room
@@ -53,11 +57,11 @@ const Messages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, mes
 
   const newMessage: any = [];
 
-  console.log(roomMessages,'message room')
+  console.log(roomMessages, 'message room');
 
   roomMessages.forEach((message: any) => {
     const content = message.message;
-    const from = message.username;
+    const from = message.nama;
     // const picture = message.picture;
 
     const startDate = new Date(message.timestamp);
@@ -106,7 +110,7 @@ const Messages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, mes
     /* MEMBUAT ARRAY BARU DARI DATA newMessage*/
   }
   newMessage.forEach((message: any) => {
-    const date = message.timeAgoString; 
+    const date = message.timeAgoString;
     if (!messagesByDate[date]) {
       messagesByDate[date] = [];
     }
@@ -152,8 +156,7 @@ const Messages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, mes
 
 export default Messages;
 
-
-// 
+//
 // import React, { useEffect } from "react";
 
 // interface ChatMessagesProps {

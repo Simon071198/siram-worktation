@@ -63,6 +63,7 @@ interface Kesatuan {
 const dataUserItem = localStorage.getItem('dataUser');
 const tokenItem = localStorage.getItem('token');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+// const [isLoading, setIsLoading] = useState(false);
 
 // console.log(token,'TOKEN')
 
@@ -141,7 +142,7 @@ export const AddInmateModal = ({
       // zona_merah: [],
       // lokasi_lemasmil_id:'',
       // nama_gateway:''
-    }
+    },
   );
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -172,16 +173,14 @@ export const AddInmateModal = ({
     let errorFields: any = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if ( key !== 'lokasi_otmil_id' ) 
-      if (formState.is_sick === '0') {
-        if (key === 'wbp_sickness') {
-          if (!value) {
-            continue;
+      if (key !== 'lokasi_otmil_id')
+        if (formState.is_sick === '0') {
+          if (key === 'wbp_sickness') {
+            if (!value) {
+              continue;
+            }
           }
         }
-      }
-
-
 
       if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
         console.log('STATUS ADA');
@@ -246,8 +245,6 @@ export const AddInmateModal = ({
       }
     }
 
-    
-
     if (errorFields.length > 0) {
       console.log(errorFields);
       setErrors(errorFields);
@@ -263,7 +260,7 @@ export const AddInmateModal = ({
 
     if (e.target.name === 'gelang_id') {
       const selectedGelang = gelang.find(
-        (item: any) => item.gelang_id === e.target.value
+        (item: any) => item.gelang_id === e.target.value,
       );
       // console.log(selectedGelang, 'ASDASDS');
       setFormState({
@@ -280,9 +277,7 @@ export const AddInmateModal = ({
         is_sick: e.target.value,
         wbp_sickness: newWbpSickness,
       });
-    }
-
-    else if (e.target.name === 'tanggal_penetapan_terdakwa') {
+    } else if (e.target.name === 'tanggal_penetapan_terdakwa') {
       if (isEdit) {
         setFormState({
           ...formState,
@@ -303,7 +298,7 @@ export const AddInmateModal = ({
         setFormState({
           ...formState,
           tanggal_penetapan_tersangka: formState.tanggal_penetapan_tersangka,
-          tanggal_penetapan_terdakwa:formState.tanggal_penetapan_terdakwa,
+          tanggal_penetapan_terdakwa: formState.tanggal_penetapan_terdakwa,
           tanggal_penetapan_terpidana: e.target.value,
         });
       } else {
@@ -394,7 +389,9 @@ export const AddInmateModal = ({
 
       // Remove the selected zona from the autocomplete data
       setAutocompleteDataZona((prevData: any) =>
-        prevData.filter((zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId)
+        prevData.filter(
+          (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
+        ),
       );
     }
   };
@@ -475,13 +472,16 @@ export const AddInmateModal = ({
   // };
 
   const getAllRuangan = async () => {
-    await apiReadAllRuanganOtmil({
-      pageSize: 1000,
-      page: 1,
-      filter: {
-        nama_lokasi_otmil: 'Cimahi',
+    await apiReadAllRuanganOtmil(
+      {
+        pageSize: 1000,
+        page: 1,
+        filter: {
+          nama_lokasi_otmil: 'Cimahi',
+        },
       },
-    },token)
+      token,
+    )
       .then((res) => {
         console.log(res.data.records, 'res');
 
@@ -492,13 +492,13 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const getAllKategoriPerkara = async () => {
-    let params = {}
-    await apiReadAllKategoriJahat(params,token)
+    let params = {};
+    await apiReadAllKategoriJahat(params, token)
       .then((res) => {
         setKategoriJahat(res);
       })
@@ -506,29 +506,29 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const getAllJenisPerkara = async () => {
     let params = {
-      pageSize : 1000,
-    }
-    await apiReadAllJenisPerkara(params,token)
-    .then((res) => {
-      setJenisPerkara(res.data.records);
+      pageSize: 1000,
+    };
+    await apiReadAllJenisPerkara(params, token)
+      .then((res) => {
+        setJenisPerkara(res.data.records);
       })
       .catch((err) =>
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const pangkatData = async () => {
-    let params = {}
-    await apiReadAllPangkat(params,token)
+    let params = {};
+    await apiReadAllPangkat(params, token)
       .then((res) => {
         setPangkat(res);
       })
@@ -536,7 +536,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -549,7 +549,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -562,7 +562,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -575,7 +575,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -588,7 +588,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -601,7 +601,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -614,7 +614,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -627,7 +627,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -636,8 +636,8 @@ export const AddInmateModal = ({
       pageSize: 1000,
       page: 1,
       filter: {},
-    }
-    await apiReadAllHunian(params,token)
+    };
+    await apiReadAllHunian(params, token)
       .then((res) => {
         setHunian(res.data.records);
       })
@@ -645,39 +645,42 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const gelangData = async () => {
     let params = {
-        pageSize: 1000,
-        page: 1,
-        filter: {},
-    }
-    await apiGelang(params,token)
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+    await apiGelang(params, token)
       .then((res) => {
         const result = res.data.records;
         // const dataGelangId = dataWbp.map((item:any)=>item.gelang_id)
         // const filter = result.filter((item:any)=>!dataGelangId.includes(item.gelang_id))
         setGelang(result);
-      },token)
+      }, token)
       .catch((err) =>
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const matraData = async () => {
-    await apiMatraRead({
-      params: {
-        pageSize: 1000,
-        page: 1,
-        filter: {},
+    await apiMatraRead(
+      {
+        params: {
+          pageSize: 1000,
+          page: 1,
+          filter: {},
+        },
       },
-    },token)
+      token,
+    )
       .then((res) => {
         setMatra(res.data.records);
       })
@@ -685,7 +688,7 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
@@ -698,7 +701,7 @@ export const AddInmateModal = ({
           filter: {},
         },
       },
-      token
+      token,
     )
       .then((res) => {
         setStatusWbp(res.data.records);
@@ -707,14 +710,14 @@ export const AddInmateModal = ({
         Alerts.fire({
           icon: 'error',
           title: err.message,
-        })
+        }),
       );
   };
 
   const handleRemoveFoto = () => {
     setFormState({ ...formState, foto_wajah: '' });
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -787,10 +790,10 @@ export const AddInmateModal = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -882,8 +885,8 @@ export const AddInmateModal = ({
                     {isDetail
                       ? 'Detail data Tersangka'
                       : isEdit
-                      ? 'Edit data Tersangka'
-                      : 'Tambah data Tersangka'}
+                        ? 'Edit data Tersangka'
+                        : 'Tambah data Tersangka'}
                   </h3>
                 </div>
                 <strong
@@ -925,7 +928,7 @@ export const AddInmateModal = ({
                             <div className="mt-1 flex flex-col items-center">
                               {formState.foto_wajah ? (
                                 formState.foto_wajah.startsWith(
-                                  'data:image/'
+                                  'data:image/',
                                 ) ? (
                                   <img
                                     className="object-cover  w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
@@ -986,7 +989,7 @@ export const AddInmateModal = ({
                             </div>
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'foto_wajah' ? 'Masukan foto' : ''
+                                item === 'foto_wajah' ? 'Masukan foto' : '',
                               )}
                             </p>
                           </div>
@@ -1044,7 +1047,7 @@ export const AddInmateModal = ({
                               </div>
                               <p className="error-text">
                                 {errors.map((item) =>
-                                  item === 'foto_wajah' ? 'Masukan foto' : ''
+                                  item === 'foto_wajah' ? 'Masukan foto' : '',
                                 )}
                               </p>
                             </div>
@@ -1070,7 +1073,7 @@ export const AddInmateModal = ({
                             />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'nama' ? 'Masukan nama' : ''
+                                item === 'nama' ? 'Masukan nama' : '',
                               )}
                             </p>
                           </div>
@@ -1083,25 +1086,31 @@ export const AddInmateModal = ({
                             >
                               Pangkat
                             </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                            <Select
+                              className="basic-single"
+                              classNamePrefix="select"
+                              styles={customStyles}
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.pangkat_id,
+                                      label: formState.pangkat,
+                                    }
+                                  : formState.pangkat_id
+                              }
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              isSearchable={true}
+                              placeholder="Pilih Pangkat"
                               name="pangkat_id"
-                              onChange={handleChange}
-                              value={formState.pangkat_id}
-                              disabled={isDetail}
-                            >
-                              <option disabled value="">
-                                Pilih Pangkat
-                              </option>
-                              {pangkat.map((item: any) => (
-                                <option value={item.pangkat_id}>
-                                  {item.nama_pangkat}
-                                </option>
-                              ))}
-                            </select>
+                              options={pangkat.map((item: any) => ({
+                                value: item.pangkat_id,
+                                label: item.nama_pangkat,
+                              }))}
+                            />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'pangkat_id' ? 'Pilih pangkat' : ''
+                                item === 'pangkat_id' ? 'Pilih pangkat' : '',
                               )}
                             </p>
                           </div>
@@ -1114,26 +1123,31 @@ export const AddInmateModal = ({
                             >
                               Matra
                             </label>
-
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            <Select
+                              className="basic-single"
+                              classNamePrefix="select"
+                              styles={customStyles}
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              isSearchable={true}
                               name="matra_id"
-                              onChange={handleChange}
-                              value={formState.matra_id}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Matra
-                              </option>
-                              {matra.map((item: any) => (
-                                <option value={item.matra_id}>
-                                  {item.nama_matra}
-                                </option>
-                              ))}
-                            </select>
+                              placeholder="Pilih Matra"
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.matra_id,
+                                      label: formState.nama_matra,
+                                    }
+                                  : formState.matra_id
+                              }
+                              options={matra.map((item: any) => ({
+                                value: item.pengunjung_id,
+                                label: item.nama_matra,
+                              }))}
+                            />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'matra_id' ? 'Pilih matra' : ''
+                                item === 'matra_id' ? 'Pilih matra' : '',
                               )}
                             </p>
                           </div>
@@ -1156,7 +1170,9 @@ export const AddInmateModal = ({
                             />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'nrp' ? 'Masukan nomor registrasi' : ''
+                                item === 'nrp'
+                                  ? 'Masukan nomor registrasi'
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -1172,27 +1188,33 @@ export const AddInmateModal = ({
                           >
                             Pendidikan Militer
                           </label>
-
-                          <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
                             name="pendidikan_id"
-                            onChange={handleChange}
-                            value={formState.pendidikan_id}
-                            disabled={isDetail}
-                          >
-                            <option value="" disabled>
-                              Pilih Pendidikan
-                            </option>
-
-                            {pendidikan.map((item) => (
-                              <option value={item.pendidikan_id}>
-                                {item.nama_pendidikan}
-                              </option>
-                            ))}
-                          </select>
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Pendidikan"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.pendidikan_id,
+                                    label: formState.nama_pendidikan,
+                                  }
+                                : formState.pendidikan_id
+                            }
+                            options={pendidikan.map((item) => ({
+                              value: item.pendidikan_id,
+                              label: item.nama_pendidikan,
+                            }))}
+                          />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'pendidikan_id' ? 'Pilih pendidikan' : ''
+                              item === 'pendidikan_id'
+                                ? 'Pilih pendidikan'
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1205,8 +1227,7 @@ export const AddInmateModal = ({
                           >
                             Kesatuan
                           </label>
-
-                          <select
+                          {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="kesatuan_id"
                             onChange={handleChange}
@@ -1221,10 +1242,32 @@ export const AddInmateModal = ({
                                 {item.nama_kesatuan}
                               </option>
                             ))}
-                          </select>
+                          </select> */}
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="kesatuan_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Kesatuan"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.kesatuan_id,
+                                    label: formState.nama_kesatuan,
+                                  }
+                                : formState.kesatuan_id
+                            }
+                            options={kesatuan.map((item: any) => ({
+                              value: item.kesatuan_id,
+                              label: item.nama_kesatuan,
+                            }))}
+                          />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'kesatuan_id' ? 'Pilih kesatuan' : ''
+                              item === 'kesatuan_id' ? 'Pilih kesatuan' : '',
                             )}
                           </p>
                         </div>
@@ -1254,7 +1297,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'jenis_kelamin'
                                 ? 'Pilih jenis kelamin'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1267,7 +1310,7 @@ export const AddInmateModal = ({
                           >
                             Agama
                           </label>
-                          <select
+                          {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="agama_id"
                             onChange={handleChange}
@@ -1283,10 +1326,32 @@ export const AddInmateModal = ({
                                 {item.nama_agama}
                               </option>
                             ))}
-                          </select>
+                          </select> */}
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="agama_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Agama"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.agama_id,
+                                    label: formState.nama_agama,
+                                  }
+                                : formState.agama_id
+                            }
+                            options={agama.map((item: any) => ({
+                              value: item.agama_id,
+                              label: item.nama_agama,
+                            }))}
+                          />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'agama_id' ? 'Pilih agama' : ''
+                              item === 'agama_id' ? 'Pilih agama' : '',
                             )}
                           </p>
                         </div>
@@ -1311,7 +1376,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'tempat_lahir'
                                 ? 'Masukan tempat_lahir'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1336,7 +1401,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'tanggal_lahir'
                                 ? 'Masukan tanggal lahir'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1391,7 +1456,7 @@ export const AddInmateModal = ({
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'provinsi_id' ? 'Pilih provinsi' : ''
+                              item === 'provinsi_id' ? 'Pilih provinsi' : '',
                             )}
                           </p>
                         </div>
@@ -1457,7 +1522,7 @@ export const AddInmateModal = ({
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'kota_id' ? 'Pilih Kota' : ''
+                              item === 'kota_id' ? 'Pilih Kota' : '',
                             )}
                           </p>
                         </div>
@@ -1480,7 +1545,7 @@ export const AddInmateModal = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'alamat' ? 'Masukan alamat' : ''
+                            item === 'alamat' ? 'Masukan alamat' : '',
                           )}
                         </p>
                       </div>
@@ -1495,7 +1560,7 @@ export const AddInmateModal = ({
                             Status Kawin
                           </label>
 
-                          <select
+                          {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="status_kawin_id"
                             onChange={handleChange}
@@ -1510,12 +1575,34 @@ export const AddInmateModal = ({
                                 {item.nama_status_kawin}
                               </option>
                             ))}
-                          </select>
+                          </select> */}
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="status_kawin_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Status Kawin"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.status_kawin_id,
+                                    label: formState.nama_status_kawin,
+                                  }
+                                : formState.status_kawin_id
+                            }
+                            options={statusKawin.map((item) => ({
+                              value: item.status_kawin_id,
+                              label: item.nama_status_kawin,
+                            }))}
+                          />
                           <p className="error-text">
                             {errors.map((item) =>
                               item === 'status_kawin_id'
                                 ? 'Pilih status nikah'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1540,7 +1627,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'nama_kontak_keluarga'
                                 ? 'Masukan nama keluarga'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1566,7 +1653,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'hubungan_kontak_keluarga'
                                 ? 'Pilih status hubungan'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1591,7 +1678,7 @@ export const AddInmateModal = ({
                             {errors.map((item) =>
                               item === 'nomor_kontak_keluarga'
                                 ? 'Masukan kontak keluarga'
-                                : ''
+                                : '',
                             )}
                           </p>
                         </div>
@@ -1620,7 +1707,7 @@ export const AddInmateModal = ({
                           </select>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'is_sick' ? 'Pilih Ya/Tidak' : ''
+                              item === 'is_sick' ? 'Pilih Ya/Tidak' : '',
                             )}
                           </p>
                         </div>
@@ -1647,7 +1734,7 @@ export const AddInmateModal = ({
                                 {errors.map((item) =>
                                   item === 'wbp_sickness'
                                     ? 'Masukan nama penyakit'
-                                    : ''
+                                    : '',
                                 )}
                               </p>
                             </div>
@@ -1848,7 +1935,7 @@ export const AddInmateModal = ({
                               {errors.map((item) =>
                                 item === 'vonis_tahun'
                                   ? 'Masukan vonis tahun'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -1873,7 +1960,7 @@ export const AddInmateModal = ({
                               {errors.map((item) =>
                                 item === 'vonis_bulan'
                                   ? 'Masukan vonis bulan'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -1898,15 +1985,13 @@ export const AddInmateModal = ({
                               {errors.map((item) =>
                                 item === 'vonis_hari'
                                   ? 'Masukan vonis hari'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
                         </div>
                       )}
                       <div className="grid grid-cols-1 gap-4">
-                      
-
                         <div className="grid grid-cols-2 gap-4">
                           {/* Tanggal diTahan */}
                           <div className="form-group w-full ">
@@ -1928,7 +2013,7 @@ export const AddInmateModal = ({
                               {errors.map((item) =>
                                 item === 'tanggal_ditahan_otmil'
                                   ? 'Masukan tanggal ditahan'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -1941,7 +2026,7 @@ export const AddInmateModal = ({
                             >
                               Keahlian
                             </label>
-                            <select
+                            {/* <select
                               className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="bidang_keahlian_id"
                               onChange={handleChange}
@@ -1956,12 +2041,34 @@ export const AddInmateModal = ({
                                   {item.nama_bidang_keahlian}
                                 </option>
                               ))}
-                            </select>
+                            </select> */}
+                            <Select
+                              className="basic-single"
+                              classNamePrefix="select"
+                              styles={customStyles}
+                              name="bidang_keahlian_id"
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              isSearchable={true}
+                              placeholder="Pilih Keahlian"
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.bidang_keahlian_id,
+                                      label: formState.nama_bidang_keahlian,
+                                    }
+                                  : formState.bidang_keahlian_id
+                              }
+                              options={keahlian.map((item: any) => ({
+                                value: item.bidang_keahlian_id,
+                                label: item.nama_bidang_keahlian,
+                              }))}
+                            />
                             <p className="error-text">
                               {errors.map((item) =>
                                 item === 'bidang_keahlian_id'
                                   ? 'Pilih keahlian'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -1991,40 +2098,52 @@ export const AddInmateModal = ({
                                       {item.nama_gelang}
                                     </option>
                                   ))
-                                : isEdit ? 
-                                gelang.map((item: any) => {
-                                  const isUsed = dataWbp.some((wbp: any) => wbp.gelang_id === item.gelang_id);
-                                  return (
-                                    <option value={item.gelang_id} key={item.gelang_id}>
-                                      {item.nama_gelang} {isUsed ? "(Sedang Digunakan)" : "(Tidak Digunakan)"}
-                                    </option>
-                                  );
-                                })
-                                 : 
-                                    
-                                    gelang
-                                    .filter(
-                                      (item: any) =>
-                                        !dataWbp
-                                          .map((wbp: any) => wbp.gelang_id || wbp.gelang_id)
-                                          .includes(item.gelang_id)
-                                    )
-                                    .map((item: any) => (
-                                      <option value={item.gelang_id}>
-                                        {item.nama_gelang}
-                                      </option>
-                                    ))
-                                    
-                                    } 
-
-
-                               
-
-                               
+                                : isEdit
+                                  ? gelang.map((item: any) => {
+                                      const isUsed = dataWbp.some(
+                                        (wbp: any) =>
+                                          wbp.gelang_id === item.gelang_id,
+                                      );
+                                      return (
+                                        <option
+                                          value={item.gelang_id}
+                                          key={item.gelang_id}
+                                        >
+                                          {item.nama_gelang}{' '}
+                                          {isUsed
+                                            ? '(Sedang Digunakan)'
+                                            : '(Tidak Digunakan)'}
+                                        </option>
+                                      );
+                                    })
+                                  : gelang
+                                      .filter(
+                                        (item: any) =>
+                                          !dataWbp
+                                            .map(
+                                              (wbp: any) =>
+                                                wbp.gelang_id || wbp.gelang_id,
+                                            )
+                                            .includes(item.gelang_id),
+                                      )
+                                      .map((item: any) => (
+                                        <option value={item.gelang_id}>
+                                          {item.nama_gelang}
+                                        </option>
+                                      ))}
                             </select>
+                            {/* <Select
+                              name="gelang_id"
+                              onChange={handleChange}
+                              isClearable={true}
+                              isSearchable={true}
+                              isDisabled={isDetail}
+                              placeholder="Pilih Gelang"
+                              styles={customStyles}
+                            /> */}
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'gelang_id' ? 'Pilih gelang' : ''
+                                item === 'gelang_id' ? 'Pilih gelang' : '',
                               )}
                             </p>
                           </div>
@@ -2048,7 +2167,7 @@ export const AddInmateModal = ({
                             />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'DMAC' ? 'Pilih gelang dulu' : ''
+                                item === 'DMAC' ? 'Pilih gelang dulu' : '',
                               )}
                             </p>
                           </div>
@@ -2078,7 +2197,7 @@ export const AddInmateModal = ({
                             </select>
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'residivis' ? 'Pilih Ya/Tidak' : ''
+                                item === 'residivis' ? 'Pilih Ya/Tidak' : '',
                               )}
                             </p>
                           </div>
@@ -2091,27 +2210,33 @@ export const AddInmateModal = ({
                             >
                               Hunian Tahanan
                             </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            <Select
+                              className="basic-single"
+                              classNamePrefix="select"
+                              styles={customStyles}
                               name="hunian_wbp_otmil_id"
-                              onChange={handleChange}
-                              value={formState.hunian_wbp_otmil_id}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Hunian Tahanan
-                              </option>
-                              {hunian.map((item: any) => (
-                                <option value={item.hunian_wbp_otmil_id}>
-                                  {item.nama_hunian_wbp_otmil}
-                                </option>
-                              ))}
-                            </select>
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              isSearchable={true}
+                              placeholder="Pilih Hunian Tahanan"
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.hunian_wbp_otmil_id,
+                                      label: formState.nama_hunian_wbp_otmil,
+                                    }
+                                  : formState.hunian_wbp_otmil_id
+                              }
+                              options={hunian.map((item: any) => ({
+                                value: item.hunian_wbp_otmil_id,
+                                label: item.nama_hunian_wbp_otmil,
+                              }))}
+                            />
                             <p className="error-text">
                               {errors.map((item) =>
                                 item === 'hunian_wbp_otmil_id'
                                   ? 'Pilih hunian'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -2137,7 +2262,7 @@ export const AddInmateModal = ({
                               {errors.map((item) =>
                                 item === 'nomor_tahanan'
                                   ? 'Masukan nomor tahanan'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -2165,12 +2290,10 @@ export const AddInmateModal = ({
                             </select>
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : ''
+                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : '',
                               )}
                             </p>
                           </div>
-
-                          
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           {/* Status Wbp*/}
@@ -2185,7 +2308,15 @@ export const AddInmateModal = ({
                               className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="status_wbp_kasus_id"
                               onChange={handleChange}
-                              defaultValue={formState.status_wbp_kasus_id ?? ''}
+                              // defaultValue={formState.status_wbp_kasus_id ?? ''}
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.status_wbp_kasus_id,
+                                      label: formState.nama_status_wbp_kasus,
+                                    }
+                                  : formState.status_wbp_kasus_id
+                              }
                               disabled={isDetail}
                             >
                               <option disabled value="">
@@ -2197,11 +2328,33 @@ export const AddInmateModal = ({
                                 </option>
                               ))}
                             </select>
+                            {/* <Select
+                              className="basic-single"
+                              classNamePrefix="select"
+                              styles={customStyles}
+                              name="status_wbp_kasus_id"
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              isSearchable={true}
+                              placeholder="Pilih Status"
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.status_wbp_kasus_id,
+                                      label: formState.nama_status_wbp_kasus,
+                                    }
+                                  : formState.status_wbp_kasus_id
+                              }
+                              options={statusWbp.map((item: any) => ({
+                                value: item.status_wbp_kasus_id,
+                                label: item.nama_status_wbp_kasus,
+                              }))}
+                            /> */}
                             <p className="error-text">
                               {errors.map((item) =>
                                 item === 'status_wbp_kasus_id'
                                   ? 'Pilih status'
-                                  : ''
+                                  : '',
                               )}
                             </p>
                           </div>
@@ -2274,84 +2427,91 @@ export const AddInmateModal = ({
                             </p>
                           </div> */}
 
-                          {formState.status_wbp_kasus_id === '' || formState.status_wbp_kasus_id === null ? null :
-                          <>
-                           {/* Tanggal Penetapan Terpidana*/}
-                            <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan terpidana
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_terpidana"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_terpidana}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_terpidana' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
+                          {formState.status_wbp_kasus_id === '' ||
+                          formState.status_wbp_kasus_id === null ? null : (
+                            <>
+                              {/* Tanggal Penetapan Terpidana*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan terpidana
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_terpidana"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_terpidana}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_terpidana'
+                                      ? 'Masukan tanggal penetapan'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
 
-                           {/* Tanggal Penetapan Terdakwa*/}
-                           <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan terdakwa
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_terdakwa"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_terdakwa}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_terdakwa' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
+                              {/* Tanggal Penetapan Terdakwa*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan terdakwa
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_terdakwa"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_terdakwa}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_terdakwa'
+                                      ? 'Masukan tanggal penetapan'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
 
-                          {/* Tanggal Penetapan Tersangka*/}
-                          <div
-                            className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block':'hidden'}`}
-                          >
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal penetapan tersangka
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_penetapan_tersangka"
-                              onChange={handleChange}
-                              value={formState.tanggal_penetapan_tersangka}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_penetapan_tersangka' ? 'Masukan tanggal penetapan':''
-                              )}
-                            </p>
-                          </div>
-                          </>
-                        }
+                              {/* Tanggal Penetapan Tersangka*/}
+                              <div
+                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                              >
+                                <label
+                                  className="  block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal penetapan tersangka
+                                </label>
+                                <input
+                                  type="date"
+                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="tanggal_penetapan_tersangka"
+                                  onChange={handleChange}
+                                  value={formState.tanggal_penetapan_tersangka}
+                                  disabled={isDetail}
+                                />
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'tanggal_penetapan_tersangka'
+                                      ? 'Masukan tanggal penetapan'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -2371,8 +2531,8 @@ export const AddInmateModal = ({
                                     ?.filter(
                                       (item: any) =>
                                         !formState.akses_ruangan_otmil_id.includes(
-                                          item.ruangan_otmil_id
-                                        )
+                                          item.ruangan_otmil_id,
+                                        ),
                                     )
                                     .map((zonaItem: any) => (
                                       <div
@@ -2381,10 +2541,10 @@ export const AddInmateModal = ({
                                           zonaItem.nama_zona === 'Hijau'
                                             ? 'border-green-500'
                                             : zonaItem.nama_zona === 'Kuning'
-                                            ? 'border-yellow-500'
-                                            : zonaItem.nama_zona === 'Merah'
-                                            ? 'border-red-500'
-                                            : 'border-slate-800'
+                                              ? 'border-yellow-500'
+                                              : zonaItem.nama_zona === 'Merah'
+                                                ? 'border-red-500'
+                                                : 'border-slate-800'
                                         } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
                                         data-te-ripple-color="dark"
                                       >
@@ -2398,7 +2558,7 @@ export const AddInmateModal = ({
                                             e.preventDefault(); // Prevent page reload
                                             handleAddZona(
                                               zonaItem.ruangan_otmil_id,
-                                              'akses_ruangan_otmil_id'
+                                              'akses_ruangan_otmil_id',
                                             );
                                           }}
                                         >
@@ -2422,7 +2582,7 @@ export const AddInmateModal = ({
                                             e.preventDefault(); // Prevent page reload
                                             handleAddZona(
                                               zonaItem.ruangan_otmil_id,
-                                              'zona_merah'
+                                              'zona_merah',
                                             );
                                           }}
                                         >
@@ -2437,10 +2597,10 @@ export const AddInmateModal = ({
                                         zonaItem.nama_zona === 'Hijau'
                                           ? 'border-green-500'
                                           : zonaItem.nama_zona === 'Kuning'
-                                          ? 'border-yellow-400'
-                                          : zonaItem.nama_zona === 'Merah'
-                                          ? 'border-red-500'
-                                          : 'border-slate-500'
+                                            ? 'border-yellow-400'
+                                            : zonaItem.nama_zona === 'Merah'
+                                              ? 'border-red-500'
+                                              : 'border-slate-500'
                                       } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
                                       data-te-ripple-color="dark"
                                     >
@@ -2454,7 +2614,7 @@ export const AddInmateModal = ({
                                           e.preventDefault(); // Prevent page reload
                                           handleAddZona(
                                             zonaItem.ruangan_otmil_id,
-                                            'akses_ruangan_otmil_id'
+                                            'akses_ruangan_otmil_id',
                                           );
                                         }}
                                       >
@@ -2467,7 +2627,7 @@ export const AddInmateModal = ({
                                           e.preventDefault(); // Prevent page reload
                                           handleAddZona(
                                             zonaItem.ruangan_otmil_id,
-                                            'zona_merah'
+                                            'zona_merah',
                                           );
                                         }}
                                       >
@@ -2515,7 +2675,8 @@ export const AddInmateModal = ({
                                       {
                                         zona.find(
                                           (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id === zonaId
+                                            zonaItem.ruangan_otmil_id ===
+                                            zonaId,
                                         )?.nama_ruangan_otmil
                                       }
                                     </p>
@@ -2524,7 +2685,7 @@ export const AddInmateModal = ({
                                       onClick={() =>
                                         handleRemoveZona(
                                           zonaId,
-                                          'akses_ruangan_otmil_id'
+                                          'akses_ruangan_otmil_id',
                                         )
                                       }
                                       className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
@@ -2559,7 +2720,7 @@ export const AddInmateModal = ({
                                   //     X
                                   //   </button>
                                   // </div>
-                                )
+                                ),
                               )}
                         </div>
 
@@ -2607,11 +2768,11 @@ export const AddInmateModal = ({
                             </svg>
                           </span>
                         </div>
-                       
+
                       ))}
                     </div>
 
-                  
+
                   </div> */}
 
                       <div className="w-full ">
@@ -2695,7 +2856,7 @@ export const AddInmateModal = ({
                                     {
                                       zona.find(
                                         (zonaItem: any) =>
-                                          zonaItem.ruangan_otmil_id === zonaId
+                                          zonaItem.ruangan_otmil_id === zonaId,
                                       )?.nama_ruangan_otmil
                                     }
                                   </p>
@@ -2704,7 +2865,7 @@ export const AddInmateModal = ({
                                     onClick={() =>
                                       handleRemoveZona(
                                         zonaId,
-                                        'akses_ruangan_otmil_id'
+                                        'akses_ruangan_otmil_id',
                                       )
                                     }
                                     className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
@@ -2755,7 +2916,7 @@ export const AddInmateModal = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond

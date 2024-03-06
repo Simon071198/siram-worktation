@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../../common/Loader';
 import { Alerts } from './AlertPenyidikan';
 import {
   apiReadPenyidikan,
   apiDeletePenyidikan,
   apiCreatePenyidikan,
   apiUpdatePenyidikan,
-} from '../../../services/api';
+} from '../../services/api';
 import { AddPenyidikanModal } from './ModalAddPenyidikan';
 import { DeletePenyidikanModal } from './ModalDeletePenyidikan';
-import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
-import SearchInputButton from '../../Device/Search';
+import SearchInputButton from '../../MasterData/Search';
 import { log } from 'console';
+import dayjs from 'dayjs';
+import Pagination from '../../../components/Pagination';
+import DropdownAction from '../../../components/DropdownAction';
+import Loader from '../../../common/Loader';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -190,6 +192,76 @@ const PenyidikanList = () => {
     setModalDeleteOpen(false);
   };
 
+  const [nomorPenyidikan, setNomorPenyidikann] = useState({
+    nomor_penyidikan: '',
+  });
+
+  const handleModalAddOpen = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+    const type = 'Sp.Sidik';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+
+    data.forEach((item) => {
+      const nomorPenyidikan = item.nomor_penyidikan.split('/')[0]; // Get the first part of the case number
+      const angka = parseInt(nomorPenyidikan, 10);
+
+      if (!isNaN(angka) && item.nomor_penyidikan.includes(currentDate)) {
+        angkaTerbesar = Math.max(angkaTerbesar, angka);
+      }
+    });
+
+    // Increment the largest number by 1 if the date is the same
+    if (angkaTerbesar === 0) {
+      // No matching cases for the current date
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+
+    setNomorPenyidikann({
+      ...nomorPenyidikan,
+      nomor_penyidikan: `${angkaTerbesar}/${type}/${currentDate}/${lokasi}`,
+    });
+
+    setModalAddOpen(true);
+  };
+
   // function untuk menutup modal
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
@@ -324,248 +396,228 @@ const PenyidikanList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data-penyidikan.xlsx');
+    xlsx.writeFile(
+      wb,
+      `Data-Penyidikan ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-15 xl:pb-1">
-      <div className="flex justify-center w-full">
-        <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-          <div className="w-full">
-            <SearchInputButton
-              value={filter}
-              placehorder="Cari Nomor Penyidikan"
-              onChange={handleFilterChange}
-            />
-          </div>
-          {/* <div className="w-full">
-            <SearchInputButton
-              value={filterJabatan}
-              placehorder="Cari jabatan"
-              onChange={handleFilterChangeJabatan}
-            />
-          </div>
-          <select
-            value={filterPangkat}
-            onChange={handleFilterChangePangkat}
-            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-          >
-            <option value="">Semua pangkat</option>
-            {pangkatData.map((item: any) => (
-              <option value={item.nama_pangkat}>
-                {item.nama_pangkat}
-              </option>
-            ))}
-          </select> */}
-
-          <button
-            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-            type="button"
-            onClick={handleSearchClick}
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-black"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
+    <div className="container py-[16px]">
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-15 xl:pb-1">
+        <div className="flex justify-center w-full">
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+            <div className="w-full">
+              <SearchInputButton
+                value={filter}
+                placehorder="Cari Nomor Penyidikan"
+                onChange={handleFilterChange}
               />
-            </svg>
-          </button>
-
-          <button
-            onClick={exportToExcel}
-            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
-          >
-            Export&nbsp;Excel
-          </button>
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-3">
-        <h4 className="text-xl font-semibold text-black dark:text-white">
-          Data Penyidikan
-        </h4>
-        {!isOperator && (
-          <button
-            onClick={() => setModalAddOpen(true)}
-            className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
-        )}
-      </div>
-      <div className="flex flex-col">
-        <div
-          className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
-            }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
-        >
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nomor Penyidikan
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama WBP
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Kasus
-            </h5>
-          </div>
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Alasan Penyidikan
-            </h5>
-          </div>
-          {isOperator ? (
-            <></>
-          ) : (
-            <div className=" p-2.5 text-center xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Aksi
-              </h5>
             </div>
+            <button
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              type="button"
+              onClick={handleSearchClick}
+              id="button-addon1"
+              data-te-ripple-init
+              data-te-ripple-color="light"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 text-black"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+            >
+              Export&nbsp;Excel
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="text-xl font-semibold text-black dark:text-white">
+            Data Penyidikan
+          </h4>
+          {!isOperator && (
+            <button
+              onClick={handleModalAddOpen}
+              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
           )}
         </div>
-        {data.length == 0 ? (
-          <div className="flex justify-center p-4 w-ful">No Data</div>
-        ) : (
-          <>
-            {data.map((item: any) => {
-              return (
-                <div
-                  className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
+        <div className="flex flex-col">
+          <div
+            className={`grid ${
+              isOperator ? 'grid-cols-4' : 'grid-cols-5'
+            }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
+          >
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nomor Penyidikan
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Pihak Terlibat
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama Kasus
+              </h5>
+            </div>
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Agenda Penyidikan
+              </h5>
+            </div>
+            {isOperator ? (
+              <></>
+            ) : (
+              <div className=" p-2.5 text-center xl:p-5 justify-center flex">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Aksi
+                </h5>
+              </div>
+            )}
+          </div>
+          {data.length == 0 ? (
+            <div className="flex justify-center p-4 w-ful">No Data</div>
+          ) : (
+            <>
+              {data.map((item: any) => {
+                return (
+                  <div
+                    className={`grid ${
+                      isOperator ? 'grid-cols-4' : 'grid-cols-5'
                     } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
-                  key={item.nomor_penyidikan}
-                >
-                  <div
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    key={item.nomor_penyidikan}
                   >
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.nomor_penyidikan}
-                    </p>
-                  </div>
-                  <div
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                  >
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.nama_wbp}
-                    </p>
-                  </div>
-                  <div
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                  >
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.kasus_id}
-                    </p>
-                  </div>
-                  <div
-                    onClick={() => handleDetailClick(item)}
-                    className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                  >
-                    <p className=" text-black dark:text-white capitalize">
-                      {item.alasan_penyidikan}
-                    </p>
-                  </div>
-                  {isOperator ? (
-                    <></>
-                  ) : (
-                    <>
-                      <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-                        <button
-                          onClick={() => handleEditClick(item)}
-                          className="py-1 px-2 text-black rounded-md bg-blue-300"
-                        >
-                          Ubah
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(item)}
-                          className="py-1 px-2 text-white rounded-md bg-red-400"
-                        >
-                          Hapus
-                        </button>
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nomor_penyidikan}
+                      </p>
+                    </div>
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nama_wbp
+                          ? `${item.nama_wbp} (tersangka)`
+                          : `${item.nama_saksi} (saksi)`}
+                      </p>
+                    </div>
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nama_kasus}
+                      </p>
+                    </div>
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.agenda_penyidikan}
+                      </p>
+                    </div>
+                    {!isOperator && (
+                      <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                        <div className="relative">
+                          <DropdownAction
+                            handleEditClick={() => handleEditClick(item)}
+                            handleDeleteClick={() => handleDeleteClick(item)}
+                          ></DropdownAction>
+                        </div>
                       </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </>
-        )}
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          )}
 
-        {modalDetailOpen && (
-          <AddPenyidikanModal
-            closeModal={() => setModalDetailOpen(false)}
-            onSubmit={handleSubmitAdd}
-            defaultValue={detailData}
-            isDetail={true}
-            token={token}
-          />
-        )}
-        {modalEditOpen && (
-          <AddPenyidikanModal
-            closeModal={handleCloseEditModal}
-            onSubmit={handleSubmitEdit}
-            defaultValue={editData}
-            isEdit={true}
-            token={token}
-          />
-        )}
-        {modalAddOpen && (
-          <AddPenyidikanModal
-            closeModal={handleCloseAddModal}
-            onSubmit={handleSubmitAdd}
-            token={token}
-          />
-        )}
-        {modalDeleteOpen && (
-          <DeletePenyidikanModal
-            closeModal={handleCloseDeleteModal}
-            onSubmit={handleSubmitDelete}
-            defaultValue={deleteData}
-          />
+          {modalDetailOpen && (
+            <AddPenyidikanModal
+              closeModal={() => setModalDetailOpen(false)}
+              onSubmit={handleSubmitAdd}
+              defaultValue={detailData}
+              isDetail={true}
+              token={token}
+            />
+          )}
+          {modalEditOpen && (
+            <AddPenyidikanModal
+              closeModal={handleCloseEditModal}
+              onSubmit={handleSubmitEdit}
+              defaultValue={editData}
+              isEdit={true}
+              token={token}
+            />
+          )}
+          {modalAddOpen && (
+            <AddPenyidikanModal
+              closeModal={handleCloseAddModal}
+              onSubmit={handleSubmitAdd}
+              defaultValue={nomorPenyidikan}
+              token={token}
+            />
+          )}
+          {modalDeleteOpen && (
+            <DeletePenyidikanModal
+              closeModal={handleCloseDeleteModal}
+              onSubmit={handleSubmitDelete}
+              defaultValue={deleteData}
+            />
+          )}
+        </div>
+
+        {data.length === 0 ? null : (
+          <div className="mt-5">
+            <div className="flex gap-4 items-center ">
+              <p>
+                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+              </p>
+              <select
+                value={pageSize}
+                onChange={handleChangePageSize}
+                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              >
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pages}
+              onChangePage={handleChagePage}
+            />
+          </div>
         )}
       </div>
-
-      {data.length === 0 ? null : (
-        <div className="mt-5">
-          <div className="flex gap-4 items-center ">
-            <p>
-              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-            </p>
-            <select
-              value={pageSize}
-              onChange={handleChangePageSize}
-              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-            >
-              <option value="10">10</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="1000">1000</option>
-            </select>
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pages}
-            onChangePage={handleChagePage}
-          />
-        </div>
-      )}
     </div>
   );
 };

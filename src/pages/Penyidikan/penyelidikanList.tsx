@@ -1,8 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { HiOutlineUserGroup } from 'react-icons/hi';
-import { MdOutlinePermContactCalendar, MdOutlineWorkHistory } from 'react-icons/md';
-import { FaUserClock } from 'react-icons/fa';
-import { BiTask } from 'react-icons/bi';
+import {  MdOutlineWorkHistory } from 'react-icons/md';
 import { BsClipboardData } from 'react-icons/bs';
 
 const routeMasterData = [

@@ -86,7 +86,7 @@ const EventList = () => {
       },
     };
     try {
-      const response = await apiReadAllEvent(params);
+      const response = await apiReadAllEvent(params, token);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       if (response.status === 200) {
@@ -143,7 +143,7 @@ const EventList = () => {
     };
     setIsLoading(true);
     try {
-      const response = await apiReadAllEvent(params);
+      const response = await apiReadAllEvent(params, token);
       console.log('response :', response);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
@@ -337,7 +337,7 @@ const EventList = () => {
                 placehorder="Cari nama Kegiatan"
                 onChange={handleFilterChange}
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
             </div>
             <button
@@ -574,7 +574,9 @@ const EventList = () => {
                             <div className="relative">
                               <DropdownAction
                                 handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
+                                handleDeleteClick={() =>
+                                  handleDeleteClick(item)
+                                }
                               ></DropdownAction>
                             </div>
                           </div>
