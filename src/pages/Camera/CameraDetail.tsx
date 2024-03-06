@@ -2,18 +2,8 @@ import DataCamera from "./DataCamera";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  faceCompareChina,
-  apiVisitorLogList,
-  apiDeviceDetail,
-  apiVisitorRealtimeLogList,
-} from "../../services/api.js";
 export default function CameraDetail() {
-  const [dataUnrecognized, setDataUnrecognized] = useState([]);
-  const [dataVisitorLog, setDataVisitorLog] = useState([]);
-  let [startDate, setStartDate] = useState("2023-07-03");
-  let [endDate, setEndDate] = useState("2023-07-24");
-  let [deviceDetail, setDeviceDetail] = useState([]);
+
 
   const { id } = useParams();
 

@@ -1,12 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import BackgroundSecurityImage from '../images/security-background.jpg';
 
 const DefaultLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const navigate = useNavigate();
+
+  const ls_dataUser = localStorage.getItem('dataUser');
+  useEffect(() => {
+    if (!ls_dataUser) {
+      navigate('/auth/signin');
+    }
+  }, []);
 
   const backgroundStyle = {
     backgroundImage: `url(${BackgroundSecurityImage})`,
@@ -20,13 +28,14 @@ const DefaultLayout = () => {
   };
 
   return (
-    <div className="dark:text-bodydark" style={backgroundStyle}>
-      <div className="absolute inset-0" style={overlayStyle}></div>
+    <div className="dark:text-bodydark bg-slate-700">
+      {/* <div className="dark:text-bodydark" style={backgroundStyle}> */}
+      {/* <div className="absolute inset-0" style={overlayStyle}></div> */}
 
       {/* <!-- ===== Page Wrapper Start ===== --> */}
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
-        
+
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* <!-- ===== Sidebar End ===== --> */}
 
@@ -38,7 +47,7 @@ const DefaultLayout = () => {
 
           {/* <!-- ===== Main Content Start ===== --> */}
           <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div className="mx-auto max-w-screen-2xl">
               <Outlet />
             </div>
           </main>

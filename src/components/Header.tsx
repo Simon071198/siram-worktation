@@ -1,5 +1,7 @@
 import DarkModeSwitcher from './DarkModeSwitcher';
 import DropdownUser from './DropdownUser';
+import { Link, NavLink } from 'react-router-dom';
+import Logo from '../images/logo/logo.png';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -7,6 +9,7 @@ const Header = (props: {
 }) => {
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-transparent-dark1 dark:drop-shadow-none">
+      {/* <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-slate-300 dark:drop-shadow-none"> */}
       <div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 ">
           {/* <div className="flex items-center gap-2 sm:gap-4 lg:hidden"> */}
@@ -17,7 +20,8 @@ const Header = (props: {
               e.stopPropagation();
               props.setSidebarOpen(!props.sidebarOpen);
             }}
-            className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark "
+            className="z-[9999] block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark "
+            // className="z-[9999] block rounded-sm  bg-white p-1.5  dark:bg-slate-500 "
             // className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden"
           >
             <span className="relative block h-5.5 w-5.5 cursor-pointer">
@@ -55,9 +59,15 @@ const Header = (props: {
           {/* <!-- Hamburger Toggle BTN --> */}
 
           {/* <Link className="block flex-shrink-0 lg:hidden" to="/"> */}
-          {/* <Link className="block flex-shrink-0" to="/">
-            <img src={Logo} alt="Logo" className="w-10" />
-          </Link> */}
+     
+            <NavLink
+              to="/"
+              className="flex justify-center items-center gap-x-2 w-full"
+            >
+              <img src={Logo} alt="Logo" className="w-10" />
+              <span className="text-xl text-white">SIRAM Workstation OTMIL</span>
+              {/* <span className="text-xl text-meta-4">SIRAM Workstation</span> */}
+            </NavLink>
         </div>
 
         <div className="hidden sm:block"></div>

@@ -48,12 +48,12 @@ export const Table = ({ rows, deleteRow, editRow }) => {
                     {row.criterion == 0
                       ? 'goes down by'
                       : row.criterion == 1
-                      ? 'goes up by'
-                      : row.criterion == 2
-                      ? 'is smaller than'
-                      : row.criterion == 3
-                      ? 'is greater than'
-                      : 'is equal to'}
+                        ? 'goes up by'
+                        : row.criterion == 2
+                          ? 'is smaller than'
+                          : row.criterion == 3
+                            ? 'is greater than'
+                            : 'is equal to'}
                   </span>
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -64,8 +64,8 @@ export const Table = ({ rows, deleteRow, editRow }) => {
                     {row.type == 0
                       ? 'Info'
                       : row.type == 1
-                      ? 'Warning'
-                      : 'Alert'}
+                        ? 'Warning'
+                        : 'Alert'}
                   </span>
                 </td>
 

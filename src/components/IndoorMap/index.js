@@ -1,42 +1,12 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 
 import { useEffect, useState } from 'react';
 
 // porp-types is a library for typechecking of props
 import PropTypes from 'prop-types';
 
-// react-chartjs-2 components
-
-// @mui material components
-// import {
-//   Modal,
-//   Box,
-//   Paper,
-//   Typography,
-//   Button,
-//   IconButton,
-//   Divider,
-//   Avatar,
-// } from "@mui/material";
 import { Link } from 'react-router-dom';
 
-// import { Router, Person, Close, Search, ArrowBack } from "@mui/icons-material";
-// Material Dashboard 2 React components
-// import MDBox from "../../components/MDBox";
-// import div from "../../components/div";
 import { apiWatchlistHistory, webserviceurl } from '../../services/api';
 // IndoorMap configurations
 import configs from './configs';
@@ -138,7 +108,7 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
       setModalOpen(true);
     } catch (error) {
       console.error('Error fetching watchlist history:', error);
-      alert('Connection error: tidak dapat mengambil data Prajurit Binaan');
+      alert('Connection error: tidak dapat mengambil data Tersangka');
     }
   };
 

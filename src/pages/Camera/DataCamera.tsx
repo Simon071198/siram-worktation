@@ -1,20 +1,14 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-// import JSMpeg from "@cycjimmy/jsmpeg-player";
-// import { Mic, CameraAlt } from "@mui/icons-material";
 import {
   faceCompareChina,
   apiVisitorLogList,
   apiDeviceDetail,
   apiVisitorRealtimeLogList,
 } from '../../services/api.js';
-
-import { useLocation } from 'react-router-dom'; // Import the necessary hook
-
+import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-
 import axios from 'axios';
-
 import ReactPlayer from 'react-player';
 
 const stylesListComent = {
@@ -23,138 +17,145 @@ const stylesListComent = {
   },
 };
 
-var cameraplayer = null;
-const client = new W3CWebSocket('ws://localhost:4000');
+const DataCamera = (props) => {
+  const [state, setState] = useState({
+    groupId: '',
+    groupShow: [],
+    ffmpegIP: 'localhost',
+    baseUrl: 'http://localhost:4000/stream/',
+    extenstion: '_.m3u8',
+    girdView: 1,
+    isFullscreenEnabled: false,
+    selectOptionGroup: null,
+    optionsDataGroup: [],
+    viewListData: [],
+    listViewCamera: [],
+    getDataPlayer: [],
+    deviceDetail: {},
+    startDate: '',
+    endDate: '',
+    isWebSocketConnected: false,
+    dataVisitorLog: [],
+  });
 
-class DataCamera extends Component {
-  constructor(props) {
-    super(props);
-    this.videoRef = React.createRef(); // Define videoRef here
+  const videoRef = useRef(null);
+  const playerRef = useRef(null);
+  const client = useRef(new W3CWebSocket('ws://localhost:4000'));
+  const clientFR = useRef(new W3CWebSocket('ws://localhost:4001'));
 
-    this.state = {
-      groupId: '',
-      groupShow: [],
-      ffmpegIP: 'localhost',
-      baseUrl: 'http://localhost:4000/',
-      extenstion: '_.m3u8',
-      // arrayData: [{ data: "Camera 1" }, { data: "Camera 2" }, { data: "Camera 3" }],
-      girdView: 1,
-      isFullscreenEnabled: false,
-      selectOptionGroup: null,
-      optionsDataGroup: [],
-      viewListData: [],
-      listViewCamera: [],
-      getDataPlayer: [],
-      deviceDetail: {},
-      startDate: '',
-      endDate: '',
-      isWebSocketConnected: false,
-      dataVisitorLog: [],
+  useEffect(() => {
+    client.current.onopen = () => {
+      console.log('WebSocket Client Connected');
     };
-    this.player = React.createRef();
-  }
-  fetchDataInmateRealtime = async () => {
-    const { id } = this.props; // Access the id prop
-    await apiVisitorRealtimeLogList({
-      device_id: id,
-    }).then((res) => {
+    clientFR.current.onopen = () => {
+      console.log('WebSocket FR Connected');
+    };
+    clientFR.current.onmessage = (message) => {
+      const dataFromServer = message;
+      console.log('got reply! ', dataFromServer);
+      if (dataFromServer.data.id == state.deviceDetail.kamera_id) {
+        fetchDataInmateRealtime();
+      }
+    };
+    const fetchDataAndSendRequest = async () => {
+      await fetchDeviceDetail(); // Wait for fetchDeviceDetail to complete before sending the request
+
+      const date = getTodayDate();
+      setState((prevState) => ({ ...prevState, endDate: date }));
+
+      return () => {
+        // clearInterval(fetchInterval);
+        sendRequest('disconnectedLive', {
+          status: 'disconnected',
+        });
+      };
+    };
+    // fetchDataInmateRealtime();
+    setInterval(fetchDataInmateRealtime, 5000);
+
+
+    
+    fetchDataAndSendRequest(); // Call the function to initiate the process
+  }, [props.id]);
+
+  const fetchDataInmateRealtime = async () => {
+    const { id } = props;
+    try {
+      const res = await apiVisitorRealtimeLogList({ device_id: id });
       console.log(res, 'data dataVisitorLog');
-      this.setState({
+      setState((prevState) => ({
+        ...prevState,
         dataVisitorLog: res,
-      });
-    });
+      }));
+    } catch (error) {
+      console.error(error);
+    }
   };
-  fetchDeviceDetail = async () => {
-    const { id } = this.props; // Access the id prop
-    await apiDeviceDetail(id).then((res) => {
+
+  const fetchDeviceDetail = async () => {
+    const { id } = props;
+    try {
+      const res = await apiDeviceDetail(id);
+      // const res = await apiDeviceDetail(id);
       console.log(res, 'Perangkat detail');
-      this.setState({
+      // console.log(state.listViewCamera, 'listViewCamera');
+
+      setState((prevState) => ({
+        ...prevState,
         deviceDetail: res,
         viewListData: [
           {
-            IpAddress: res.IpAddress,
-            urlRTSP: res.urlRTSP,
-            deviceName: res.device_name,
-            deviceId: res.device_id,
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
           },
         ],
         listViewCamera: [
           {
-            IpAddress: res.IpAddress,
-            urlRTSP: res.urlRTSP,
-            deviceName: res.device_name,
-            deviceId: res.device_id,
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
           },
         ],
+      }));
+      sendRequest('startLiveView', {
+        listViewCameraData: JSON.stringify([
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ]),
       });
-      this.sendRequest('startLiveView', {
-        listViewCameraData: JSON.stringify(this.state.listViewCamera),
+      sendRequestFR('startFR', {
+        listViewCameraData: JSON.stringify([
+          {
+            IpAddress: res.ip_address,
+            urlRTSP: res.url_rtsp,
+            deviceName: res.nama_kamera,
+            deviceId: res.kamera_id,
+          },
+        ]),
       });
-    });
-  };
-
-  //=========================API Service=====================//
-
-  //=========================Function & Method===============//
-  componentDidUpdate(prevProps) {
-    if (this.props.id !== prevProps.id) {
-      // When the id prop changes, fetch new data and update the component's state
-      this.fetchDataInmateRealtime();
-      this.fetchDeviceDetail();
+      // sendRequest('startLiveView', {
+      //   listViewCameraData: JSON.stringify(state.listViewCamera),
+      // });
+    } catch (error) {
+      console.error(error);
     }
-  }
-
-  componentDidMount = () => {
-    // ... Your other code ...
-
-    const date = this.getTodayDate();
-    this.setState({ endDate: date });
-
-    // console.log(this.deviceDetail, "device detail");
-
-    this.fetchDataInmateRealtime();
-    this.fetchDeviceDetail();
-
-    // this.fetchInterval = setInterval(this.fetchDataInmateRealtime, 5000);
-
-    client.onopen = async () => {
-      console.log('WebSocket Client Connected');
-
-      // Send the initial WebSocket request only when the connection is open
-      await this.sendRequest('startDiscovery');
-
-      // Handle WebSocket messages
-      client.onmessage = (message) => {
-        const dataFromServer = JSON.parse(message.data);
-        var id = dataFromServer.id;
-
-        if (id === 'startDiscovery') {
-          console.log('data from server', dataFromServer);
-
-          // Send another WebSocket request only when the connection is open
-          this.sendRequest('startLiveView', {
-            listViewCameraData: JSON.stringify(this.state.listViewCamera),
-          });
-        } else if (id === 'streamCameraList') {
-          console.log('data from server camera list', dataFromServer);
-          // this.streamCameraList(dataFromServer);
-        } else if (id === 'stopJsmpeg') {
-          this.destroyCamera(dataFromServer);
-        }
-      };
-    };
   };
 
-  componentWillUnmount = () => {
-    clearInterval(this.fetchInterval);
-
-    // cameraplayer.destroy();
-    this.sendRequest('disconnectedLive', {
-      status: 'disconnected',
-    });
+  const componentDidUpdate = (prevProps) => {
+    if (props.id !== prevProps.id) {
+      fetchDataInmateRealtime();
+      fetchDeviceDetail();
+    }
   };
 
-  getTodayDate = () => {
+  const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -162,312 +163,233 @@ class DataCamera extends Component {
     return `${year}-${month}-${day}`;
   };
 
-  formatTimestamp = (timestamp) => {
+  const formatTimestamp = (timestamp) => {
     const dateObj = new Date(timestamp);
     const day = dateObj.getDate();
     const month = new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(
-      dateObj,
+      dateObj
     );
     const year = dateObj.getFullYear();
     const time = dateObj.toLocaleTimeString('id-ID', { hour12: false });
-
     return `${day} ${month} ${year} ${time}`;
   };
 
-  sendRequest = (method, params) => {
-    client.send(
-      JSON.stringify({
-        method: method,
-        params: params,
-      }),
-    );
+  const sendRequest = (method, params) => {
+    client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  // streamCameraList = (data) => {
-  //   console.log("stream camera list", data);
-  //   if (data.result.length > 0) {
-  //     const newCameraData = data.result.map((cam, i) => {
-  //       const videoUrl = `ws://${this.state.ffmpegIP}:700${i}/`;
-  //       const idCanvas = `video-canvas${i}`;
-  //       console.log("video URL", videoUrl);
-  //       const canvasElement = document.getElementById(idCanvas); // Get the actual DOM element
+  const sendRequestFR = (method, params) => {
+    clientFR.current.send(JSON.stringify({ method: method, params: params }));
+  };
 
-  //       const cameraplayer = new JSMpeg.VideoElement(canvasElement, videoUrl, {
-  //         autoplay: true,
-  //         controls: true,
-  //         needPlayButton: true,
-  //       });
-
-  //       return { player: cameraplayer };
-  //     });
-  //     console.log("new camera data", newCameraData);
-  //     this.setState({
-  //       getDataPlayer: newCameraData,
-  //     });
-  //   }
-  // };
-
-  destroyCamera = (data) => {
+  const destroyCamera = (data) => {
     console.log('destroy streaming');
-    cameraplayer.stop();
-    this.setState({
+    playerRef.current.stop();
+    setState((prevState) => ({
+      ...prevState,
       cameraplayer: null,
-    });
+    }));
   };
 
-  reset = () => {
-    this.setState({
+  const reset = () => {
+    setState((prevState) => ({
+      ...prevState,
       selectOptionGroup: null,
       viewListData: [],
       listViewCamera: [],
-    });
-    this.getGroupList();
-    this.getViewList();
+    }));
   };
 
-  pause = () => {
-    cameraplayer.stop();
+  const pause = () => {
+    playerRef.current.stop();
   };
 
-  ref = (player) => {
-    // console.log(player.player.isPlaying);
-  };
-
-  renderStream1 = (obj, index) => {
+  const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);
-    const ref = React.createRef();
-    var urlStream = this.state.baseUrl + obj.IpAddress + this.state.extenstion;
+    var urlStream = state.baseUrl + obj.IpAddress + state.extenstion;
     console.log(urlStream);
     return (
-      <div className="w-full  p-1">
+      <div className="w-full  p-1" key={index}>
         <div className="bg-black p-1">
           <div className="relative">
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url={urlStream}
+                url='http://192.168.1.135:5000/stream/192.168.1.63_.m3u8'
                 width="100%"
                 height="100%"
                 playing={true}
                 playsinline={true}
-                controls={true} // You can simplify the controls logic
+                controls={true}
+                ref={playerRef}
               />
             </div>
-            <div className="absolute left-4 right-4 top-2">
+            {/* <div className="absolute left-4 right-4 top-2">
               <span className="text-white text-lg font-semibold">
                 {obj.deviceName}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
     );
   };
 
-  render() {
-    const { deviceDetail } = this.state;
-    const unrecognizedRows = this.state.dataVisitorLog.filter(
-      (row) => row.visitor_name == 'unrecognized',
-    );
-    const faceDetectionRows = this.state.dataVisitorLog.filter(
-      (row) => row.visitor_name != 'unrecognized',
-    );
+  const { deviceDetail, dataVisitorLog } = state;
+  const unrecognizedRows = dataVisitorLog.filter(
+    (row) => row.visitor_name === 'unrecognized'
+  );
+  const faceDetectionRows = dataVisitorLog.filter(
+    (row) => row.visitor_name !== 'unrecognized'
+  );
 
-    const strongStyle = {
-      fontSize: '11px',
-      fontWeight: 'semibold',
-    };
+  return (
+    <>
+      <h1 className="font-semibold ">
+        {deviceDetail && deviceDetail.nama_kamera} -{' '}
+        {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
+        {deviceDetail.nama_ruangan_lemasmil &&
+          deviceDetail.nama_ruangan_lemasmil}
+        - {deviceDetail.nama_lokasi_otmil && deviceDetail.nama_lokasi_otmil}
+        {deviceDetail.nama_lokasi_lemasmil && deviceDetail.nama_lokasi_lemasmil}
+      </h1>
 
-    return (
-      <>
-        <h1 className="font-semibold ">
-          {' '}
-          {deviceDetail && deviceDetail.device_name} -{' '}
-          {deviceDetail && deviceDetail.location}
-        </h1>
-
-        <div className="flex gap-4 h-[52vh] justify-between">
-          <div className="w-[65%] h-full">
-            {this.state.listViewCamera.map((obj, index) =>
-              this.renderStream1(obj, index),
-            )}
-          </div>
-          <div className="w-[20%] h-full ml-auto">
-            <div className="w-full h-[93.3%]">
-              <div className="container">
-                <p className="font-semibold text-center">
-                  Kemiripan Terdeteksi: {faceDetectionRows.length}
-                </p>
-              </div>
-              <div className="h-full overflow-y-auto">
-                {' '}
-                <table className="w-full">
-                  <tbody>
-                    {faceDetectionRows?.map((row, index) => (
-                      <tr key={index} className="flex items-center">
-                        <td className="w-1/4 flex items-center">
-                          <img
-                            src={`https://dev.transforme.co.id/gema_admin_api${row.image}`}
-                            alt="Person"
-                            className="w-16 h-16 rounded-5 mr-2"
-                          />
-                          <img
-                            src={`https://dev.transforme.co.id/gema_admin_api${row.face_pics}`}
-                            alt="Person"
-                            className="w-16 h-16 rounded-5"
-                          />
-                        </td>
-                        <td className="w-3/4 flex flex-col items-end">
-                          <p className="text-xs font-semibold">
-                            {row.visitor_name}
-                          </p>
-                          <p className="text-xs">
-                            {row.gender === true
-                              ? 'Pria'
-                              : row.gender === false
-                              ? 'Wanita'
-                              : row.gender === null || row.gender === ''
-                              ? 'Unknown'
-                              : null}{' '}
-                            - {row.age} Years Old
-                          </p>
-                          <p className="text-xs">{row.nationality}</p>
-                          <p className="text-xs">
-                            {this.formatTimestamp(row.timestamp)}
-                          </p>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div className="w-[15%] h-full ml-auto">
-            <div className="w-full h-[93.3%]">
-              <div className="container">
-                <p className="font-semibold text-center">
-                  Tidak Dikenal : {unrecognizedRows.length}
-                </p>
-              </div>
-              <div className="h-full overflow-y-auto">
-                {' '}
-                <table className="w-full">
-                  <tbody>
-                    {unrecognizedRows?.map((row, index) => (
-                      <tr key={index}>
-                        <td className="w-1/4">
-                          <img
-                            src={`https://dev.transforme.co.id/gema_admin_api${row.image}`}
-                            alt="Person"
-                            className="w-20 h-20 rounded-5"
-                          />
-                        </td>
-                        <td className="w-3/4">
-                          <p className="font-semibold text-xs">
-                            Camera {row.device_name} - {row.location_name}
-                          </p>
-                          <p className=" text-xs">
-                            {this.formatTimestamp(row.timestamp)}
-                          </p>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
-        <div className="w-[65%] h-full">
-  <div className="w-full">
-    <p className="font-semibold pl-5 pt-10">
-      Kemiripan Terdeteksi: {faceDetectionRows.length}
-    </p>
-    <div className="pt-1">
-      <div className="flex overflow-x-auto">
-        <div className="flex space-x-4">
-          {faceDetectionRows?.map((row, index) => (
-            <div key={index} className="flex-shrink-0">
-              <img
-                src={`https://dev.transforme.co.id/gema_admin_api${row.image}`}
-                alt="Person"
-                className="w-20 h-20 rounded-5 flex-wrap"
-              />
-            </div>
+      <div className="flex gap-4 h-[52vh] justify-between">
+        <div className="w-[80%] h-full">
+          {state.listViewCamera.map((obj, index) => (
+            <div key={index}>{renderStream1(obj, index)}</div>
           ))}
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-          <div className="w-[35%] h-full">
-            <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
-            <table className="w-full">
-              <tbody>
-                <tr className="flex justify-between">
-                  <td>
-                    <span className="text-xs">IP Kamera</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">
-                      {deviceDetail && deviceDetail.IpAddress}
-                    </span>
-                  </td>
-                </tr>
-                <tr className="flex justify-between">
-                  <td>
-                    <span className="text-xs">Nama Kamera</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">
-                      {deviceDetail && deviceDetail.device_name} -{' '}
-                      {deviceDetail && deviceDetail.location}
-                    </span>
-                  </td>
-                </tr>
-                <tr className="flex justify-between">
-                  <td>
-                    <span className="text-xs">Total Deteksi Hari Ini</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">20266</span>
-                  </td>
-                </tr>
-                {/* <tr className="flex ">
-                  <td>
-                    <span className="text-xs">Analitik</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">Pengenalan Wajah</span>
-                  </td>
-                </tr> */}
-                <tr className="flex justify-between">
-                  <td>
-                    <span className="text-xs">Nomor Seri Analitik</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">
-                      {deviceDetail && deviceDetail.dm_name}
-                    </span>
-                  </td>
-                </tr>
-                <tr className="flex justify-between">
-                  <td>
-                    <span className="text-xs">AI SNAP Record SIMILAR TO</span>
-                  </td>
-                  <td>
-                    <span className="text-xs">122</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div className="w-[20%] h-full ml-auto">
+          <div className="w-full h-[93.3%]">
+            <div className="container">
+              <p className="font-semibold text-center">
+                Kemiripan Terdeteksi: {faceDetectionRows.length}
+              </p>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <table className="w-full">
+                <tbody>
+                  {faceDetectionRows?.map((row, index) => (
+                    <tr key={index} className="flex items-center">
+                      <td className="w-1/4 flex items-center">
+                        <img
+                          src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
+                          alt="Person"
+                          className="w-16 h-16 rounded-5 mr-2"
+                        />
+                        {/* <img
+                          src={`https://dev.transforme.co.id/siram_admin_api${row.face_pics}`}
+                          alt="Person"
+                          className="w-16 h-16 rounded-5"
+                        /> */}
+                      </td>
+                      <td className="w-3/4 flex flex-col items-end">
+                        <p className="text-xs font-semibold">
+                          {row.nama_wbp ? row.nama_wbp : row.keterangan}
+                        </p>
+                        {/* <p className="text-xs">
+                          {row.gender === true
+                            ? 'Pria'
+                            : row.gender === false
+                            ? 'Wanita'
+                            : row.gender === null || row.gender === ''
+                            ? 'Unknown'
+                            : null}{' '}
+                          - {row.age} Years Old
+                        </p> */}
+                        <p className="text-xs">{row.nationality}</p>
+                        <p className="text-xs">
+                          {formatTimestamp(row.timestamp)}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </>
-    );
-  }
-}
+      </div>
+      {/* <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
+        <div className="w-[65%] h-full">
+          <div className="w-full">
+            <p className="font-semibold pl-5 pt-10">
+              Kemiripan Terdeteksi: {faceDetectionRows.length}
+            </p>
+            <div className="pt-1">
+              <div className="flex overflow-x-auto">
+                <div className="flex space-x-4">
+                  {faceDetectionRows?.map((row, index) => (
+                    <div key={index} className="flex-shrink-0">
+                      <img
+                        src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
+                        alt="Person"
+                        className="w-20 h-20 rounded-5 flex-wrap"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-[35%] h-full">
+          <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
+          <table className="w-full">
+            <tbody>
+              <tr className="flex justify-between">
+                <td>
+                  <span className="text-xs">IP Kamera</span>
+                </td>
+                <td>
+                  <span className="text-xs">
+                    {deviceDetail && deviceDetail.IpAddress}
+                  </span>
+                </td>
+              </tr>
+              <tr className="flex justify-between">
+                <td>
+                  <span className="text-xs">Nama Kamera</span>
+                </td>
+                <td>
+                  <span className="text-xs">
+                    {deviceDetail && deviceDetail.device_name} -{' '}
+                    {deviceDetail && deviceDetail.location}
+                  </span>
+                </td>
+              </tr>
+              <tr className="flex justify-between">
+                <td>
+                  <span className="text-xs">Total Deteksi Hari Ini</span>
+                </td>
+                <td>
+                  <span className="text-xs">20266</span>
+                </td>
+              </tr>
+              <tr className="flex justify-between">
+                <td>
+                  <span className="text-xs">Nomor Seri Analitik</span>
+                </td>
+                <td>
+                  <span className="text-xs">
+                    {deviceDetail && deviceDetail.dm_name}
+                  </span>
+                </td>
+              </tr>
+              <tr className="flex justify-between">
+                <td>
+                  <span className="text-xs">AI SNAP Record SIMILAR TO</span>
+                </td>
+                <td>
+                  <span className="text-xs">122</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div> */}
+    </>
+  );
+};
+
 export default DataCamera;
