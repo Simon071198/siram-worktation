@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import {
   apiJenisSidangInsert,
   apiJenisSidangRead,
@@ -7,12 +7,12 @@ import {
   apiJenisSidangDelete,
   apiRealtimeLog,
   apiReadKamera,
-} from '../../services/api';
-import Pagination from '../../components/Pagination';
+} from '../../../services/api';
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import * as xlsx from 'xlsx';
-import { Alerts } from 'renderer/pages/User/AlertUser';
-import SearchInputButton from 'renderer/pages/Device/Search';
+import { Alerts } from '../../User/AlertUser';
+import SearchInputButton from '../../Device/Search';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {

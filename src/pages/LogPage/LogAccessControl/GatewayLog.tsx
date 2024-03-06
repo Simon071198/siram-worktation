@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import axios from 'axios';
-import { apiGatewayLog, apiVisitorLogList } from '../../services/api';
-import { webserviceurl } from '../../services/api';
+import { apiGatewayLog, apiVisitorLogList } from '../../../services/api';
+import { webserviceurl } from '../../../services/api';
 import { NavLink } from 'react-router-dom';
-import Pagination from '../../components/Pagination';
-import Loader from '../../common/Loader';
+import Pagination from '../../../components/Pagination';
+import Loader from '../../../common/Loader';
 
 export default function GatewayLog() {
   const [data, setData] = useState([]);

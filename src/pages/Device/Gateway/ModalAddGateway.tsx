@@ -3,7 +3,7 @@ import {
   apiReadAllRuanganOtmil,
   apiReadAlllokasiOtmil,
   apiReadZona,
-} from '../../services/api';
+} from '../../../services/api';
 
 // interface
 interface AddGatewayModalProps {

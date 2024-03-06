@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { AddKamera } from './ModalAddKamera';
 import { DeleteKameraModal } from './ModalDeleteKamera';
 import { Alerts } from './AlertKamera';
@@ -8,11 +8,11 @@ import {
   apiDeleteKamera,
   apiCreateKamera,
   apiUpdateKamera,
-} from '../../services/api';
-import Pagination from '../../components/Pagination';
+} from '../../../services/api';
+import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'

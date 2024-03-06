@@ -4,7 +4,7 @@ import {
   apiReadAllWBP,
   apiReadAlllokasiOtmil,
   apiReadZona,
-} from '../../services/api';
+} from '../../../services/api';
 import { webpack } from 'webpack';
 
 // interface

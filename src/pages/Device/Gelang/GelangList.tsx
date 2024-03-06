@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { AddGelang } from './ModalAddGelang';
 import { DeleteGelangModal } from './ModalDeleteGelang';
 import { Alerts } from './AlertGelang';
@@ -8,11 +8,11 @@ import {
   apiDeleteGelang,
   apiCreateGelang,
   apiUpdateGelang,
-} from '../../services/api';
-import Pagination from '../../components/Pagination';
+} from '../../../services/api';
+import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 
 // Interface untuk objek 'params' dan 'item'

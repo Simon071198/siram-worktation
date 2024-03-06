@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import axios from 'axios';
-import { apiVisitorRealtimeLogList } from '../../services/api';
+import { apiVisitorRealtimeLogList } from '../../../services/api';
 
-import { webserviceurl } from '../../services/api';
+import { webserviceurl } from '../../../services/api';
 import { NavLink } from 'react-router-dom';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
