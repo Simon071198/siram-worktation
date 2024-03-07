@@ -8,11 +8,9 @@ import {
   apiReadStatusWBP,
   apiReadjenisperkara,
 } from '../../services/api';
-<<<<<<< HEAD
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-=======
 import utc from 'dayjs/plugin/utc';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -21,8 +19,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
->>>>>>> a5c644927d81d6e506bdcec9962d127c71121580
-
 
 interface WBP {
   wbp_profile_id: string;
@@ -52,7 +48,7 @@ export const AddDaftarKasusModal = ({
     oditur_penyidik_id: [],
     saksi_id: [],
     keteranganSaksis: [],
-    zona_waktu:''
+    zona_waktu: '',
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -139,10 +135,66 @@ export const AddDaftarKasusModal = ({
           },
         },
         {
-          element: '.b-tambah',
+          element: '.input-lokasi',
           popover: {
-            title: 'Tambah',
-            description: 'Menambahkan daftar kasus',
+            title: 'Lokasi Kasus',
+            description: 'Isi lokasi kasus',
+          },
+        },
+        {
+          element: '.i-kejadian',
+          popover: {
+            title: 'Tanggal Kejadian Kasus',
+            description: 'Menentukan tanggal kejadian kasus',
+          },
+        },
+        {
+          element: '.i-pelaporan',
+          popover: {
+            title: 'Tanggal Pelaporan Kasus',
+            description: 'Menentukan tanggal pelaporan kasus',
+          },
+        },
+        {
+          element: '.i-jumlah',
+          popover: {
+            title: 'Jumlah Penyidikan',
+            description: 'Isi jumlah penyidikan',
+          },
+        },
+        {
+          element: '.p-oditur',
+          popover: {
+            title: 'Oditur Penyidikan',
+            description: 'Pilih oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Ketua Oditur Penyidikan',
+            description: 'Pilih ketua oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-pihak',
+          popover: {
+            title: 'Pihak Terlibat',
+            description: 'Pilih pihak terlibat yang diinginkan',
+          },
+        },
+        {
+          element: '.d-nama',
+          popover: {
+            title: 'Nama Tersangka',
+            description: 'Isi dengan lengkap keterangan',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data kasus`,
           },
         },
       ],
@@ -643,7 +695,7 @@ export const AddDaftarKasusModal = ({
                     </label>
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
                       name="waktu_kejadian"
                       placeholder="Tanggal Kejadian Kasus"
                       onChange={handleChange}
@@ -668,7 +720,7 @@ export const AddDaftarKasusModal = ({
                     </label>
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                       name="waktu_pelaporan_kasus"
                       placeholder="Tanggal Pelaporan Kasus"
                       onChange={handleChange}
@@ -694,7 +746,7 @@ export const AddDaftarKasusModal = ({
                       Jumlah Penyidikan
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jumlah"
                       name="waktu_pelaporan_kasus"
                       placeholder="Jumlah Penyidikan"
                       onChange={handleChange}
@@ -718,7 +770,7 @@ export const AddDaftarKasusModal = ({
                       Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize text-white"
+                      className="capitalize text-white p-oditur"
                       isMulti
                       options={OditurPenyidikOpstions}
                       isDisabled={isDetail}
@@ -743,7 +795,7 @@ export const AddDaftarKasusModal = ({
                       Ketua Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-ketua"
                       options={ketuaOditurPenyidik}
                       isDisabled={isDetail}
                       onChange={handleSelectKetuaOditur}
@@ -769,7 +821,7 @@ export const AddDaftarKasusModal = ({
                     Pihak Terlibat
                   </label>
                   <Select
-                    className="capitalize"
+                    className="capitalize p-pihak"
                     isMulti
                     options={pihakTerlibat}
                     isDisabled={isDetail}
@@ -780,16 +832,19 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                        errors.includes('wbp_profile_ids')
-                        ? `${errors.includes('wbp_profile_ids')
-                          ? 'Tersangka'
-                          : ''
-                        } ${errors.includes('saksi_id') &&
-                          errors.includes('wbp_profile_ids')
-                          ? 'Dan'
-                          : ''
-                        } ${errors.includes('saksi_id') ? 'Saksi' : ''
-                        } Belum di Pilih`
+                      errors.includes('wbp_profile_ids')
+                        ? `${
+                            errors.includes('wbp_profile_ids')
+                              ? 'Tersangka'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') &&
+                            errors.includes('wbp_profile_ids')
+                              ? 'Dan'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') ? 'Saksi' : ''
+                          } Belum di Pilih`
                         : ''}
                     </p>
                   </div>
@@ -842,10 +897,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangans-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keterangans')
+                                placeholder={`${
+                                  errors.includes('keterangans')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeteranganTersangka(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -867,7 +923,7 @@ export const AddDaftarKasusModal = ({
                       Saksi
                     </label>
 
-                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t d-nama">
                       <div className="form-group w-2/6">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -906,10 +962,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangan-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keteranganSaksis')
+                                placeholder={`${
+                                  errors.includes('keteranganSaksis')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan Saksi'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeterangan(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -925,25 +982,27 @@ export const AddDaftarKasusModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -973,10 +1032,12 @@ export const AddDaftarKasusModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

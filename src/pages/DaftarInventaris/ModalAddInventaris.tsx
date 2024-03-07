@@ -163,6 +163,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
     });
 
     driverObj.drive();
+  };
+
   const customStyles = {
     container: (provided: any) => ({
       ...provided,
@@ -419,14 +421,16 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 </div>
 
                 {/* <div className="w-10"> */}
-                <button>
-                  <HiQuestionMarkCircle
-                    values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>
+                {isDetail ? null : (
+                  <button>
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 {/* </div> */}
 
                 <strong
@@ -643,11 +647,10 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           Tipe barang
                         </label>
                         <Select
-                          className="basic-single"
+                          className="basic-single t-barang"
                           classNamePrefix="select"
                           styles={customStyles}
                           name="tipe_aset_id"
-
                           isDisabled={isDetail}
                           isClearable={true}
                           isSearchable={true}
@@ -655,9 +658,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.tipe_aset_id,
-                                label: formState.nama_tipe,
-                              }
+                                  value: formState.tipe_aset_id,
+                                  label: formState.nama_tipe,
+                                }
                               : formState.tipe_aset_id
                           }
                           options={tipeAset.map((item: any) => ({
@@ -730,27 +733,27 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         </label>
 
                         <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="ruangan_otmil_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Ruangan"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                    value: formState.ruangan_otmil_id,
-                                    label: formState.nama_ruangan_otmil,
-                                  }
-                                : formState.ruangan_otmil_id
-                            }
-                            options={ruangan.map ((item: any) => ({
-                              value: item.ruangan_otmil_id,
-                              label: item.nama_ruangan_otmil,
-                            }))}
-                          />
+                          className="basic-single p-ruangan"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          name="ruangan_otmil_id"
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Ruangan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.ruangan_otmil_id,
+                                  label: formState.nama_ruangan_otmil,
+                                }
+                              : formState.ruangan_otmil_id
+                          }
+                          options={ruangan.map((item: any) => ({
+                            value: item.ruangan_otmil_id,
+                            label: item.nama_ruangan_otmil,
+                          }))}
+                        />
                         <p className="error-text bottom-0 absolute">
                           {errors.map((item) =>
                             item === 'ruangan_otmil_id' ? 'Pilih ruangan' : '',
@@ -890,18 +893,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
                   <div className="error mt-4 text-center">
                     <p className="text-red-400">
@@ -927,7 +930,6 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                       buttonLoad ? 'bg-slate-400' : ''
                     }`}
                     id="t-data-ubah"
-
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -959,8 +961,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     id="t-data"
                     disabled={buttonLoad}

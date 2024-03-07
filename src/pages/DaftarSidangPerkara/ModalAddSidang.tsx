@@ -309,12 +309,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
             description: 'Isi hasil vonis',
           },
         },
-
         {
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'Mengubah' : 'Menambahkan'} data sidang`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data sidang`,
           },
         },
       ],
