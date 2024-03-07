@@ -10,6 +10,9 @@ import {
   apiReadStatusWBP,
   apiReadjenisperkara,
 } from '../../services/api';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -58,6 +61,7 @@ export const AddDaftarKasusModal = ({
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
   const [dataSaksi, setDataSaksi] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
 
@@ -99,6 +103,44 @@ export const AddDaftarKasusModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.input-nomor',
+          popover: {
+            title: 'Nomor Kasus',
+            description: 'Isi nomor kasus',
+          },
+        },
+        {
+          element: '.input-nama',
+          popover: {
+            title: 'Nama Kasus',
+            description: 'Isi nama kasus',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Perkara',
+            description: 'Pilih jenis perkara yang diinginkan',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan daftar kasus',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -472,6 +514,18 @@ export const AddDaftarKasusModal = ({
                         : 'Tambah Data Daftar Kasus'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                <button>
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -490,7 +544,7 @@ export const AddDaftarKasusModal = ({
                       Nomor Kasus
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nomor"
                       name="nomor_kasus"
                       placeholder="Nomor Kasus"
                       onChange={handleChange}
@@ -513,7 +567,7 @@ export const AddDaftarKasusModal = ({
                       Nama Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nama"
                       name="nama_kasus"
                       placeholder="Nama Kasus"
                       onChange={handleChange}
@@ -535,7 +589,7 @@ export const AddDaftarKasusModal = ({
                       Jenis Perkara
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-jenis"
                       options={jenisPerkaraOpstions}
                       isDisabled={isDetail}
                       onChange={handleSelectPerkara}
@@ -558,7 +612,7 @@ export const AddDaftarKasusModal = ({
                       Lokasi Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
                       name="lokasi_kasus"
                       placeholder="Lokasi Kasus"
                       onChange={handleChange}
