@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alerts } from './AlertPenyidikan';
 import {
   apiReadPenyidikan,
@@ -10,7 +10,6 @@ import { AddPenyidikanModal } from './ModalAddPenyidikan';
 import { DeletePenyidikanModal } from './ModalDeletePenyidikan';
 import * as xlsx from 'xlsx';
 import SearchInputButton from '../../MasterData/Search';
-import { log } from 'console';
 import dayjs from 'dayjs';
 import Pagination from '../../../components/Pagination';
 import DropdownAction from '../../../components/DropdownAction';
@@ -335,6 +334,8 @@ const PenyidikanList = () => {
 
   // function untuk mengubah data
   const handleSubmitEdit = async (params: any) => {
+    console.log('token', token);
+
     try {
       const responseEdit = await apiUpdatePenyidikan(params, token);
       if (responseEdit.data.status === 'OK') {

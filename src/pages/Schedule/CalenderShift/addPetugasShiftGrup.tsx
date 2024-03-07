@@ -12,7 +12,6 @@ import 'dayjs/locale/id';
 import { BiLoaderAlt } from 'react-icons/bi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { registerLocale, setDefaultLocale } from 'react-datepicker';
 
 interface Shift {
   shift_id: any;

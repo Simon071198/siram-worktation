@@ -4,15 +4,19 @@ import { Alerts } from './AlertDaftarKasus';
 import {
   apiReadAllWBP,
   apiReadJaksaPenyidik,
-  apiReadKategoriPerkara,
-  apiReadOditur,
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
 } from '../../services/api';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const dataUserItem = localStorage.getItem('dataUser');
-const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 interface WBP {
   wbp_profile_id: string;
@@ -42,6 +46,7 @@ export const AddDaftarKasusModal = ({
     oditur_penyidik_id: [],
     saksi_id: [],
     keteranganSaksis: [],
+    zona_waktu:''
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 

@@ -2,9 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading } from 'react-icons/ai';
 import Select from 'react-select';
 import { apiReadKasus } from '../../../services/api';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const dataUserItem = localStorage.getItem('dataUser');
-const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+dayjs.locale('id');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const AddPenyidikanModal = ({
   closeModal,
@@ -29,7 +35,10 @@ export const AddPenyidikanModal = ({
     nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
     nama_kategori_perkara: defaultValue?.nama_kategori_perkara,
     nrp_wbp: defaultValue?.nrp_wbp,
+    zona_waktu: defaultValue?.zona_waktu,
   });
+
+  
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,13 +53,34 @@ export const AddPenyidikanModal = ({
     const fetchData = async () => {
       const kasus = await apiReadKasus(params, token);
       setDataKasus(kasus.data.records);
-
       setIsLoading(false);
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      if (!formState?.zona_waktu) {
+        setFormState({
+          ...formState,
+          zona_waktu: zonaWaktu,
+        });
+      }
     };
     fetchData();
   }, []);
 
-  console.log(formState, 'formstate');
+  const timezone = dayjs();
+  console.log('timezone', timezone.format('Z'));
 
   const validateForm = () => {
     let errorFields = [];
@@ -182,13 +212,64 @@ export const AddPenyidikanModal = ({
 
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
+    console.log('3333', e.target.value);
+  };
+
+  const handleChangeWaktu = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_dimulai_penyidikan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+  const handleChangeWaktuSelesai = (e: any) => {
+    try {
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      setFormState({
+        ...formState,
+        waktu_selesai_penyidikan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+        zona_waktu: zonaWaktu,
+      });
+    } catch (error) {
+      console.error('Terjadi kesalahan:', error);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
     setButtonLoad(true);
-
     onSubmit(formState).then(() => setButtonLoad(false));
   };
 
@@ -218,7 +299,7 @@ export const AddPenyidikanModal = ({
       ...provided,
       width: '100%',
     }),
-    control: (provided: any, state: any) => ({
+    control: (provided: any) => ({
       ...provided,
       backgroundColor: 'rgb(30 41 59)',
       borderColor: 'rgb(30 41 59)',
@@ -228,7 +309,6 @@ export const AddPenyidikanModal = ({
       paddingLeft: 3,
       paddingRight: 4.5,
       borderRadius: 5,
-
       '&:hover': {
         borderColor: 'rgb(30 41 59)',
       },
@@ -300,6 +380,14 @@ export const AddPenyidikanModal = ({
       color: 'white',
     }),
   };
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
+
 
   return (
     <div>
@@ -527,20 +615,35 @@ export const AddPenyidikanModal = ({
                 <div className="grid grid-cols-2 gap-x-4">
                   <div className="form-group w-full h-22">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className=" block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Waktu Mulai Penyidikan
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_dimulai_penyidikan"
-                      placeholder="Waktu Mulai Penyidikan"
-                      onChange={handleChange}
-                      value={formState.waktu_dimulai_penyidikan}
-                      disabled={isDetail}
-                    />
+                    <div className="flex items-center justify-center">
+                      <DatePicker
+                        selected={dayjs(
+                          formState.waktu_dimulai_penyidikan,
+                        ).toDate()}
+                        onChange={handleChangeWaktu}
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        timeCaption="Pilih Waktu" // Ganti dengan caption waktu yang diinginkan
+                        showTimeInput
+                        timeInputLabel="Waktu" // Ganti dengan label waktu yang diinginkan
+                        timeFormat="HH:mm" // Ganti dengan format waktu yang diinginkan
+                        disabled={false} // Ganti dengan kondisi yang sesuai
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        locale="id"
+                      />
+
+                      <input
+                        type="text"
+                        value={formState?.zona_waktu}
+                        disabled
+                        className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      />
+                    </div>
                     <p className="error-text">
                       {errors?.map((item) =>
                         item === 'waktu_dimulai_penyidikan'
@@ -556,15 +659,29 @@ export const AddPenyidikanModal = ({
                     >
                       Waktu Selesai Penyidikan
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_selesai_penyidikan"
-                      placeholder="Waktu Selesai Penyidikan"
-                      onChange={handleChange}
-                      value={formState.waktu_selesai_penyidikan}
-                      disabled={isDetail}
-                    />
+                    <div className="flex items-center justify-center">
+                      <DatePicker
+                        selected={dayjs(
+                          formState.waktu_selesai_penyidikan,
+                        ).toDate()}
+                        onChange={(date) => handleChangeWaktuSelesai(date)}
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        timeCaption="Pilih Waktu" // Ganti dengan caption waktu yang diinginkan
+                        showTimeInput
+                        timeInputLabel="Waktu" // Ganti dengan label waktu yang diinginkan
+                        timeFormat="HH:mm" // Ganti dengan format waktu yang diinginkan
+                        disabled={false} // Ganti dengan kondisi yang sesuai
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        locale="id"
+                      />
+                      <input
+                        type="text"
+                        value={formState?.zona_waktu}
+                        disabled
+                        className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      />
+                    </div>
                     <p className="error-text">
                       {errors?.map((item) =>
                         item === 'waktu_selesai_penyidikan'
