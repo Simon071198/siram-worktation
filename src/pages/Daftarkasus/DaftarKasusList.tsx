@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import { Alerts } from './AlertDaftarKasus';
 import {
@@ -51,6 +52,7 @@ const DaftarKasus = () => {
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+  const navigate = useNavigate();
 
   // const navigate = useNavigate();
 
@@ -517,6 +519,12 @@ const DaftarKasus = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Daftar Kasus
           </h4>
+          <button
+          className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
+          onClick={() => navigate('/penyidikan')}
+          >
+            Penyidikan
+          </button>
           {!isOperator && (
             <button
               onClick={handleModalAddOpen}

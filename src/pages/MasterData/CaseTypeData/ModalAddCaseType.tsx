@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Select from 'react-select/dist/declarations/src/Select';
+// import Select from 'react-select/dist/declarations/src/Select';
+import Select from 'react-select';
 import { apiReadKategoriPerkara } from '../../../services/api';
 
 // interface
@@ -79,6 +80,91 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     }
     setErrors([]);
     return true;
+  };
+
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
   };
 
   const handleChange = (
@@ -248,7 +334,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     >
                       Nama Kategori Perkara
                     </label>
-                    <select
+                    {/* <select
                       className="w-full rounded border border-stroke   py-3 pl-3 pr-6.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       name="kategori_perkara_id"
                       onChange={handleChange}
@@ -263,7 +349,29 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                           {item.nama_kategori_perkara}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
+                    <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="kategori_perkara_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Pendidikan"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.kategori_perkara_id,
+                                    label: formState.nama_kategori_perkara,
+                                  }
+                                : formState.kategori_perkara_id
+                            }
+                            options={kategori_perkara.map((item) => ({
+                              value: item.kategori_perkara_id,
+                              label: item.nama_kategori_perkara,
+                            }))}
+                          />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'kategori_perkara_id'
@@ -349,9 +457,8 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -383,9 +490,8 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -419,18 +525,18 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <br />
+                        <div className="error">
+                          {errors
+                            .filter((item: string) =>
+                              item.startsWith('INVALID_ID'),
+                            )[0]
+                            .replace('INVALID_ID_', '')}{' '}
+                          is not a valid bond
+                        </div>
+                      </>
+                    )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

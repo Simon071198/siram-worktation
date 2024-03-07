@@ -5,17 +5,17 @@ import {
   apiUpdateVisitor,
   apiDeletePengunjung,
   apiDeleteVisitor,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddVisitorModal } from './ModalAddVisitor';
 import { Alerts } from './AlertVisitor';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { DeleteVisitorModal } from './ModalDeleteVisitor';
 import SearchInputButton from '../Search';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
-import ToolsTip from 'renderer/components/ToolsTip';
+import ToolsTip from '../../../components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 
 interface Item {

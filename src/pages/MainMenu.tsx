@@ -196,6 +196,7 @@ const routes = [
     link: '/tutorial-data',
     icon: <IoDocumentText size={80} />,
   },
+
 ];
 
 // const MainMenu = () => {
