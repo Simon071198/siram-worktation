@@ -122,6 +122,7 @@ export const AddInmateModal = ({
       // vonis_bulan: '',
       // vonis_hari: '',
       tanggal_ditahan_otmil: '',
+      tanggal_masa_penahanan_otmil: '',
       bidang_keahlian_id: '',
       gelang_id: '',
       DMAC: '',
@@ -137,6 +138,12 @@ export const AddInmateModal = ({
       tanggal_penetapan_tersangka: '',
       tanggal_penetapan_terdakwa: '',
       tanggal_penetapan_terpidana: '',
+      zat_adiktif: '',
+      jenis_olahraga: '',
+      penyakit: '',
+      berat_badan: '',
+      tinggi_badan: '',
+      pola_makan: '',
       // zona_hijau: [],
       // zona_kuning: [],
       // zona_merah: [],
@@ -2512,6 +2519,227 @@ export const AddInmateModal = ({
                               </div>
                             </>
                           )}
+
+                          {/* Tanggal Masa Penahanan */}
+                          <div className="form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Tanggal Masa Penahanan
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="tanggal_masa_penahanan_otmil"
+                              onChange={handleChange}
+                              value={formState.tanggal_masa_penahanan_otmil}
+                              disabled={isDetail}
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'tanggal_masa_penahanan_otmil'
+                                  ? 'Masukan tanggal masa penahanan'
+                                  : '',
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----- DATA KESEHATAN ----- */}
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Data Kesehatan
+                      </p>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Penyakit */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Penyakit
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="penyakit"
+                                placeholder="Nama penyakit"
+                                onChange={handleChange}
+                                value={formState.penyakit}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'penyakit'
+                                    ? 'Masukan nama penyakit'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Berat Badan */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Berat Badan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="berat_badan"
+                                placeholder="Berapa berat badan"
+                                onChange={handleChange}
+                                value={formState.berat_badan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'berat_badan'
+                                    ? 'Masukan berat badan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Tinggi Badan */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tinggi Badan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tinggi_badan"
+                                placeholder="Berapa tinggi badan"
+                                onChange={handleChange}
+                                value={formState.tinggi_badan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tinggi_badan'
+                                    ? 'Masukan tinggi badan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----- DATA PERILAKU ----- */}
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Data Perilaku
+                      </p>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Pola Makan */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Pola Makan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="pola_makan"
+                                placeholder="Nama pola makan"
+                                onChange={handleChange}
+                                value={formState.pola_makan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'pola_makan'
+                                    ? 'Masukan nama pola makan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Jenis Olahraga */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className=" block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Jenis Olahraga
+                              </label>
+                              <select
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="jenis_olahraga"
+                                onChange={handleChange}
+                                value={formState.jenis_olahraga}
+                                disabled={isDetail}
+                              >
+                                <option disabled value="">
+                                  Pilih Jenis Olahraga
+                                </option>
+                                <option value="0">Futsal</option>
+                                <option value="1">Voli</option>
+                                <option value="2">Badminton</option>
+                                <option value="3">Berenang</option>
+                                <option value="4">Golf</option>
+                                <option value="5">Basket</option>
+                                <option value="6">Sepak Bola</option>
+                              </select>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'jenis_olahraga'
+                                    ? 'Pilih jenis olahraga'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Konsumsi Zat Adiktif */}
+                            <div className="form-group w-full flex flex-col">
+                              <label
+                                className=" block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Jenis Zat Adiktif
+                              </label>
+                              <select
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="zat_adiktif"
+                                onChange={handleChange}
+                                value={formState.zat_adiktif}
+                                disabled={isDetail}
+                              >
+                                <option disabled value="">
+                                  Pilih Jenis Zat Adiktif
+                                </option>
+                                <option value="0">Nikotin</option>
+                                <option value="1">Alkohol</option>
+                                <option value="2">Kafein</option>
+                                <option value="3">Amfetamin</option>
+                                <option value="4">Ganja</option>
+                                <option value="5">Kokain</option>
+                                <option value="6">Heroin</option>
+                              </select>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'zat_adiktif'
+                                    ? 'Pilih jenis zat adiktif'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading } from 'react-icons/ai';
 import Select from 'react-select';
 import { apiReadKasus } from '../../../services/api';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import utc from 'dayjs/plugin/utc';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -45,6 +48,7 @@ export const AddPenyidikanModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [dataKasus, setDataKasus] = useState<any[]>([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     const params = {
@@ -266,6 +270,97 @@ export const AddPenyidikanModal = ({
     }
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.input-nomor',
+          popover: {
+            title: 'Nomor Penyidikan',
+            description: 'Isi nomor penyidikan',
+          },
+        },
+        {
+          element: '#p-kasus',
+          popover: {
+            title: 'Nomor Kasus',
+            description: 'Pilih nomor kasus yang diinginkan',
+          },
+        },
+        {
+          element: '.input-nama',
+          popover: { title: 'Nama Kasus', description: 'Isi nama kasus' },
+        },
+        {
+          element: '.input-perkara',
+          popover: {
+            title: 'Jenis Perkara',
+            description: 'Isi jenis perkara',
+          },
+        },
+        {
+          element: '.input-kategori',
+          popover: {
+            title: 'Kategori Perkara',
+            description: 'Isi kategori perkara',
+          },
+        },
+        {
+          element: '#p-terlibat',
+          popover: {
+            title: 'Pihak Terlibat',
+            description: 'Pilih pihak terlibat yang diinginkan',
+          },
+        },
+        {
+          element: '.input-nrp',
+          popover: {
+            title: 'NRP',
+            description: 'Isi NRP',
+          },
+        },
+        {
+          element: '#p-penyidikan',
+          popover: {
+            title: 'Penyidikan',
+            description: 'Pilih penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.input-waktu',
+          popover: {
+            title: 'Waktu Mulai Penyidikan',
+            description: 'Menentukan tanggal waktu mulai penyidikan',
+          },
+        },
+        {
+          element: '.input-selesai',
+          popover: {
+            title: 'Waktu Selesai Penyidikan',
+            description: 'Menentukan tanggal waktu selesai penyidikan',
+          },
+        },
+        {
+          element: '.t-agenda',
+          popover: {
+            title: 'Agenda Penyidikan',
+            description: 'Isi agenda penyidikan dengan lengkap',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'} Penyidikan`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} penyidikan`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -425,6 +520,18 @@ export const AddPenyidikanModal = ({
                         : 'Tambah Data Penyidikan'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                <button>
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -443,7 +550,7 @@ export const AddPenyidikanModal = ({
                       Nomor Penyidikan
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nomor"
                       name="nomor_penyidikan"
                       onChange={handleChange}
                       value={formState.nomor_penyidikan}
@@ -471,6 +578,7 @@ export const AddPenyidikanModal = ({
                       defaultValue={kasusOptionsValue}
                       options={kasusOptions}
                       styles={customStyles}
+                      id="p-kasus"
                     />
                     <p className="error-text">
                       {errors?.map((item) =>
@@ -486,7 +594,7 @@ export const AddPenyidikanModal = ({
                       Nama Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nama"
                       name="nama_kasus"
                       placeholder="Nama Kasus"
                       onChange={handleChange}
@@ -507,7 +615,7 @@ export const AddPenyidikanModal = ({
                       Jenis Perkara
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-perkara"
                       name="nama_jenis_perkara"
                       placeholder="Jenis Perkara"
                       onChange={handleChange}
@@ -530,7 +638,7 @@ export const AddPenyidikanModal = ({
                       Kategori Perkara
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-kategori"
                       name="nama_kategori_perkara"
                       placeholder="Kategori Perkara"
                       onChange={handleChange}
@@ -562,6 +670,7 @@ export const AddPenyidikanModal = ({
                       onChange={handleSelectPihakTerlibat}
                       placeholder="Pihak Terlibat"
                       styles={customStyles}
+                      id="p-terlibat"
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -577,7 +686,7 @@ export const AddPenyidikanModal = ({
                       NRP
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nrp"
                       name="nrp_wbp"
                       placeholder="NRP"
                       onChange={handleChange}
@@ -605,6 +714,7 @@ export const AddPenyidikanModal = ({
                     options={penyidikOptions}
                     placeholder="Penyidik"
                     styles={customStyles}
+                    id="p-penyidikan"
                   />
                   {/* <p className="error-text">
                     {errors?.map((item) =>
@@ -620,6 +730,7 @@ export const AddPenyidikanModal = ({
                     >
                       Waktu Mulai Penyidikan
                     </label>
+
                     <div className="flex items-center justify-center">
                       <DatePicker
                         selected={dayjs(
@@ -659,6 +770,7 @@ export const AddPenyidikanModal = ({
                     >
                       Waktu Selesai Penyidikan
                     </label>
+
                     <div className="flex items-center justify-center">
                       <DatePicker
                         selected={dayjs(
@@ -701,7 +813,7 @@ export const AddPenyidikanModal = ({
                       Agenda Penyidikan
                     </label>
                     <textarea
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-agenda"
                       name="agenda_penyidikan"
                       id="textArea"
                       placeholder="Alasan Penyidikan"
@@ -727,6 +839,7 @@ export const AddPenyidikanModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -761,6 +874,7 @@ export const AddPenyidikanModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { BiCategory, BiHighlight } from 'react-icons/bi';
-import { ImHammer2 } from "react-icons/im";
-import { FaBuildingColumns } from "react-icons/fa6";
+import { ImHammer2 } from 'react-icons/im';
+import { FaBuildingColumns } from 'react-icons/fa6';
 
 const routeMasterData = [
   {
@@ -168,13 +168,13 @@ const routeMasterData = [
     id: 11,
     name: 'Data Oditur',
     link: '/jaksa-list',
-    icon: <ImHammer2 size={25}/>,
+    icon: <ImHammer2 size={25} />,
   },
   {
     id: 11,
     name: 'Data Saksi',
     link: '/saksi-data',
-    icon: <BiHighlight size={25}/>,
+    icon: <BiHighlight size={25} />,
   },
   {
     id: 11,
@@ -187,8 +187,8 @@ const routeMasterData = [
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        width='25'
-        height='25'
+        width="25"
+        height="25"
       >
         <path
           stroke-linecap="round"
@@ -224,7 +224,7 @@ const routeMasterData = [
     id: 12,
     name: 'Data Barang Bukti',
     link: '/barang-bukti',
-    icon: <BiCategory size={25}/>,
+    icon: <BiCategory size={25} />,
   },
   // {
   //   id: 13,
@@ -252,10 +252,8 @@ const routeMasterData = [
     id: 13,
     name: 'pengadilan Militer',
     link: '/pengadilan-militer',
-    icon: <FaBuildingColumns size={25}/>
+    icon: <FaBuildingColumns size={25} />,
   },
- 
- 
 ];
 
 const MasterDataList = () => {
@@ -280,7 +278,6 @@ const MasterDataList = () => {
             </div>{' '}
           </NavLink>
         ))}
-        
 
         {/* {routeMasterData.map((data) => (
           <NavLink to={data.link}>

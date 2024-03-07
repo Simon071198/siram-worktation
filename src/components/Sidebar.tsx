@@ -4,6 +4,7 @@ import Logo from '../images/logo/logo.png';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import { boolean } from 'yup';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
+import { IoDocumentText } from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import { apiversion } from '../services/api';
 import { version } from '../utils/constants';
@@ -26,7 +27,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
 
   const handleNavLinkClick = () => {
@@ -270,8 +271,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/penyidikan"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('penyidikan') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('penyidikan') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     fill="#FFFFFF"
@@ -308,8 +312,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/pencatatan-bap"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('pencatatan-bap') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('pencatatan-bap') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -336,8 +343,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/daftar-sidang"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('daftar-sidang') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('daftar-sidang') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -364,8 +374,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/daftar-kasus"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('daftar-kasus') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('daftar-kasus') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <HiOutlineDocumentSearch size={20} />
                   Daftar Kasus
@@ -378,8 +391,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/pengunjung"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('pengunjung') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('pengunjung') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -817,8 +833,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/event-data"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('event-data') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('event-data') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -844,8 +863,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/daftar-inventaris"
                   onClick={handleNavLinkClick}
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('daftar-inventaris') && 'bg-graydark dark:bg-meta-4'
-                    }`}
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('daftar-inventaris') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1092,7 +1114,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Pengaturan --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === '/setting-list' || pathname.includes('setting-list')
+                  pathname === '/setting-list' ||
+                  pathname.includes('setting-list')
                 }
               >
                 {(handleClick, open) => {
@@ -1151,6 +1174,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+
                           {isSuperAdmin &&
                             <li>
                               <NavLink
@@ -1164,6 +1188,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 Manajemen Pengguna
                               </NavLink>
                             </li>
+
                           }
                           <li>
                             <NavLink
@@ -1767,6 +1792,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
               <li>
                 <NavLink
+
                   to=""
                   onClick={
                   async (e)=>{
