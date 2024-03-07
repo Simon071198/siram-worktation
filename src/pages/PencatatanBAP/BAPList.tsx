@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   apiChangePassword,
@@ -23,6 +23,7 @@ import DropdownAction from '../../components/DropdownAction';
 // }
 
 const BAPList = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -441,10 +442,16 @@ const BAPList = () => {
           <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
             Data Pencatatan BAP
           </h4>
+          <button
+            className='text-black rounded-md font-semibold w-20 h-10 bg-green-600'
+            onClick={() => navigate('/daftar-sidang')}
+          >
+            Sidang
+          </button>
           {!isOperator && (
             <button
               onClick={handleModalAddOpen}
-              className=" text-black rounded-md bg-blue-300 w-20 h-10"
+              className="text-black rounded-md bg-blue-300 w-20 h-10"
             >
               Tambah
             </button>

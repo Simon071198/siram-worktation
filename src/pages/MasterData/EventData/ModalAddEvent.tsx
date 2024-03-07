@@ -9,6 +9,8 @@ import {
   apiReadAllEvent,
 } from '../../../services/api';
 import { Alerts } from './AlertEvent';
+// import Select from 'react-select/dist/declarations/src/Select';
+import Select from "react-select"
 interface AddVisitorModalProps {
   closeModal: () => void;
   onSubmit: (params: any) => void;
@@ -98,6 +100,90 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
   //     document.removeEventListener('mousedown', handleOutsideClick);
   //   };
   // }, [closeModal]);
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
 
   const validateForm = () => {
     let errorFields = [];
@@ -531,7 +617,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     <label htmlFor="ruangan_otmil_id">
                       Pilih Ruangan otmil:
                     </label>
-                    <select
+                    {/* <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
@@ -548,7 +634,27 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                           {item.nama_ruangan_otmil}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
+                    <Select
+                    name="ruangan_otmil_id"
+                    isDisabled={isDetail}
+                    isClearable={true}
+                    isSearchable={true}
+                    placeholder="Pilih Ruangan"
+                    defaultValue={
+                      isEdit || isDetail
+                        ? {
+                            value: formState.ruangan_otmil_id,
+                            label: formState.nama_ruangan_otmil,
+                          }
+                        : formState.ruangan_otmil_id
+                    }
+                    styles={customStyles}
+                    options={ruanganotmil.map((item) => ({
+                      value: item.ruangan_otmil_id,
+                      label: item.nama_ruangan_otmil,
+                    }))}
+                    />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'

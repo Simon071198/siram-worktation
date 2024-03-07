@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import Pagination from '../../../components/Pagination';
 import DropdownAction from '../../../components/DropdownAction';
 import Loader from '../../../common/Loader';
+import { useNavigate } from 'react-router-dom';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -38,6 +39,7 @@ interface Item {
 
 const PenyidikanList = () => {
   // useState untuk menampung data dari API
+  const navigate = useNavigate();
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
   const [editData, setEditData] = useState<Item | null>(null);
@@ -451,6 +453,13 @@ const PenyidikanList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Penyidikan
           </h4>
+
+          <button
+          className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
+          onClick={() => navigate('/pencatatan-bap')}
+          >
+            BAP
+          </button>
           {!isOperator && (
             <button
               onClick={handleModalAddOpen}
@@ -462,9 +471,8 @@ const PenyidikanList = () => {
         </div>
         <div className="flex flex-col">
           <div
-            className={`grid ${
-              isOperator ? 'grid-cols-4' : 'grid-cols-5'
-            }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
+            className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
+              }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
           >
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -503,9 +511,8 @@ const PenyidikanList = () => {
               {data.map((item: any) => {
                 return (
                   <div
-                    className={`grid ${
-                      isOperator ? 'grid-cols-4' : 'grid-cols-5'
-                    } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
+                      } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nomor_penyidikan}
                   >
                     <div
