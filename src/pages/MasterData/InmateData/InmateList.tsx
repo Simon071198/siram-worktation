@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
   apiReadAllWBP,
@@ -21,6 +21,7 @@ import ToolsTip from '../../../components/ToolsTip';
 import DropdownAction from '../../../components/DropdownAction';
 
 const InmateList = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -600,6 +601,12 @@ const InmateList = () => {
             Data Tersangka
           </h4>
 
+          <button
+            className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+            onClick={() => navigate('/daftar-kasus')}
+          >
+            Daftar Kasus
+          </button>
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
@@ -612,9 +619,8 @@ const InmateList = () => {
 
         <div className="">
           <div
-            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${
-              isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
-            }`}
+            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
+              }`}
           >
             <div className="p-2.5 xl:p-5">
               <h5 className=" font-medium uppercase ">Nama</h5>
@@ -657,9 +663,8 @@ const InmateList = () => {
                 return (
                   <div>
                     <div
-                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${
-                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                      }`}
+                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                        }`}
                     >
                       <div
                         onClick={() => handleDetailClick(item)}

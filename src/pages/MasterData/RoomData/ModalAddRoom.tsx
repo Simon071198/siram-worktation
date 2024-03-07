@@ -4,6 +4,7 @@ import {
   apiReadAlllokasiOtmil,
   apiReadZona,
 } from '../../../services/api';
+import Select from 'react-select';
 
 // interface
 interface AddRoomModalProps {
