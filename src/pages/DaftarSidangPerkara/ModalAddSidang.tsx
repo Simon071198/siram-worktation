@@ -18,6 +18,9 @@ import { Alerts } from './AlertSidang';
 import { CiGlass } from 'react-icons/ci';
 import dayjs from 'dayjs';
 // import { ipcRenderer } from 'electron';]
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -92,6 +95,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
+  const [filter, setFilter] = useState('');
 
   // useEffect untuk mengambil data dari api
 
@@ -154,6 +158,170 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       arrayTemp.push(e[i].value);
     }
     setFormState({ ...formState, hakim_id: arrayTemp });
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-nama',
+          popover: {
+            title: 'Nama Sidang',
+            description: 'Pilih nama sidang yang diinginkan',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Pilih Jenis Sidang',
+            description: 'Pilih jenis sidang yang diinginkan',
+          },
+        },
+        {
+          element: '.p-anggota',
+          popover: {
+            title: 'Anggota Oditur Penuntut',
+            description: 'Pilih anggota oditur penuntut yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Ketua Oditur',
+            description: 'Pilih ketua oditur yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kasus',
+          popover: {
+            title: 'Kasus',
+            description: 'Pilih kasus yang diinginkan',
+          },
+        },
+        {
+          element: '.input-nomor',
+          popover: {
+            title: 'Nomor Kasus',
+            description: 'Isi nomor kasus',
+          },
+        },
+        {
+          element: '.p-militer',
+          popover: {
+            title: 'Pengadilan militer',
+            description: 'Pilih pengadilan militer yang diinginkan',
+          },
+        },
+        {
+          element: '.input-juru',
+          popover: {
+            title: 'Juru Sita',
+            description: 'Isi juru sita',
+          },
+        },
+        {
+          element: '.input-pengawas',
+          popover: {
+            title: 'Pengawas peradilan militer',
+            description: 'Isi pengawas peradilan militer',
+          },
+        },
+        {
+          element: '.input-agenda',
+          popover: {
+            title: 'Agenda Sidang',
+            description: 'Isi agenda sidang',
+          },
+        },
+        {
+          element: '.input-jadwal',
+          popover: {
+            title: 'Jadwal Sidang',
+            description: 'Menentukan tanggal jadwal sidang',
+          },
+        },
+        {
+          element: '.input-perubahan',
+          popover: {
+            title: 'Perubahan Jadwal Sidang',
+            description: 'Menentukan tanggal perubahan jadwal sidang',
+          },
+        },
+        {
+          element: '.input-waktu',
+          popover: {
+            title: 'Waktu Mulai',
+            description: 'Menentukan tanggal waktu mulai',
+          },
+        },
+        {
+          element: '.input-selesai',
+          popover: {
+            title: 'Waktu Selesai',
+            description: 'Menentukan tanggal waktu selesai',
+          },
+        },
+        {
+          element: '.p-ahli',
+          popover: {
+            title: 'Ahli',
+            description: 'Pilih ahli yang diinginkan',
+          },
+        },
+        {
+          element: '.p-saksi',
+          popover: {
+            title: 'Saksi',
+            description: 'Pilih saksi yang diinginkan',
+          },
+        },
+        {
+          element: '#a-pengacara',
+          popover: {
+            title: 'Pengacara',
+            description: 'Isi dan tambah pengacara',
+          },
+        },
+        {
+          element: '.i-vonis',
+          popover: {
+            title: 'Vonis',
+            description: 'Menentukan tahun, bulan, hari vonis',
+          },
+        },
+        {
+          element: '.input-nama',
+          popover: {
+            title: 'Nama Dokumen',
+            description: 'Isi nama dokumen',
+          },
+        },
+        {
+          element: '.p-unggah',
+          popover: {
+            title: 'Unggah File',
+            description: 'Pilih file pdf yang diinginkan',
+          },
+        },
+        {
+          element: '.t-hasil',
+          popover: {
+            title: 'Hasil Vonis',
+            description: 'Isi hasil vonis',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data sidang`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleSelectJaksa = (e: any) => {
@@ -743,6 +911,18 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         : 'Tambah Data Sidang'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                <button>
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer  "
                   onClick={closeModal}
@@ -763,7 +943,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       </label>
 
                       <select
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary p-nama"
                         onChange={handleChange}
                         // placeholder="Tahap sidang"
                         name="nama_sidang"
@@ -825,7 +1005,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Pilih Jenis Sidang
                       </label>
                       <Select
-                        className="basic-single"
+                        className="basic-single p-jenis"
                         defaultValue={
                           isEdit || isDetail
                             ? {
@@ -865,7 +1045,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Anggota Oditur Penuntut
                     </label>
                     <Select
-                      className="basic-multi-select"
+                      className="basic-multi-select p-anggota"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={
@@ -987,7 +1167,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Ketua Oditur
                       </label>
                       <Select
-                        className="basic-select"
+                        className="basic-select p-ketua"
                         classNamePrefix="select"
                         defaultValue={
                           isEdit || isDetail
@@ -1059,7 +1239,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Kasus
                       </label>
                       <Select
-                        className="basic-single"
+                        className="basic-single p-kasus"
                         classNamePrefix="select"
                         defaultValue={
                           isEdit || isDetail
@@ -1121,7 +1301,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Nomor Kasus
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nomor"
                         onChange={handleChange}
                         placeholder="Nomor Kasus"
                         name="nomor_kasus"
@@ -1144,7 +1324,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Pengadilan militer
                       </label>
                       <Select
-                        className="basic-single"
+                        className="basic-single p-militer"
                         classNamePrefix="select"
                         defaultValue={
                           isEdit || isDetail
@@ -1185,7 +1365,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Juru Sita
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-juru"
                         onChange={handleChange}
                         placeholder="Juru sita"
                         name="juru_sita"
@@ -1207,7 +1387,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Pengawas peradilan militer
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-pengawas"
                         onChange={handleChange}
                         placeholder="Pengawas"
                         name="pengawas_peradilan_militer"
@@ -1234,7 +1414,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Agenda sidang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
                       onChange={handleChange}
                       placeholder="Agenda sidang"
                       name="agenda_sidang"
@@ -1260,7 +1440,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <div className="flex flex-row">
                       <input
                         type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-jadwal"
                         name="jadwal_sidang"
                         onChange={handleChange}
                         value={formState.jadwal_sidang}
@@ -1294,7 +1474,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <div className="flex flex-row">
                       <input
                         type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-perubahan"
                         name="perubahan_jadwal_sidang"
                         onChange={handleChange}
                         value={formState.perubahan_jadwal_sidang}
@@ -1328,7 +1508,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <div className="flex flex-row">
                       <input
                         type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-waktu"
                         name="waktu_mulai_sidang"
                         onChange={handleChange}
                         value={formState.waktu_mulai_sidang}
@@ -1362,7 +1542,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       <div className="flex flex-row">
                       <input
                         type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-selesai"
                         name="waktu_selesai_sidang"
                         onChange={handleChange}
                         value={formState.waktu_selesai_sidang}
@@ -1395,7 +1575,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Ahli
                     </label>
                     <Select
-                      className="basic-multi-select"
+                      className="basic-multi-select p-ahli"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={
@@ -1440,7 +1620,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Saksi
                     </label>
                     <Select
-                      className="basic-multi-select"
+                      className="basic-multi-select p-saksi"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={
@@ -1489,7 +1669,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </div>
 
                   {/* pengacara */}
-                  <div className="">
+                  <div className="" id="a-pengacara">
                     <div className="flex items-center">
                       <p className="text-white">Pengacara</p>
                       <p
@@ -1619,7 +1799,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   {/* Vonis */}
                   <div className="grid grid-cols-1 ">
                     <p className="text-white text-sm font-medium">Vonis</p>
-                    <div className=" grid grid-cols-3 gap-4 border px-2 py-2 rounded-lg border-blue-500">
+                    <div className=" grid grid-cols-3 gap-4 border px-2 py-2 rounded-lg border-blue-500 i-vonis">
                       {/* Vonis tahun */}
                       <div className="form-group w-full ">
                         <input
@@ -1686,7 +1866,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Nama Dokumen
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nama"
                       onChange={handleChange}
                       placeholder="Nama Dokumen"
                       name="nama_dokumen_persidangan"
@@ -1771,7 +1951,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="flex flex-col items-center justify-center space-y-3 p-unggah">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                             <svg
                               width="16"
@@ -1831,7 +2011,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Hasil vonis
                     </label>
                     <textarea
-                      className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-hasil"
                       name="hasil_vonis"
                       placeholder="Hasil vonis"
                       onChange={handleChange}
@@ -1879,6 +2059,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -1913,6 +2094,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

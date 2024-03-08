@@ -8,6 +8,9 @@ import {
   apiReadStatusWBP,
   apiReadjenisperkara,
 } from '../../services/api';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import utc from 'dayjs/plugin/utc';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -16,7 +19,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
 
 interface WBP {
   wbp_profile_id: string;
@@ -46,7 +48,7 @@ export const AddDaftarKasusModal = ({
     oditur_penyidik_id: [],
     saksi_id: [],
     keteranganSaksis: [],
-    zona_waktu:''
+    zona_waktu: '',
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -63,6 +65,7 @@ export const AddDaftarKasusModal = ({
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
   const [dataSaksi, setDataSaksi] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
 
@@ -104,6 +107,100 @@ export const AddDaftarKasusModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.input-nomor',
+          popover: {
+            title: 'Nomor Kasus',
+            description: 'Isi nomor kasus',
+          },
+        },
+        {
+          element: '.input-nama',
+          popover: {
+            title: 'Nama Kasus',
+            description: 'Isi nama kasus',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Perkara',
+            description: 'Pilih jenis perkara yang diinginkan',
+          },
+        },
+        {
+          element: '.input-lokasi',
+          popover: {
+            title: 'Lokasi Kasus',
+            description: 'Isi lokasi kasus',
+          },
+        },
+        {
+          element: '.i-kejadian',
+          popover: {
+            title: 'Tanggal Kejadian Kasus',
+            description: 'Menentukan tanggal kejadian kasus',
+          },
+        },
+        {
+          element: '.i-pelaporan',
+          popover: {
+            title: 'Tanggal Pelaporan Kasus',
+            description: 'Menentukan tanggal pelaporan kasus',
+          },
+        },
+        {
+          element: '.i-jumlah',
+          popover: {
+            title: 'Jumlah Penyidikan',
+            description: 'Isi jumlah penyidikan',
+          },
+        },
+        {
+          element: '.p-oditur',
+          popover: {
+            title: 'Oditur Penyidikan',
+            description: 'Pilih oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Ketua Oditur Penyidikan',
+            description: 'Pilih ketua oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-pihak',
+          popover: {
+            title: 'Pihak Terlibat',
+            description: 'Pilih pihak terlibat yang diinginkan',
+          },
+        },
+        {
+          element: '.d-nama',
+          popover: {
+            title: 'Nama Tersangka',
+            description: 'Isi dengan lengkap keterangan',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data kasus`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -501,6 +598,18 @@ export const AddDaftarKasusModal = ({
                         : 'Tambah Data Daftar Kasus'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                <button>
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -519,7 +628,7 @@ export const AddDaftarKasusModal = ({
                       Nomor Kasus
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nomor"
                       name="nomor_kasus"
                       placeholder="Nomor Kasus"
                       onChange={handleChange}
@@ -542,7 +651,7 @@ export const AddDaftarKasusModal = ({
                       Nama Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nama"
                       name="nama_kasus"
                       placeholder="Nama Kasus"
                       onChange={handleChange}
@@ -564,7 +673,7 @@ export const AddDaftarKasusModal = ({
                       Jenis Perkara
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-jenis"
                       options={jenisPerkaraOpstions}
                       isDisabled={isDetail}
                       onChange={handleSelectPerkara}
@@ -587,7 +696,7 @@ export const AddDaftarKasusModal = ({
                       Lokasi Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
                       name="lokasi_kasus"
                       placeholder="Lokasi Kasus"
                       onChange={handleChange}
@@ -611,7 +720,7 @@ export const AddDaftarKasusModal = ({
                     <div className="flex flex-row">
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
                       name="waktu_kejadian"
                       placeholder="Tanggal Kejadian Kasus"
                       onChange={handleChange}
@@ -645,7 +754,7 @@ export const AddDaftarKasusModal = ({
                     <div className="flex flex-row">
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                       name="waktu_pelaporan_kasus"
                       placeholder="Tanggal Pelaporan Kasus"
                       onChange={handleChange}
@@ -679,7 +788,7 @@ export const AddDaftarKasusModal = ({
                       Jumlah Penyidikan
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jumlah"
                       name="waktu_pelaporan_kasus"
                       placeholder="Jumlah Penyidikan"
                       onChange={handleChange}
@@ -703,7 +812,7 @@ export const AddDaftarKasusModal = ({
                       Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize text-white"
+                      className="capitalize text-white p-oditur"
                       isMulti
                       options={OditurPenyidikOpstions}
                       isDisabled={isDetail}
@@ -728,7 +837,7 @@ export const AddDaftarKasusModal = ({
                       Ketua Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-ketua"
                       options={ketuaOditurPenyidik}
                       isDisabled={isDetail}
                       onChange={handleSelectKetuaOditur}
@@ -754,7 +863,7 @@ export const AddDaftarKasusModal = ({
                     Pihak Terlibat
                   </label>
                   <Select
-                    className="capitalize"
+                    className="capitalize p-pihak"
                     isMulti
                     options={pihakTerlibat}
                     isDisabled={isDetail}
@@ -765,16 +874,19 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                        errors.includes('wbp_profile_ids')
-                        ? `${errors.includes('wbp_profile_ids')
-                          ? 'Tersangka'
-                          : ''
-                        } ${errors.includes('saksi_id') &&
-                          errors.includes('wbp_profile_ids')
-                          ? 'Dan'
-                          : ''
-                        } ${errors.includes('saksi_id') ? 'Saksi' : ''
-                        } Belum di Pilih`
+                      errors.includes('wbp_profile_ids')
+                        ? `${
+                            errors.includes('wbp_profile_ids')
+                              ? 'Tersangka'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') &&
+                            errors.includes('wbp_profile_ids')
+                              ? 'Dan'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') ? 'Saksi' : ''
+                          } Belum di Pilih`
                         : ''}
                     </p>
                   </div>
@@ -827,10 +939,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangans-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keterangans')
+                                placeholder={`${
+                                  errors.includes('keterangans')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeteranganTersangka(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -852,7 +965,7 @@ export const AddDaftarKasusModal = ({
                       Saksi
                     </label>
 
-                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t d-nama">
                       <div className="form-group w-2/6">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -891,10 +1004,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangan-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keteranganSaksis')
+                                placeholder={`${
+                                  errors.includes('keteranganSaksis')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan Saksi'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeterangan(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -910,25 +1024,27 @@ export const AddDaftarKasusModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -958,10 +1074,12 @@ export const AddDaftarKasusModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

@@ -16,12 +16,16 @@ import SearchInputButton from '../Device/Search';
 import dayjs from 'dayjs';
 import Pagination from '../../components/Pagination';
 import DropdownAction from '../../components/DropdownAction';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
 
 const SidangList = () => {
+  const [filter, setFilter] = useState('');
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [jenisSidang, setJenisSidang] = useState([]);
@@ -132,6 +136,51 @@ const SidangList = () => {
     console.log('NEW ITEM DETAIl', detailItem);
     setDetailData(detailItem);
     setModalDetailOpen(true);
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama binaan',
+          },
+        },
+        {
+          element: '.p-sidang',
+          popover: {
+            title: 'Jenis Sidang',
+            description: 'Pilih jenis sidang yang diinginkan',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama binaan',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahakan data daftar sidang',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleEditClick = (item: any) => {
@@ -499,7 +548,7 @@ const SidangList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={searchData.namaWBP}
                 placehorder="Cari nama binaan"
@@ -514,7 +563,7 @@ const SidangList = () => {
               onChange={(e) =>
                 setSearchData({ ...searchData, jenisSidang: e.target.value })
               }
-              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-sidang"
             >
               <option value="">Semua jenis sidang</option>
               {jenisSidang.map((item: any) => (
@@ -525,7 +574,7 @@ const SidangList = () => {
             </select>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search "
               type="button"
               onClick={handleSearchSidang}
               id="button-addon1"
@@ -548,10 +597,21 @@ const SidangList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex justify-between">
@@ -560,7 +620,7 @@ const SidangList = () => {
           </h4>
           <button
             onClick={() => setModalAddOpen(true)}
-            className=" text-black rounded-md bg-blue-300 w-20 h-10"
+            className=" text-black rounded-md bg-blue-300 w-20 h-10 b-tambah"
           >
             Tambah
           </button>
