@@ -21,6 +21,9 @@ import dayjs from 'dayjs';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { da } from 'date-fns/locale';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -526,6 +529,31 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       setGetSaksi([]);
     }
   };
+  
+ const handleJadwalSidang = (e: any) => {
+  console.log('1213', e);
+
+  const timeZone = dayjs().format('Z');
+  let zonaWaktu;
+  switch (timeZone) {
+    case '+07:00':
+      zonaWaktu = 'WIB';
+      break;
+    case '+08:00':
+      zonaWaktu = 'WITA';
+      break;
+    case '+09:00':
+      zonaWaktu = 'WIT';
+      break;
+    default:
+      zonaWaktu = 'Zona Waktu Tidak Dikenal';
+  }
+  setFormState({
+    ...formState,
+    jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+    zona_waktu: zonaWaktu,
+  });
+  }
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -850,10 +878,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       '_blank',
     );
 
-    // Optional: Customize the new window (size, position, etc.)
-    // if (newWindow) {
-    //   newWindow.resizeTo(500, 500);
-    // }
+    const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{ border: 'solid 1px pink' }}
+      />
+    );
   };
 
   return (
@@ -1438,13 +1469,22 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Jadwal sidang
                       </label>
                       <div className="flex flex-row">
-                      <input
-                        type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-jadwal"
+                      <DatePicker
+                        selected={
+                          formState.jadwal_sidang
+                            ? dayjs(formState.jadwal_sidang).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleJadwalSidang}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeCaption="Pilih Waktu"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        // customInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
                         name="jadwal_sidang"
-                        onChange={handleChange}
-                        value={formState.jadwal_sidang}
-                        disabled={isDetail}
+                        disabled={false}
+                        locale="id"
                       />
                       <input
                         type="text"

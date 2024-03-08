@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface AddVisitorModalProps {
   closeModal: () => void;
@@ -361,6 +363,62 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       });
     }
   }
+
+  const handleWaktuMulai = (e: any) => {
+    console.log('test', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+
+    // console.log('Formatted Date:', formattedDate);
+  console.log('Zona Waktu:', zonaWaktu);
+    setFormState({
+      ...formState,
+      waktu_mulai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  };
+
+  const handleWaktuSelesai = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_selesai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  };
+
+
+
   useEffect(() => {
     getTimeZone()
     const fetchData = async () => {
@@ -435,7 +493,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
   };
 
   const handleRuanganChange = (e: any) => {
-    const selectedRuangan = e.target.value;
+    const selectedRuangan = e.value;
 
     // Temukan data ruangan berdasarkan ID yang dipilih
     const selectedData = ruanganotmil.find(
@@ -544,6 +602,13 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       // Add your other modal styles here
     },
   };
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   return (
     <div>
@@ -645,19 +710,28 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       waktu mulai kegiatan
                     </label>
                     <div className="flex flex-row">
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
-                      name="waktu_mulai_kegiatan"
-                      onChange={handleChange}
-                      value={formState.waktu_mulai_kegiatan}
-                      disabled={isDetail}
-                    />
+                      <DatePicker
+                        selected={
+                          formState.waktu_mulai_kegiatan
+                            ? dayjs(formState.waktu_mulai_kegiatan).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleWaktuMulai}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeCaption="Pilih Waktu"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                        name="waktu_mulai_kegiatan"
+                        disabled={false}
+                        locale="id"
+                      />
                     <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                        name="zona_waktu"
-                        value={formState.zona_waktu}
+                        // name="zona_waktu"
+                        value={formState?.zona_waktu}
                         disabled
                       />
                       </div>
@@ -678,14 +752,31 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       Waktu Akhir Kegiatan
                     </label>
                     <div className="flex flex-row">
-                    <input
+                    {/* <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-akhir"
                       name="waktu_selesai_kegiatan"
                       onChange={handleChange}
                       value={formState.waktu_selesai_kegiatan}
                       disabled={isDetail}
-                    />
+                    /> */}
+                    <DatePicker
+                        selected={
+                          formState.waktu_selesai_kegiatan
+                            ? dayjs(formState.waktu_selesai_kegiatan).toDate()
+                            : dayjs().toDate()
+                        }                        
+                        onChange={handleWaktuSelesai}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeCaption="Pilih Waktu"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-akhir"
+                        name="waktu_selesai_kegiatan"
+                        disabled={false}
+                        locale="id"
+                      />
                     <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
@@ -799,6 +890,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                             }
                           : formState.ruangan_otmil_id
                       }
+                      onChange={handleRuanganChange}
                       styles={customStyles}
                       options={ruanganotmil.map((item) => ({
                         value: item.ruangan_otmil_id,
