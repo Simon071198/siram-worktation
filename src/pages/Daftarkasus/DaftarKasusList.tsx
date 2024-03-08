@@ -18,6 +18,9 @@ import DropdownAction from '../../components/DropdownAction';
 import dayjs from 'dayjs';
 import { EditDaftarKasusModal } from './modalEditdaftarKasus';
 import { AddBarangBuktiModal } from '../MasterData/BarangBukti/ModalAddBarangBukti';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface Item {
   nama_kasus: string;
@@ -65,6 +68,44 @@ const DaftarKasus = () => {
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama kasus',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama kasus',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan daftar kasus',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleSearchClick = async () => {
@@ -424,7 +465,7 @@ const DaftarKasus = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari Nama Kasus"
@@ -433,7 +474,7 @@ const DaftarKasus = () => {
             </div>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -456,10 +497,21 @@ const DaftarKasus = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -476,7 +528,7 @@ const DaftarKasus = () => {
           {!isOperator && (
             <button
               onClick={handleModalAddOpen}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

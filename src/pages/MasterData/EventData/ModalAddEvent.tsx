@@ -10,7 +10,11 @@ import {
 } from '../../../services/api';
 import { Alerts } from './AlertEvent';
 // import Select from 'react-select/dist/declarations/src/Select';
-import Select from "react-select"
+import Select from 'react-select';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+
 interface AddVisitorModalProps {
   closeModal: () => void;
   onSubmit: (params: any) => void;
@@ -77,6 +81,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
   const [selectedSourceItems, setSelectedSourceItems] = useState<string[]>([]);
   const [selectedTargetItems, setSelectedTargetItems] = useState<string[]>([]);
   const [dataEvent, setDataEvent] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -209,6 +214,93 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     }
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Kegiatan',
+            description: 'Isi nama kegiatan',
+          },
+        },
+        {
+          element: '.i-mulai',
+          popover: {
+            title: 'Waktu Mulai Kegiatan',
+            description: 'Menentukan waktu mulai kegiatan',
+          },
+        },
+        {
+          element: '.i-akhir',
+          popover: {
+            title: 'Waktu Akhir Kegiatan',
+            description: 'Menentukan waktu akhir kegiatan',
+          },
+        },
+        {
+          element: '.i-status',
+          popover: {
+            title: 'Status Kegiatan',
+            description: 'Isi status kegiatan',
+          },
+        },
+        {
+          element: '#p-ruang',
+          popover: {
+            title: 'Pilih Ruangan Otmil',
+            description: 'Pilih ruangan otmil yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jenis',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Isi jenis ruangan',
+          },
+        },
+        {
+          element: '.i-lokasi',
+          popover: {
+            title: 'Nama Lokasi Otmil',
+            description: 'Isi nama lokasi otmil',
+          },
+        },
+        {
+          element: '.i-zona',
+          popover: {
+            title: 'Zona',
+            description: 'Isi zona',
+          },
+        },
+        {
+          element: '.d-peserta',
+          popover: {
+            title: 'Pilih Peserta',
+            description: 'Pilih peserta yang diinginkan',
+          },
+        },
+        {
+          element: '.d-ikut',
+          popover: {
+            title: 'Peserta Ikut',
+            description: 'Menampilkan peserta ikut',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data event`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (
@@ -472,6 +564,20 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         : 'Tambah Data Event'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : (
+                  <button>
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -491,7 +597,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     </label>
                     <input
                       type="text"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_kegiatan"
                       dark:text-gray
                       placeholder="nama kegiatan"
@@ -515,7 +621,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     </label>
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
                       name="waktu_mulai_kegiatan"
                       onChange={handleChange}
                       value={formState.waktu_mulai_kegiatan}
@@ -539,7 +645,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     </label>
                     <input
                       type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-akhir"
                       name="waktu_selesai_kegiatan"
                       onChange={handleChange}
                       value={formState.waktu_selesai_kegiatan}
@@ -564,7 +670,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     </label>
                     <input
                       type="text"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-status"
                       name="status_kegiatan"
                       dark:text-gray
                       placeholder="Status kegiatan"
@@ -636,24 +742,25 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       ))}
                     </select> */}
                     <Select
-                    name="ruangan_otmil_id"
-                    isDisabled={isDetail}
-                    isClearable={true}
-                    isSearchable={true}
-                    placeholder="Pilih Ruangan"
-                    defaultValue={
-                      isEdit || isDetail
-                        ? {
-                            value: formState.ruangan_otmil_id,
-                            label: formState.nama_ruangan_otmil,
-                          }
-                        : formState.ruangan_otmil_id
-                    }
-                    styles={customStyles}
-                    options={ruanganotmil.map((item) => ({
-                      value: item.ruangan_otmil_id,
-                      label: item.nama_ruangan_otmil,
-                    }))}
+                      name="ruangan_otmil_id"
+                      id="p-ruang"
+                      isDisabled={isDetail}
+                      isClearable={true}
+                      isSearchable={true}
+                      placeholder="Pilih Ruangan"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.ruangan_otmil_id,
+                              label: formState.nama_ruangan_otmil,
+                            }
+                          : formState.ruangan_otmil_id
+                      }
+                      styles={customStyles}
+                      options={ruanganotmil.map((item) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -669,7 +776,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail}
@@ -690,7 +797,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lokasi"
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail}
@@ -708,7 +815,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     <input
                       type="text"
                       id="nama_zona"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-zona"
                       name="nama_zona"
                       onChange={handleChange}
                       value={formState.nama_zona}
@@ -724,7 +831,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
 
                 {isEdit ? (
                   <div className="grid grid-cols-9 w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-peserta">
                       <h2 className="py-2 rounded-md bg-slate-600 mb-2">
                         Pilih Peserta
                       </h2>
@@ -765,7 +872,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       </p>
                     </div>
 
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
                       <h2 className="py-2 rounded-md bg-slate-600 mb-2">
                         Peserta Ikut
                       </h2>
@@ -805,7 +912,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </div>
                 ) : isDetail ? (
                   <div className=" w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
                       <h2 className="py-2 rounded-md bg-slate-600 mb-2">
                         Peserta Ikut
                       </h2>
@@ -823,7 +930,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   </div>
                 ) : (
                   <div className="grid grid-cols-9 w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary bg-slate-800 focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <div className="max-h-60 focus:border-primary bg-slate-800 focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-peserta">
                       <h2 className="py-2 rounded-md bg-slate-600 mb-2">
                         Pilih Peserta
                       </h2>
@@ -861,7 +968,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       </p>
                     </div>
 
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll">
+                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
                       <h2 className="py-2 rounded-md bg-slate-600 mb-2">
                         Peserta Ikut
                       </h2>
@@ -934,6 +1041,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -968,6 +1076,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

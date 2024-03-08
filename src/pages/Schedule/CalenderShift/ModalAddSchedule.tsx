@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiReadAllScheduleShift, apiReadAllShift } from '../../../services/api';
+import {
+  apiReadAllScheduleShift,
+  apiReadAllShift,
+} from '../../../services/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
@@ -8,6 +11,9 @@ import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import 'dayjs/locale/id';
 import { Alerts } from '../SceduleShift/Alert';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
   //get Token
@@ -27,6 +33,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const [startDate, setStartDate] = useState({
     tanggal: parseInt(dayjs(selectedDate).format('D')),
@@ -92,6 +99,65 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
       bulan: parseInt(dayjs(end).format('M')),
       tahun: parseInt(dayjs(end).format('YYYY')),
     });
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.d-one',
+          popover: {
+            title: 'Tanggal Awal',
+            description: 'Menentukan tanggal awal',
+          },
+        },
+        {
+          element: '.d-second',
+          popover: {
+            title: 'Tanggal Akhir',
+            description: 'Menentukan tanggal akhir',
+          },
+        },
+        {
+          element: '.p-shift',
+          popover: {
+            title: 'Shift',
+            description: 'Pilih shift yang diinginkan',
+          },
+        },
+        {
+          element: '.i-mulai',
+          popover: {
+            title: 'Waktu Mulai',
+            description: 'Menentukan waktu mulai',
+          },
+        },
+        {
+          element: '.i-selesai',
+          popover: {
+            title: 'Waktu Selesai',
+            description: 'Menentukan waktu selesai',
+          },
+        },
+        {
+          element: '.jadwal',
+          popover: {
+            title: 'Jadwal Yang Akan Dibuat',
+            description: 'Menentukan jadwal yang akan dibuat',
+          },
+        },
+        {
+          element: '#b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleDateChangeEndDate = (date: any) => {
@@ -297,6 +363,18 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Tambah Jadwal Shift Kerja
               </h1>
+
+              {/* <div className="w-10"> */}
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -315,7 +393,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                   </label>
                   <div className="w-full flex items-center space-x-1">
                     <DatePicker
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary d-one"
                       selected={selectedDate.toDate()}
                       onChange={handleDateChange}
                       dateFormat="dd MMMM yyyy"
@@ -324,7 +402,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                     />
                     <h1>s/d</h1>
                     <DatePicker
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary d-second"
                       selected={selectedEndDate.toDate()}
                       onChange={handleDateChangeEndDate}
                       dateFormat="dd MMMM yyyy"
@@ -346,7 +424,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                     name="shift_id"
                     value={schedule.shift_id}
                     onChange={handleChangeShift}
-                    className="capitalize w-full rounded  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:focus-border-primary"
+                    className="capitalize w-full rounded  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:focus-border-primary p-shift"
                   >
                     <option value="">Pilih Shift</option>
                     {shiftData.map((item: any) => {
@@ -379,7 +457,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                       name="waktu_mulai"
                       value={jamShift.waktu_mulai}
                       type="time"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-mulai"
                     />
                     <div className="h-3">
                       <h1 className="pl-2 text-xs text-red-500">
@@ -398,7 +476,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                       name="waktu_selesai"
                       value={jamShift.waktu_selesai}
                       type="time"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-selesai"
                     />
                     <div className="h-3">
                       <h1 className="pl-2 text-xs text-red-500">
@@ -407,7 +485,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                     </div>
                   </div>
                 </div>
-                <div>
+                <div className="jadwal">
                   <h1 className="block text-sm font-medium text-black dark:text-white">
                     Jadwal Yang Akan Dibuat
                   </h1>
@@ -475,6 +553,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                   }`}
                   type="submit"
                   disabled={buttonLoad}
+                  id="b-submit"
                 >
                   {buttonLoad ? (
                     <>
