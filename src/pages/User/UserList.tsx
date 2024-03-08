@@ -17,6 +17,9 @@ import { DeleteUserModal } from './ModalDeleteUser';
 import { UbahPasswordModal } from './ModalUbahPassword';
 import SearchInputButton from '../MasterData/Search';
 import DropdownActionWithPass from '../../components/DropdownActionWithPass';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -49,6 +52,44 @@ const UserList = () => {
   // const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   //  setToken(dataToken.token)
   //   },[token])
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama pengguna',
+          },
+        },
+        {
+          element: '.p-role',
+          popover: {
+            title: 'Semua Role',
+            description: 'Pilih role yang diinginkan',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama pengguna',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data pengguna aplikasi',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
 
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
@@ -310,7 +351,7 @@ const UserList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari nama pengguna"
@@ -321,7 +362,7 @@ const UserList = () => {
             <select
               value={filterRole}
               onChange={handleFilterChangeRole}
-              className="capitalize rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="capitalize rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-role"
             >
               <option value="">Semua role</option>
               {roleData.map((item: any) => (
@@ -330,7 +371,7 @@ const UserList = () => {
             </select>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -350,6 +391,17 @@ const UserList = () => {
                 />
               </svg>
             </button>
+
+            <div className="w-5">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex justify-between">
@@ -358,7 +410,7 @@ const UserList = () => {
           </h4>
           <button
             onClick={() => setModalAddOpen(true)}
-            className=" text-black rounded-md bg-blue-300 w-20 h-10"
+            className=" text-black rounded-md bg-blue-300 w-20 h-10 b-tambah"
           >
             Tambah
           </button>

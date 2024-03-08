@@ -4,6 +4,9 @@ import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { set } from 'react-hook-form';
 import { allKameraOtmilByLocation } from '../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -17,6 +20,7 @@ const CameraPlayback = () => {
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
+  const [filter, setFilter] = useState('');
   const [date, setDate] = useState('2023-11-20');
   const [timeStart, setTimeStart] = useState('15:04:00');
   const [timeFinish, setTimeFinish] = useState('18:05:00');
@@ -178,6 +182,51 @@ const CameraPlayback = () => {
     playerRef.current.seekTo(0);
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-kamera',
+          popover: {
+            title: 'Select Camera',
+            description: 'Pilih camera yang diinginkan',
+          },
+        },
+        {
+          element: '.i-date',
+          popover: {
+            title: 'Date',
+            description: 'Menentukan tanggal playback camera',
+          },
+        },
+        {
+          element: '.i-time',
+          popover: {
+            title: 'Time',
+            description: 'Menentukan waktu playback camera',
+          },
+        },
+        {
+          element: '.i-times',
+          popover: {
+            title: 'Time',
+            description: 'Menentukan waktu playback camera',
+          },
+        },
+        {
+          element: '.r-player',
+          popover: {
+            title: 'React Player',
+            description: 'Menampilkan hasil playback camera',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   // Handle video playback ended
   const handleVideoEnded = () => {
     setCurrentVideoIndex(
@@ -206,7 +255,7 @@ const CameraPlayback = () => {
         <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
       )}
       <div className="flex justify-around gap-4 mb-4">
-        <select onChange={handleCameraChange}>
+        <select onChange={handleCameraChange} className="p-kamera">
           <option value="">Select a Camera</option>
           {dataAllCamera.map((data, index) => (
             <option key={data.kamera_id} value={index}>
@@ -215,16 +264,37 @@ const CameraPlayback = () => {
           ))}
         </select>
 
-        <input type="date" value={date} onChange={handleDateChange} />
-        <input type="time" value={timeStart} onChange={handleTimeStartChange} />
+        <input
+          type="date"
+          value={date}
+          onChange={handleDateChange}
+          className="i-date"
+        />
+        <input
+          type="time"
+          value={timeStart}
+          onChange={handleTimeStartChange}
+          className="i-time"
+        />
         <input
           type="time"
           value={timeFinish}
           onChange={handleTimeFinishChange}
+          className="i-times"
         />
+        <div className="w-5">
+          <button>
+            <HiQuestionMarkCircle
+              values={filter}
+              aria-placeholder="Show tutorial"
+              // onChange={}
+              onClick={handleClickTutorial}
+            />
+          </button>
+        </div>
       </div>
       {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
-      <div className="player-wrapper">
+      <div className="player-wrapper r-player">
         <ReactPlayer
           className="react-player"
           url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"

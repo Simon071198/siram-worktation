@@ -5,6 +5,9 @@ import { apiVisitorRealtimeLogList } from '../../../services/api';
 
 import { webserviceurl } from '../../../services/api';
 import { NavLink } from 'react-router-dom';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -54,6 +57,7 @@ export default function Realtime() {
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [filter, setFilter] = useState('');
 
   const handleLocationChange = (event: any) => {
     setSelectedLocation(event.target.value);
@@ -88,6 +92,65 @@ export default function Realtime() {
       document.body.removeChild(tempLink);
     }
   }
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-analitik',
+          popover: {
+            title: 'Pilih Analitik',
+            description: 'Pilih analitik yang diinginkan',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama',
+            description: 'Isi nama',
+          },
+        },
+        {
+          element: '.i-usia',
+          popover: {
+            title: 'Usia',
+            description: 'Isi usia',
+          },
+        },
+        {
+          element: '.p-gender',
+          popover: {
+            title: 'Pilih Gender',
+            description: 'Pilih gender yang diinginkan',
+          },
+        },
+        {
+          element: '.p-lokasi',
+          popover: {
+            title: 'Pilih Lokasi',
+            description: 'Pilih lokasi yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kamera',
+          popover: {
+            title: 'Pilih Kamera',
+            description: 'Pilih kamera yang diinginkan',
+          },
+        },
+        {
+          element: '.b-csv',
+          popover: {
+            title: 'Export CSV',
+            description: 'Klik untuk mendapatkan file export csv',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
 
   const handleExportClick = () => {
     if (data && data.length > 0) {
@@ -198,7 +261,7 @@ export default function Realtime() {
                 <select
                   id="analytics-select"
                   name="Select Analytics"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-analitik"
                   value={selectedAnalytics}
                   onChange={(e) => setSelectedAnalytics(e.target.value)}
                 >
@@ -219,7 +282,7 @@ export default function Realtime() {
                     id="name-input"
                     type="text"
                     name="Name"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-nama"
                     value={selectedName}
                     onChange={(e) => setSelectedName(e.target.value)}
                   />
@@ -238,7 +301,7 @@ export default function Realtime() {
                     id="age-input"
                     type="text"
                     name="Age"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-usia"
                     value={selectedAge}
                     onChange={(e) => setSelectedAge(e.target.value)}
                   />
@@ -275,7 +338,7 @@ export default function Realtime() {
                   <select
                     id="gender-select"
                     name="Select Gender"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-gender"
                     value={selectedGender}
                     onChange={(e) => setSelectedGender(e.target.value)}
                   >
@@ -295,7 +358,7 @@ export default function Realtime() {
                 <select
                   id="location-select"
                   name="Select Location"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-lokasi"
                   value={selectedLocation}
                   onChange={handleLocationChange}
                 >
@@ -316,7 +379,7 @@ export default function Realtime() {
                 <select
                   id="device-select"
                   name="Select Device"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-kamera"
                   value={selectedDevice}
                   onChange={handleDeviceChange}
                 >
@@ -333,7 +396,7 @@ export default function Realtime() {
 
           <button
             onClick={handleExportClick}
-            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded"
+            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded b-csv"
           >
             Export CSV
           </button>
@@ -344,7 +407,21 @@ export default function Realtime() {
           />
         </div>
       </div>
-      <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
+      <div className="w-full flex justify-between">
+        <div>
+          <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
+        </div>
+
+        <button>
+          <HiQuestionMarkCircle
+            values={filter}
+            aria-placeholder="Show tutorial"
+            // onChange={}
+            onClick={handleClickTutorial}
+          />
+        </button>
+      </div>
+
       {selectedAnalytics == 'unrecognized' ? (
         <div className="flex flex-col">
           <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-meta-4 dark:bg-slate-600 sm:grid-cols-5">

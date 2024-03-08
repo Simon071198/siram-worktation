@@ -567,7 +567,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : (
-                  <button>
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

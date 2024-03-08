@@ -451,14 +451,16 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                 </div>
 
                 {/* <div className="w-10"> */}
-                <button>
-                  <HiQuestionMarkCircle
-                    values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>
+                {isDetail ? null : (
+                  <button className="pr-60">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 {/* </div> */}
 
                 <strong

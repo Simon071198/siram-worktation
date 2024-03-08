@@ -422,7 +422,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : (
-                  <button>
+                  <button className="pr-70">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
