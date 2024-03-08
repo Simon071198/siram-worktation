@@ -519,8 +519,10 @@ const DaftarKasus = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Daftar Kasus
           </h4>
+          <div className='flex gap-3'>
+
           <button
-          className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
+          className='text-black rounded-md font-semibold py-2 px-3 bg-green-500'
           onClick={() => navigate('/penyidikan')}
           >
             Penyidikan
@@ -533,6 +535,7 @@ const DaftarKasus = () => {
               Tambah
             </button>
           )}
+        </div>
         </div>
         <div className="">
           <div

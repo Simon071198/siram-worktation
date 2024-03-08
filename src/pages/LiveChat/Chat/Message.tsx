@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import iconPicture from '../../../../../assets/icon.png';
+import iconPicture from '../../../images/icon.png';
 import { time } from 'console';
 
 const Message = (props: any) => {

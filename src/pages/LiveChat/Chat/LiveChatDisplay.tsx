@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import ChatMessages from './Messages';
 import Input from './InputChat';
-import iconPicture from '../../../../../assets/icon.png';
+import iconPicture from '../../../images/icon.png';
 
 const socket = io('http://192.168.1.135:4010');
 

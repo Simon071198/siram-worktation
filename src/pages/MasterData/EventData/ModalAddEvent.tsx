@@ -10,7 +10,8 @@ import {
 } from '../../../services/api';
 import { Alerts } from './AlertEvent';
 // import Select from 'react-select/dist/declarations/src/Select';
-import Select from 'react-select';
+import Select from "react-select"
+import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -67,6 +68,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     jenis_ruangan_otmil: defaultValue?.jenis_ruangan_otmil ?? '',
     nama_lokasi_otmil: defaultValue?.nama_lokasi_otmil ?? '',
     nama_zona: defaultValue?.status_zona_otmil ?? '',
+    zona_waktu: defaultValue?.zona_waktu ??'',
   });
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -336,8 +338,31 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     console.log(onSubmit);
     // closeModal();
   };
-
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  }
   useEffect(() => {
+    getTimeZone()
     const fetchData = async () => {
       let params = {
         pageSize: 1000,
@@ -619,6 +644,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     >
                       waktu mulai kegiatan
                     </label>
+                    <div className="flex flex-row">
                     <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
@@ -627,6 +653,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       value={formState.waktu_mulai_kegiatan}
                       disabled={isDetail}
                     />
+                    <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                      </div>
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'waktu_mulai_kegiatan'
@@ -643,6 +677,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     >
                       Waktu Akhir Kegiatan
                     </label>
+                    <div className="flex flex-row">
                     <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-akhir"
@@ -651,6 +686,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       value={formState.waktu_selesai_kegiatan}
                       disabled={isDetail}
                     />
+                    <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'waktu_selesai_kegiatan'

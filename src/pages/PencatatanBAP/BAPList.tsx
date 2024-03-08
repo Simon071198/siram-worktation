@@ -491,8 +491,10 @@ const BAPList = () => {
           <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
             Data Pencatatan BAP
           </h4>
+          <div className='flex gap-3'>
+
           <button
-            className='text-black rounded-md font-semibold w-20 h-10 bg-green-600'
+            className='text-black rounded-md font-semibold w-20 h-10 bg-green-500'
             onClick={() => navigate('/daftar-sidang')}
           >
             Sidang
@@ -506,6 +508,7 @@ const BAPList = () => {
               Tambah
             </button>
           )}
+        </div>
         </div>
 
         <div className="flex flex-col">
