@@ -619,7 +619,7 @@ export const EditDaftarKasusModal = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : (
-                  <button className="pr-70">
+                  <button className="pr-75">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

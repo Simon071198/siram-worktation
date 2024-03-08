@@ -17,9 +17,11 @@ import { DeleteUserModal } from './ModalDeleteUser';
 import { UbahPasswordModal } from './ModalUbahPassword';
 import SearchInputButton from '../MasterData/Search';
 import DropdownActionWithPass from '../../components/DropdownActionWithPass';
+import * as xlsx from 'xlsx';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import dayjs from 'dayjs';
 
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -40,6 +42,7 @@ const UserList = () => {
   const [filterRole, setFilterRole] = useState('');
   const [roleData, setRoleData] = useState([]);
   // const [token,setToken] = useState(null)
+  const [dataExcel, setDataExcel] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -296,6 +299,43 @@ const UserList = () => {
     fetchData();
   }, [currentPage]);
 
+  const exportToExcel = async () => {
+    const dataToExcel = [
+      [
+        'Nama Petugas',
+        'Role',
+        'NRP',
+        'Matra',
+        'Jabatan',
+        'Divisi',
+        'Email',
+        'Phone',
+        'Suspended',
+        'Masa Berlaku Akun',
+      ],
+      ...dataExcel.map((item: any) => [
+        item.nama,
+        item.role_name,
+        item.nrp,
+        item.nama_matra,
+        item.jabatan,
+        item.divisi,
+        item.email,
+        item.phone,
+        item.is_suspended,
+        item.expiry_date,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-Pengguna ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+  };
+
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
@@ -390,6 +430,13 @@ const UserList = () => {
                   clip-rule="evenodd"
                 />
               </svg>
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
+            >
+              Export&nbsp;Excel
             </button>
 
             <div className="w-5">

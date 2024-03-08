@@ -521,7 +521,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                 </div>
 
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-70">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

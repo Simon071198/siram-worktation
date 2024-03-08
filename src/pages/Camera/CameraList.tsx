@@ -79,7 +79,7 @@ const CameraList = () => {
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen">
         {/* <div className="flex flex-col items-center"> */}
         <div className="w-full flex justify-center pt-5">
-          <h2 className="font-bold text-xl tracking-tight mr-5">
+          <h2 className="font-bold text-xl tracking-tight mr-3">
             Daftar Kamera
           </h2>
           {/* <div className="w-5"> */}

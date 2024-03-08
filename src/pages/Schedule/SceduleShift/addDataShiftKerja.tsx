@@ -189,8 +189,17 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
               </h1>
 
               {/* <div className="w-10"> */}
-              {isDetail ? null : (
-                <button className="pr-40">
+              {isDetail ? null : isEdit ? (
+                <button className="pr-55">
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+              ) : (
+                <button className="pr-45">
                   <HiQuestionMarkCircle
                     values={filter}
                     aria-placeholder="Show tutorial"

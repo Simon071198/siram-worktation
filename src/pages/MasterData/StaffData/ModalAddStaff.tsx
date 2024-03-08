@@ -14,6 +14,9 @@ import {
   apiStatusKawin,
 } from '../../../services/api';
 import { Alerts } from './AlertStaff';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 // interface
 // interface AddStaffModalProps {
@@ -120,6 +123,7 @@ export const AddStaffModal = ({
   const [keahlian, setKeahlian] = useState<Keahlian[]>([]);
   const [kesatuan, setKesatuan] = useState<Kesatuan[]>([]);
   const [matra, setMatra] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [filteredKesatuan, setFilteredKesatuan] = useState(kesatuan);
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -186,6 +190,163 @@ export const AddStaffModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: `${isEdit ? '.b-edit' : '.b-unggah'}`,
+          popover: {
+            title: `${isEdit ? 'Edit Gambar' : 'Unggah Gambar'}`,
+            description: `Klik untuk ${isEdit ? 'mengedit' : 'mengunggah'} gambar`,
+          },
+        },
+        {
+          element: '.b-del',
+          popover: {
+            title: 'Button Delete',
+            description: 'Klik untuk menghapus gambar',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama',
+            description: 'Isi nama petugas',
+          },
+        },
+        {
+          element: '#p-pangkat',
+          popover: {
+            title: 'Pangkat',
+            description: 'Pilih pangkat yang diinginkan',
+          },
+        },
+        {
+          element: '.p-matra',
+          popover: {
+            title: 'Matra',
+            description: 'Pilih matra petugas',
+          },
+        },
+        {
+          element: '.i-nrp',
+          popover: {
+            title: 'NRP',
+            description: 'Isi nrp petugas',
+          },
+        },
+        {
+          element: '.p-lokasi',
+          popover: {
+            title: 'Pilih Lokasi Petugas',
+            description: 'Pilih lokasi petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kesatuan',
+          popover: {
+            title: 'Pilih Kesatuan',
+            description: 'Pilih kesatuan petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jabatan',
+          popover: {
+            title: 'Jabatan',
+            description: 'Isi jabatan petugas',
+          },
+        },
+        {
+          element: '.i-divisi',
+          popover: {
+            title: 'Divisi',
+            description: 'Isi divisi petugas',
+          },
+        },
+        {
+          element: '.p-militer',
+          popover: {
+            title: 'Pendidikan Militer',
+            description: 'Pilih kesatuan petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ahli',
+          popover: {
+            title: 'Keahlian',
+            description: 'Pilih keahlian petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Kelamin',
+            description: 'Pilih jenis kelamin',
+          },
+        },
+        {
+          element: '.p-agama',
+          popover: {
+            title: 'Agama',
+            description: 'Pilih agama',
+          },
+        },
+        {
+          element: '.i-lahir',
+          popover: {
+            title: 'Tempat Lahir',
+            description: 'Isi tempat lahir',
+          },
+        },
+        {
+          element: '.i-tanggal',
+          popover: {
+            title: 'Tanggal Lahir',
+            description: 'Menentukan tanggal lahir',
+          },
+        },
+        {
+          element: '.p-status',
+          popover: {
+            title: 'Status Kawin',
+            description: 'Pilih status kawin',
+          },
+        },
+        {
+          element: '.p-provin',
+          popover: {
+            title: 'Provinsi',
+            description: 'Pilih provinsi',
+          },
+        },
+        {
+          element: '.p-kota',
+          popover: {
+            title: 'Kota',
+            description: 'Pilih kota',
+          },
+        },
+        {
+          element: '.t-alamat',
+          popover: {
+            title: 'Alamat',
+            description: 'Isi alamat dengan lengkap',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data petugas`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -551,6 +712,29 @@ export const AddStaffModal = ({
                         : 'Tambah Data Petugas'}
                   </h3>
                 </div>
+
+                {/* <div className="w-5"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-75">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -577,7 +761,7 @@ export const AddStaffModal = ({
                       </div>
                     )}
                     {isEdit && (
-                      <div className="form-group w-full h-fit ">
+                      <div className="form-group w-full h-fit">
                         <div className="mt-1 flex flex-col items-center">
                           {formState.foto_wajah ? (
                             formState.foto_wajah.startsWith('data:image/') ? (
@@ -613,13 +797,13 @@ export const AddStaffModal = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-edit">
                                 Edit Gambar
                               </div>
                             </label>
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -648,7 +832,7 @@ export const AddStaffModal = ({
                       </div>
                     )}
                     {!isEdit && !isDetail && (
-                      <div className="form-group w-full h-fit ">
+                      <div className="form-group w-full h-fit">
                         <div className=" mt-1 flex flex-col items-center">
                           {formState.foto_wajah ? (
                             <img
@@ -672,14 +856,14 @@ export const AddStaffModal = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-unggah">
                                 Unggah Gambar
                               </div>
                             </label>
 
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -718,7 +902,7 @@ export const AddStaffModal = ({
                           Nama
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                           name="nama"
                           placeholder="Nama"
                           onChange={handleChange}
@@ -741,6 +925,7 @@ export const AddStaffModal = ({
                         </label>
                         <Select
                           className="basic-single"
+                          id="p-pangkat"
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={
@@ -778,7 +963,7 @@ export const AddStaffModal = ({
                         </label>
 
                         <Select
-                          className="basic-single"
+                          className="basic-single p-matra"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -815,7 +1000,7 @@ export const AddStaffModal = ({
                           NRP
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nrp"
                           name="nrp"
                           placeholder="NRP"
                           onChange={handleChange}
@@ -858,7 +1043,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-lokasi"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -914,7 +1099,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-kesatuan"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -951,7 +1136,7 @@ export const AddStaffModal = ({
                           Jabatan
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jabatan"
                           name="jabatan"
                           placeholder="Jabatan"
                           onChange={handleChange}
@@ -973,7 +1158,7 @@ export const AddStaffModal = ({
                           Divisi
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-divisi"
                           name="divisi"
                           placeholder="Divisi"
                           onChange={handleChange}
@@ -996,7 +1181,7 @@ export const AddStaffModal = ({
                           Pendidikan Militer
                         </label>
                         <Select
-                          className="basic-single"
+                          className="basic-single p-militer"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -1050,7 +1235,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-ahli"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -1089,7 +1274,7 @@ export const AddStaffModal = ({
                           Jenis Kelamin
                         </label>
                         <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-jenis"
                           name="jenis_kelamin"
                           onChange={handleChange}
                           value={formState.jenis_kelamin}
@@ -1135,7 +1320,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-agama"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -1172,7 +1357,7 @@ export const AddStaffModal = ({
                           Tempat Lahir
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lahir"
                           name="tempat_lahir"
                           placeholder="Tempat Lahir"
                           onChange={handleChange}
@@ -1197,7 +1382,7 @@ export const AddStaffModal = ({
                         </label>
                         <input
                           type="date"
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-tanggal"
                           name="tanggal_lahir"
                           onChange={handleChange}
                           value={formState.tanggal_lahir}
@@ -1239,7 +1424,7 @@ export const AddStaffModal = ({
                             ))}
                           </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-status"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -1298,7 +1483,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-provin"
                           classNamePrefix="select"
                           defaultValue={
                             isEdit || isDetail
@@ -1356,7 +1541,7 @@ export const AddStaffModal = ({
                             ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-kota"
                           classNamePrefix="select"
                           defaultValue={
                             isEdit || isDetail
@@ -1400,7 +1585,7 @@ export const AddStaffModal = ({
                           Alamat
                         </label>
                         <textarea
-                          className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-alamat"
                           name="alamat"
                           placeholder="Alamat"
                           onChange={handleChange}
@@ -1425,6 +1610,7 @@ export const AddStaffModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -1459,6 +1645,7 @@ export const AddStaffModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

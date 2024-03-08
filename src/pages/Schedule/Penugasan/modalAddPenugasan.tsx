@@ -129,7 +129,7 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
               </h1>
 
               {/* <div className="w-10"> */}
-              <button className="pr-40">
+              <button className="pr-45">
                 <HiQuestionMarkCircle
                   values={filter}
                   aria-placeholder="Show tutorial"

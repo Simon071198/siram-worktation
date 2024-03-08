@@ -351,7 +351,16 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                 </div>
 
                 {/* <div className="w-5"> */}
-                {isDetail ? null : (
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
                   <button className="pr-75">
                     <HiQuestionMarkCircle
                       values={filter}
