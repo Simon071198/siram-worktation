@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
+import toast, { Toaster } from 'react-hot-toast';
+
 // import DocViewer, { DocViewerRenderers } from "@react-pdf-viewer/core";
 import { apiReadPenyidikan } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -186,18 +188,31 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
 
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
+    const maxSizeInBytes = 10 * 1024 * 1024; // 5 MB, adjust as needed
+  
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        // File size exceeds the limit, handle the error as you wish
+        console.log('File size exceeds the limit.');
+        toast.error("File size exceeds limit of 10MB. Please reduce file size and try again.")
+        return;
+      }
+  
       const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
-
+  
       reader.onloadend = async () => {
-        setFormState({ ...formState, pdf_file_base64: reader.result });
-
-        console.log(formState.pdf_file_base64, 'Preview');
+        await setFormState({ ...formState, pdf_file_base64: reader.result });
+        // console.log(formState.pdf_file_base64, 'Preview');
+        // console.log(file, 'Preview');
+        // console.log(reader.result, 'Preview');
       };
+      
       reader.readAsDataURL(file);
+      // console.log(formState.pdf_file_base64, 'Preview');
     }
   };
+  
+
   const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
   console.log(formState, 'ada');
 
@@ -666,8 +681,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     Dokumen BAP
                   </label>
                   <div
-                    className="relative block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5 padding-100"
-                    style={{ height: '200%' }}
+                    className="relative block w-full appearance-none overflow-hidden rounded border border-blue-500  bg-red-600 py-4 px-4 dark:bg-meta-4 sm:py-7.5 padding-100"
+                    // style={{ height: '200%' }}
                   >
                     <input
                       type="file"
@@ -700,35 +715,49 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                           </button>
                         </div>
                         <div className="">
-                          <div style={{ height: '200%' }}>
-                            {/* pdf */}
-                            {file && (
-                              <div className="padding-100 top-10">
-                                {file == 'pdf' ? (
-                                  <iframe
-                                    src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                    title="pdf"
-                                    width="100%"
-                                    height="420%"
-                                    className="border-0 text-center justify-center"
-                                    scrolling="no"
-                                  />
-                                ) : file == 'docx' || file == 'doc' ? (
-                                  // {/* docx */}
-                                  <iframe
-                                    src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                    title="docx"
-                                    width="100%"
-                                    height="220%"
-                                    // className="border-0 text-center justify-center padding-left-10"
-                                  ></iframe>
-                                ) : (
-                                  <p>Ekstensi file tidak didukung</p>
-                                )}
-                              </div>
-                            )}
+                          <div style={{ height: '10%' }}>
+                              {/* pdf */}
+                              {file && (
+                                  <div className="">
+                                      {file === 'pdf' ? (
+                                          <iframe
+                                              src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                              title="pdf"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              className="border-0 text-center justify-center"
+                                              // scrolling="no"
+                                          />
+                                      ) : (file === 'docx' || file === 'doc' ) ? (
+                                          // {/* docx */}
+                                          <iframe
+                                              src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                              title="docx"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              // className="border-0 text-center justify-center padding-left-10"
+                                          ></iframe>
+                                      ) : (
+                                          <p>Ekstensi file tidak didukung</p>
+                                      )}
+                                  </div>
+                              )}
+                              {formState.pdf_file_base64 && (
+                                  <div className="">
+                                          <embed
+                                              src={`${formState.pdf_file_base64}`}
+                                              title="pdf"
+                                              type="application/pdf"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              className="border-0 text-center justify-center"
+                                              // scrolling="no"
+                                          />
+                                   
+                                  </div>
+                              )}
                           </div>
-                        </div>
+                      </div>
                         <p className="text-center text-sm text-blue-500">
                           Dokumen terupload !
                         </p>
