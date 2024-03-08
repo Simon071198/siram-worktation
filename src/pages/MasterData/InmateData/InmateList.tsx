@@ -600,27 +600,29 @@ const InmateList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Tersangka
           </h4>
-
-          <button
-            className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
-            onClick={() => navigate('/daftar-kasus')}
-          >
-            Daftar Kasus
-          </button>
-          {!isOperator && (
+          <div className="flex gap-3">
             <button
-              onClick={() => setModalAddOpen(true)}
-              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500"
+              onClick={() => navigate('/daftar-kasus')}
             >
-              Tambah
+              Daftar Kasus
             </button>
-          )}
+            {!isOperator && (
+              <button
+                onClick={() => setModalAddOpen(true)}
+                className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              >
+                Tambah
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="">
           <div
-            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
-              }`}
+            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${
+              isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
+            }`}
           >
             <div className="p-2.5 xl:p-5">
               <h5 className=" font-medium uppercase ">Nama</h5>
@@ -663,8 +665,9 @@ const InmateList = () => {
                 return (
                   <div>
                     <div
-                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                        }`}
+                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${
+                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      }`}
                     >
                       <div
                         onClick={() => handleDetailClick(item)}

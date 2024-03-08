@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import IconProfile from '../../../../../assets/icon.png';
+import iconPicture from '../../../images/icon.png';
 import SearchChat from './SearchChat';
 
 interface SidebarLiveChatProps {
