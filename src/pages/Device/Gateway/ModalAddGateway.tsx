@@ -4,6 +4,9 @@ import {
   apiReadAlllokasiOtmil,
   apiReadZona,
 } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 // interface
 interface AddGatewayModalProps {
@@ -68,6 +71,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
   const [NamaZona, setNamaZona] = useState<namazona[]>([]);
   const [ruanganotmil, setruanganotmil] = useState<ruangan[]>([]);
   const [lokasiotmil, setlokasiotmil] = useState<lokasi[]>([]);
+  const [filter, setFilter] = useState('');
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -118,6 +122,72 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
     }
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Gateway',
+            description: 'Isi nama gateway',
+          },
+        },
+        {
+          element: '.i-gmac',
+          popover: {
+            title: 'GMAC',
+            description: 'Isi GMAC',
+          },
+        },
+        {
+          element: '.p-status',
+          popover: {
+            title: 'Status Gateway',
+            description: 'Pilih status gateway yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ruang',
+          popover: {
+            title: 'Pilih Ruangan Otmil',
+            description: 'Pilih ruangan otmil yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jenis',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Isi jenis ruangan',
+          },
+        },
+        {
+          element: '.i-lokasi',
+          popover: {
+            title: 'Nama Lokasi Otmil',
+            description: 'Isi nama lokasi otmil',
+          },
+        },
+        {
+          element: '.i-zona',
+          popover: {
+            title: 'Zona',
+            description: 'Isi zona',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data gateway`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (
@@ -279,6 +349,29 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                         : 'Tambah Data Gateway'}
                   </h3>
                 </div>
+
+                {/* <div className="w-5"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-75">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -296,7 +389,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       Nama Gateway
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_gateway"
                       placeholder="Nama Gateway"
                       onChange={handleChange}
@@ -318,7 +411,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       GMAC
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-gmac"
                       name="gmac"
                       placeholder="GMAC"
                       onChange={handleChange}
@@ -340,7 +433,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       Status Gateway
                     </label>
                     <select
-                      className="w-full rounded border border-stroke py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-status"
                       name="status_gateway"
                       onChange={handleChange}
                       value={formState.status_gateway}
@@ -367,7 +460,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                     <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-ruang"
                       value={formState.ruangan_otmil_id}
                       onChange={handleRuanganChange}
                       disabled={isDetail}
@@ -396,7 +489,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail || isEdit}
@@ -417,7 +510,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lokasi"
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail || isEdit}
@@ -435,7 +528,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                     <input
                       type="text"
                       id="nama_zona"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-zona"
                       name="nama_zona"
                       onChange={handleChange}
                       defaultValue={formState.status_zona_ruangan_otmil}
@@ -459,6 +552,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -484,7 +578,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       ) : (
                         ''
                       )}
-                      Ubah Data Gelang
+                      Ubah Data Gateway
                     </button>
                   ) : (
                     <button
@@ -493,6 +587,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -518,7 +613,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       ) : (
                         ''
                       )}
-                      Tambah Data Gelang
+                      Tambah Data Gateway
                     </button>
                   )}
                   {errors.filter((item: string) =>

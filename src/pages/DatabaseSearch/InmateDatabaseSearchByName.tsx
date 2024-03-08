@@ -5,6 +5,9 @@ import {
   apiWatchlistHistory,
 } from '../../services/api';
 import { webserviceurl } from '../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 export default function InmateDatabaseSearchByName() {
   const [searchName, setSearchName] = useState('');
@@ -19,8 +22,9 @@ export default function InmateDatabaseSearchByName() {
   const [detailWatchlist, setDetailDpo] = useState([{}]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [filter, setFilter] = useState('');
 
-  const handleClose = (event:any, reason:any) => {
+  const handleClose = (event: any, reason: any) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -28,14 +32,46 @@ export default function InmateDatabaseSearchByName() {
     setIsFound(false);
     setIsNotFound(false);
   };
-  const handleCardClick = async (data:any) => {
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-cari',
+          popover: {
+            title: 'Cari Prajurit Binaan',
+            description: 'Mencari prajurit binaan',
+          },
+        },
+        {
+          element: '#b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari prajurit binaan',
+          },
+        },
+        {
+          element: '.d-hasil',
+          popover: {
+            title: 'Hasil Pencarian',
+            description: 'Menampilkan semua hasil pencarian',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
+  const handleCardClick = async (data: any) => {
     await setSelectedCard(data);
     console.log(data);
     await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(
       (res) => {
         console.log(res);
         setDetailDpo(res.records);
-      }
+      },
     );
     await setIsModalOpen(true); // Open the modal when a card is clicked
   };
@@ -66,23 +102,40 @@ export default function InmateDatabaseSearchByName() {
       <div className="relative w-full h-60 bg-boxdark shadow-md">
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 "></div>
         <div className="mx-4 relative ">
-          <h1 className="py-4 text-white text-xl">
-            Pencarian Prajurit Binaan di Database
-          </h1>
+          <div className="w-full flex justify-between">
+            <h1 className="py-4 text-white text-xl">
+              Pencarian Prajurit Binaan di Database
+            </h1>
+
+            {/* <div className="w-5"> */}
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+            {/* </div> */}
+          </div>
+
           <div className="border-[0.1px] border-b border-white opacity-30 "></div>
           <div className="mt-10 grid grid-cols-1 text-center">
             <div className="flex flex-col text-white">
               {/* <p className="text-3xl">LOGO SIRAM</p> */}
               <p className="text-2xl">SIRAM Workstation</p>
-              <p className='text-sm text-slate-500 font-light'> Pencarian berdasarkan nama prajurit binaan</p>
+              <p className="text-sm text-slate-500 font-light">
+                {' '}
+                Pencarian berdasarkan nama prajurit binaan
+              </p>
             </div>
             <div className="flex justify-center mt-4">
               <div className="flex items-center bg-white px-4 py-2 rounded-full focus:border-teal-500">
                 <input
-                  className="w-[400px] text-lg focus-visible:outline-none text-black"
+                  className="w-[400px] text-lg focus-visible:outline-none text-black i-cari"
                   placeholder="Cari prajurit binaan"
                 ></input>
-                <button>
+                <button id="b-search">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -115,7 +168,7 @@ export default function InmateDatabaseSearchByName() {
 
       <div className="h-[400px] overflow-y-scroll">
         <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px]">
-          <div className=" grid grid-cols-1 gap-6">
+          <div className=" grid grid-cols-1 gap-6 d-hasil">
             <div className="bg-boxdark px-4 py-4 flex">
               <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
                 <img
@@ -135,15 +188,15 @@ export default function InmateDatabaseSearchByName() {
                 </div>
                 <div className="flex flex-col mt-6 item-center  w-full">
                   <p className="text-lg">Keterangan</p>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      width='15'
-                      height='15'
+                      width="15"
+                      height="15"
                     >
                       <path
                         stroke-linecap="round"
@@ -156,7 +209,6 @@ export default function InmateDatabaseSearchByName() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="bg-boxdark px-4 py-4 flex">
@@ -178,15 +230,15 @@ export default function InmateDatabaseSearchByName() {
                 </div>
                 <div className="flex flex-col mt-6 item-center  w-full">
                   <p className="text-lg">Keterangan</p>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      width='15'
-                      height='15'
+                      width="15"
+                      height="15"
                     >
                       <path
                         stroke-linecap="round"
@@ -199,7 +251,6 @@ export default function InmateDatabaseSearchByName() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div className="bg-boxdark px-4 py-4 flex">
@@ -221,15 +272,15 @@ export default function InmateDatabaseSearchByName() {
                 </div>
                 <div className="flex flex-col mt-6 item-center  w-full">
                   <p className="text-lg">Keterangan</p>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      width='15'
-                      height='15'
+                      width="15"
+                      height="15"
                     >
                       <path
                         stroke-linecap="round"
@@ -242,7 +293,6 @@ export default function InmateDatabaseSearchByName() {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
