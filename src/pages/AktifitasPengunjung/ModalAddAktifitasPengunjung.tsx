@@ -12,6 +12,8 @@ import dayjs from 'dayjs';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 // interface
 interface AddAktifitasPengunjungModalProps {
@@ -322,6 +324,56 @@ export const AddAktifitasPengunjung: React.FC<
     });
   };
 
+  const handleMulaiBerkunjung = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_mulai_kunjungan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const handleSelesaiBerkunjung = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_selesai_kunjungan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -613,23 +665,31 @@ export const AddAktifitasPengunjung: React.FC<
                       Waktu Mulai Berkunjung
                     </label>
                     <div className="flex flex-row">
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
-                      name="waktu_mulai_kunjungan"
-                      placeholder="waktu mulai kunjungan"
-                      onChange={handleChange}
-                      value={formState.waktu_mulai_kunjungan}
-                      disabled={isDetail}
-                    />
-                    <input
+                      <DatePicker
+                        selected={
+                          formState.waktu_mulai_kunjungan
+                            ? dayjs(formState.waktu_mulai_kunjungan).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleMulaiBerkunjung}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        timeCaption="time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
+                        name="waktu_mulai_kunjungan"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"
                         value={formState.zona_waktu}
                         disabled
                       />
-                      </div>
+                    </div>
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'waktu_mulai_kunjungan'
@@ -647,23 +707,40 @@ export const AddAktifitasPengunjung: React.FC<
                       Waktu Selesai Berkunjung
                     </label>
                     <div className="flex flex-row">
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
-                      name="waktu_selesai_kunjungan"
-                      placeholder="waktu selesai kunjungan"
-                      onChange={handleChange}
-                      value={formState.waktu_selesai_kunjungan}
-                      disabled={isDetail}
-                    />
-                    <input
+                      {/* <input
+                        type="datetime-local"
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
+                        name="waktu_selesai_kunjungan"
+                        placeholder="waktu selesai kunjungan"
+                        onChange={handleChange}
+                        value={formState.waktu_selesai_kunjungan}
+                        disabled={isDetail}
+                      /> */}
+                      <DatePicker
+                        selected={
+                          formState.waktu_selesai_kunjungan
+                            ? dayjs(formState.waktu_selesai_kunjungan).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleSelesaiBerkunjung}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        timeCaption="Pilih Waktu"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
+                        name="waktu_selesai_kunjungan"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"
                         value={formState.zona_waktu}
                         disabled
                       />
-                      </div>
+                    </div>
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'waktu_selesai_kunjungan'
@@ -710,9 +787,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                              value: formState.ruangan_otmil_id,
-                              label: formState.nama_ruangan_otmil,
-                            }
+                            value: formState.ruangan_otmil_id,
+                            label: formState.nama_ruangan_otmil,
+                          }
                           : formState.ruangan_otmil_id
                       }
                       placeholder={'Pilih Ruangan'}
@@ -825,9 +902,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                              value: formState.petugas_id,
-                              label: formState.nama_petugas,
-                            }
+                            value: formState.petugas_id,
+                            label: formState.nama_petugas,
+                          }
                           : formState.petugas_id
                       }
                       placeholder={'Pilih Petugas'}
@@ -863,9 +940,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                              value: formState.pengunjung_id,
-                              label: formState.nama_pengunjung,
-                            }
+                            value: formState.pengunjung_id,
+                            label: formState.nama_pengunjung,
+                          }
                           : formState.pengunjung_id
                       }
                       placeholder={'Pilih pengunjung'}
@@ -913,25 +990,24 @@ export const AddAktifitasPengunjung: React.FC<
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
 
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-ubah"
@@ -964,9 +1040,8 @@ export const AddAktifitasPengunjung: React.FC<
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-tambah"
