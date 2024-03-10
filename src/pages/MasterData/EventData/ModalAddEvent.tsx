@@ -717,7 +717,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                             : dayjs().toDate()
                         }
                         onChange={handleWaktuMulai}
-                        showTimeSelect
+                        showTimeInput
                         timeFormat="HH:mm"
                         timeCaption="Pilih Waktu"
                         dateFormat="dd/MM/yyyy HH:mm"
@@ -767,7 +767,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                             : dayjs().toDate()
                         }                        
                         onChange={handleWaktuSelesai}
-                        showTimeSelect
+                        showTimeInput
                         timeFormat="HH:mm"
                         timeCaption="Pilih Waktu"
                         dateFormat="dd/MM/yyyy HH:mm"

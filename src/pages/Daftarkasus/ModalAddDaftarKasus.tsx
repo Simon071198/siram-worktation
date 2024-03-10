@@ -248,6 +248,55 @@ export const AddDaftarKasusModal = ({
       );
   };
 
+  const handleWaktuKejadian = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  };
+  const handleWaktuPelaporan = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  };
+
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -429,6 +478,14 @@ export const AddDaftarKasusModal = ({
       color: 'white',
     }),
   };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const modalStyles: any = {
     backdrop: {
@@ -718,13 +775,22 @@ export const AddDaftarKasusModal = ({
                       Tanggal Kejadian Kasus
                     </label>
                     <div className="flex flex-row">
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
+                    <DatePicker
+                      selected={
+                        formState.waktu_kejadian
+                          ? dayjs(formState.waktu_kejadian).toDate()
+                          : dayjs().toDate()
+                      }
+                      showTimeInput
+                      timeFormat="HH:mm"
+                      onChange={handleWaktuKejadian}
+                      timeCaption="Time"
+                      dateFormat="dd/MM/yyyy HH:mm"
+                      customTimeInput={<ExampleCustomTimeInput />}
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
                       name="waktu_kejadian"
-                      placeholder="Tanggal Kejadian Kasus"
-                      onChange={handleChange}
-                      disabled={isDetail}
+                      disabled={false}
+                      locale="id"
                     />
                     <input
                         type="text"
@@ -752,13 +818,23 @@ export const AddDaftarKasusModal = ({
                       Tanggal Pelaporan Kasus
                     </label>
                     <div className="flex flex-row">
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
+                    <DatePicker
+                      selected={
+                        formState.waktu_pelaporan_kasus
+                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                          : dayjs().toDate()
+                      }
+                      showTimeInput
+                      timeFormat="HH:mm"
+                      // timeIntervals={15}
+                      onChange={handleWaktuPelaporan}
+                      timeCaption="Time"
+                      dateFormat="dd/MM/yyyy HH:mm"
+                      customTimeInput={<ExampleCustomTimeInput />}
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                       name="waktu_pelaporan_kasus"
-                      placeholder="Tanggal Pelaporan Kasus"
-                      onChange={handleChange}
-                      disabled={isDetail}
+                      disabled={false}
+                      locale="id"
                     />
                     <input
                         type="text"

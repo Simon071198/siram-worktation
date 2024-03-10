@@ -11,6 +11,10 @@ import {
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import dayjs from 'dayjs';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { get } from 'react-hook-form';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -33,6 +37,7 @@ export const EditDaftarKasusModal = ({
     waktu_kejadian: defaultValue?.waktu_kejadian,
     waktu_pelaporan_kasus: defaultValue?.waktu_pelaporan_kasus,
     tanggal_pelimpahan_kasus: defaultValue?.tanggal_pelimpahan_kasus,
+    zona_waktu: defaultValue?.zona_waktu,
     wbp_profile_ids:
       defaultValue?.wbp_profile?.map((item: any) => item.wbp_profile_id) || [],
     keterangans:
@@ -239,6 +244,83 @@ export const EditDaftarKasusModal = ({
     onSubmit(formState).then(() => setButtonLoad(false));
   };
 
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  }
+
+
+  const handleWaktuKejadian = (e: any) => {
+    console.log('test', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  }
+
+  const handleWaktuPelaporan = (e: any) => {
+    console.log('test', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+
+    setFormState({
+      ...formState,
+      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,  
+    });
+  }
+
   const jenisPerkara = async () => {
     let params = {
       pageSize: 1000,
@@ -272,7 +354,7 @@ export const EditDaftarKasusModal = ({
   };
 
   useEffect(() => {
-    Promise.all([tersangka(), Saksi(), jenisPerkara(), Oditur()]).then(() => {
+    Promise.all([tersangka(), Saksi(), jenisPerkara(), Oditur(), getTimeZone()]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -318,6 +400,14 @@ export const EditDaftarKasusModal = ({
         }),
       );
   };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const customStyles = {
     container: (provided: any) => ({
@@ -735,21 +825,37 @@ export const EditDaftarKasusModal = ({
 
                   <div className="form-group w-full">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Tanggal Kejadian Kasus
                     </label>
+                    <div className="flex flex-row">
+                      <DatePicker
+                        selected={
+                          formState.waktu_kejadian
+                          ? dayjs(formState.waktu_kejadian).toDate()
+                          : dayjs().toDate()
+                        }
+                        onChange={handleWaktuKejadian}
+                        showTimeInput
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                        timeFormat="HH:mm"
+                        timeCaption="time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        disabled={false}
+                        name='waktu_kejadian'
+                        locale={'id'}
+                      />
                     <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
-                      name="waktu_kejadian"
-                      placeholder="Tanggal Kejadian Kasus"
-                      onChange={handleChange}
-                      defaultValue={defaultValue.waktu_kejadian}
-                      disabled={isDetail}
-                    />
-                    <div className="h-2">
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                       <p className="error-text">
                         {errors.map((item) =>
                           item === 'waktu_kejadian'
@@ -757,7 +863,6 @@ export const EditDaftarKasusModal = ({
                             : '',
                         )}
                       </p>
-                    </div>
                   </div>
 
                   <div className="form-group w-full">
@@ -767,7 +872,8 @@ export const EditDaftarKasusModal = ({
                     >
                       Tanggal Pelaporan Kasus
                     </label>
-                    <input
+                    <div className="flex flex-row">
+                    {/* <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                       name="waktu_pelaporan_kasus"
@@ -775,7 +881,32 @@ export const EditDaftarKasusModal = ({
                       onChange={handleChange}
                       defaultValue={defaultValue.waktu_pelaporan_kasus}
                       disabled={isDetail}
-                    />
+                    /> */}
+                     <DatePicker
+                        selected={
+                          formState.waktu_pelaporan_kasus
+                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                          : dayjs().toDate()
+                        }
+                        onChange={handleWaktuPelaporan}
+                        showTimeInput
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                        timeFormat="HH:mm"
+                        timeCaption="time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        disabled={false}
+                        name='waktu_pelaporan_kasus'
+                        locale={'id'}
+                      />
+                    <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>

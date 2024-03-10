@@ -440,6 +440,14 @@ export const AddAktifitasPengunjung: React.FC<
     fetchData();
   }, []);
 
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
+
   const customStyles = {
     container: (provided: any) => ({
       ...provided,
@@ -661,11 +669,12 @@ export const AddAktifitasPengunjung: React.FC<
                             : dayjs().toDate()
                         }
                         onChange={handleMulaiBerkunjung}
-                        showTimeSelect
+                        showTimeInput
                         timeFormat="HH:mm"
-                        timeIntervals={15}
+                        // timeIntervals={15}
                         timeCaption="time"
                         dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
                         className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
                         name="waktu_mulai_kunjungan"
                         disabled={false}
@@ -696,15 +705,6 @@ export const AddAktifitasPengunjung: React.FC<
                       Waktu Selesai Berkunjung
                     </label>
                     <div className="flex flex-row">
-                      {/* <input
-                        type="datetime-local"
-                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
-                        name="waktu_selesai_kunjungan"
-                        placeholder="waktu selesai kunjungan"
-                        onChange={handleChange}
-                        value={formState.waktu_selesai_kunjungan}
-                        disabled={isDetail}
-                      /> */}
                       <DatePicker
                         selected={
                           formState.waktu_selesai_kunjungan
@@ -712,11 +712,12 @@ export const AddAktifitasPengunjung: React.FC<
                             : dayjs().toDate()
                         }
                         onChange={handleSelesaiBerkunjung}
-                        showTimeSelect
+                        showTimeInput
                         timeFormat="HH:mm"
-                        timeIntervals={15}
+                        // timeIntervals={1}
                         timeCaption="Pilih Waktu"
                         dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
                         className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
                         name="waktu_selesai_kunjungan"
                         disabled={false}
