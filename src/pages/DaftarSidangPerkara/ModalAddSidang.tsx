@@ -529,31 +529,105 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       setGetSaksi([]);
     }
   };
-  
- const handleJadwalSidang = (e: any) => {
-  console.log('1213', e);
 
-  const timeZone = dayjs().format('Z');
-  let zonaWaktu;
-  switch (timeZone) {
-    case '+07:00':
-      zonaWaktu = 'WIB';
-      break;
-    case '+08:00':
-      zonaWaktu = 'WITA';
-      break;
-    case '+09:00':
-      zonaWaktu = 'WIT';
-      break;
-    default:
-      zonaWaktu = 'Zona Waktu Tidak Dikenal';
+  const handleJadwalSidang = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
   }
-  setFormState({
-    ...formState,
-    jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-    zona_waktu: zonaWaktu,
-  });
+  const handlePerubahanJadwal = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      perubahan_jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
   }
+
+  const handleWaktuMulai = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_mulai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  }
+  const handleWaktuSelesai = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_selesai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  }
+
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -748,6 +822,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       transform: 'translate(-50%, -50%)',
     },
   };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const customStyles = {
     container: (provided: any) => ({
@@ -1051,9 +1133,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                                value: formState.jenis_persidangan_id,
-                                label: formState.nama_jenis_persidangan,
-                              }
+                              value: formState.jenis_persidangan_id,
+                              label: formState.nama_jenis_persidangan,
+                            }
                             : formState.jenis_persidangan_id
                         }
                         name="jenis_persidangan_id"
@@ -1093,9 +1175,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState?.oditurHolder?.map((item: any) => ({
-                              value: item.oditur_penuntut_id,
-                              label: item.nama_oditur,
-                            }))
+                            value: item.oditur_penuntut_id,
+                            label: item.nama_oditur,
+                          }))
                           : ''
                       }
                       placeholder={'Pilih oditur penuntut'}
@@ -1214,9 +1296,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                                value: formState.oditur_penuntut_id,
-                                label: formState.nama_oditur,
-                              }
+                              value: formState.oditur_penuntut_id,
+                              label: formState.nama_oditur,
+                            }
                             : formState.oditur_penuntut_id
                         }
                         placeholder={'Pilih ketua oditur'}
@@ -1286,9 +1368,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                                value: formState.kasus_id,
-                                label: formState.nama_kasus,
-                              }
+                              value: formState.kasus_id,
+                              label: formState.nama_kasus,
+                            }
                             : formState.kasus_id
                         }
                         placeholder={'Pilih kasus'}
@@ -1371,9 +1453,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                                value: formState.pengadilan_militer_id,
-                                label: formState.nama_pengadilan_militer,
-                              }
+                              value: formState.pengadilan_militer_id,
+                              label: formState.nama_pengadilan_militer,
+                            }
                             : formState.pengadilan_militer_id
                         }
                         isClearable={true}
@@ -1480,30 +1562,30 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Jadwal sidang
                       </label>
                       <div className="flex flex-row">
-                      <DatePicker
-                        selected={
-                          formState.jadwal_sidang
-                            ? dayjs(formState.jadwal_sidang).toDate()
-                            : dayjs().toDate()
-                        }
-                        onChange={handleJadwalSidang}
-                        showTimeSelect
-                        timeFormat="HH:mm"
-                        timeCaption="Pilih Waktu"
-                        dateFormat="dd/MM/yyyy HH:mm"
-                        // customInput={<ExampleCustomTimeInput />}
-                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
-                        name="jadwal_sidang"
-                        disabled={false}
-                        locale="id"
-                      />
-                      <input
-                        type="text"
-                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                        name="zona_waktu"
-                        value={formState.zona_waktu}
-                        disabled
-                      />
+                        <DatePicker
+                          selected={
+                            formState.jadwal_sidang
+                              ? dayjs(formState.jadwal_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleJadwalSidang}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeCaption="Pilih Waktu"
+                          dateFormat="dd/MM/yyyy HH:mm"
+                          // customInput={<ExampleCustomTimeInput />}
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                          name="jadwal_sidang"
+                          disabled={false}
+                          locale="id"
+                        />
+                        <input
+                          type="text"
+                          className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
                       </div>
                       <p className="error-text">
                         {errors.map((item) =>
@@ -1523,21 +1605,38 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Perubahan jadwal sidang
                       </label>
                       <div className="flex flex-row">
-                      <input
+                        {/* <input
                         type="datetime-local"
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-perubahan"
                         name="perubahan_jadwal_sidang"
                         onChange={handleChange}
                         value={formState.perubahan_jadwal_sidang}
                         disabled={isDetail}
-                      />
-                      <input
-                        type="text"
-                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                        name="zona_waktu"
-                        value={formState.zona_waktu}
-                        disabled
-                      />
+                      /> */}
+                        <DatePicker
+                          selected={
+                            formState.perubahan_jadwal_sidang
+                              ? dayjs(formState.perubahan_jadwal_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handlePerubahanJadwal}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeCaption="Pilih Waktu"
+                          dateFormat="dd/MM/yyyy HH:mm"
+                          // customInput={<ExampleCustomTimeInput />}
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
+                          name="perubahan_jadwal_sidang"
+                          disabled={false}
+                          locale="id"
+                        />
+                        <input
+                          type="text"
+                          className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
                       </div>
                       <p className="error-text">
                         {errors.map((item) =>
@@ -1557,21 +1656,38 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Waktu mulai
                       </label>
                       <div className="flex flex-row">
-                      <input
-                        type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-waktu"
-                        name="waktu_mulai_sidang"
-                        onChange={handleChange}
-                        value={formState.waktu_mulai_sidang}
-                        disabled={isDetail}
-                      />
-                      <input
-                        type="text"
-                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                        name="zona_waktu"
-                        value={formState.zona_waktu}
-                        disabled
-                      />
+                        {/* <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-waktu"
+                          name="waktu_mulai_sidang"
+                          onChange={handleChange}
+                          value={formState.waktu_mulai_sidang}
+                          disabled={isDetail}
+                        /> */}
+                        <DatePicker
+                          selected={
+                            formState.waktu_mulai_sidang
+                              ? dayjs(formState.waktu_mulai_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleWaktuMulai}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeCaption="Pilih Waktu"
+                          dateFormat="dd/MM/yyyy HH:mm"
+                          // customInput={<ExampleCustomTimeInput />}
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                          name="waktu_mulai_sidang"
+                          disabled={false}
+                          locale="id"
+                        />
+                        <input
+                          type="text"
+                          className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
                       </div>
                       <p className="error-text">
                         {errors.map((item) =>
@@ -1591,21 +1707,38 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         Waktu selesai
                       </label>
                       <div className="flex flex-row">
-                      <input
-                        type="datetime-local"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-selesai"
-                        name="waktu_selesai_sidang"
-                        onChange={handleChange}
-                        value={formState.waktu_selesai_sidang}
-                        disabled={isDetail}
-                      />
-                      <input
-                        type="text"
-                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                        name="zona_waktu"
-                        value={formState.zona_waktu}
-                        disabled
-                      />
+                        {/* <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-selesai"
+                          name="waktu_selesai_sidang"
+                          onChange={handleChange}
+                          value={formState.waktu_selesai_sidang}
+                          disabled={isDetail}
+                        /> */}
+                        <DatePicker
+                          selected={
+                            formState.waktu_selesai_sidang
+                              ? dayjs(formState.waktu_selesai_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleWaktuSelesai}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeCaption="Pilih Waktu"
+                          dateFormat="dd/MM/yyyy HH:mm"
+                          // customInput={<ExampleCustomTimeInput />}
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
+                          name="waktu_selesai_sidang"
+                          disabled={false}
+                          locale="id"
+                        />
+                        <input
+                          type="text"
+                          className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
                       </div>
                       <p className="error-text">
                         {errors.map((item) =>
@@ -1632,14 +1765,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.ahliHolder.map((item: any) => ({
-                              value: item.ahli_id,
-                              label:
-                                item.nama_ahli +
-                                ' ' +
-                                '(' +
-                                item.bidang_ahli +
-                                ')',
-                            }))
+                            value: item.ahli_id,
+                            label:
+                              item.nama_ahli +
+                              ' ' +
+                              '(' +
+                              item.bidang_ahli +
+                              ')',
+                          }))
                           : formState.ahli_id
                       }
                       placeholder={'Pilih ahli'}
@@ -1677,21 +1810,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
+                            value: item.saksi_id,
+                            label: item.nama_saksi,
+                          }))
                           : formState.saksi_id
                       }
                       value={
                         isEdit || isDetail
                           ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
+                            value: item.saksi_id,
+                            label: item.nama_saksi,
+                          }))
                           : getSaksi.map((item: any) => ({
-                              value: item.value,
-                              label: item.label,
-                            }))
+                            value: item.value,
+                            label: item.label,
+                          }))
                       }
                       placeholder={'Pilih saksi'}
                       isClearable={true}
@@ -1724,9 +1857,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     <div className="flex items-center">
                       <p className="text-white">Pengacara</p>
                       <p
-                        className={`${
-                          pengacaraEror ? 'block' : 'hidden'
-                        } ml-4 text-red-400 text-sm`}
+                        className={`${pengacaraEror ? 'block' : 'hidden'
+                          } ml-4 text-red-400 text-sm`}
                       >
                         Masukan nama pengacara
                       </p>
@@ -1769,9 +1901,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         )}
                       </div>
                       <div
-                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${
-                          formState.pengacara?.length === 0 ? 'hidden' : 'block'
-                        }`}
+                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${formState.pengacara?.length === 0 ? 'hidden' : 'block'
+                          }`}
                       >
                         {/* {isDetail || isEdit
                           ? formState.pengacara?.map(
@@ -1950,9 +2081,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
-                              isDetail ? 'hidden' : 'block'
-                            }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
+                              }`}
                           >
                             <button
                               className="p-[2px]"
@@ -1988,9 +2118,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${
-                              isDetail ? 'block' : 'hidden'
-                            }`}
+                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
+                              }`}
                           >
                             <button
                               type="button"
@@ -2079,18 +2208,18 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
               .length > 0 && (
               <div className="error mt-4">
@@ -2105,9 +2234,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-ubah"
@@ -2140,9 +2268,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-tambah"
