@@ -199,6 +199,7 @@ const GatewayList = () => {
       });
     }
   };
+  
 
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
@@ -338,7 +339,7 @@ const GatewayList = () => {
         'Nama Ruangan Otmil',
         'Zona',
       ],
-      ...dataExcel.map((item: any) => [
+      ...data.map((item: any) => [
         item.nama_gateway,
         item.gmac,
         item.status_gateway,
