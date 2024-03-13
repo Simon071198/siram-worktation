@@ -3,6 +3,9 @@ import Select from 'react-select';
 
 import { Alerts } from './AlertBarangBukti';
 import { apiReadKasus } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -40,6 +43,7 @@ export const AddBarangBuktiModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dataKasus, setDataKasus] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -89,6 +93,79 @@ export const AddBarangBuktiModal = ({
       }));
     }
   }, [formState.dokumen_barang_bukti]);
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: `${isEdit ? '.b-edit' : '.b-unggah'}`,
+          popover: {
+            title: `${isEdit ? 'Edit' : 'Unggah'}`,
+            description: 'Manambah gambar',
+          },
+        },
+        {
+          element: '.b-del',
+          popover: {
+            title: 'Hapus',
+            description: 'Klik untuk menghapus gambar',
+          },
+        },
+        {
+          element: '.p-kasus',
+          popover: {
+            title: 'Kasus',
+            description: 'Pilih kasus yang diinginkan',
+          },
+        },
+        {
+          element: '.i-nomor',
+          popover: {
+            title: 'Nomor Barang Bukti',
+            description: 'Isi nomor barang bukti',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Barang Bukti',
+            description: 'Isi nama barang bukti',
+          },
+        },
+        {
+          element: '.i-ket',
+          popover: {
+            title: 'Keterangan',
+            description: 'Isi keterangan',
+          },
+        },
+        {
+          element: '.i-tanggal',
+          popover: {
+            title: 'Tanggal Di Ambil',
+            description: 'Menentukan tanggal di ambil',
+          },
+        },
+        {
+          element: '.b-file',
+          popover: {
+            title: 'Barang Bukti Kasus',
+            description: 'Menambahkan file barang bukti kasus',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data barang bukti`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
 
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
@@ -365,6 +442,27 @@ export const AddBarangBuktiModal = ({
                         : 'Tambah Barang Bukti'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -427,16 +525,16 @@ export const AddBarangBuktiModal = ({
                             style={{ display: 'none' }}
                             onChange={handleImageChange}
                           />
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 ">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-edit">
                                 Edit Gambar
                               </div>
                             </label>
                             <button
                               type="button"
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -487,9 +585,9 @@ export const AddBarangBuktiModal = ({
                             style={{ display: 'none' }}
                             onChange={handleImageChange}
                           />
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 ">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-unggah">
                                 Unggah Gambar
                               </div>
                             </label>
@@ -497,7 +595,7 @@ export const AddBarangBuktiModal = ({
                             <button
                               type="button"
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -536,7 +634,7 @@ export const AddBarangBuktiModal = ({
                           Kasus
                         </label>
                         <Select
-                          className="basic-single"
+                          className="basic-single p-kasus"
                           classNamePrefix="select"
                           defaultValue={
                             isEdit || isDetail || isKasus
@@ -571,13 +669,13 @@ export const AddBarangBuktiModal = ({
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
-                          Nomer Barang Bukti
+                          Nomor Barang Bukti
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nomor"
                           onChange={handleChange}
                           name="nomor_barang_bukti"
-                          placeholder="Nomer Barang Bukti"
+                          placeholder="Nomor Barang Bukti"
                           value={formState.nomor_barang_bukti}
                           disabled={isDetail}
                         />
@@ -599,7 +697,7 @@ export const AddBarangBuktiModal = ({
                           Nama Barang Bukti
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nama"
                           onChange={handleChange}
                           name="nama_bukti_kasus"
                           placeholder="Nama Bukti Kasus"
@@ -627,7 +725,7 @@ export const AddBarangBuktiModal = ({
                         keterangan
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-ket"
                         onChange={handleChange}
                         name="keterangan"
                         placeholder="keterangan"
@@ -651,7 +749,7 @@ export const AddBarangBuktiModal = ({
                       </label>
                       <input
                         type="date"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-tanggal"
                         onChange={handleChange}
                         name="tanggal_diambil"
                         placeholder="Tanggal Di Ambil"
@@ -702,7 +800,7 @@ export const AddBarangBuktiModal = ({
                     </label>
                     <div
                       // id="FileUpload"
-                      className="relative  block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
+                      className="relative  block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5 b-file"
                     >
                       <input
                         type="file"
@@ -713,7 +811,7 @@ export const AddBarangBuktiModal = ({
                         className="hidden"
                       />
                       {formState.pdf_file_base64 ? (
-                        <div className="grid grid-cols-1">
+                        <div className="grid grid-cols-1 ">
                           <div
                             className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
                               }`}
@@ -763,7 +861,7 @@ export const AddBarangBuktiModal = ({
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="flex flex-col items-center justify-center space-y-3 ">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                             <svg
                               width="16"
@@ -823,6 +921,7 @@ export const AddBarangBuktiModal = ({
                         }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -856,6 +955,7 @@ export const AddBarangBuktiModal = ({
                         }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

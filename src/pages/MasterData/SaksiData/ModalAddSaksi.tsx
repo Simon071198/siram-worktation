@@ -3,6 +3,9 @@ import Select from 'react-select';
 
 import { Alerts } from './AlertSaksi';
 import { apiReadKasus } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -34,6 +37,7 @@ export const AddSaksiModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [dataKasus, setDataKasus] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const validateForm = () => {
     let errorFields = [];
@@ -56,6 +60,51 @@ export const AddSaksiModal = ({
     }
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Saksi',
+            description: 'Isi nama saksi',
+          },
+        },
+        {
+          element: '.i-no',
+          popover: {
+            title: 'No Kontak',
+            description: 'Isi no kontak',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Kelamin',
+            description: 'Pilih jenis kelamin',
+          },
+        },
+        {
+          element: '.t-alamat',
+          popover: {
+            title: 'Alamat',
+            description: 'Isi alamat dengan lengkap',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data tipe`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -265,6 +314,27 @@ export const AddSaksiModal = ({
                         : 'Tambah Data Saksi'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -283,7 +353,7 @@ export const AddSaksiModal = ({
                       Nama Saksi
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_saksi"
                       placeholder="Nama Saksi"
                       onChange={handleChange}
@@ -305,7 +375,7 @@ export const AddSaksiModal = ({
                       No Kontak
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-no"
                       name="no_kontak"
                       placeholder="No Kontak"
                       onChange={handleChange}
@@ -328,7 +398,7 @@ export const AddSaksiModal = ({
                       Jenis Kelamin
                     </label>
                     <select
-                      className="w-full rounded border border-stroke   py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke   py-[13.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-jenis"
                       name="jenis_kelamin"
                       onChange={handleChange}
                       value={formState.jenis_kelamin}
@@ -356,7 +426,7 @@ export const AddSaksiModal = ({
                     Alamat
                   </label>
                   <textarea
-                    className="w-full h-25 m-0 rounded border border-stroke box-border py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    className="w-full h-25 m-0 rounded border border-stroke box-border py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-alamat"
                     name="alamat"
                     onChange={handleChange}
                     value={formState.alamat}
@@ -377,6 +447,7 @@ export const AddSaksiModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -411,6 +482,7 @@ export const AddSaksiModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg
