@@ -360,7 +360,7 @@ const InventarisList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(wb, 'data_inventaris.xlsx');
   };
 
   document.querySelectorAll('.custom-truncate').forEach(function (element) {

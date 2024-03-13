@@ -658,21 +658,25 @@ const InmateList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Tersangka
           </h4>
-          <div className="flex gap-3">
-            <button
-              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500"
-              onClick={() => navigate('/daftar-kasus')}
-            >
-              Daftar Kasus
-            </button>
-            {!isOperator && (
+          <div className="flex flex-row space-x-4 space-x">
+            <div>
               <button
-                onClick={() => setModalAddOpen(true)}
-                className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                onClick={() => navigate('/daftar-kasus')}
               >
-                Tambah
+                Daftar Kasus
               </button>
-            )}
+            </div>
+            <div>
+              {!isOperator && (
+                <button
+                  onClick={() => setModalAddOpen(true)}
+                  className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+                >
+                  Tambah
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

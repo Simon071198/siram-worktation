@@ -931,9 +931,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.pangkat_id,
-                                  label: formState.pangkat,
-                                }
+                                value: formState.pangkat_id,
+                                label: formState.nama_pangkat,
+                              }
                               : formState.pangkat_id
                           }
                           isDisabled={isDetail}
@@ -974,9 +974,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.matra_id,
-                                  label: formState.nama_matra,
-                                }
+                                value: formState.matra_id,
+                                label: formState.nama_matra,
+                              }
                               : formState.matra_id
                           }
                           options={matra.map((item: any) => ({
@@ -1054,9 +1054,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.lokasi_kesatuan_id,
-                                  label: formState.nama_lokasi_kesatuan,
-                                }
+                                value: formState.lokasi_kesatuan_id,
+                                label: formState.nama_lokasi_kesatuan,
+                              }
                               : formState.lokasi_kesatuan_id
                           }
                           options={lokasi.map((item: any) => ({
@@ -1110,9 +1110,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.kesatuan_id,
-                                  label: formState.nama_kesatuan,
-                                }
+                                value: formState.kesatuan_id,
+                                label: formState.nama_kesatuan,
+                              }
                               : formState.kesatuan_id
                           }
                           options={kesatuan.map((item: any) => ({
@@ -1188,13 +1188,13 @@ export const AddStaffModal = ({
                           isClearable={true}
                           isSearchable={true}
                           name="pendidikan_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Pendidikan"
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.pendidikan_id,
-                                  label: formState.nama_pendidikan,
-                                }
+                                value: formState.pendidikan_id,
+                                label: formState.nama_pendidikan,
+                              }
                               : formState.pendidikan_id
                           }
                           options={pendidikan.map((item: any) => ({
@@ -1217,23 +1217,6 @@ export const AddStaffModal = ({
                         >
                           Keahlian
                         </label>
-
-                        {/* <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="bidang_keahlian_id"
-                          onChange={handleChange}
-                          value={formState.bidang_keahlian_id}
-                          disabled={isDetail}
-                        >
-                          <option disabled value="">
-                            Pilih keahlian
-                          </option>
-                          {keahlian.map((item) => (
-                            <option value={item.bidang_keahlian_id}>
-                              {item.nama_bidang_keahlian}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
                           className="basic-single p-ahli"
                           classNamePrefix="select"
@@ -1242,13 +1225,13 @@ export const AddStaffModal = ({
                           isClearable={true}
                           isSearchable={true}
                           name="bidang_keahlian_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Keahlian"
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.bidang_keahlian_id,
-                                  label: formState.nama_bidang_keahlian,
-                                }
+                                value: formState.bidang_keahlian_id,
+                                label: formState.nama_bidang_keahlian,
+                              }
                               : formState.bidang_keahlian_id
                           }
                           options={keahlian.map((item: any) => ({
@@ -1303,22 +1286,6 @@ export const AddStaffModal = ({
                         >
                           Agama
                         </label>
-                        {/* <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="agama_id"
-                          onChange={handleChange}
-                          value={formState.agama_id}
-                          disabled={isDetail}
-                        >
-                          <option value="" disabled>
-                            Pilih agama
-                          </option>
-                          {agama.map((item) => (
-                            <option value={item.agama_id}>
-                              {item.nama_agama}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
                           className="basic-single p-agama"
                           classNamePrefix="select"
@@ -1327,13 +1294,13 @@ export const AddStaffModal = ({
                           isClearable={true}
                           isSearchable={true}
                           name="agama_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Agama"
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.agama_id,
-                                  label: formState.nama_agama,
-                                }
+                                value: formState.agama_id,
+                                label: formState.nama_agama,
+                              }
                               : formState.agama_id
                           }
                           options={agama.map((item: any) => ({
@@ -1435,9 +1402,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.status_kawin_id,
-                                  label: formState.nama_status_kawin,
-                                }
+                                value: formState.status_kawin_id,
+                                label: formState.nama_status_kawin,
+                              }
                               : formState.status_kawin_id
                           }
                           options={statusKawin.map((item: any) => ({
@@ -1488,9 +1455,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.provinsi_id,
-                                  label: formState.nama_provinsi,
-                                }
+                                value: formState.provinsi_id,
+                                label: formState.nama_provinsi,
+                              }
                               : formState.provinsi_id
                           }
                           placeholder={'Pilih provinsi'}
@@ -1546,9 +1513,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.kota_id,
-                                  label: formState.nama_kota,
-                                }
+                                value: formState.kota_id,
+                                label: formState.nama_kota,
+                              }
                               : formState.kota_id
                           }
                           placeholder={'Pilih kota'}
@@ -1605,9 +1572,8 @@ export const AddStaffModal = ({
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-ubah"
@@ -1640,9 +1606,8 @@ export const AddStaffModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-tambah"
@@ -1677,18 +1642,18 @@ export const AddStaffModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <br />
+                        <div className="error">
+                          {errors
+                            .filter((item: string) =>
+                              item.startsWith('INVALID_ID'),
+                            )[0]
+                            .replace('INVALID_ID_', '')}{' '}
+                          is not a valid bond
+                        </div>
+                      </>
+                    )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

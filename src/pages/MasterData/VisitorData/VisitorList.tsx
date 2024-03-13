@@ -337,7 +337,7 @@ const VisitorList = () => {
         item.nik,
         item.tempat_lahir,
         item.tanggal_lahir,
-        item.jenis_kelamin,
+        item.jenis_kelamin === '1' ? 'Laki-laki' : 'Perempuan',
         item.nama_provinsi,
         item.nama_kota,
         item.alamat,

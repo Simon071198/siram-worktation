@@ -41,6 +41,8 @@ const AhliList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
+  const [filterKasus, setFilterKasus] = useState('');
+  const [filterPerkara, setFilterPerkara] = useState('');
   const [filterJabatan, setFilterJabatan] = useState('');
   const [filterPangkat, setFilterPangkat] = useState('');
   const [pangkatData, setPangkatData] = useState([]);
@@ -70,13 +72,23 @@ const AhliList = () => {
     setFilter(newFilter);
   };
 
+  const handleFilterKasusChange = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterKasus(newFilter);
+  }
+
+  const handleFilterPerkaraChange = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterPerkara(newFilter);
+  }
+
   const handleSearchClick = async () => {
     try {
       let params = {
         filter: {
           nama_bukti_kasus: filter,
-          // jabatan : filterJabatan,
-          // nama_pangkat : filterPangkat
+          nama_kasus: filterKasus,
+          nama_jenis_perkara: filterPerkara
         },
         page: currentPage,
         pageSize: pageSize,
@@ -128,7 +140,7 @@ const AhliList = () => {
     return () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
-  }, [filter, filterJabatan, filterPangkat]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
+  }, [filter, filterJabatan, filterPangkat, filterKasus, filterPerkara]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
     let param = {
@@ -328,6 +340,20 @@ const AhliList = () => {
                 onChange={handleFilterChange}
               />
             </div>
+            <div className="w-full">
+              <SearchInputButton
+                value={filterKasus}
+                placehorder="Cari Nama kasus"
+                onChange={handleFilterKasusChange}
+              />
+            </div>
+            <div className="w-full">
+              <SearchInputButton
+                value={filterPerkara}
+                placehorder="Cari Nama Perkara"
+                onChange={handleFilterPerkaraChange}
+              />
+            </div>
 
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
@@ -375,72 +401,72 @@ const AhliList = () => {
         </div>
         <div className="flex flex-col">
           {isOperator ? (
-            <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+            <div className="grid items-center grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6 ">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Foto Barang
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs text-center font-medium uppercase xsm:text-base">
                   Nama Barang Bukti
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Nama Kasus
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Nomor Barang
                 </h5>
               </div>
-              {/* <div className="p-2.5 xl:p-5 justify-center flex">
-           <h5 className="text-sm font-medium uppercase xsm:text-base">
-             Keterangan
-           </h5>
-         </div> */}
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
+                  Tanggal Diambil
+                </h5>
+              </div>
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Tanggal Diambil
                 </h5>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6">
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+            <div className="grid items-center grid-cols-7 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-7">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Foto Barang
                 </h5>
               </div>
               <div className="p-2.5 xl:py-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                <h5 className="text-xs text-center font-medium uppercase xsm:text-base">
                   Nama Barang Bukti
                 </h5>
               </div>
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Nama Kasus
                 </h5>
               </div>
               <div className="p-2.5 xl:py-5 xl:px-3 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Nomor Barang
                 </h5>
               </div>
-              {/* <div className="p-2.5 xl:p-5 justify-center flex">
-           <h5 className="text-sm font-medium uppercase xsm:text-base">
-             Keterangan
-           </h5>
-         </div> */}
-              <div className="p-2.5 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Tanggal Diambil
                 </h5>
               </div>
-              <div className=" p-2.5 text-center xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <div className="p-2.5 text-center col-span-1 xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
+                  Nama Perkara
+                </h5>
+              </div>
+              <div className="hidden p-2.5 col-span-1 text-center sm:block xl:p-5">
+                <h5 className="text-xs font-medium uppercase xsm:text-base">
                   Aksi
                 </h5>
               </div>
@@ -457,7 +483,7 @@ const AhliList = () => {
                     {isOperator ? (
                       <>
                         <div
-                          className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 capitalize"
+                          className="grid grid-cols-6 grid-cols-7 rounded-sm bg-gray-2 dark:bg-meta-4"
                           key={item.nama_bukti_kasus}
                         >
                           <div
@@ -515,6 +541,14 @@ const AhliList = () => {
                           >
                             <p className=" text-black truncate dark:text-white capitalize">
                               {item.tanggal_diambil}
+                            </p>
+                          </div>
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
+                              {item.nama_jenis_perkara}
                             </p>
                           </div>
                         </div>
@@ -523,7 +557,7 @@ const AhliList = () => {
                     ) : (
                       <>
                         <div
-                          className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-6 capitalize"
+                          className="grid grid-cols-7 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-7 capitalize"
                           key={item.nama_bukti_kasus}
                         >
                           <div
@@ -581,6 +615,14 @@ const AhliList = () => {
                           >
                             <p className=" text-black truncate dark:text-white capitalize">
                               {item.tanggal_diambil}
+                            </p>
+                          </div>
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className=" text-black truncate dark:text-white capitalize">
+                              {item.nama_jenis_perkara}
                             </p>
                           </div>
 
