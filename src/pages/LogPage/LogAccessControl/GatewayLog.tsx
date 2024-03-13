@@ -6,6 +6,8 @@ import { webserviceurl } from '../../../services/api';
 import { NavLink } from 'react-router-dom';
 import Pagination from '../../../components/Pagination';
 import Loader from '../../../common/Loader';
+import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
 
 export default function GatewayLog() {
   const [data, setData] = useState([]);
@@ -13,6 +15,11 @@ export default function GatewayLog() {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
   let [startDate, setStartDate] = useState('');
   let [endDate, setEndDate] = useState('');
 
@@ -44,7 +51,40 @@ export default function GatewayLog() {
 
   // const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
 
-  const handleExportClick = () => {
+  console.log(data,"Ini Data Boss QQ");
+  
+
+  const handleExportClick = async () => {
+
+    const dataToExcel = [
+      [
+        'Nama Prajurit Binaan',
+        'No DMAC Gelang',
+        'Lokasi OTMIL',
+        'Lokasi Ruangan',
+        'Zonasi Gateway',
+        'Jenis Ruangan OTMIL',
+        'Time Stamp',
+      ],
+      ...data.map((item: any) => [
+        item.nama_wbp,
+        item.gmac,
+        item.nama_ruangan_otmil,
+        item.nama_lokasi_otmil,
+        item.status_zona_ruangan_otmil,
+        item.jenis_ruangan_otmil,
+        item.timestamp,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-Gateway-Log ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+
     // if (data && data.length > 0) {
     //   exportToCSV(data, 'exported_data.csv');
     // } else {
@@ -168,11 +208,11 @@ export default function GatewayLog() {
 
   const getGatewayLog = async () => {
     try {
-      setIsLoading(true);
       let params = {
         filter: '',
       };
-      const responseLog = await apiGatewayLog(params);
+      setIsLoading(true);
+      const responseLog = await apiGatewayLog(params, token);
       setData(responseLog.data.records);
       setPages(responseLog.data.pagination.totalPages);
       setRows(responseLog.data.pagination.totalRecords);
@@ -214,8 +254,8 @@ export default function GatewayLog() {
                         <input
                           name="Name"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedName}
-                          // onChange={(e) => setSelectedName(e.target.value)}
+                        // value={selectedName}
+                        // onChange={(e) => setSelectedName(e.target.value)}
                         />
                       </div>
 
@@ -225,8 +265,8 @@ export default function GatewayLog() {
                           type="number"
                           name="Age"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedAge}
-                          // onChange={(e) => setSelectedAge(e.target.value)}
+                        // value={selectedAge}
+                        // onChange={(e) => setSelectedAge(e.target.value)}
                         />
                       </div>
 
@@ -235,8 +275,8 @@ export default function GatewayLog() {
                         <select
                           name="Select Gender"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                          // value={selectedGender}
-                          // onChange={(e) => setSelectedGender(e.target.value)}
+                        // value={selectedGender}
+                        // onChange={(e) => setSelectedGender(e.target.value)}
                         >
                           <option value="">Semua Gender</option>
                           <option value="true">Pria</option>
@@ -275,7 +315,7 @@ export default function GatewayLog() {
                       name="Select Device"
                       // value={selectedDevice}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleDeviceChange}
+                    // onChange={handleDeviceChange}
                     >
                       <option value="">Semua Perangkat</option>
 
@@ -293,7 +333,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={startDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleStartDateChange}
+                    // onChange={handleStartDateChange}
                     />
                   </div>
 
@@ -303,7 +343,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={endDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                      // onChange={handleEndDateChange}
+                    // onChange={handleEndDateChange}
                     />
                   </div>
                 </div>
@@ -312,7 +352,7 @@ export default function GatewayLog() {
                 <button
                   className="bg-blue-500 text-white px-2 rounded-md py-1"
                   type="button"
-                  // onClick={handleExportClick}
+                onClick={handleExportClick}
                 >
                   Export Excel
                 </button>
