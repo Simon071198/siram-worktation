@@ -28,6 +28,7 @@ export const AddBarangBuktiModal = ({
       keterangan: '',
       pdf_file_base64: '',
       tanggal_diambil: '',
+      nama_jenis_perkara: '',
     },
   );
   console.log('formsate', formState);
@@ -540,9 +541,9 @@ export const AddBarangBuktiModal = ({
                           defaultValue={
                             isEdit || isDetail || isKasus
                               ? {
-                                  value: formState.kasus_id,
-                                  label: formState.nama_kasus,
-                                }
+                                value: formState.kasus_id,
+                                label: formState.nama_kasus,
+                              }
                               : formState.kasus_id
                           }
                           placeholder={'Pilih Kasus'}
@@ -666,6 +667,30 @@ export const AddBarangBuktiModal = ({
                       </p>
                     </div>
                   </div>
+                  <div className="mb-6">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Jenis Perkara
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      type="text"
+                      name="nama_jenis_perkara"
+                      placeholder='Nama Jenis Perkara'
+                      value={formState.nama_jenis_perkara}
+                      onChange={handleChange}
+                      disabled={isDetail}
+                    />
+                    <p className="error-text absolute">
+                      {errors.map((item) =>
+                        item === 'nama_jenis_perkara'
+                          ? 'Masukan jenis perkara'
+                          : '',
+                      )}
+                    </p>
+                  </div>
 
                   {/* Dokumentasi */}
                   <div className="grid grid-cols-1">
@@ -690,9 +715,8 @@ export const AddBarangBuktiModal = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
-                              isDetail ? 'hidden' : 'block'
-                            }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
+                              }`}
                           >
                             <p className="p-[2px]" onClick={handleRemoveDoc}>
                               <svg
@@ -725,9 +749,8 @@ export const AddBarangBuktiModal = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${
-                              isDetail ? 'block' : 'hidden'
-                            }`}
+                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
+                              }`}
                           >
                             <button
                               type="button"
@@ -796,9 +819,8 @@ export const AddBarangBuktiModal = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -830,9 +852,8 @@ export const AddBarangBuktiModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -866,18 +887,18 @@ export const AddBarangBuktiModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <br />
+                        <div className="error">
+                          {errors
+                            .filter((item: string) =>
+                              item.startsWith('INVALID_ID'),
+                            )[0]
+                            .replace('INVALID_ID_', '')}{' '}
+                          is not a valid bond
+                        </div>
+                      </>
+                    )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

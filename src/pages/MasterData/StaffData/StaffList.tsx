@@ -382,12 +382,26 @@ const StaffList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Petugas', 'Jabatan', 'Pangkat', 'Divisi'],
+      ['Nama Petugas', 'Pangkat', 'Matra', 'NRP', 'Lokasi Kesatuan', 'Kesatuan', 'Jabatan', 'Divisi', 'Pendidikan Militer', 'keahlian', 'Agama', 'Tempat Lahir', 'Tanggal Lahir', 'Status Kawin', 'Provinsi', 'Kota', 'Alamat','Jenis Kelamin'],
       ...data.map((item: any) => [
         item.nama,
-        item.jabatan,
         item.nama_pangkat,
+        item.nama_matra,
+        item.nrp,
+        item.nama_lokasi_kesatuan,
+        item.nama_kesatuan,
+        item.jabatan,
         item.divisi,
+        item.nama_pendidikan,
+        item.nama_bidang_keahlian,
+        item.nama_agama,
+        item.tempat_lahir,
+        item.tanggal_lahir,
+        item.nama_status_kawin,
+        item.nama_provinsi,
+        item.nama_kota,
+        item.alamat,
+        item.jenis_kelamin === '1' ? 'Laki-laki' : 'Perempuan',
       ]),
     ];
 
