@@ -24,6 +24,9 @@ import { useFetcher } from 'react-router-dom';
 import { deflate } from 'zlib';
 import { Alerts } from './AlertInmate';
 import { TbLockSquareRoundedFilled } from 'react-icons/tb';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 interface Kota {
   kota_id: string;
@@ -92,6 +95,10 @@ export const AddInmateModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
+
+  console.log(isDetail);
+  console.log(isEdit);
+
 
   const [formState, setFormState] = useState(
     defaultValue || {
@@ -837,6 +844,396 @@ export const AddInmateModal = ({
     }),
   };
 
+  // Kodingan Driver Tutorial
+
+  const handleClickTutorial = () => {
+    const steps = [
+      // {
+      //   element: '.f-unggah-gambar',
+      //   popover: {
+      //     title: 'Tombol Unggah Gambar',
+      //     description: 'Tombol unggah foto tersangka',
+      //   },
+
+      // },
+      {
+        element: '.t-remove-gambar',
+        popover: {
+          title: 'Tombol Remove Gambar',
+          description: 'Tombol remove foto tersangka',
+        },
+
+      },
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama tersangka',
+          description: 'Isi nama tersangka',
+        },
+
+      },
+      {
+        element: '.f-pangkat',
+        popover: {
+          title: 'Pangkat tersangka',
+          description: 'Pilih pangkat tersangka',
+        },
+      },
+      {
+        element: '.f-matra',
+        popover: {
+          title: 'Matra tersangka',
+          description: 'Pilih matra tersangka',
+        },
+      },
+      {
+        element: '.f-nrp',
+        popover: {
+          title: 'Nomor registrasi pegawai tersangka',
+          description: 'Isi nomor registrasi pegawai tersangka',
+        },
+      },
+      {
+        element: '.f-pendidikan',
+        popover: {
+          title: 'Pendidikan militer tersangka',
+          description: 'Pilih Pendidikan militer tersangka',
+        },
+      },
+      {
+        element: '.f-kesatuan',
+        popover: {
+          title: 'Kesatuan tersangka',
+          description: 'Pilih kesatuan tersangka',
+        },
+      },
+      {
+        element: '.f-kelamin',
+        popover: {
+          title: 'Jenis Kelamin tersangka',
+          description: 'Pilih jenis kelamin tersangka',
+        },
+      },
+      {
+        element: '.f-agama',
+        popover: {
+          title: 'Agama tersangka',
+          description: 'Pilih agama tersangka',
+        },
+      },
+      {
+        element: '.f-tempat-lahir',
+        popover: {
+          title: 'Tempat lahir tersangka',
+          description: 'Isi tempat lahir tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-lahir',
+        popover: {
+          title: 'Tanggal lahir tersangka',
+          description: 'Isi tanggal lahir tersangka',
+        },
+      },
+      {
+        element: '.f-provinsi',
+        popover: {
+          title: 'Provinsi domisili tersangka',
+          description: 'Pilih provinsi domisili tersangka',
+        },
+      },
+      {
+        element: '.f-kota',
+        popover: {
+          title: 'Kota domisili tersangka',
+          description: 'Pilih kota domisili tersangka',
+        },
+      },
+      {
+        element: '.f-alamat',
+        popover: {
+          title: 'Alamat domisili tersangka',
+          description: 'Isi alamat domisili tersangka',
+        },
+      },
+      {
+        element: '.f-status-kawin',
+        popover: {
+          title: 'Status perkawinan tersangka',
+          description: 'Pilih status perkawinan tersangka',
+        },
+      },
+      {
+        element: '.f-nama-keluarga',
+        popover: {
+          title: 'Nama keluarga tersangka',
+          description: 'Isi nama keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-status-keluarga',
+        popover: {
+          title: 'Status keluarga tersangka',
+          description: 'Isi status keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-kontak-keluarga',
+        popover: {
+          title: 'Nomor kontak keluarga tersangka',
+          description: 'Isi nomor kontak keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-penyakit',
+        popover: {
+          title: 'Status penyakit tersangka',
+          description: 'Pilih status penyakit tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-ditahan',
+        popover: {
+          title: 'Tanggal ditahan tersangka',
+          description: 'Isi tanggal ditahan tersangka',
+        },
+      },
+      {
+        element: '.f-keahlian',
+        popover: {
+          title: 'Keahlian tersangka',
+          description: 'Isi keahlian tersangka',
+        },
+      },
+      {
+        element: '.f-gelang',
+        popover: {
+          title: 'Merek gelang tersangka',
+          description: 'Pilih merek gelang tersangka',
+        },
+      },
+      {
+        element: '.f-dmac-gelang',
+        popover: {
+          title: 'Kode DMAC gelang tersangka',
+          description: 'Isi kode DMAC gelang tersangka',
+        },
+      },
+      {
+        element: '.f-residivis',
+        popover: {
+          title: 'Residivis tersangka',
+          description: 'Pilih residivis tersangka',
+        },
+      },
+      {
+        element: '.f-hunian-tahanan',
+        popover: {
+          title: 'Tempat hunian tahanan tersangka',
+          description: 'Pilih tempat hunian tahanan tersangka',
+        },
+      },
+      {
+        element: '.f-nomor-tahanan',
+        popover: {
+          title: 'Nomor tahanan tersangka',
+          description: 'Isi tahanan tersangka',
+        },
+      },
+      {
+        element: '.f-status-terisolasi',
+        popover: {
+          title: 'Status terisolasi tersangka',
+          description: 'Pilih status terisolasi tersangka',
+        },
+      },
+      {
+        element: '.f-status-tersangka',
+        popover: {
+          title: 'Status Wbp tersangka',
+          description: 'Pilih status Wbp tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-masa-penahanan',
+        popover: {
+          title: 'Tanggal masa penahanan tersangka',
+          description: 'Isi tanggal masa penahanan tersangka',
+        },
+      },
+      {
+        element: '.f-kesehatan-penyakit',
+        popover: {
+          title: 'Nama penyakit tersangka',
+          description: 'Isi nama penyakit tersangka',
+        },
+      },
+      {
+        element: '.f-berat-badan',
+        popover: {
+          title: 'Berat badan tersangka',
+          description: 'Isi berat badan tersangka',
+        },
+      },
+      {
+        element: '.f-tinggi-badan',
+        popover: {
+          title: 'Tinggi badan tersangka',
+          description: 'Isi tinggi badan tersangka',
+        },
+      },
+      {
+        element: '.f-pola-makan',
+        popover: {
+          title: 'Nama pola makan tersangka',
+          description: 'Isi nama pola makan tersangka',
+        },
+      },
+      {
+        element: '.f-jenis-olahraga',
+        popover: {
+          title: 'Jenis olahraga tersangka',
+          description: 'Pilih jenis olahraga tersangka',
+        },
+      },
+      {
+        element: '.f-zat-adiktif',
+        popover: {
+          title: 'Zat adiktif tersangka',
+          description: 'Pilih zat adiktif tersangka',
+        },
+      },
+      {
+        element: '.akses-zona',
+        popover: {
+          title: 'Zona akses tersangka',
+          description: 'Pilih zona akses tersangka',
+        },
+      },
+      {
+        element: '.zona-hijau',
+        popover: {
+          title: 'Zona hijau tersangka',
+          description: 'Daftar zona hijau tersangka',
+        },
+      },
+      {
+        element: '.zona-merah',
+        popover: {
+          title: 'Zona merah tersangka',
+          description: 'Daftar zona merah tersangka',
+        },
+      },
+      {
+        element: '.tombol-submit',
+        popover: {
+          title: 'Tombol Submit tersangka',
+          description: 'Klik tombol submit tersangka',
+        },
+      },
+    ];
+
+    // Kondisi Status Penyakit Tersangka
+
+    if (formState.is_sick === '1') {
+      steps.splice(20, 0, {
+        element: '.f-nama-penyakit',
+        popover: {
+          title: 'Nama penyakit tersangka',
+          description: 'Isi nama penyakit tersangka',
+        },
+      });
+    }
+
+    // Kondisi Status Penyakit Tersangka
+
+    // Kondisi Tambah,Edit,Detail
+
+    let gambarElement: string | undefined;
+    let gambarTitle: string | undefined;
+    let gambarDescription: string | undefined;
+
+    if (isEdit){
+      gambarElement = ".f-edit-gambar";
+      gambarTitle = "Tombol Edit Gambar";
+      gambarDescription = "Tombol edit foto tersangka"
+    } else if (!isDetail && !isEdit){
+      gambarElement = ".f-unggah-gambar";
+      gambarTitle = "Tombol Unggah Gambar";
+      gambarDescription = "Tombol unggah foto tersangka";
+    }
+
+    if (isEdit && gambarElement && gambarTitle && gambarDescription){
+      steps.splice(0, 0, {
+        element: gambarElement,
+        popover: {
+          title: gambarTitle,
+          description: gambarDescription,
+        },
+      });
+    } else if (!isEdit && !isDetail && gambarElement && gambarTitle && gambarDescription){
+      steps.splice(0, 0, {
+        element: gambarElement,
+        popover: {
+          title: gambarTitle,
+          description: gambarDescription,
+        },
+      });
+    }
+
+
+    // Kondisi Tambah,Edit,Detail
+
+    // Kondisi Status Wbp Tersangka
+
+    let tanggalElement: string | undefined;
+    let tanggalTitle: string | undefined;
+    let tanggalDescription: string | undefined;
+
+    if (formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963') {
+      tanggalElement = '.f-tanggal-terpidana';
+      tanggalTitle = 'Tanggal terpidana tersangka';
+      tanggalDescription = 'Isi tanggal terpidana tersangka';
+    } else if (formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064') {
+      tanggalElement = '.f-tanggal-terdakwa';
+      tanggalTitle = 'Tanggal terpidana tersangka';
+      tanggalDescription = 'Isi tanggal terpidana tersangka';
+    } else if (formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964') {
+      tanggalElement = '.f-tanggal-tersangka';
+      tanggalTitle = 'Tanggal penetapan tersangka';
+      tanggalDescription = 'Isi tanggal penetapan tersangka';
+    }
+
+    if (formState.is_sick === '1' && tanggalElement && tanggalTitle && tanggalDescription) {
+      steps.splice(30, 0, {
+        element: tanggalElement,
+        popover: {
+          title: tanggalTitle,
+          description: tanggalDescription,
+        },
+      });
+    } else if (tanggalElement && tanggalTitle && tanggalDescription) {
+      steps.splice(29, 0, {
+        element: tanggalElement,
+        popover: {
+          title: tanggalTitle,
+          description: tanggalDescription,
+        },
+      });
+    }
+
+
+    // Kondisi Status Wbp Tersangka
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
+  };
+
+
   return (
     // <div
     //   ref={modalContainerRef}
@@ -896,6 +1293,14 @@ export const AddInmateModal = ({
                         : 'Tambah data Tersangka'}
                   </h3>
                 </div>
+                {!isDetail && (<button className='pr-[440px]'>
+                  <HiQuestionMarkCircle
+                    // values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>)}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -969,13 +1374,13 @@ export const AddInmateModal = ({
                               />
                               <div className="flex gap-2">
                                 <label htmlFor="image-upload">
-                                  <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                                  <div className="f-edit-gambar cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
                                     Edit Gambar
                                   </div>
                                 </label>
                                 <button
                                   onClick={handleRemoveFoto}
-                                  className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                                  className="t-remove-gambar cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -1027,14 +1432,14 @@ export const AddInmateModal = ({
                               />
                               <div className="flex gap-2">
                                 <label htmlFor="image-upload">
-                                  <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                                  <div className="f-unggah-gambar cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
                                     Unggah Gambar
                                   </div>
                                 </label>
 
                                 <button
                                   onClick={handleRemoveFoto}
-                                  className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                                  className="t-remove-gambar cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -1063,7 +1468,7 @@ export const AddInmateModal = ({
 
                         <div className="flex flex-col gap-4 ">
                           {/* Nama */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-nama form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1086,7 +1491,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Pangkat */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-pangkat form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1100,9 +1505,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.pangkat_id,
-                                      label: formState.pangkat,
-                                    }
+                                    value: formState.pangkat_id,
+                                    label: formState.pangkat,
+                                  }
                                   : formState.pangkat_id
                               }
                               isDisabled={isDetail}
@@ -1123,7 +1528,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Matra */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-matra form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1142,9 +1547,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.matra_id,
-                                      label: formState.nama_matra,
-                                    }
+                                    value: formState.matra_id,
+                                    label: formState.nama_matra,
+                                  }
                                   : formState.matra_id
                               }
                               options={matra.map((item: any) => ({
@@ -1160,7 +1565,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* NRP */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-nrp form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1188,7 +1593,7 @@ export const AddInmateModal = ({
 
                       <div className="grid grid-cols-2 gap-4 mt-5">
                         {/* Pendidikan*/}
-                        <div className="form-group w-full flex flex-col ">
+                        <div className="f-pendidikan form-group w-full flex flex-col ">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1207,9 +1612,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.pendidikan_id,
-                                    label: formState.nama_pendidikan,
-                                  }
+                                  value: formState.pendidikan_id,
+                                  label: formState.nama_pendidikan,
+                                }
                                 : formState.pendidikan_id
                             }
                             options={pendidikan.map((item) => ({
@@ -1227,7 +1632,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kesatuan */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kesatuan form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1262,9 +1667,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.kesatuan_id,
-                                    label: formState.nama_kesatuan,
-                                  }
+                                  value: formState.kesatuan_id,
+                                  label: formState.nama_kesatuan,
+                                }
                                 : formState.kesatuan_id
                             }
                             options={kesatuan.map((item: any) => ({
@@ -1280,7 +1685,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Jenis Kelamin */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kelamin form-group w-full flex flex-col">
                           <label
                             className=" block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1310,7 +1715,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Agama */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-agama form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1346,9 +1751,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.agama_id,
-                                    label: formState.nama_agama,
-                                  }
+                                  value: formState.agama_id,
+                                  label: formState.nama_agama,
+                                }
                                 : formState.agama_id
                             }
                             options={agama.map((item: any) => ({
@@ -1364,7 +1769,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Tempat Lahir */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-tempat-lahir form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1389,7 +1794,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Tanggal Lahir */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-tanggal-lahir form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1414,7 +1819,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Provinsi */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-provinsi form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1444,9 +1849,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.provinsi_id,
-                                    label: formState.nama_provinsi,
-                                  }
+                                  value: formState.provinsi_id,
+                                  label: formState.nama_provinsi,
+                                }
                                 : formState.provinsi_id
                             }
                             placeholder={'Pilih provinsi'}
@@ -1469,7 +1874,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kota */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kota form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1504,9 +1909,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.kota_id,
-                                    label: formState.nama_kota,
-                                  }
+                                  value: formState.kota_id,
+                                  label: formState.nama_kota,
+                                }
                                 : formState.kota_id
                             }
                             placeholder={'Pilih kota'}
@@ -1535,7 +1940,7 @@ export const AddInmateModal = ({
                         </div>
                       </div>
                       {/* Alamat */}
-                      <div className="form-group w-full flex flex-col">
+                      <div className="f-alamat form-group w-full flex flex-col">
                         <label
                           className=" block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1559,7 +1964,7 @@ export const AddInmateModal = ({
 
                       <div className="grid grid-cols-2 gap-4 ">
                         {/* Status Kawin */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-status-kawin form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1595,9 +2000,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.status_kawin_id,
-                                    label: formState.nama_status_kawin,
-                                  }
+                                  value: formState.status_kawin_id,
+                                  label: formState.nama_status_kawin,
+                                }
                                 : formState.status_kawin_id
                             }
                             options={statusKawin.map((item) => ({
@@ -1615,7 +2020,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kontak Keluarga Nama */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-nama-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1640,7 +2045,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Status Keluarga */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-status-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1666,7 +2071,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kontak Keluarga no HP */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kontak-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1691,7 +2096,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Penyakit */}
-                        <div className="form-group w-full ">
+                        <div className="f-penyakit form-group w-full ">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1720,9 +2125,9 @@ export const AddInmateModal = ({
                         </div>
 
                         {formState.is_sick === '0' ||
-                        formState.is_sick === '' ? null : (
+                          formState.is_sick === '' ? null : (
                           <>
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-nama-penyakit form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2001,7 +2406,7 @@ export const AddInmateModal = ({
                       <div className="grid grid-cols-1 gap-4">
                         <div className="grid grid-cols-2 gap-4">
                           {/* Tanggal diTahan */}
-                          <div className="form-group w-full ">
+                          <div className="f-tanggal-ditahan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2026,7 +2431,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Keahlian */}
-                          <div className="form-group w-full ">
+                          <div className="f-keahlian form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2061,9 +2466,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.bidang_keahlian_id,
-                                      label: formState.nama_bidang_keahlian,
-                                    }
+                                    value: formState.bidang_keahlian_id,
+                                    label: formState.nama_bidang_keahlian,
+                                  }
                                   : formState.bidang_keahlian_id
                               }
                               options={keahlian.map((item: any) => ({
@@ -2081,7 +2486,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Gelang */}
-                          <div className="form-group w-full ">
+                          <div className="f-gelang form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2101,43 +2506,43 @@ export const AddInmateModal = ({
 
                               {isDetail
                                 ? gelang.map((item: any) => (
-                                    <option value={item.gelang_id}>
-                                      {item.nama_gelang}
-                                    </option>
-                                  ))
+                                  <option value={item.gelang_id}>
+                                    {item.nama_gelang}
+                                  </option>
+                                ))
                                 : isEdit
                                   ? gelang.map((item: any) => {
-                                      const isUsed = dataWbp.some(
-                                        (wbp: any) =>
-                                          wbp.gelang_id === item.gelang_id,
-                                      );
-                                      return (
-                                        <option
-                                          value={item.gelang_id}
-                                          key={item.gelang_id}
-                                        >
-                                          {item.nama_gelang}{' '}
-                                          {isUsed
-                                            ? '(Sedang Digunakan)'
-                                            : '(Tidak Digunakan)'}
-                                        </option>
-                                      );
-                                    })
+                                    const isUsed = dataWbp.some(
+                                      (wbp: any) =>
+                                        wbp.gelang_id === item.gelang_id,
+                                    );
+                                    return (
+                                      <option
+                                        value={item.gelang_id}
+                                        key={item.gelang_id}
+                                      >
+                                        {item.nama_gelang}{' '}
+                                        {isUsed
+                                          ? '(Sedang Digunakan)'
+                                          : '(Tidak Digunakan)'}
+                                      </option>
+                                    );
+                                  })
                                   : gelang
-                                      .filter(
-                                        (item: any) =>
-                                          !dataWbp
-                                            .map(
-                                              (wbp: any) =>
-                                                wbp.gelang_id || wbp.gelang_id,
-                                            )
-                                            .includes(item.gelang_id),
-                                      )
-                                      .map((item: any) => (
-                                        <option value={item.gelang_id}>
-                                          {item.nama_gelang}
-                                        </option>
-                                      ))}
+                                    .filter(
+                                      (item: any) =>
+                                        !dataWbp
+                                          .map(
+                                            (wbp: any) =>
+                                              wbp.gelang_id || wbp.gelang_id,
+                                          )
+                                          .includes(item.gelang_id),
+                                    )
+                                    .map((item: any) => (
+                                      <option value={item.gelang_id}>
+                                        {item.nama_gelang}
+                                      </option>
+                                    ))}
                             </select>
                             {/* <Select
                               name="gelang_id"
@@ -2156,7 +2561,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* DMAC Gelang */}
-                          <div className="form-group w-full ">
+                          <div className="f-dmac-gelang form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2180,7 +2585,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Residivis */}
-                          <div className="form-group w-full ">
+                          <div className="f-residivis form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2210,7 +2615,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Hunian Tahanan */}
-                          <div className="form-group w-full ">
+                          <div className="f-hunian-tahanan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2229,9 +2634,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.hunian_wbp_otmil_id,
-                                      label: formState.nama_hunian_wbp_otmil,
-                                    }
+                                    value: formState.hunian_wbp_otmil_id,
+                                    label: formState.nama_hunian_wbp_otmil,
+                                  }
                                   : formState.hunian_wbp_otmil_id
                               }
                               options={hunian.map((item: any) => ({
@@ -2249,7 +2654,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Nomor Tahanan*/}
-                          <div className="form-group w-full ">
+                          <div className="f-nomor-tahanan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2275,7 +2680,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Terisolasi */}
-                          <div className="form-group w-full ">
+                          <div className="f-status-terisolasi form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2304,7 +2709,7 @@ export const AddInmateModal = ({
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           {/* Status Wbp*/}
-                          <div className="form-group w-full ">
+                          <div className="f-status-tersangka form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2319,9 +2724,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.status_wbp_kasus_id,
-                                      label: formState.nama_status_wbp_kasus,
-                                    }
+                                    value: formState.status_wbp_kasus_id,
+                                    label: formState.nama_status_wbp_kasus,
+                                  }
                                   : formState.status_wbp_kasus_id
                               }
                               disabled={isDetail}
@@ -2435,11 +2840,11 @@ export const AddInmateModal = ({
                           </div> */}
 
                           {formState.status_wbp_kasus_id === '' ||
-                          formState.status_wbp_kasus_id === null ? null : (
+                            formState.status_wbp_kasus_id === null ? null : (
                             <>
                               {/* Tanggal Penetapan Terpidana*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2466,7 +2871,7 @@ export const AddInmateModal = ({
 
                               {/* Tanggal Penetapan Terdakwa*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2493,7 +2898,7 @@ export const AddInmateModal = ({
 
                               {/* Tanggal Penetapan Tersangka*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2521,7 +2926,7 @@ export const AddInmateModal = ({
                           )}
 
                           {/* Tanggal Masa Penahanan */}
-                          <div className="form-group w-full ">
+                          <div className="f-tanggal-masa-penahanan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2558,7 +2963,7 @@ export const AddInmateModal = ({
                         <div className="grid grid-cols-1 gap-4">
                           <div className="grid grid-cols-2 gap-4">
                             {/* Penyakit */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-kesehatan-penyakit form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2583,7 +2988,7 @@ export const AddInmateModal = ({
                             </div>
 
                             {/* Berat Badan */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-berat-badan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2608,7 +3013,7 @@ export const AddInmateModal = ({
                             </div>
 
                             {/* Tinggi Badan */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-tinggi-badan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2646,7 +3051,7 @@ export const AddInmateModal = ({
                         <div className="grid grid-cols-1 gap-4">
                           <div className="grid grid-cols-2 gap-4">
                             {/* Pola Makan */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-pola-makan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2671,7 +3076,7 @@ export const AddInmateModal = ({
                             </div>
 
                             {/* Jenis Olahraga */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-jenis-olahraga form-group w-full flex flex-col">
                               <label
                                 className=" block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2706,7 +3111,7 @@ export const AddInmateModal = ({
                             </div>
 
                             {/* Konsumsi Zat Adiktif */}
-                            <div className="form-group w-full flex flex-col">
+                            <div className="f-zat-adiktif form-group w-full flex flex-col">
                               <label
                                 className=" block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -2747,92 +3152,35 @@ export const AddInmateModal = ({
                     {isDetail ? null : (
                       <>
                         {/*  Akses Zona  */}
-                        <div className=" grid grid-cols-3 gap-5 justify-normal pt-4">
+                        <div className="grid grid-cols-3 gap-5 justify-normal pt-4">
                           <div className="w-full col-span-3">
                             <h3 className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                               Akses Zona
                             </h3>
 
-                            <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg ">
+                            <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg akses-zona">
                               {isEdit
                                 ? autocompleteDataZona
-                                    ?.filter(
-                                      (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.includes(
-                                          item.ruangan_otmil_id,
-                                        ),
-                                    )
-                                    .map((zonaItem: any) => (
-                                      <div
-                                        key={zonaItem.ruangan_otmil_id}
-                                        className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${
-                                          zonaItem.nama_zona === 'Hijau'
-                                            ? 'border-green-500'
-                                            : zonaItem.nama_zona === 'Kuning'
-                                              ? 'border-yellow-500'
-                                              : zonaItem.nama_zona === 'Merah'
-                                                ? 'border-red-500'
-                                                : 'border-slate-800'
-                                        } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
-                                        data-te-ripple-color="dark"
-                                      >
-                                        <p className="text-xs capitalize font-semibold">
-                                          {' '}
-                                          {zonaItem.nama_ruangan_otmil}
-                                        </p>
-                                        <button
-                                          className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                          onClick={(e) => {
-                                            e.preventDefault(); // Prevent page reload
-                                            handleAddZona(
-                                              zonaItem.ruangan_otmil_id,
-                                              'akses_ruangan_otmil_id',
-                                            );
-                                          }}
-                                        >
-                                          Ijinkan
-                                        </button>
-                                        {/* <button
-                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
-                                    onClick={(e) => {
-                                      e.preventDefault(); // Prevent page reload
-                                      handleAddZona(
-                                        zonaItem.ruangan_otmil_id,
-                                        'zona_kuning'
-                                      );
-                                    }}
-                                  >
-                                    Awasi
-                                  </button> */}
-                                        <button
-                                          className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                          onClick={(e) => {
-                                            e.preventDefault(); // Prevent page reload
-                                            handleAddZona(
-                                              zonaItem.ruangan_otmil_id,
-                                              'zona_merah',
-                                            );
-                                          }}
-                                        >
-                                          Larang
-                                        </button>
-                                      </div>
-                                    ))
-                                : autocompleteDataZona?.map((zonaItem: any) => (
+                                  ?.filter(
+                                    (item: any) =>
+                                      !formState.akses_ruangan_otmil_id.includes(
+                                        item.ruangan_otmil_id,
+                                      ),
+                                  )
+                                  .map((zonaItem: any) => (
                                     <div
                                       key={zonaItem.ruangan_otmil_id}
-                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${
-                                        zonaItem.nama_zona === 'Hijau'
-                                          ? 'border-green-500'
-                                          : zonaItem.nama_zona === 'Kuning'
-                                            ? 'border-yellow-400'
-                                            : zonaItem.nama_zona === 'Merah'
-                                              ? 'border-red-500'
-                                              : 'border-slate-500'
-                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
+                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${zonaItem.nama_zona === 'Hijau'
+                                        ? 'border-green-500'
+                                        : zonaItem.nama_zona === 'Kuning'
+                                          ? 'border-yellow-500'
+                                          : zonaItem.nama_zona === 'Merah'
+                                            ? 'border-red-500'
+                                            : 'border-slate-800'
+                                        } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
                                       data-te-ripple-color="dark"
                                     >
-                                      <p className="text-xs text-white capitalize font-semibold">
+                                      <p className="text-xs capitalize font-semibold">
                                         {' '}
                                         {zonaItem.nama_ruangan_otmil}
                                       </p>
@@ -2848,7 +3196,18 @@ export const AddInmateModal = ({
                                       >
                                         Ijinkan
                                       </button>
-
+                                      {/* <button
+                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
+                                    onClick={(e) => {
+                                      e.preventDefault(); // Prevent page reload
+                                      handleAddZona(
+                                        zonaItem.ruangan_otmil_id,
+                                        'zona_kuning'
+                                      );
+                                    }}
+                                  >
+                                    Awasi
+                                  </button> */}
                                       <button
                                         className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                                         onClick={(e) => {
@@ -2862,7 +3221,51 @@ export const AddInmateModal = ({
                                         Larang
                                       </button>
                                     </div>
-                                  ))}
+                                  ))
+                                : autocompleteDataZona?.map((zonaItem: any) => (
+                                  <div
+                                    key={zonaItem.ruangan_otmil_id}
+                                    className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${zonaItem.nama_zona === 'Hijau'
+                                      ? 'border-green-500'
+                                      : zonaItem.nama_zona === 'Kuning'
+                                        ? 'border-yellow-400'
+                                        : zonaItem.nama_zona === 'Merah'
+                                          ? 'border-red-500'
+                                          : 'border-slate-500'
+                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
+                                    data-te-ripple-color="dark"
+                                  >
+                                    <p className="text-xs text-white capitalize font-semibold">
+                                      {' '}
+                                      {zonaItem.nama_ruangan_otmil}
+                                    </p>
+                                    <button
+                                      className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                      onClick={(e) => {
+                                        e.preventDefault(); // Prevent page reload
+                                        handleAddZona(
+                                          zonaItem.ruangan_otmil_id,
+                                          'akses_ruangan_otmil_id',
+                                        );
+                                      }}
+                                    >
+                                      Ijinkan
+                                    </button>
+
+                                    <button
+                                      className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                      onClick={(e) => {
+                                        e.preventDefault(); // Prevent page reload
+                                        handleAddZona(
+                                          zonaItem.ruangan_otmil_id,
+                                          'zona_merah',
+                                        );
+                                      }}
+                                    >
+                                      Larang
+                                    </button>
+                                  </div>
+                                ))}
                             </div>
                             {/* Display errors */}
                             {/* {errors.map((error, index) => (
@@ -2875,7 +3278,7 @@ export const AddInmateModal = ({
 
                     {/*  Zona  */}
                     <div className=" grid grid-cols-2 gap-5 justify-normal pt-4">
-                      <div className="w-full ">
+                      <div className="zona-hijau w-full ">
                         <h3 className="text-md font-semibold mb-2">
                           Zona Hijau
                         </h3>
@@ -2883,73 +3286,73 @@ export const AddInmateModal = ({
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
+                              <div
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {item.nama_ruangan_otmil}
+                                </p>
+                              </div>
+                            ))
+                            : formState.akses_ruangan_otmil_id?.map(
+                              (zonaId: any) => (
                                 <div
+                                  key={zonaId}
                                   className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
                                   data-te-ripple-color="dark"
                                 >
                                   <p className="capitalize text-center">
-                                    {item.nama_ruangan_otmil}
-                                  </p>
-                                </div>
-                              ))
-                            : formState.akses_ruangan_otmil_id?.map(
-                                (zonaId: any) => (
-                                  <div
-                                    key={zonaId}
-                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                    data-te-ripple-color="dark"
-                                  >
-                                    <p className="capitalize text-center">
-                                      {
-                                        zona.find(
-                                          (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id ===
-                                            zonaId,
-                                        )?.nama_ruangan_otmil
-                                      }
-                                    </p>
-                                    <span
-                                      data-te-chip-close
-                                      onClick={() =>
-                                        handleRemoveZona(
+                                    {
+                                      zona.find(
+                                        (zonaItem: any) =>
+                                          zonaItem.ruangan_otmil_id ===
                                           zonaId,
-                                          'akses_ruangan_otmil_id',
-                                        )
-                                      }
-                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                      )?.nama_ruangan_otmil
+                                    }
+                                  </p>
+                                  <span
+                                    data-te-chip-close
+                                    onClick={() =>
+                                      handleRemoveZona(
+                                        zonaId,
+                                        'akses_ruangan_otmil_id',
+                                      )
+                                    }
+                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke-width="1.5"
+                                      stroke="currentColor"
+                                      className="h-3 w-3"
                                     >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                        className="h-3 w-3"
-                                      >
-                                        <path
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M6 18L18 6M6 6l12 12"
-                                        />
-                                      </svg>
-                                    </span>
-                                  </div>
-                                  // <div
-                                  //   key={zonaId}
-                                  //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                                  // >
-                                  //   <span className="text-sm">
-                                  //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                                  //   </span>
-                                  //   <button
-                                  //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                                  //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                                  //   >
-                                  //     X
-                                  //   </button>
-                                  // </div>
-                                ),
-                              )}
+                                      <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
+                                    </svg>
+                                  </span>
+                                </div>
+                                // <div
+                                //   key={zonaId}
+                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                                // >
+                                //   <span className="text-sm">
+                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                                //   </span>
+                                //   <button
+                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                                //   >
+                                //     X
+                                //   </button>
+                                // </div>
+                              ),
+                            )}
                         </div>
 
                         {/* Display errors */}
@@ -3003,7 +3406,7 @@ export const AddInmateModal = ({
 
                   </div> */}
 
-                      <div className="w-full ">
+                      <div className="zona-merah w-full ">
                         <h3 className="text-md font-semibold mb-2">
                           Zona Merah
                         </h3>
@@ -3065,70 +3468,70 @@ export const AddInmateModal = ({
                         <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
-                                <div
-                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                  data-te-ripple-color="dark"
-                                >
-                                  <p className="capitalize text-center">
-                                    {item.nama_ruangan_otmil}
-                                  </p>
-                                </div>
-                              ))
+                              <div
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {item.nama_ruangan_otmil}
+                                </p>
+                              </div>
+                            ))
                             : formState.zona_merah?.map((zonaId: any) => (
-                                <div
-                                  key={zonaId}
-                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                  data-te-ripple-color="dark"
+                              <div
+                                key={zonaId}
+                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                data-te-ripple-color="dark"
+                              >
+                                <p className="capitalize text-center">
+                                  {
+                                    zona.find(
+                                      (zonaItem: any) =>
+                                        zonaItem.ruangan_otmil_id === zonaId,
+                                    )?.nama_ruangan_otmil
+                                  }
+                                </p>
+                                <span
+                                  data-te-chip-close
+                                  onClick={() =>
+                                    handleRemoveZona(
+                                      zonaId,
+                                      'akses_ruangan_otmil_id',
+                                    )
+                                  }
+                                  className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                                 >
-                                  <p className="capitalize text-center">
-                                    {
-                                      zona.find(
-                                        (zonaItem: any) =>
-                                          zonaItem.ruangan_otmil_id === zonaId,
-                                      )?.nama_ruangan_otmil
-                                    }
-                                  </p>
-                                  <span
-                                    data-te-chip-close
-                                    onClick={() =>
-                                      handleRemoveZona(
-                                        zonaId,
-                                        'akses_ruangan_otmil_id',
-                                      )
-                                    }
-                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    className="h-3 w-3"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      stroke="currentColor"
-                                      className="h-3 w-3"
-                                    >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M6 18L18 6M6 6l12 12"
-                                      />
-                                    </svg>
-                                  </span>
-                                </div>
-                                // <div
-                                //   key={zonaId}
-                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                                // >
-                                //   <span className="text-sm">
-                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                                //   </span>
-                                //   <button
-                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                                //   >
-                                //     X
-                                //   </button>
-                                // </div>
-                              ))}
+                                    <path
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                </span>
+                              </div>
+                              // <div
+                              //   key={zonaId}
+                              //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                              // >
+                              //   <span className="text-sm">
+                              //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                              //   </span>
+                              //   <button
+                              //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                              //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                              //   >
+                              //     X
+                              //   </button>
+                              // </div>
+                            ))}
                         </div>
 
                         {/* Display errors */}
@@ -3139,18 +3542,18 @@ export const AddInmateModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -3175,9 +3578,8 @@ export const AddInmateModal = ({
 
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -3209,9 +3611,8 @@ export const AddInmateModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

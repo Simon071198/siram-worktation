@@ -540,6 +540,7 @@ const DaftarKasus = () => {
             </div>
           </div>
         </div>
+        </div>
         <div className="">
           <div
             className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
@@ -723,7 +724,6 @@ const DaftarKasus = () => {
             />
           </div>
         )}
-      </div>
     </div>
   );
 };

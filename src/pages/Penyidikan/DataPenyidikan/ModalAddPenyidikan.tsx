@@ -41,8 +41,6 @@ export const AddPenyidikanModal = ({
     zona_waktu: defaultValue?.zona_waktu,
   });
 
-  
-
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
@@ -483,7 +481,6 @@ export const AddPenyidikanModal = ({
     />
   );
 
-
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -522,14 +519,25 @@ export const AddPenyidikanModal = ({
                 </div>
 
                 {/* <div className="w-10"> */}
-                <button>
-                  <HiQuestionMarkCircle
-                    values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-70">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 {/* </div> */}
 
                 <strong

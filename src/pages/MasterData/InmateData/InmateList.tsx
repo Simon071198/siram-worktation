@@ -19,6 +19,9 @@ import { HiDotsVertical, HiPencilAlt, HiOutlineTrash } from 'react-icons/hi';
 import * as xlsx from 'xlsx';
 import ToolsTip from '../../../components/ToolsTip';
 import DropdownAction from '../../../components/DropdownAction';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 const InmateList = () => {
   const navigate = useNavigate();
@@ -525,6 +528,51 @@ const InmateList = () => {
     setHoveredIndex(false);
   };
 
+  // Kodingan Driver Tutorial
+
+  const handleClickTutorial = () => {
+    const driverObj: any =
+      driver({
+        showProgress: true,
+        steps: [
+          {
+            element: '.kotak-pencarian',
+            popover: {
+              title: 'Search',
+              description: 'Tempat mencari nama tersangka',
+            },
+          },
+          {
+            element: '.kotak-pencarian-ruangan',
+            popover: {
+              title: 'Ruangan',
+              description: 'Tempat menentukan ruangan',
+            },
+          },
+          {
+            element: '.tombol-pencarian',
+            popover: {
+              title: 'Button Search',
+              description: 'Click button untuk mencari nama tersangka',
+            },
+          },
+          {
+            element: '.excel',
+            popover: { title: 'Excel', description: 'Mendapatkan file excel data tersangka' },
+          },
+          {
+            element: '.b-tambah',
+            popover: {
+              title: 'Tambah',
+              description: 'Menambahkan data tersangka',
+            },
+          },
+        ],
+      });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -532,7 +580,7 @@ const InmateList = () => {
       <div className="rounded-sm border  border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full kotak-pencarian">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari nama"
@@ -555,7 +603,7 @@ const InmateList = () => {
             <select
               value={filterHunian}
               onChange={handleFilterChangeHunian}
-              className="w-full rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="kotak-pencarian-ruangan w-full rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
             >
               <option value="">Semua ruang</option>
               {hunian.map((item: any) => (
@@ -566,7 +614,7 @@ const InmateList = () => {
             </select>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className="tombol-pencarian rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -589,10 +637,20 @@ const InmateList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -624,8 +682,9 @@ const InmateList = () => {
 
         <div className="">
           <div
-            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
-              }`}
+            className={`rounded-t-md bg-gray-2 dark:bg-slate-600 text-center text-md ${
+              isOperator ? 'grid grid-cols-4 ' : 'grid grid-cols-5 '
+            }`}
           >
             <div className="p-2.5 xl:p-5">
               <h5 className=" font-medium uppercase ">Nama</h5>
@@ -668,8 +727,9 @@ const InmateList = () => {
                 return (
                   <div>
                     <div
-                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                        }`}
+                      className={` rounded-sm bg-gray-2 dark:bg-meta-4  text-md ${
+                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      }`}
                     >
                       <div
                         onClick={() => handleDetailClick(item)}

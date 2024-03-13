@@ -465,8 +465,17 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                 </div>
 
                 {/* <div className="w-10"> */}
-                {isDetail ? null : (
-                  <button className="pr-20">
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

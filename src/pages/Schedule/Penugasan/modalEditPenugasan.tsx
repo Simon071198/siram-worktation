@@ -135,7 +135,7 @@ const ModalEditPenugasan: React.FC<AddRoomModalProps> = ({
 
               {/* <div className="w-10"> */}
               {isDetail ? null : (
-                <button>
+                <button className="pr-55">
                   <HiQuestionMarkCircle
                     values={filter}
                     aria-placeholder="Show tutorial"

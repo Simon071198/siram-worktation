@@ -195,7 +195,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
 
               {/* <div className="w-10"> */}
               {isDetail ? null : (
-                <button>
+                <button className="pr-70">
                   <HiQuestionMarkCircle
                     values={filter}
                     aria-placeholder="Show tutorial"

@@ -302,7 +302,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </g>{' '}
                     </g>
                   </svg>
-                  penyidikan
+                  Penyidikan
                 </NavLink>
               </li>
               {/* <!-- Menu Penyidikan --> */}
