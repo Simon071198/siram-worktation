@@ -519,26 +519,31 @@ const DaftarKasus = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Daftar Kasus
           </h4>
-          <button
-          className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
-          onClick={() => navigate('/penyidikan')}
-          >
-            Penyidikan
-          </button>
-          {!isOperator && (
-            <button
-              onClick={handleModalAddOpen}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
-            >
-              Tambah
-            </button>
-          )}
+          <div className="flex flex-row space-x-4 space-x">
+            <div>
+              <button
+                className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
+                onClick={() => navigate('/penyidikan')}
+              >
+                Penyidikan
+              </button>
+            </div>
+            <div>
+              {!isOperator && (
+                <button
+                  onClick={handleModalAddOpen}
+                  className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+                >
+                  Tambah
+                </button>
+              )}
+            </div>
+          </div>
         </div>
         <div className="">
           <div
-            className={`${
-              isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+            className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+              } rounded-t-md bg-gray-2 dark:bg-slate-600`}
           >
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -581,9 +586,8 @@ const DaftarKasus = () => {
                 return (
                   <div>
                     <div
-                      className={`${
-                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                      className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                        } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                       key={item.nama_kasus}
                     >
                       <div
