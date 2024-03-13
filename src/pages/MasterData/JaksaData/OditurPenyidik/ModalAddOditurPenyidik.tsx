@@ -191,7 +191,7 @@ export const AddOditurPenyidikModal = ({
                   <button className="pr-70">
                     <HiQuestionMarkCircle
                       values={filter}
-                      aria-placeholder="Show tutorial"
+                      aria-placeholder="Show   tutorial"
                       // onChange={}
                       onClick={handleClickTutorial}
                     />
