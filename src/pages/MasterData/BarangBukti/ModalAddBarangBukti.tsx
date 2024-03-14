@@ -3,6 +3,7 @@ import Select from 'react-select';
 
 import { Alerts } from './AlertBarangBukti';
 import { apiReadKasus } from '../../../services/api';
+import { apiReadAllJenisPerkara } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -28,6 +29,8 @@ export const AddBarangBuktiModal = ({
       keterangan: '',
       pdf_file_base64: '',
       tanggal_diambil: '',
+      jenis_perkara_id: '',
+      nama_jenis_perkara: '',
     },
   );
   console.log('formsate', formState);
@@ -39,6 +42,7 @@ export const AddBarangBuktiModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dataKasus, setDataKasus] = useState([]);
+  const [dataJenisPerkara, setDataJenisPerkara] = useState([]);
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -179,7 +183,10 @@ export const AddBarangBuktiModal = ({
   };
 
   useEffect(() => {
-    Promise.all([kasus()]).then(() => {
+    Promise.all([
+      kasus(),
+      apiJenisPerkara(),
+    ]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -199,6 +206,22 @@ export const AddBarangBuktiModal = ({
         }),
       );
   };
+
+  const apiJenisPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadAllJenisPerkara(params, token)
+      .then((res) => {
+        setDataJenisPerkara(res.data.records);
+      })
+      .catch((err) =>
+        Alerts.fire({
+          icon: 'error',
+          title: err.massage,
+        }),
+      );
+  }
 
   const customStyles = {
     container: (provided: any) => ({
@@ -540,9 +563,9 @@ export const AddBarangBuktiModal = ({
                           defaultValue={
                             isEdit || isDetail || isKasus
                               ? {
-                                  value: formState.kasus_id,
-                                  label: formState.nama_kasus,
-                                }
+                                value: formState.kasus_id,
+                                label: formState.nama_kasus,
+                              }
                               : formState.kasus_id
                           }
                           placeholder={'Pilih Kasus'}
@@ -666,6 +689,50 @@ export const AddBarangBuktiModal = ({
                       </p>
                     </div>
                   </div>
+                  <div className="mb-6">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Jenis Perkara
+                    </label>
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                            value: formState.jenis_perkara_id,
+                            label: formState.nama_jenis_perkara,
+                          }
+                          : formState.jenis_perkara_id
+                      }
+                      placeholder={'Pilih Jenis Perkara'}
+                      isClearable={true}
+                      isSearchable={true}
+                      isDisabled={isDetail}
+                      name="jenis_perkara_id"
+                      styles={customStyles}
+                      options={dataJenisPerkara.map((item: any) => ({
+                        value: item.jenis_perkara_id,
+                        label: item.nama_jenis_perkara,
+                      }))}
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          jenis_perkara_id: e?.value,
+                          nama_jenis_perkara: e?.label,
+                        });
+                      }}
+                    />
+                    <p className="error-text absolute">
+                      {errors.map((item) =>
+                        item === 'nama_jenis_perkara'
+                          ? 'Masukan jenis perkara'
+                          : '',
+                      )}
+                    </p>
+                  </div>
 
                   {/* Dokumentasi */}
                   <div className="grid grid-cols-1">
@@ -690,9 +757,8 @@ export const AddBarangBuktiModal = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
-                              isDetail ? 'hidden' : 'block'
-                            }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
+                              }`}
                           >
                             <p className="p-[2px]" onClick={handleRemoveDoc}>
                               <svg
@@ -725,9 +791,8 @@ export const AddBarangBuktiModal = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${
-                              isDetail ? 'block' : 'hidden'
-                            }`}
+                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
+                              }`}
                           >
                             <button
                               type="button"
@@ -796,9 +861,8 @@ export const AddBarangBuktiModal = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -830,9 +894,8 @@ export const AddBarangBuktiModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                        buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -866,18 +929,18 @@ export const AddBarangBuktiModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                      <>
+                        <br />
+                        <div className="error">
+                          {errors
+                            .filter((item: string) =>
+                              item.startsWith('INVALID_ID'),
+                            )[0]
+                            .replace('INVALID_ID_', '')}{' '}
+                          is not a valid bond
+                        </div>
+                      </>
+                    )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">
