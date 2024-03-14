@@ -3,6 +3,7 @@ import Select from 'react-select';
 
 import { Alerts } from './AlertBarangBukti';
 import { apiReadKasus } from '../../../services/api';
+import { apiReadAllJenisPerkara } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -28,6 +29,7 @@ export const AddBarangBuktiModal = ({
       keterangan: '',
       pdf_file_base64: '',
       tanggal_diambil: '',
+      jenis_perkara_id: '',
       nama_jenis_perkara: '',
     },
   );
@@ -40,6 +42,7 @@ export const AddBarangBuktiModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dataKasus, setDataKasus] = useState([]);
+  const [dataJenisPerkara, setDataJenisPerkara] = useState([]);
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -180,7 +183,10 @@ export const AddBarangBuktiModal = ({
   };
 
   useEffect(() => {
-    Promise.all([kasus()]).then(() => {
+    Promise.all([
+      kasus(),
+      apiJenisPerkara(),
+    ]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -200,6 +206,22 @@ export const AddBarangBuktiModal = ({
         }),
       );
   };
+
+  const apiJenisPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadAllJenisPerkara(params, token)
+      .then((res) => {
+        setDataJenisPerkara(res.data.records);
+      })
+      .catch((err) =>
+        Alerts.fire({
+          icon: 'error',
+          title: err.massage,
+        }),
+      );
+  }
 
   const customStyles = {
     container: (provided: any) => ({
@@ -674,14 +696,34 @@ export const AddBarangBuktiModal = ({
                     >
                       Nama Jenis Perkara
                     </label>
-                    <input
-                      className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                      type="text"
-                      name="nama_jenis_perkara"
-                      placeholder='Nama Jenis Perkara'
-                      value={formState.nama_jenis_perkara}
-                      onChange={handleChange}
-                      disabled={isDetail}
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                            value: formState.jenis_perkara_id,
+                            label: formState.nama_jenis_perkara,
+                          }
+                          : formState.jenis_perkara_id
+                      }
+                      placeholder={'Pilih Jenis Perkara'}
+                      isClearable={true}
+                      isSearchable={true}
+                      isDisabled={isDetail}
+                      name="jenis_perkara_id"
+                      styles={customStyles}
+                      options={dataJenisPerkara.map((item: any) => ({
+                        value: item.jenis_perkara_id,
+                        label: item.nama_jenis_perkara,
+                      }))}
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          jenis_perkara_id: e?.value,
+                          nama_jenis_perkara: e?.label,
+                        });
+                      }}
                     />
                     <p className="error-text absolute">
                       {errors.map((item) =>

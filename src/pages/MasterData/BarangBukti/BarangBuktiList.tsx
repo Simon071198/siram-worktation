@@ -307,6 +307,7 @@ const AhliList = () => {
         'nomer barang bukti',
         'keterangan',
         'tanggal di ambil',
+        'nama jenis perkara'
       ],
       ...data.map((item: any) => [
         item.nama_kasus,
@@ -314,6 +315,7 @@ const AhliList = () => {
         item.nomor_barang_bukti,
         item.keterangan,
         item.tanggal_diambil,
+        item.nama_jenis_perkara
       ]),
     ];
 
@@ -429,7 +431,7 @@ const AhliList = () => {
               </div>
               <div className="p-2.5 text-center col-span-1 xl:p-5">
                 <h5 className="text-xs font-medium uppercase xsm:text-base">
-                  Tanggal Diambil
+                  Nama Perkara
                 </h5>
               </div>
             </div>
