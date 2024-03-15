@@ -27,6 +27,20 @@ const Penugasan = () => {
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
 
   const [dataPenugasan, setDataPenugasan] = useState([
     {
@@ -230,12 +244,14 @@ const Penugasan = () => {
           <h1 className="text-xl font-semibold text-black dark:text-white">
             Data Penugasan Shift
           </h1>
-          <button
-            onClick={() => setModalAddOpen(!modalAddOpen)}
-            className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(!modalAddOpen)}
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
+          )}
         </div>
         <div className="flex flex-col mb-5  ">
           <div className="rounded-b-md rounded-t-md">
@@ -267,18 +283,22 @@ const Penugasan = () => {
                           >
                             Detail
                           </button>
-                          <button
-                            onClick={() => handleEdit(item)}
-                            className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(item.penugasan_id)}
-                            className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
-                          >
-                            Delete
-                          </button>
+                          {!isOperator && (
+                            <>
+                              <button
+                                onClick={() => handleEdit(item)}
+                                className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(item.penugasan_id)}
+                                className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                              >
+                                Delete
+                              </button>
+                            </>
+                          )}
                         </div>
                       </li>
                     );

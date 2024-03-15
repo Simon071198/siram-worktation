@@ -50,7 +50,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState('');  
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -744,45 +744,47 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                         </div>
                         <div className="">
                           <div style={{ height: '10%' }}>
-                            {/* pdf */}
-                            {file && (
-                              <div className="">
-                                {file === 'pdf' ? (
-                                  <iframe
-                                    src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                    title="pdf"
-                                    width="100%"
-                                    height="600px" // Adjust the height as per your requirement
-                                    className="border-0 text-center justify-center"
-                                    // scrolling="no"
-                                  />
-                                ) : file === 'docx' || file === 'doc' ? (
-                                  // {/* docx */}
-                                  <iframe
-                                    src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                    title="docx"
-                                    width="100%"
-                                    height="600px" // Adjust the height as per your requirement
-                                    // className="border-0 text-center justify-center padding-left-10"
-                                  ></iframe>
-                                ) : (
-                                  <p>Ekstensi file tidak didukung</p>
-                                )}
-                              </div>
-                            )}
-                            {formState.pdf_file_base64 && (
-                              <div className="">
-                                <embed
-                                  src={`${formState.pdf_file_base64}`}
-                                  title="pdf"
-                                  type="application/pdf"
-                                  width="100%"
-                                  height="600px" // Adjust the height as per your requirement
-                                  className="border-0 text-center justify-center"
-                                  // scrolling="no"
-                                />
-                              </div>
-                            )}
+                              {/* pdf */}
+                              {file && (
+                                  <div className="">
+                                      {file === 'pdf' ? (
+                                          <iframe
+                                              src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                              title="pdf"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              className="border-0 text-center justify-center"
+                                              // scrolling="no"
+                                          />
+                                      ) : (file === 'docx' || file === 'doc' ) ? (
+                                          // {/* docx */}
+                                          <iframe
+                                              src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                              title="docx"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              // className="border-0 text-center justify-center padding-left-10"
+                                          ></iframe>
+                                      ) : (
+                                          <p>Ekstensi file tidak didukung</p>
+                                      )}
+                                  </div>
+                              )}
+                              {/* {formState.pdf_file_base64 && (
+                                  <div className="">
+                                          <embed
+                                              src={`${formState.pdf_file_base64}`}
+                                              title="pdf"
+                                              type="application/pdf"
+                                              width="100%"
+                                              height="600px" // Adjust the height as per your requirement
+                                              className="border-0 text-center justify-center"
+                                              // scrolling="no"
+                                          />
+                                   
+                                  </div>
+                              )} */}
+
                           </div>
                         </div>
                         <p className="text-center text-sm text-blue-500">

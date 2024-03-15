@@ -50,6 +50,7 @@ const GelangList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState({
     nama_gelang: '',
+    // dmac:'123'
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
@@ -61,6 +62,7 @@ const GelangList = () => {
   const [isOperator, setIsOperator] = useState<boolean>();
   const [searchData, setSearchData] = useState({
     dmac: '',
+    nama_gelang:''
   });
 
   const tokenItem = localStorage.getItem('token');
@@ -92,7 +94,7 @@ const GelangList = () => {
   const handleSearchClick = async () => {
     let params = {
       filter: {
-        nama_gelang: filter,
+        nama_gelang: searchData.nama_gelang,
         dmac: searchData.dmac,
         // nama_lokasi_otmil: 'Cimahi',
         lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
@@ -406,9 +408,11 @@ const GelangList = () => {
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="flex w-full search">
               <SearchInputButton
-                value={filter.nama_gelang}
+                // value={filter.nama_gelang}
                 placehorder="Cari nama Gelang"
-                onChange={handleFilterChange}
+                // onChange={handleFilterChange}
+                value={searchData.nama_gelang}
+                onChange={(e) => setSearchData({ ...searchData, nama_gelang: e.target.value })}
 
               // onClick={handleSearchClick}
               />

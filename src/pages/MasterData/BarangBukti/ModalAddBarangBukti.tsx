@@ -23,6 +23,7 @@ export const AddBarangBuktiModal = ({
   isEdit,
   token,
 }: any) => {
+
   const navigate = useNavigate();
   const location = useLocation();
 

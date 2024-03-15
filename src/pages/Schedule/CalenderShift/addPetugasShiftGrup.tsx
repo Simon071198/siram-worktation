@@ -48,6 +48,20 @@ const AddPetugasShiftGrup = ({
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [filter, setFilter] = useState('');
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
 
   const [dataPetugasShift, setDataPetugasShift] = useState(
     defaultValue || {
@@ -673,7 +687,8 @@ const AddPetugasShiftGrup = ({
                   </div>
                 </div>
                 {isDetail ? null : (
-                  <button
+                  !isOperator && (
+                    <button
                     onClick={handleSubmit}
                     className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                       buttonLoad ? 'bg-slate-400' : ''
@@ -691,6 +706,7 @@ const AddPetugasShiftGrup = ({
                     )}
                     Submit
                   </button>
+                    )                  
                 )}
               </div>
             </div>
