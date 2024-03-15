@@ -173,9 +173,9 @@ const OditurPenuntutList = () => {
     setIsLoading(true);
     try {
       const response = await apiReadOditurPenuntut(param, token);
-      if (response.data.status !== 'OK') {
-        throw new Error(response.data.message);
-      }
+      // if (response.data.status !== 'OK') {
+      //   throw new Error(response.data.message);
+      // }
       const result = response.data.records;
       setData(result);
       setPages(response.data.pagination.totalPages);
