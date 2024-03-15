@@ -377,7 +377,6 @@ const InventarisList = () => {
         'Tipe',
         'Model',
         'Merek',
-        'Asal Barang',
         'Tanggal Masuk',
       ],
       ...data.map((item: any) => [
@@ -386,7 +385,6 @@ const InventarisList = () => {
         item.nama_tipe,
         item.model,
         item.merek,
-        item.company,
         item.tanggal_masuk,
       ]),
     ];

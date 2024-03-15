@@ -57,7 +57,7 @@ const DropdownUser = () => {
             {dataUser.nama_petugas}
           </span>
           <span className="block text-xs capitalize text-white">
-            {dataUser.role_name}
+            {/* {dataUser.role_name} */}
           </span>
         </span>
 

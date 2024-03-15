@@ -476,12 +476,14 @@ const KameraList = () => {
           <h4 className="ext-xl font-semibold text-black dark:text-white">
             Data Perangkat Kamera
           </h4>
-          <button
-            onClick={() => setModalAddOpen(true)}
-            className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(true)}
+              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+            >
+              Tambah
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col">

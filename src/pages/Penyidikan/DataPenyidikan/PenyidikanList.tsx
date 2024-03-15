@@ -25,7 +25,7 @@ interface Item {
   nomor_penyidikan: string;
   wbp_profile_id: string;
   kasus_id: string;
-  alasan_penyidikan: string;
+  // alasan_penyidikan: string;
   lokasi_penyidikan: string;
   waktu_penyidikan: string;
   agenda_penyidikan: string;
@@ -421,7 +421,7 @@ const PenyidikanList = () => {
     const dataToExcel = [
       [
         'nomor penyidikan',
-        'alasan penyidikan',
+        // 'alasan penyidikan',
         'lokasi penyidikan',
         'waktu penyidikan',
         'agenda penyidikan',
@@ -432,7 +432,7 @@ const PenyidikanList = () => {
       ],
       ...data.map((item: any) => [
         item.nomor_penyidikan,
-        item.alasan_penyidikan,
+        // item.alasan_penyidikan,
         item.lokasi_penyidikan,
         item.waktu_penyidikan,
         item.agenda_penyidikan,
