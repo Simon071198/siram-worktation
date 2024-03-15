@@ -63,14 +63,52 @@ const SignIn = () => {
       let record = res.data.user;
       let token = res.data.auth;
       if (res.data.status === 'success') {
-        Swal.fire(`Berhasil Masuk`).then(() => {
-          localStorage.setItem('dataUser', JSON.stringify(record));
-          localStorage.setItem('token', JSON.stringify(token));
-          setError(false);
-
-          navigate(lastPage);
-          window.location.reload();
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+          didClose: () => {
+          }
         });
+        
+        
+        localStorage.setItem('dataUser', JSON.stringify(record));
+        localStorage.setItem('token', JSON.stringify(token));
+        setError(false);
+        
+        navigate(lastPage);
+        Toast.fire({
+          icon: "success",
+          title: "Berhasil Masuk"
+        });
+        window.location.reload();
+        
+
+        // Toast.fire({
+        //   icon: "success",
+        //   title: "Berhasil Masuk"
+        // }).then(() => {
+        //   localStorage.setItem('dataUser', JSON.stringify(record));
+        //   localStorage.setItem('token', JSON.stringify(token));
+        //   setError(false);
+
+        //   navigate(lastPage);
+        //   window.location.reload();
+        // });
+        // Swal.fire(`Berhasil Masuk`).then(() => {
+        //   localStorage.setItem('dataUser', JSON.stringify(record));
+        //   localStorage.setItem('token', JSON.stringify(token));
+        //   setError(false);
+
+        //   navigate(lastPage);
+        //   window.location.reload();
+        // });
         setButtonLoad(false);
       } else {
         setError(true);
