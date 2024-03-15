@@ -495,7 +495,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/gema_admin_api' +
+                        'http://dev.transforme.co.id/siram_admin_api' +
                         item.image
                       }
                       alt=""
