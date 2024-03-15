@@ -44,7 +44,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState('');  
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -753,7 +753,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                       )}
                                   </div>
                               )}
-                              {formState.pdf_file_base64 && (
+                              {/* {formState.pdf_file_base64 && (
                                   <div className="">
                                           <embed
                                               src={`${formState.pdf_file_base64}`}
@@ -766,7 +766,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                           />
                                    
                                   </div>
-                              )}
+                              )} */}
                           </div>
                       </div>
                         <p className="text-center text-sm text-blue-500">

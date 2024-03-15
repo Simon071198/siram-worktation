@@ -38,6 +38,21 @@ const GrupShift = () => {
   const [modalAddOpen, setModalAddOpen] = useState(false);
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
   const [dataGrup, setDataGrup] = useState([
     {
       grup_petugas_id: '',
@@ -236,12 +251,14 @@ const GrupShift = () => {
           <h1 className="text-xl font-semibold text-black dark:text-white">
             Data Grup Shift
           </h1>
-          <button
-            onClick={() => setModalAddOpen(!modalAddOpen)}
-            className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(!modalAddOpen)}
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
+          )}
         </div>
         <div className="flex flex-col">
           <div className="rounded-b-md rounded-t-md">
@@ -297,20 +314,25 @@ const GrupShift = () => {
                               >
                                 Detail
                               </button>
-                              <button
-                                onClick={() => handleEditClick(itemGrup)}
-                                className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDeleteClick(itemGrup.grup_petugas_id)
-                                }
-                                className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
-                              >
-                                Delete
-                              </button>
+                              {!isOperator && (
+                                <>
+                                  <button
+                                    onClick={() => handleEditClick(itemGrup)}
+                                    className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteClick(itemGrup.grup_petugas_id)
+                                    }
+                                    className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                                  >
+                                    Delete
+                                  </button>
+                                </>
+                              )}
+
                             </div>
                           </li>
                         </ul>

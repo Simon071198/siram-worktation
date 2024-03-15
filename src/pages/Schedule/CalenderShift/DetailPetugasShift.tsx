@@ -74,6 +74,21 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
 
   const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [shift, setShift] = useState<Shift[]>([]);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
   const [waktu, setWaktu] = useState({
     waktu_mulai: shift[0]?.waktu_mulai,
     waktu_selesai: shift[0]?.waktu_selesai,
@@ -455,25 +470,27 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     })}
                   </div>
                 </div>
-                <div className="flex space-x-4">
-                  <button
-                    onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <>
-                        <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                    Submit
-                  </button>
-                </div>
+                {!isOperator && (
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={handleSubmit}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <>
+                          <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      Submit
+                    </button>
+                  </div>
+                )}
+
               </div>
             </div>
           </>

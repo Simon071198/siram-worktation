@@ -18,6 +18,8 @@ export const AddBarangBuktiModal = ({
   isEdit,
   token,
 }: any) => {
+  console.log(defaultValue,"ini default value boss qq");
+  
   const [formState, setFormState] = useState(
     defaultValue || {
       // nama_kasus:'',

@@ -47,6 +47,7 @@ const StaffList = () => {
   const [pangkatData, setPangkatData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [isAdmin, setIsAdmin] = useState<boolean>();
   const [filteran, setFilteran] = useState('');
 
   const tokenItem = localStorage.getItem('token');
@@ -380,6 +381,16 @@ const StaffList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'admin') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+
+    console.log(isAdmin, 'Admin');
+  }, [isAdmin]);
+
   const exportToExcel = () => {
     const dataToExcel = [
       ['Nama Petugas', 'Pangkat', 'Matra', 'NRP', 'Lokasi Kesatuan', 'Kesatuan', 'Jabatan', 'Divisi', 'Pendidikan Militer', 'keahlian', 'Agama', 'Tempat Lahir', 'Tanggal Lahir', 'Status Kawin', 'Provinsi', 'Kota', 'Alamat','Jenis Kelamin'],
@@ -491,7 +502,7 @@ const StaffList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Petugas
           </h4>
-          {!isOperator && (
+          {!isOperator && !isAdmin && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
@@ -501,7 +512,7 @@ const StaffList = () => {
           )}
         </div>
         <div className="flex flex-col">
-          {isOperator ? (
+          {isOperator || isAdmin ? (
             <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-3">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -551,7 +562,7 @@ const StaffList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ? (
+                    {isOperator || isAdmin ? (
                       <>
                         <div
                           className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize"

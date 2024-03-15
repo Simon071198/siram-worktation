@@ -24,6 +24,9 @@ const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
 
+const dataUserItem = localStorage.getItem('dataUser');
+const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
 const SidangList = () => {
   const [filter, setFilter] = useState('');
   const [data, setData] = useState([]);
@@ -42,6 +45,7 @@ const SidangList = () => {
     jenisSidang: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isOperator, setIsOperator] = useState<boolean>();
 
   const [alertIsAdded, setAlertIsAdded] = useState(false);
   const [alertIsEdited, setAlertIsEdited] = useState(false);
@@ -55,6 +59,16 @@ const SidangList = () => {
     console.log(pageNumber, 'pageNumber');
     setCurrentPage(pageNumber);
   };
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
 
   const handleDetailClick = (item: any) => {
     console.log(item, 'detail item');
@@ -618,44 +632,73 @@ const SidangList = () => {
           <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
             Data Daftar Sidang
           </h4>
-          <button
-            onClick={() => setModalAddOpen(true)}
-            className=" text-black rounded-md bg-blue-300 w-20 h-10 b-tambah"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(true)}
+              className=" text-black rounded-md bg-blue-300 w-20 h-10 b-tambah"
+            >
+              Tambah
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col">
-          <div className="grid grid-cols-5 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-            <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nama WBP
-              </h5>
-            </div>
+          {isOperator ? (
+            <div className="grid grid-cols-4 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Nama WBP
+                </h5>
+              </div>
 
-            <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Jenis Sidang
-              </h5>
-            </div>
-            <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Jadwal Sidang
-              </h5>
-            </div>
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Jenis Sidang
+                </h5>
+              </div>
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Jadwal Sidang
+                </h5>
+              </div>
 
-            <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Ketua Oditur
-              </h5>
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Ketua Oditur
+                </h5>
+              </div>
             </div>
-            <div className="p-2.5 xl:p-5 ">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Aksi
-              </h5>
+          ) : (
+            <div className="grid grid-cols-5 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Nama WBP
+                </h5>
+              </div>
+
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Jenis Sidang
+                </h5>
+              </div>
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Jadwal Sidang
+                </h5>
+              </div>
+
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Ketua Oditur
+                </h5>
+              </div>
+              <div className="p-2.5 xl:p-5 ">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Aksi
+                </h5>
+              </div>
             </div>
-          </div>
+          )}
 
           {data.length == 0 ? (
             <div className="flex justify-center p-4 w-ful">No Data</div>
@@ -664,49 +707,92 @@ const SidangList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className="hidden text-black dark:text-white sm:block">
-                          {item.nama_wbp}
-                        </p>
-                      </div>
+                    {isOperator ?
+                      (<div className="grid grid-cols-4 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nama_wbp}
+                          </p>
+                        </div>
 
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
-                      >
-                        <p className="hidden text-black dark:text-white sm:block">
-                          {item.nama_jenis_persidangan}
-                        </p>
-                      </div>
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nama_jenis_persidangan}
+                          </p>
+                        </div>
 
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className="hidden text-black dark:text-white sm:block">
-                          {item.jadwal_sidang}
-                        </p>
-                      </div>
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.jadwal_sidang}
+                          </p>
+                        </div>
 
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
-                      >
-                        <p className="hidden text-black dark:text-white sm:block text-center">
-                          {item?.sidang_oditur && item.sidang_oditur.length > 0
-                            ? item?.sidang_oditur?.find(
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block text-center">
+                            {item?.sidang_oditur && item.sidang_oditur.length > 0
+                              ? item?.sidang_oditur?.find(
                                 (item: any) => item.ketua_oditur === '1',
                               )?.nama_oditur || ''
-                            : ''}
-                        </p>
+                              : ''}
+                          </p>
+                        </div>
                       </div>
+                      ) : (
+                        <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className="hidden text-black dark:text-white sm:block">
+                              {item.nama_wbp}
+                            </p>
+                          </div>
 
-                      <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
-                        {/* <button
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                          >
+                            <p className="hidden text-black dark:text-white sm:block">
+                              {item.nama_jenis_persidangan}
+                            </p>
+                          </div>
+
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          >
+                            <p className="hidden text-black dark:text-white sm:block">
+                              {item.jadwal_sidang}
+                            </p>
+                          </div>
+
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                          >
+                            <p className="hidden text-black dark:text-white sm:block text-center">
+                              {item?.sidang_oditur && item.sidang_oditur.length > 0
+                                ? item?.sidang_oditur?.find(
+                                  (item: any) => item.ketua_oditur === '1',
+                                )?.nama_oditur || ''
+                                : ''}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                            {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
                       >
@@ -718,14 +804,15 @@ const SidangList = () => {
                       >
                         Hapus
                       </button> */}
-                        <div className="relative">
-                          <DropdownAction
-                            handleEditClick={() => handleEditClick(item)}
-                            handleDeleteClick={() => handleDeleteClick(item)}
-                          ></DropdownAction>
-                        </div>
-                      </div>
-                    </div>
+                            <div className="relative">
+                              <DropdownAction
+                                handleEditClick={() => handleEditClick(item)}
+                                handleDeleteClick={() => handleDeleteClick(item)}
+                              ></DropdownAction>
+                            </div>
+                          </div>
+                        </div>)}
+
                     <div className="border-t border-slate-600"></div>
                   </div>
                 );

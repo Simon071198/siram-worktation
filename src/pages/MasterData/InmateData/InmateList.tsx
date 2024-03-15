@@ -22,6 +22,7 @@ import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from "react-icons/hi2";
+import dayjs from 'dayjs';
 
 const InmateList = () => {
   const navigate = useNavigate();
@@ -405,33 +406,35 @@ const InmateList = () => {
         'Lokasi Kesatuan',
         'Provinsi',
         'Kota',
-        'alamat',
-        'tempat lahir',
-        'tanggal lahir',
-        'nama pendidikan',
-        'keahlian',
-        'nomor tahanan',
-        'riwayat penyakit',
-        'nama hunuian wbp',
-        'nama keluarga',
-        'hubungan dengan keluarga',
-        'nomor keluarga',
-        'nama matra',
-        'nama kasus',
-        'no kasus',
-        'jenis perkara',
-        'kategori perkara',
-        'pasal',
-        'vonis tahun',
-        'vonis bulan',
-        'vonis hari',
-        'waktu kejadian',
-        'waktu kejadian',
+        'Alamat',
+        'Tempat Lahir',
+        'Tanggal Lahir',
+        'Nama Pendidikan',
+        'Keahlian',
+        'Agama',
+        'Status Pernikahan',
+        'Nomor Tahanan',
+        'Riwayat Penyakit',
+        'Nama Hunian WBP',
+        'Nama Keluarga',
+        'Hubungan dengan Keluarga',
+        'Nomor Kontak Keluarga',
+        'Nama Matra',
+        'Nama Kasus',
+        'No Kasus',
+        'Jenis Perkara',
+        'Kategori Perkara',
+        'Pasal',
+        'Vonis Tahun',
+        'Vonis Bulan',
+        'Vonis Hari',
+        'Lokasi Kasus',
+        'Waktu Kejadian',
         'DMAC',
-        'nama gelang',
-        'tanggal pasang',
-        'tanggal aktivasi',
-        'lokasi tahanan',
+        'Nama Gelang',
+        'Tanggal Pasang',
+        'Tanggal Aktivasi',
+        'Lokasi Tahanan',
       ],
       ...data.map((item: any) => [
         item.nama,
@@ -444,10 +447,10 @@ const InmateList = () => {
         item.alamat,
         item.tempat_lahir,
         item.tanggal_lahir,
-        item.nama_agama,
-        item.nama_status_kawin,
         item.nama_pendidikan,
         item.nama_bidang_keahlian,
+        item.nama_agama,
+        item.nama_status_kawin,
         item.nomor_tahanan,
         item.wbp_sickness,
         item.nama_hunian_wbp_otmil,
@@ -476,7 +479,7 @@ const InmateList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(wb, `Data-Tersangka ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,);
   };
 
   // const modalRefs = data.map(() => useRef(null));
