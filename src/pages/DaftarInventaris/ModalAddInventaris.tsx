@@ -74,6 +74,16 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
     }
   };
 
+  const handleSelectTipeBarang = (e: any) => {
+    // setSelectedOption(e)
+    setFormState({ ...formState, tipe_aset_id: e?.value });
+  };
+
+  const handleSelectRuangan = (e: any) => {
+    // setSelectedOption(e)
+    setFormState({ ...formState, ruangan_otmil_id: e?.value });
+  };
+
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -664,6 +674,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           isClearable={true}
                           isSearchable={true}
                           placeholder="Pilih tipe aset"
+                          // value={formState.tipe_aset_id}
                           defaultValue={
                             isEdit || isDetail
                               ? {
@@ -676,6 +687,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             value: item.tipe_aset_id,
                             label: item.nama_tipe,
                           }))}
+                          onChange={handleSelectTipeBarang}
                         />
                         <p className="error-text absolute -bottom-5">
                           {errors.map((item) =>
@@ -762,6 +774,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                             value: item.ruangan_otmil_id,
                             label: item.nama_ruangan_otmil,
                           }))}
+                          onChange={handleSelectRuangan}
                         />
                         <p className="error-text bottom-0 absolute">
                           {errors.map((item) =>

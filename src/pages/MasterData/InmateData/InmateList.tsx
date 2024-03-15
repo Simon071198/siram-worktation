@@ -671,7 +671,7 @@ const InmateList = () => {
               {!isOperator && (
                 <button
                   onClick={() => setModalAddOpen(true)}
-                  className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+                  className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
                 >
                   Tambah
                 </button>
