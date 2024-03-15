@@ -50,6 +50,10 @@ const BAPList = () => {
   const [filter, setFilter] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [searchData, setSearchData] = useState({
+    nomor_kasus: '',
+    nama_kasus: '',
+  });
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -82,6 +86,8 @@ const BAPList = () => {
       let params = {
         filter: {
           nama_dokumen_bap: filter,
+          nomor_kasus: searchData.nomor_kasus,
+          nama_kasus: searchData.nama_kasus
           // lokasi_otmil: 'Cimahi',
         },
         page: currentPage,
@@ -119,6 +125,20 @@ const BAPList = () => {
           popover: {
             title: 'Search',
             description: 'Mencari nama dokumen',
+          },
+        },
+        {
+          element: '.search-nomor',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nomor penyidikan',
+          },
+        },
+        {
+          element: '.search-kasus',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama kasus',
           },
         },
         {
@@ -452,6 +472,7 @@ const BAPList = () => {
       `Data-BAP ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
+  
 
   return isLoading ? (
     <Loader />
@@ -465,6 +486,20 @@ const BAPList = () => {
                 value={filter}
                 placehorder="Cari Nama Dokumen"
                 onChange={handleFilterChange}
+              />
+            </div>
+            <div className="w-full search-nomor">
+              <SearchInputButton
+                value={searchData.nomor_kasus}
+                placehorder="Cari Nomor Penyidikan"
+                onChange={(e) => setSearchData({...searchData, nomor_kasus: e.target.value})}
+              />
+            </div>
+            <div className="w-full search-kasus">
+              <SearchInputButton
+                value={searchData.nama_kasus}
+                placehorder="Cari Nama Kasus"
+                onChange={(e) => setSearchData({...searchData, nama_kasus: e.target.value})}
               />
             </div>
 

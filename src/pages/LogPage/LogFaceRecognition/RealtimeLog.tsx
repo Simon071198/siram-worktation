@@ -10,6 +10,9 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Alerts } from '../AlertLog';
 import { Error403Message } from '../../../utils/constants';
+import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
+
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -158,12 +161,42 @@ export default function Realtime() {
   };
 
   const handleExportClick = () => {
-    if (data && data.length > 0) {
-      exportToCSV(data, 'exported_data.csv');
-    } else {
-      setShowModal(true);
-      setModalMessage('No data found to export.');
-    }
+
+    const dataToExcel = [
+      [
+        'Nama',
+        'Gender',
+        'Usia',
+        'Status',
+        'Nama Kamera',
+        'Tipe Lokasi',
+        'Nama Lokasi',
+      ],
+      ...data.map((item: any) => [
+        item.nama,
+        item.gender,
+        item.usia,
+        item.status,
+        item.nama_kamera,
+        item.tipe_lokasi,
+        item.nama_lokasi,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-LogRealTime ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+
+    // if (data && data.length > 0) {
+    //   exportToCSV(data, 'exported_data.csv');
+    // } else {
+    //   setShowModal(true);
+    //   setModalMessage('No data found to export.');
+    // }
   };
 
   const handleCloseModal = () => {
