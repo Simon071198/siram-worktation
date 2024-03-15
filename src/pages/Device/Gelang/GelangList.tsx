@@ -59,6 +59,9 @@ const GelangList = () => {
   const [filteran, setFilteran] = useState('');
 
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [searchData, setSearchData] = useState({
+    dmac: '',
+  });
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -90,6 +93,7 @@ const GelangList = () => {
     let params = {
       filter: {
         nama_gelang: filter,
+        dmac: searchData.dmac,
         // nama_lokasi_otmil: 'Cimahi',
         lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
       },
@@ -406,7 +410,7 @@ const GelangList = () => {
                 placehorder="Cari nama Gelang"
                 onChange={handleFilterChange}
 
-                // onClick={handleSearchClick}
+              // onClick={handleSearchClick}
               />
               {/* <select
             className="w-3/6 text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
@@ -420,6 +424,13 @@ const GelangList = () => {
             <option value="rusak">Rusak</option>
           </select> */}
             </div>
+            <div className="flex w-full search">
+                <SearchInputButton
+                  value={searchData.dmac}
+                  placehorder="Cari Nomor DMAC"
+                  onChange={(e) => setSearchData({ ...searchData, dmac: e.target.value })}
+                />
+              </div>
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"
