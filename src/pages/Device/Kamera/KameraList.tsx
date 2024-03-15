@@ -340,10 +340,10 @@ const KameraList = () => {
         'Nama Ruangan Otmil',
         'Zona',
       ],
-      ...dataExcel.map((item: any) => [
-        item.nama_kamera,
-        item.url_rtsp,
-        item.ip_address,
+      ...data.map((item: any) => [
+        item.deviceName,
+        item.urlRTSP,
+        item.IpAddress,
         item.status_kamera,
         item.merk,
         item.model,

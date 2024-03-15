@@ -14,6 +14,9 @@ import {
 } from '../../../services/api';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -309,6 +312,49 @@ const RoomList = () => {
     );
   };
 
+  const handleClickTutorial = () => {
+    const driverObj: any =
+      driver({
+        showProgress: true,
+        steps: [
+          {
+            element: '.f-ruangan',
+            popover: {
+              title: 'Search',
+              description: 'Tempat mencari nama ruangan',
+            },
+          },
+          {
+            element: '.f-jenis-ruangan',
+            popover: {
+              title: 'Jenis Ruangan',
+              description: 'Tempat memilih jenis ruangan',
+            },
+          },
+          {
+            element: '.tombol-pencarian',
+            popover: {
+              title: 'Button Search',
+              description: 'Click button untuk mencari nama ruangan',
+            },
+          },
+          {
+            element: '.excel',
+            popover: { title: 'Excel', description: 'Mendapatkan file excel ruangan' },
+          },
+          {
+            element: '.b-tambah',
+            popover: {
+              title: 'Tambah',
+              description: 'Menambahkan data nama ruangan',
+            },
+          },
+        ],
+      });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -316,7 +362,7 @@ const RoomList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="w-full flex justify-center">
           <div className="mb-3 flex items-center px-2 justify-center rounded space-x-1 bg-slate-600 py-1">
-            <div className="w-full">
+            <div className="f-ruangan w-full">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari Ruangan"
@@ -325,7 +371,7 @@ const RoomList = () => {
               />
             </div>
             <select
-              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="f-jenis-ruangan rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
               name="jenis_ruangan_otmil"
               value={filterJenisRuangan}
               onChange={handleFilterChangeJenisRuangan}
@@ -337,7 +383,7 @@ const RoomList = () => {
               <option value="Kamar">Kamar</option>
             </select>
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className="tombol-pencarian rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -359,10 +405,20 @@ const RoomList = () => {
             </button>
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex justify-between mb-3">
@@ -372,7 +428,7 @@ const RoomList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

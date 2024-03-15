@@ -332,7 +332,7 @@ const GelangList = () => {
         'Nama Ruangan Otmil',
         'Zona',
       ],
-      ...dataExcel.map((item: any) => [
+      ...data.map((item: any) => [
         item.nama_gelang,
         item.dmac,
         item.tanggal_pasang,

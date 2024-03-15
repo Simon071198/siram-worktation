@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 // import Select from 'react-select/dist/declarations/src/Select';
 import Select from 'react-select';
 import { apiReadKategoriPerkara } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 // interface
 interface AddCaseTypeModalProps {
@@ -226,6 +229,48 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     },
   };
 
+  const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama perkara',
+          description: 'Isi nama perkara',
+        },
+
+      },
+      {
+        element: '.f-pasal',
+        popover: {
+          title: 'Nomor pasal ',
+          description: 'Isi nomor pasal perkara',
+        },
+
+      },
+      {
+        element: '.f-kategori',
+        popover: {
+          title: 'Kategori perkara',
+          description: 'Pilih kategori perkara',
+        },
+      },
+      {
+        element: `${isEdit ? '.b-ubah-modal' : '.b-tambah-modal'}`,
+        popover: {
+          title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+          description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data perkara`,
+        },
+      },
+    ];
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
+  };
+
   //return
   return (
     <div>
@@ -271,6 +316,14 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                         : 'Tambah Jenis Perkara'}
                   </h3>
                 </div>
+                {!isDetail && (<button className='pr-[440px]'>
+                  <HiQuestionMarkCircle
+                    // values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>)}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -280,7 +333,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-1 justify-normal">
-                  <div className="form-group w-full h-22">
+                  <div className="f-nama form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -304,7 +357,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </p>
                   </div>
 
-                  <div className="form-group w-full h-22">
+                  <div className="f-pasal form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -327,7 +380,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   </div>
 
                   {/* kategori perkara id start */}
-                  <div className="form-group w-full flex flex-col h-22">
+                  <div className="f-kategori form-group w-full flex flex-col h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -351,27 +404,27 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                       ))}
                     </select> */}
                     <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="kategori_perkara_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Pendidikan"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                    value: formState.kategori_perkara_id,
-                                    label: formState.nama_kategori_perkara,
-                                  }
-                                : formState.kategori_perkara_id
-                            }
-                            options={kategori_perkara.map((item) => ({
-                              value: item.kategori_perkara_id,
-                              label: item.nama_kategori_perkara,
-                            }))}
-                          />
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
+                      name="kategori_perkara_id"
+                      isDisabled={isDetail}
+                      isClearable={true}
+                      isSearchable={true}
+                      placeholder="Pilih Pendidikan"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                            value: formState.kategori_perkara_id,
+                            label: formState.nama_kategori_perkara,
+                          }
+                          : formState.kategori_perkara_id
+                      }
+                      options={kategori_perkara.map((item) => ({
+                        value: item.kategori_perkara_id,
+                        label: item.nama_kategori_perkara,
+                      }))}
+                    />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'kategori_perkara_id'
@@ -457,7 +510,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
                         }`}
                       type="submit"
                       disabled={buttonLoad}
@@ -490,7 +543,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
                         }`}
                       type="submit"
                       disabled={buttonLoad}

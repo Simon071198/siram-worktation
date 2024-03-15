@@ -5,6 +5,9 @@ import {
   apiReadZona,
 } from '../../../services/api';
 import Select from 'react-select';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 // interface
 interface AddRoomModalProps {
@@ -189,6 +192,55 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     },
   };
 
+  const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama ruangan',
+          description: 'Isi nama ruangan',
+        },
+
+      },
+      {
+        element: '.f-jenis-ruangan-modal',
+        popover: {
+          title: 'Jenis ruangan ',
+          description: 'Pilih jenis ruangan',
+        },
+
+      },
+      {
+        element: '.f-zona-ruangan',
+        popover: {
+          title: 'Zona ruangan',
+          description: 'Pilih zona ruangan',
+        },
+      },
+      {
+        element: '.f-lokasi',
+        popover: {
+          title: 'Lokasi',
+          description: 'Pilih lokasi',
+        },
+      },
+      {
+        element: `.b-submit`,
+        popover: {
+          title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+          description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data ruangan`,
+        },
+      },
+    ];
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
+  };
+
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -241,6 +293,14 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         : 'Tambah Data Ruangan'}
                   </h3>
                 </div>
+                {!isDetail && (<button className='pr-[440px]'>
+                  <HiQuestionMarkCircle
+                    // values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>)}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -251,7 +311,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-2 mt-4">
                   <div className="grid grid-cols-1 gap-3">
-                    <div className="form-group w-full ">
+                    <div className="f-nama form-group w-full ">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -286,7 +346,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                       {!isDetail ? (
                         <>
                           <select
-                            className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                            className="f-jenis-ruangan-modal capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
                             name="jenis_ruangan_otmil"
                             onChange={handleChange}
                             value={formState.jenis_ruangan_otmil}
@@ -347,7 +407,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                       ) : (
                         <>
                           <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                            className="f-zona-ruangan w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
                             name="zona_id"
                             onChange={handleChange}
                             value={formState.zona_id}
@@ -384,7 +444,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           Kode Lokasi
                         </label>
                         <select
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                          className="f-lokasi w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
                           name="lokasi_otmil_id"
                           onChange={handleChange}
                           value={formState.lokasi_otmil_id}
@@ -488,7 +548,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                 <br></br>
                 {isDetail ? null : (
                   <button
-                    className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                    className="b-submit btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
                     type="submit"
                   >
                     Submit

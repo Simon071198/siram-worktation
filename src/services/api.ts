@@ -3970,7 +3970,7 @@ export async function apiChangePassword(params: any, token: any) {
   }
 }
 
-export async function apiGatewayLog(params: any) {
+export async function apiGatewayLog(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -3978,6 +3978,7 @@ export async function apiGatewayLog(params: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response);

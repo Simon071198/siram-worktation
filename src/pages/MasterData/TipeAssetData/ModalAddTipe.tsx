@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Alerts } from './AlertTipe';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from "react-icons/hi2";
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -85,6 +88,33 @@ export const AddTipeModal = ({
     },
   };
 
+  const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama tipe aset',
+          description: 'Isi nama tipe aset',
+        },
+
+      },
+      {
+        element: `${isEdit ? '.b-ubah-modal' : '.b-tambah-modal'}`,
+        popover: {
+          title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+          description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} tipe aset`,
+        },
+      },
+    ];
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
+  };
+
   return (
     // <div
     //   ref={modalContainerRef}
@@ -144,6 +174,14 @@ export const AddTipeModal = ({
                       : 'Tambah Data Tipe Aset'}
                   </h3>
                 </div>
+                {!isDetail && (<button className='pr-[440px]'>
+                  <HiQuestionMarkCircle
+                    // values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>)}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -153,7 +191,7 @@ export const AddTipeModal = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="form-group w-full mt-4 h-22">
+                <div className="f-nama form-group w-full mt-4 h-22">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -179,7 +217,7 @@ export const AddTipeModal = ({
                 {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
-                  className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                  className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                     buttonLoad ? 'bg-slate-400' : ''
                   }`}
                   type="submit"
@@ -213,7 +251,7 @@ export const AddTipeModal = ({
                 </button>
                 ) : (
                   <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                         buttonLoad ? 'bg-slate-400' : ''
                       }`}
                       type="submit"

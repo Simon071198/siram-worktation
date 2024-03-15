@@ -313,7 +313,7 @@ const UserList = () => {
         'Suspended',
         'Masa Berlaku Akun',
       ],
-      ...dataExcel.map((item: any) => [
+      ...data.map((item: any) => [
         item.nama,
         item.role_name,
         item.nrp,
