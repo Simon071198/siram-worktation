@@ -5,8 +5,14 @@ import {
   apiWatchlistHistory,
 } from '../../services/api';
 import { webserviceurl } from '../../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertDatabaseSearch';
+import { Error403Message } from '../../utils/constants';
 
 export default function EmployeeDatabaseSearchByName() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [searchName, setSearchName] = useState('');
 
   const [imagePreview, setImagePreview] = useState(null);
@@ -20,7 +26,7 @@ export default function EmployeeDatabaseSearchByName() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
 
-  const handleClose = (event, reason) => {
+  const handleClose = (event: any, reason: any) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -28,15 +34,26 @@ export default function EmployeeDatabaseSearchByName() {
     setIsFound(false);
     setIsNotFound(false);
   };
-  const handleCardClick = async (data) => {
+  const handleCardClick = async (data: any) => {
     await setSelectedCard(data);
     console.log(data);
-    await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(
-      (res) => {
+    await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 })
+      .then((res) => {
         console.log(res);
         setDetailDpo(res.records);
-      },
-    );
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+
     await setIsModalOpen(true); // Open the modal when a card is clicked
   };
   const handleSearch = async () => {
@@ -54,8 +71,16 @@ export default function EmployeeDatabaseSearchByName() {
       } else {
         setIsNotFound(true);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -89,14 +114,13 @@ export default function EmployeeDatabaseSearchByName() {
                   className="w-[500px] rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                 />
 
-                  <button
-                    type="button"
-                    className="bg-primary text-white px-6 py-2 mt-3 w-50 rounded-md cursor-pointer"
-                    onClick={handleSearch}
-                  >
-                    Cari
-                  </button>
-               
+                <button
+                  type="button"
+                  className="bg-primary text-white px-6 py-2 mt-3 w-50 rounded-md cursor-pointer"
+                  onClick={handleSearch}
+                >
+                  Cari
+                </button>
               </div>
             </div>
 
@@ -105,24 +129,27 @@ export default function EmployeeDatabaseSearchByName() {
                 <table className="min-w-full">
                   <thead>
                     <tr>
-                      <th className="py-2 px-3 bg-slate-600">Hasil Pencarian</th>
+                      <th className="py-2 px-3 bg-slate-600">
+                        Hasil Pencarian
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {searchResult?.map((row) => (
+                    {searchResult?.map((row: any) => (
                       <tr
                         onClick={() => handleCardClick(row)}
                         className="cursor-pointer"
                         key={row.name}
                       >
-                        <td className="px-6 py-4 border-t border-slate-600 capitalize">{row.name}</td>
+                        <td className="px-6 py-4 border-t border-slate-600 capitalize">
+                          {row.name}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-
           </div>
         </form>
         {isModalOpen && (
@@ -158,31 +185,45 @@ export default function EmployeeDatabaseSearchByName() {
                       <tbody>
                         <tr>
                           <td className="font-semibold ">Nama</td>
-                          <td className='pl-4 capitalize'>{selectedCard.name}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.name}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Tanggal Lahir</td>
-                          <td className='pl-4 capitalize'>{selectedCard.dob}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.dob}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Kebangsaan</td>
-                          <td className='pl-4 capitalize'>{selectedCard.country_name}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.country_name}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Nomor Identitas</td>
-                          <td className='pl-4 capitalize'>{selectedCard.identity}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.identity}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Jenis Kelamin</td>
-                          <td className='pl-4 capitalize'>{selectedCard.gender ? 'Male' : 'Female'}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.gender ? 'Male' : 'Female'}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">ID Prajurit Binaan</td>
-                          <td className='pl-4 capitalize'>{selectedCard.visitor_id}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.visitor_id}
+                          </td>
                         </tr>
                         <tr>
                           <td className="font-semibold">Tanggal Input</td>
-                          <td className='pl-4 capitalize'>{selectedCard.create_stamp}</td>
+                          <td className="pl-4 capitalize">
+                            {selectedCard.create_stamp}
+                          </td>
                         </tr>
                       </tbody>
                     </table>

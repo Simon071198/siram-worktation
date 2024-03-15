@@ -16,7 +16,9 @@ import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -34,6 +36,9 @@ interface Item {
 }
 
 const RoomList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -115,8 +120,16 @@ const RoomList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -168,10 +181,15 @@ const RoomList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -220,66 +238,102 @@ const RoomList = () => {
   // function untuk menghapus data
   const handleSubmitDeleteRuangan = () => {
     let params = {};
-    apiDeleteAllRuangan(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+    apiDeleteAllRuangan(params, token)
+      .then((res) => {
+        if (res.data.status === 'OK') {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil menghapus data',
+          });
+          setModalDeleteOpen(false);
+          setData(res.data.records);
+          handleCloseAddModal(); //tutup modal
+          currentPage === 1 ? fetchData() : setCurrentPage(1);
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Gagal menghapus data',
+          });
+        }
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil menghapus data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-        setModalDeleteOpen(false);
-        setData(res.data.records);
-        handleCloseAddModal(); //tutup modal
-        currentPage === 1 ? fetchData() : setCurrentPage(1);
-      } else {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal menghapus data',
-        });
-      }
-    });
+      });
 
     setModalDeleteOpen(false);
   };
 
   // function untuk menambah data
   const handleSubmitAddRuangan = async (params: Params) => {
-    apiCreateAllRuanganOtmil(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+    apiCreateAllRuanganOtmil(params, token)
+      .then((res) => {
+        if (res.data.status === 'OK') {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil menambah data',
+          });
+          setData(res.data.records);
+          handleCloseAddModal(); //tutup modal
+          currentPage === 1 ? fetchData() : setCurrentPage(1);
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Gagal menambah data',
+          });
+          handleCloseAddModal(); //tutup modal
+        }
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil menambah data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-        setData(res.data.records);
-        handleCloseAddModal(); //tutup modal
-        currentPage === 1 ? fetchData() : setCurrentPage(1);
-      } else {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal menambah data',
-        });
-        handleCloseAddModal(); //tutup modal
-      }
-    });
+      });
   };
 
   // function untuk mengubah data
   const handleSubmitEditRuangan = async (params: Params) => {
-    apiUpdateAllRuanganOtmil(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+    apiUpdateAllRuanganOtmil(params, token)
+      .then((res) => {
+        if (res.data.status === 'OK') {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil mengubah data',
+          });
+          setModalDeleteOpen(false);
+          setEdit(!edit);
+          handleCloseEditModal(); //tutup modal
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Gagal mengubah data',
+          });
+        }
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil mengubah data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-        setModalDeleteOpen(false);
-        setEdit(!edit);
-        handleCloseEditModal(); //tutup modal
-      } else {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal mengubah data',
-        });
-      }
-    });
+      });
   };
 
   useEffect(() => {
@@ -313,44 +367,46 @@ const RoomList = () => {
   };
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.f-ruangan',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari nama ruangan',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-ruangan',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari nama ruangan',
           },
-          {
-            element: '.f-jenis-ruangan',
-            popover: {
-              title: 'Jenis Ruangan',
-              description: 'Tempat memilih jenis ruangan',
-            },
+        },
+        {
+          element: '.f-jenis-ruangan',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Tempat memilih jenis ruangan',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari nama ruangan',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama ruangan',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel ruangan' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel ruangan',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data nama ruangan',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data nama ruangan',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };

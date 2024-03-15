@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import { Alerts } from './AlertDaftarKasus';
 import {
@@ -21,6 +21,7 @@ import { AddBarangBuktiModal } from '../MasterData/BarangBukti/ModalAddBarangBuk
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { Error403Message } from '../../utils/constants';
 
 interface Item {
   nama_kasus: string;
@@ -28,6 +29,9 @@ interface Item {
 }
 
 const DaftarKasus = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -52,7 +56,6 @@ const DaftarKasus = () => {
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-  const navigate = useNavigate();
 
   // const navigate = useNavigate();
 
@@ -131,10 +134,14 @@ const DaftarKasus = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -188,10 +195,14 @@ const DaftarKasus = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -247,10 +258,14 @@ const DaftarKasus = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -276,10 +291,14 @@ const DaftarKasus = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -305,10 +324,14 @@ const DaftarKasus = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -450,10 +473,14 @@ const DaftarKasus = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -522,7 +549,7 @@ const DaftarKasus = () => {
           <div className="flex flex-row space-x-4 space-x">
             <div>
               <button
-                className='text-black rounded-md font-semibold py-2 px-3 bg-green-600'
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
                 onClick={() => navigate('/penyidikan')}
               >
                 Penyidikan
@@ -540,190 +567,190 @@ const DaftarKasus = () => {
             </div>
           </div>
         </div>
-        </div>
-        <div className="">
-          <div
-            className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-              } rounded-t-md bg-gray-2 dark:bg-slate-600`}
-          >
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nomer Kasus
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nama Kasus
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Tanggal Pelaporan
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Tanggal Kejadian
-              </h5>
-            </div>
-
-            {isOperator ? null : (
-              <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Aksi
-                </h5>
-              </div>
-            )}
+      </div>
+      <div className="">
+        <div
+          className={`${
+            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+        >
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Nomer Kasus
+            </h5>
           </div>
 
-          {data.length === 0 ? (
-            <div className="flex justify-center p-4 w-ful">No Data</div>
-          ) : (
-            <>
-              {data.map((item: any) => {
-                return (
-                  <div>
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Nama Kasus
+            </h5>
+          </div>
+
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Tanggal Pelaporan
+            </h5>
+          </div>
+
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Tanggal Kejadian
+            </h5>
+          </div>
+
+          {isOperator ? null : (
+            <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Aksi
+              </h5>
+            </div>
+          )}
+        </div>
+
+        {data.length === 0 ? (
+          <div className="flex justify-center p-4 w-ful">No Data</div>
+        ) : (
+          <>
+            {data.map((item: any) => {
+              return (
+                <div>
+                  <div
+                    className={`${
+                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    key={item.nama_kasus}
+                  >
                     <div
-                      className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                        } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
-                      key={item.nama_kasus}
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.nomor_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.nama_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.waktu_pelaporan_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate text-center dark:text-white capitalize">
-                          {item.waktu_kejadian}
-                        </p>
-                      </div>
-                      {isOperator ? (
-                        <></>
-                      ) : (
-                        <>
-                          <div className="hidden items-center  justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-                            <div className="relative">
-                              <DropdownAction
-                                kasus={true}
-                                handleAddClick={() =>
-                                  handleAddBarangBuktiClick(item)
-                                }
-                                handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() =>
-                                  handleDeleteClick(item)
-                                }
-                              >
-                                <button></button>
-                              </DropdownAction>
-                            </div>
-                          </div>
-                        </>
-                      )}
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nomor_kasus}
+                      </p>
                     </div>
-                    <div className="border-t border-slate-600"></div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nama_kasus}
+                      </p>
+                    </div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.waktu_pelaporan_kasus}
+                      </p>
+                    </div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate text-center dark:text-white capitalize">
+                        {item.waktu_kejadian}
+                      </p>
+                    </div>
+                    {isOperator ? (
+                      <></>
+                    ) : (
+                      <>
+                        <div className="hidden items-center  justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
+                          <div className="relative">
+                            <DropdownAction
+                              kasus={true}
+                              handleAddClick={() =>
+                                handleAddBarangBuktiClick(item)
+                              }
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            >
+                              <button></button>
+                            </DropdownAction>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                );
-              })}
-            </>
-          )}
-
-          {modalDetailOpen && (
-            <EditDaftarKasusModal
-              closeModal={() => setModalDetailOpen(false)}
-              onSubmit={handleSubmitAdd}
-              defaultValue={detailData}
-              isDetail={true}
-              token={token}
-            />
-          )}
-          {modalEditOpen && (
-            <EditDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitEdit}
-              defaultValue={editData}
-              isEdit={true}
-              token={token}
-            />
-          )}
-          {modalAddBarangBukti && (
-            <AddBarangBuktiModal
-              isKasus={true}
-              defaultValue={detailData}
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitAddBarangBukti}
-              token={token}
-            />
-          )}
-          {modalAddOpen && (
-            <AddDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitAdd}
-              defaultValue={nomorKasus}
-              token={token}
-            />
-          )}
-          {modalDeleteOpen && (
-            <DeleteDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitDelete}
-              defaultValue={deleteData}
-            />
-          )}
-        </div>
-
-        {data.length === 0 ? null : (
-          <div className="mt-5">
-            <div className="flex gap-4 items-center ">
-              <p>
-                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-              </p>
-              <select
-                value={pageSize}
-                onChange={handleChangePageSize}
-                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-              >
-                <option value="10">10</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="1000">1000</option>
-              </select>
-            </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={pages}
-              onChangePage={handleChagePage}
-            />
-          </div>
+                  <div className="border-t border-slate-600"></div>
+                </div>
+              );
+            })}
+          </>
         )}
+
+        {modalDetailOpen && (
+          <EditDaftarKasusModal
+            closeModal={() => setModalDetailOpen(false)}
+            onSubmit={handleSubmitAdd}
+            defaultValue={detailData}
+            isDetail={true}
+            token={token}
+          />
+        )}
+        {modalEditOpen && (
+          <EditDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitEdit}
+            defaultValue={editData}
+            isEdit={true}
+            token={token}
+          />
+        )}
+        {modalAddBarangBukti && (
+          <AddBarangBuktiModal
+            isKasus={true}
+            defaultValue={detailData}
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAddBarangBukti}
+            token={token}
+          />
+        )}
+        {modalAddOpen && (
+          <AddDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAdd}
+            defaultValue={nomorKasus}
+            token={token}
+          />
+        )}
+        {modalDeleteOpen && (
+          <DeleteDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitDelete}
+            defaultValue={deleteData}
+          />
+        )}
+      </div>
+
+      {data.length === 0 ? null : (
+        <div className="mt-5">
+          <div className="flex gap-4 items-center ">
+            <p>
+              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+            </p>
+            <select
+              value={pageSize}
+              onChange={handleChangePageSize}
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+            >
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pages}
+            onChangePage={handleChagePage}
+          />
+        </div>
+      )}
     </div>
   );
 };

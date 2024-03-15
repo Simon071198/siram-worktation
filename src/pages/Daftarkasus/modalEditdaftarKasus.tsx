@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { get } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -54,6 +56,9 @@ export const EditDaftarKasusModal = ({
       defaultValue?.saksi?.map((item: any) => item.keterangan) || [],
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   //state
 
@@ -266,8 +271,7 @@ export const EditDaftarKasusModal = ({
         zona_waktu: zonaWaktu,
       });
     }
-  }
-
+  };
 
   const handleWaktuKejadian = (e: any) => {
     console.log('test', e);
@@ -291,9 +295,9 @@ export const EditDaftarKasusModal = ({
     setFormState({
       ...formState,
       waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
-  }
+  };
 
   const handleWaktuPelaporan = (e: any) => {
     console.log('test', e);
@@ -317,9 +321,9 @@ export const EditDaftarKasusModal = ({
     setFormState({
       ...formState,
       waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
-  }
+  };
 
   const jenisPerkara = async () => {
     let params = {
@@ -329,12 +333,17 @@ export const EditDaftarKasusModal = ({
       .then((res) => {
         setDataJenisPerkara(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Oditur = async () => {
@@ -345,16 +354,27 @@ export const EditDaftarKasusModal = ({
       .then((res) => {
         setDataOditurPenyidik(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   useEffect(() => {
-    Promise.all([tersangka(), Saksi(), jenisPerkara(), Oditur(), getTimeZone()]).then(() => {
+    Promise.all([
+      tersangka(),
+      Saksi(),
+      jenisPerkara(),
+      Oditur(),
+      getTimeZone(),
+    ]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -373,12 +393,17 @@ export const EditDaftarKasusModal = ({
           prevPihakTerlibat.concat(tersangka),
         );
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Saksi = async () => {
@@ -393,12 +418,17 @@ export const EditDaftarKasusModal = ({
         }));
         setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
@@ -836,8 +866,8 @@ export const EditDaftarKasusModal = ({
                       <DatePicker
                         selected={
                           formState.waktu_kejadian
-                          ? dayjs(formState.waktu_kejadian).toDate()
-                          : dayjs().toDate()
+                            ? dayjs(formState.waktu_kejadian).toDate()
+                            : dayjs().toDate()
                         }
                         onChange={handleWaktuKejadian}
                         showTimeInput
@@ -847,10 +877,10 @@ export const EditDaftarKasusModal = ({
                         timeCaption="time"
                         dateFormat="dd/MM/yyyy HH:mm"
                         disabled={false}
-                        name='waktu_kejadian'
+                        name="waktu_kejadian"
                         locale={'id'}
                       />
-                    <input
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"
@@ -858,13 +888,13 @@ export const EditDaftarKasusModal = ({
                         disabled
                       />
                     </div>
-                      <p className="error-text">
-                        {errors.map((item) =>
-                          item === 'waktu_kejadian'
-                            ? 'Masukan Tanggal Kejadian Kasus'
-                            : '',
-                        )}
-                      </p>
+                    <p className="error-text">
+                      {errors.map((item) =>
+                        item === 'waktu_kejadian'
+                          ? 'Masukan Tanggal Kejadian Kasus'
+                          : '',
+                      )}
+                    </p>
                   </div>
 
                   <div className="form-group w-full">
@@ -875,7 +905,7 @@ export const EditDaftarKasusModal = ({
                       Tanggal Pelaporan Kasus
                     </label>
                     <div className="flex flex-row">
-                    {/* <input
+                      {/* <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                       name="waktu_pelaporan_kasus"
@@ -884,11 +914,11 @@ export const EditDaftarKasusModal = ({
                       defaultValue={defaultValue.waktu_pelaporan_kasus}
                       disabled={isDetail}
                     /> */}
-                     <DatePicker
+                      <DatePicker
                         selected={
                           formState.waktu_pelaporan_kasus
-                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
-                          : dayjs().toDate()
+                            ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                            : dayjs().toDate()
                         }
                         onChange={handleWaktuPelaporan}
                         showTimeInput
@@ -898,10 +928,10 @@ export const EditDaftarKasusModal = ({
                         timeCaption="time"
                         dateFormat="dd/MM/yyyy HH:mm"
                         disabled={false}
-                        name='waktu_pelaporan_kasus'
+                        name="waktu_pelaporan_kasus"
                         locale={'id'}
                       />
-                    <input
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"

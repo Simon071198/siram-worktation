@@ -14,6 +14,9 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertAktifitasPengunjung';
+import { Error403Message } from '../../utils/constants';
 
 // interface
 interface AddAktifitasPengunjungModalProps {
@@ -79,6 +82,9 @@ export const AddAktifitasPengunjung: React.FC<
       // ruangan_lemasmil_id: '',
     },
   );
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   //state
   const [errors, setErrors] = useState<string[]>([]);
@@ -396,10 +402,10 @@ export const AddAktifitasPengunjung: React.FC<
         zona_waktu: zonaWaktu,
       });
     }
-  }
+  };
   // fetch data
   useEffect(() => {
-    getTimeZone()
+    getTimeZone();
     const fetchData = async () => {
       let params = {
         pageSize: 1000,
@@ -433,8 +439,16 @@ export const AddAktifitasPengunjung: React.FC<
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
@@ -788,9 +802,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.ruangan_otmil_id,
-                            label: formState.nama_ruangan_otmil,
-                          }
+                              value: formState.ruangan_otmil_id,
+                              label: formState.nama_ruangan_otmil,
+                            }
                           : formState.ruangan_otmil_id
                       }
                       placeholder={'Pilih Ruangan'}
@@ -903,9 +917,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.petugas_id,
-                            label: formState.nama_petugas,
-                          }
+                              value: formState.petugas_id,
+                              label: formState.nama_petugas,
+                            }
                           : formState.petugas_id
                       }
                       placeholder={'Pilih Petugas'}
@@ -941,9 +955,9 @@ export const AddAktifitasPengunjung: React.FC<
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.pengunjung_id,
-                            label: formState.nama_pengunjung,
-                          }
+                              value: formState.pengunjung_id,
+                              label: formState.nama_pengunjung,
+                            }
                           : formState.pengunjung_id
                       }
                       placeholder={'Pilih pengunjung'}
@@ -991,24 +1005,25 @@ export const AddAktifitasPengunjung: React.FC<
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
 
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-ubah"
@@ -1041,8 +1056,9 @@ export const AddAktifitasPengunjung: React.FC<
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-tambah"

@@ -8,6 +8,8 @@ import { Alerts } from '../SceduleShift/Alert';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -26,6 +28,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   onSubmit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -108,10 +113,15 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
 
         setStaff(staff.data.records);
         setNewStaff(staffNew.data.records);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -251,48 +261,85 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   };
 
   const handleAddPetugas = async () => {
-    const addDataPetugas = await apiUpdateAllStaff(addStaff, token);
-    if (addDataPetugas.data.status === 'OK') {
-      const filter = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: dataGrup.grup_petugas_id,
-        },
-      };
-      const filter2 = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: '',
-        },
-      };
-      const staff = await apiReadAllStaff(filter, token);
-      const staffNew = await apiReadAllStaff(filter2, token);
-      setStaff(staff.data.records);
-      setNewStaff(staffNew.data.records);
+    try {
+      const addDataPetugas = await apiUpdateAllStaff(addStaff, token);
+      if (addDataPetugas.data.status === 'OK') {
+        const filter = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: dataGrup.grup_petugas_id,
+          },
+        };
+        const filter2 = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: '',
+          },
+        };
+        const staff = await apiReadAllStaff(filter, token);
+        const staffNew = await apiReadAllStaff(filter2, token);
+        setStaff(staff.data.records);
+        setNewStaff(staffNew.data.records);
+      } else {
+        // Handle the case when addDataPetugas.data.status is not 'OK'
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menambahkan petugas',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
-  const handleDeletePetugas = async (item: any) => {
-    const updatedItem = { ...item, grup_petugas_id: null };
-    console.log('delete:', updatedItem);
 
-    const addDataPetugas = await apiUpdateAllStaff(updatedItem, token);
-    if (addDataPetugas.data.status === 'OK') {
-      const filter = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: dataGrup.grup_petugas_id,
-        },
-      };
-      const filter2 = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: '',
-        },
-      };
-      const staff = await apiReadAllStaff(filter, token);
-      const staffNew = await apiReadAllStaff(filter2, token);
-      setStaff(staff.data.records);
-      setNewStaff(staffNew.data.records);
+  const handleDeletePetugas = async (item: any) => {
+    try {
+      const updatedItem = { ...item, grup_petugas_id: null };
+      console.log('delete:', updatedItem);
+
+      const addDataPetugas = await apiUpdateAllStaff(updatedItem, token);
+      if (addDataPetugas.data.status === 'OK') {
+        const filter = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: dataGrup.grup_petugas_id,
+          },
+        };
+        const filter2 = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: '',
+          },
+        };
+        const staff = await apiReadAllStaff(filter, token);
+        const staffNew = await apiReadAllStaff(filter2, token);
+        setStaff(staff.data.records);
+        setNewStaff(staffNew.data.records);
+      } else {
+        // Handle the case when addDataPetugas.data.status is not 'OK'
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menghapus petugas',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 

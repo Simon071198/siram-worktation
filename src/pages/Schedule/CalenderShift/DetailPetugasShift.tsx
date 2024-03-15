@@ -11,6 +11,8 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { Alerts } from '../GrupShift/Alert';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Schedule {
   schedule_id: any;
@@ -29,6 +31,9 @@ interface Staff {
   // tambahkan atribut lain sesuai kebutuhan
 }
 const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -192,10 +197,15 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
         setStaff(staff.data.records);
         setPenugasan(penugasan.data.records);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };

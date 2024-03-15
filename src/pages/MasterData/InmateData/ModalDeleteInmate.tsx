@@ -9,7 +9,7 @@ export const DeleteInmateModal = ({
     defaultValue || {
       nama: '',
       alamat: '',
-    }
+    },
   );
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef: any = useRef(null);
@@ -30,10 +30,10 @@ export const DeleteInmateModal = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    setButtonLoad(true)
+    setButtonLoad(true);
     console.log(formState, 'formState');
 
-    onSubmit(formState).then(()=> setButtonLoad(false))
+    onSubmit(formState).then(() => setButtonLoad(false));
   };
 
   const modalStyles: any = {
@@ -83,7 +83,9 @@ export const DeleteInmateModal = ({
               <p className="text-sm text-black dark:text-white">
                 Apakah Anda yakin ingin menghapus data ini?
               </p>
-              <p className="text-sm text-center text-black dark:text-white"> nama tersangka 
+              <p className="text-sm text-center text-black dark:text-white">
+                {' '}
+                nama tersangka
                 <span className="text-red-400"> {formState.nama}</span> akan
                 dihapus{' '}
               </p>
@@ -101,7 +103,9 @@ export const DeleteInmateModal = ({
               </button>
               <button
                 className={`btn flex justify-center rounded py-2 px-6 font-medium text-white  ${
-                  buttonLoad ? 'bg-slate-400 hover:bg-none' : 'hover:bg-red-400 bg-red-500 '
+                  buttonLoad
+                    ? 'bg-slate-400 hover:bg-none'
+                    : 'hover:bg-red-400 bg-red-500 '
                 }`}
                 type="submit"
                 disabled={buttonLoad}

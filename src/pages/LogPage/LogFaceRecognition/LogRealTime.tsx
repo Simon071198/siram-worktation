@@ -9,7 +9,7 @@ import {
   apiReadKamera,
 } from '../../../services/api';
 import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import { Alerts } from '../../User/AlertUser';
 import SearchInputButton from '../../Device/Search';

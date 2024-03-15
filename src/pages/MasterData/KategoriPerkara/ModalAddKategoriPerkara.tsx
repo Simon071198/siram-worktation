@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 // interface
 interface AddKategoriPerkaraModalProps {
@@ -12,19 +12,13 @@ interface AddKategoriPerkaraModalProps {
   isEdit?: boolean;
 }
 
-
-
-export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = ({
-  closeModal,
-  onSubmit,
-  defaultValue,
-  isDetail,
-  isEdit,
-}) => {
+export const AddKategoriPerkaraModal: React.FC<
+  AddKategoriPerkaraModalProps
+> = ({ closeModal, onSubmit, defaultValue, isDetail, isEdit }) => {
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_kategori_perkara: '',
-    }
+    },
   );
 
   //state
@@ -54,9 +48,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (
-        key !== ''
-      ) {
+      if (key !== '') {
         if (!value) {
           errorFields.push(key);
         }
@@ -71,10 +63,13 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
     return true;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,11 +86,12 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         setTimeout(() => {
-          setIsLoading(false)
+          setIsLoading(false);
         }, 300);
-      } catch (err) { throw err }
+      } catch (err) {
+        throw err;
+      }
     };
     fetchData();
   }, []);
@@ -128,7 +124,6 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
           title: 'Nama kategori perkara',
           description: 'Isi nama kategori perkara',
         },
-
       },
       {
         element: `${isEdit ? '.b-ubah-modal' : '.b-tambah-modal'}`,
@@ -202,14 +197,16 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                         : 'Tambah Kategori Perkara'}
                   </h3>
                 </div>
-                {!isDetail && (<button className='pr-[430px]'>
-                  <HiQuestionMarkCircle
-                    // values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>)}
+                {!isDetail && (
+                  <button className="pr-[430px]">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -218,9 +215,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                 </strong>
               </div>
               <form onSubmit={handleSubmit}>
-
                 <div className="mt-5 grid grid-cols-1 gap-5 justify-normal">
-
                   <div className="f-nama form-group w-full h-22">
                     <label
                       className="block text-sm text-start mb-1 font-medium text-black dark:text-white"
@@ -231,7 +226,7 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                     <input
                       className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       name="nama_kategori_perkara"
-                      placeholder='Nama kategori Perkara'
+                      placeholder="Nama kategori Perkara"
                       onChange={handleChange}
                       value={formState.nama_kategori_perkara}
                       disabled={isDetail}
@@ -240,19 +235,19 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                       {errors.map((item) =>
                         item === 'nama_kategori_perkara'
                           ? 'Pilih Kategori Perkara'
-                          : ''
+                          : '',
                       )}
                     </p>
                   </div>
                 </div>
 
-
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -284,8 +279,9 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                     </button>
                   ) : (
                     <button
-                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -316,20 +312,21 @@ export const AddKategoriPerkaraModal: React.FC<AddKategoriPerkaraModalProps> = (
                       Tambah Kategori Perkara
                     </button>
                   )}
-                  {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                    .length > 0 && (
-                      <>
-                        <br />
-                        <div className="error">
-                          {errors
-                            .filter((item: string) =>
-                              item.startsWith('INVALID_ID')
-                            )[0]
-                            .replace('INVALID_ID_', '')}{' '}
-                          is not a valid bond
-                        </div>
-                      </>
-                    )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">
