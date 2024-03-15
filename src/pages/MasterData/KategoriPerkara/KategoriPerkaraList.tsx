@@ -271,7 +271,7 @@ const KategoriPerkaraList = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `Data-JenisPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+      `Data-KategoriPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
   useEffect(() => {

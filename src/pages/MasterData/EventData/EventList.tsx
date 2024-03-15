@@ -361,7 +361,7 @@ const EventList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data_event.xlsx');
+    xlsx.writeFile(wb, 'data_kegiatan.xlsx');
   };
 
   return isLoading ? (
