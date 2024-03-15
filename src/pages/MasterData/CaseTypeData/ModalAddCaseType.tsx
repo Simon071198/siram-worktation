@@ -4,7 +4,10 @@ import Select from 'react-select';
 import { apiReadKategoriPerkara } from '../../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertCaseType';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddCaseTypeModalProps {
@@ -22,6 +25,9 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_jenis_perkara: '',
@@ -202,8 +208,16 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchDataKategori();
@@ -237,7 +251,6 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
           title: 'Nama perkara',
           description: 'Isi nama perkara',
         },
-
       },
       {
         element: '.f-pasal',
@@ -245,7 +258,6 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
           title: 'Nomor pasal ',
           description: 'Isi nomor pasal perkara',
         },
-
       },
       {
         element: '.f-kategori',
@@ -316,14 +328,16 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                         : 'Tambah Jenis Perkara'}
                   </h3>
                 </div>
-                {!isDetail && (<button className='pr-[440px]'>
-                  <HiQuestionMarkCircle
-                    // values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>)}
+                {!isDetail && (
+                  <button className="pr-[440px]">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -415,12 +429,12 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.kategori_perkara_id,
-                            label: formState.nama_kategori_perkara,
-                          }
+                              value: formState.kategori_perkara_id,
+                              label: formState.nama_kategori_perkara,
+                            }
                           : formState.kategori_perkara_id
                       }
-                      options={kategori_perkara.map((item) => ({
+                      options={kategori_perkara.map((item: any) => ({
                         value: item.kategori_perkara_id,
                         label: item.nama_kategori_perkara,
                       }))}
@@ -510,8 +524,9 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -543,8 +558,9 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </button>
                   ) : (
                     <button
-                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -578,18 +594,18 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                      <>
-                        <br />
-                        <div className="error">
-                          {errors
-                            .filter((item: string) =>
-                              item.startsWith('INVALID_ID'),
-                            )[0]
-                            .replace('INVALID_ID_', '')}{' '}
-                          is not a valid bond
-                        </div>
-                      </>
-                    )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.png';
 import { useForm } from 'react-hook-form';
@@ -10,16 +10,33 @@ import { apiUserLogin } from '../../services/api';
 
 const SignIn = () => {
   const [error, setError]: any = useState(false);
+  const [forceLogout, setForceLogout] = useState(false);
+  const [lastPage, setLastPage] = useState('/');
   const [errorName, setErrorName]: any = useState('');
   const [passVisible, setPassVisible] = useState<boolean>(false);
   const [buttonLoad, setButtonLoad] = useState(false);
   const navigate: any = useNavigate();
+  const location = useLocation();
 
   const ls_dataUser = localStorage.getItem('dataUser');
 
   useEffect(() => {
-    if (ls_dataUser) {
+    const paramsState = location.state;
+    const forceLogout = paramsState && paramsState.forceLogout;
+    if (ls_dataUser && !forceLogout) {
       navigate('/');
+    }
+
+    if (forceLogout) {
+      setForceLogout(true);
+      setLastPage(paramsState.lastPage);
+
+      // Define the keys you want to remove
+      const keysToRemove = ['dataUser', 'token'];
+      // Iterate over the keys and remove them from localStorage
+      keysToRemove.forEach((key) => {
+        localStorage.removeItem(key);
+      });
     }
   }, []);
 
@@ -46,13 +63,52 @@ const SignIn = () => {
       let record = res.data.user;
       let token = res.data.auth;
       if (res.data.status === 'success') {
-        Swal.fire(`Berhasil Masuk`).then(() => {
-          localStorage.setItem('dataUser', JSON.stringify(record));
-          localStorage.setItem('token', JSON.stringify(token));
-          setError(false);
-          navigate('/');
-          window.location.reload();
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+          didClose: () => {
+          }
         });
+        
+        
+        localStorage.setItem('dataUser', JSON.stringify(record));
+        localStorage.setItem('token', JSON.stringify(token));
+        setError(false);
+        
+        navigate(lastPage);
+        Toast.fire({
+          icon: "success",
+          title: "Berhasil Masuk"
+        });
+        window.location.reload();
+        
+
+        // Toast.fire({
+        //   icon: "success",
+        //   title: "Berhasil Masuk"
+        // }).then(() => {
+        //   localStorage.setItem('dataUser', JSON.stringify(record));
+        //   localStorage.setItem('token', JSON.stringify(token));
+        //   setError(false);
+
+        //   navigate(lastPage);
+        //   window.location.reload();
+        // });
+        // Swal.fire(`Berhasil Masuk`).then(() => {
+        //   localStorage.setItem('dataUser', JSON.stringify(record));
+        //   localStorage.setItem('token', JSON.stringify(token));
+        //   setError(false);
+
+        //   navigate(lastPage);
+        //   window.location.reload();
+        // });
         setButtonLoad(false);
       } else {
         setError(true);

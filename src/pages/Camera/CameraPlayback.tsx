@@ -7,12 +7,18 @@ import { allKameraOtmilByLocation } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertCamera';
+import { Error403Message } from '../../utils/constants';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
 
 const CameraPlayback = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [baseUrl] = useState('http://192.168.1.135:4002/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -41,10 +47,22 @@ const CameraPlayback = () => {
 
   useEffect(() => {
     // Fetch camera data when the component mounts.
-    allKameraOtmilByLocation(token).then((res) => {
-      setLocationDeviceListOtmil(res);
-      console.log(res, 'res otmil');
-    });
+    allKameraOtmilByLocation(token)
+      .then((res) => {
+        setLocationDeviceListOtmil(res);
+        console.log(res, 'res otmil');
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
 
     // WebSocket logic
     client.current.onopen = () => {

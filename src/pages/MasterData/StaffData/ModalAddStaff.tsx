@@ -17,6 +17,8 @@ import { Alerts } from './AlertStaff';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 // interface AddStaffModalProps {
@@ -111,6 +113,9 @@ export const AddStaffModal = ({
     },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   //state
   const [pangkat, setPangkat] = useState<Pangkat[]>([]);
@@ -406,12 +411,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setPangkat(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const lokasiKesatuanData = async () => {
@@ -419,12 +429,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setLokasi(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kotaData = async () => {
@@ -432,12 +447,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKota(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const matraData = async () => {
@@ -450,12 +470,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setMatra(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const provinsiData = async () => {
@@ -463,12 +488,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setProvinsi(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const agamaData = async () => {
@@ -476,12 +506,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setAgama(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const statusKawinData = async () => {
@@ -489,12 +524,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setStatusKawin(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const pendidikanData = async () => {
@@ -502,12 +542,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setPendidikan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const keahlianData = async () => {
@@ -515,12 +560,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKeahlian(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kesatuanData = async () => {
@@ -528,12 +578,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKesatuan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   //return
@@ -931,9 +986,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.pangkat_id,
-                                label: formState.nama_pangkat,
-                              }
+                                  value: formState.pangkat_id,
+                                  label: formState.nama_pangkat,
+                                }
                               : formState.pangkat_id
                           }
                           isDisabled={isDetail}
@@ -974,9 +1029,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.matra_id,
-                                label: formState.nama_matra,
-                              }
+                                  value: formState.matra_id,
+                                  label: formState.nama_matra,
+                                }
                               : formState.matra_id
                           }
                           options={matra.map((item: any) => ({
@@ -1054,9 +1109,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.lokasi_kesatuan_id,
-                                label: formState.nama_lokasi_kesatuan,
-                              }
+                                  value: formState.lokasi_kesatuan_id,
+                                  label: formState.nama_lokasi_kesatuan,
+                                }
                               : formState.lokasi_kesatuan_id
                           }
                           options={lokasi.map((item: any) => ({
@@ -1110,9 +1165,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.kesatuan_id,
-                                label: formState.nama_kesatuan,
-                              }
+                                  value: formState.kesatuan_id,
+                                  label: formState.nama_kesatuan,
+                                }
                               : formState.kesatuan_id
                           }
                           options={kesatuan.map((item: any) => ({
@@ -1192,9 +1247,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.pendidikan_id,
-                                label: formState.nama_pendidikan,
-                              }
+                                  value: formState.pendidikan_id,
+                                  label: formState.nama_pendidikan,
+                                }
                               : formState.pendidikan_id
                           }
                           options={pendidikan.map((item: any) => ({
@@ -1229,9 +1284,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.bidang_keahlian_id,
-                                label: formState.nama_bidang_keahlian,
-                              }
+                                  value: formState.bidang_keahlian_id,
+                                  label: formState.nama_bidang_keahlian,
+                                }
                               : formState.bidang_keahlian_id
                           }
                           options={keahlian.map((item: any) => ({
@@ -1298,9 +1353,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.agama_id,
-                                label: formState.nama_agama,
-                              }
+                                  value: formState.agama_id,
+                                  label: formState.nama_agama,
+                                }
                               : formState.agama_id
                           }
                           options={agama.map((item: any) => ({
@@ -1402,9 +1457,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.status_kawin_id,
-                                label: formState.nama_status_kawin,
-                              }
+                                  value: formState.status_kawin_id,
+                                  label: formState.nama_status_kawin,
+                                }
                               : formState.status_kawin_id
                           }
                           options={statusKawin.map((item: any) => ({
@@ -1455,9 +1510,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.provinsi_id,
-                                label: formState.nama_provinsi,
-                              }
+                                  value: formState.provinsi_id,
+                                  label: formState.nama_provinsi,
+                                }
                               : formState.provinsi_id
                           }
                           placeholder={'Pilih provinsi'}
@@ -1513,9 +1568,9 @@ export const AddStaffModal = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.kota_id,
-                                label: formState.nama_kota,
-                              }
+                                  value: formState.kota_id,
+                                  label: formState.nama_kota,
+                                }
                               : formState.kota_id
                           }
                           placeholder={'Pilih kota'}
@@ -1572,8 +1627,9 @@ export const AddStaffModal = ({
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-ubah"
@@ -1606,8 +1662,9 @@ export const AddStaffModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-tambah"
@@ -1642,18 +1699,18 @@ export const AddStaffModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                      <>
-                        <br />
-                        <div className="error">
-                          {errors
-                            .filter((item: string) =>
-                              item.startsWith('INVALID_ID'),
-                            )[0]
-                            .replace('INVALID_ID_', '')}{' '}
-                          is not a valid bond
-                        </div>
-                      </>
-                    )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

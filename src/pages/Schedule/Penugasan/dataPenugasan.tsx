@@ -10,8 +10,13 @@ import Loader from '../../../common/Loader';
 import ModalAddPenugasan from './modalAddPenugasan';
 import ModalEditPenugasan from './modalEditPenugasan';
 import { DeleteModal } from './modalDeletePenugasan';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 const Penugasan = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -65,10 +70,15 @@ const Penugasan = () => {
         setDataPenugasan(data);
         setIsLoading(false);
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -100,65 +110,103 @@ const Penugasan = () => {
     setdataDeletePenugasan({ penugasan_id: item });
     setModalDeleteOpen(true);
   };
+
   //create penugasan
   const handleSubmitPenugasan = async (param: any) => {
-    const addData = await apiCreatePenugasanShift(param, token);
-    if (addData.data.status == 'OK') {
-      const response = await apiReadAllPenugasanShift(params, token);
-      const data = response.data.records;
+    try {
+      const addData = await apiCreatePenugasanShift(param, token);
+      if (addData.data.status === 'OK') {
+        const response = await apiReadAllPenugasanShift(params, token);
+        const data = response.data.records;
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        setModalAddOpen(false);
+        setDataPenugasan(data);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menambah data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menambah data',
-      });
-      setModalAddOpen(false);
-      setDataPenugasan(data);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menambah data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
 
   //Edit
   const handleEditPenugasan = async (param: any) => {
-    const addData = await apiEditPenugasanShift(param, token);
-    if (addData.data.status == 'OK') {
-      const response = await apiReadAllPenugasanShift(params, token);
-      const data = response.data.records;
+    try {
+      const addData = await apiEditPenugasanShift(param, token);
+      if (addData.data.status === 'OK') {
+        const response = await apiReadAllPenugasanShift(params, token);
+        const data = response.data.records;
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengubah data',
+        });
+        setModalEditOpen(false);
+        setDataPenugasan(data);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal mengubah data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil mengubah data',
-      });
-      setModalEditOpen(false);
-      setDataPenugasan(data);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal mengubah data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
 
   //Delete
   const handleDeletePenugasan = async (param: any) => {
-    const addData = await apiDeletePenugasanShift(param, token);
-    if (addData.data.status == 'OK') {
-      const response = await apiReadAllPenugasanShift(params, token);
-      const data = response.data.records;
+    try {
+      const addData = await apiDeletePenugasanShift(param, token);
+      if (addData.data.status === 'OK') {
+        const response = await apiReadAllPenugasanShift(params, token);
+        const data = response.data.records;
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
+        });
+        setModalEditOpen(false);
+        setDataPenugasan(data);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menghapus data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menghapus data',
-      });
-      setModalEditOpen(false);
-      setDataPenugasan(data);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menghapus data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
+
   return isLoading ? (
     <Loader />
   ) : (

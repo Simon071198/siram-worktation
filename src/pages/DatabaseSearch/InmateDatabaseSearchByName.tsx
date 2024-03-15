@@ -8,8 +8,14 @@ import { webserviceurl } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertDatabaseSearch';
+import { Error403Message } from '../../utils/constants';
 
 export default function InmateDatabaseSearchByName() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [searchName, setSearchName] = useState('');
 
   const [imagePreview, setImagePreview] = useState(null);
@@ -67,12 +73,22 @@ export default function InmateDatabaseSearchByName() {
   const handleCardClick = async (data: any) => {
     await setSelectedCard(data);
     console.log(data);
-    await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(
-      (res) => {
+    await apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 })
+      .then((res) => {
         console.log(res);
         setDetailDpo(res.records);
-      },
-    );
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
     await setIsModalOpen(true); // Open the modal when a card is clicked
   };
   const handleSearch = async () => {
@@ -90,8 +106,16 @@ export default function InmateDatabaseSearchByName() {
       } else {
         setIsNotFound(true);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     } finally {
       setLoading(false);
     }

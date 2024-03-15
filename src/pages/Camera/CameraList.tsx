@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   apiLocationOnlineDeviceList,
   allKameraLemasmil,
@@ -8,8 +8,13 @@ import {
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Alerts } from './AlertCamera';
+import { Error403Message } from '../../utils/constants';
 
 const CameraList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [filter, setFilter] = useState('');
   const [dense, setDense] = React.useState(false);
   const [accordionState, setAccordionState] = useState({
@@ -23,19 +28,55 @@ const CameraList = () => {
     [],
   );
   useEffect(() => {
-    apiLocationOnlineDeviceList().then((res) => {
-      setLocationDeviceList(res);
-    });
+    apiLocationOnlineDeviceList()
+      .then((res) => {
+        setLocationDeviceList(res);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
 
-    allKameraOtmil().then((res) => {
-      setLocationDeviceListOtmil(res);
-      console.log(res, 'res otmil');
-    });
+    allKameraOtmil()
+      .then((res) => {
+        setLocationDeviceListOtmil(res);
+        console.log(res, 'res otmil');
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
 
-    allKameraLemasmil().then((res) => {
-      setLocationDeviceListLemasmil(res);
-      console.log(res, 'res lemasmil');
-    });
+    allKameraLemasmil()
+      .then((res) => {
+        setLocationDeviceListLemasmil(res);
+        console.log(res, 'res lemasmil');
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, []);
   //   useEffect(() => {
   //     apiLocationOnlineDeviceList().then((res) => {
