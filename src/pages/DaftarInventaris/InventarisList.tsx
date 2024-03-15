@@ -347,7 +347,7 @@ const InventarisList = () => {
         'Tanggal Masuk',
       ],
       ...data.map((item: any) => [
-        item.nama_barang,
+        item.nama_aset,
         item.serial_number,
         item.nama_tipe,
         item.model,

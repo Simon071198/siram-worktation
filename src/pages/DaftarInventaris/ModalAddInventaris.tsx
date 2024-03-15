@@ -271,11 +271,11 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'nama_ruangan_lemasmil' &&
+        // key !== 'nama_ruangan_lemasmil' &&
         key !== 'status_zona_lemasmil' &&
         key !== 'updated_at' &&
         key !== 'garansi' &&
-        key !== 'nama_tipe' &&
+        // key !== 'nama_tipe' &&
         key !== 'ruangan_lemasmil_id'
       ) {
         if (!value) {
@@ -667,9 +667,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.tipe_aset_id,
-                                  label: formState.nama_tipe,
-                                }
+                                value: formState.tipe_aset_id,
+                                label: formState.nama_tipe,
+                              }
                               : formState.tipe_aset_id
                           }
                           options={tipeAset.map((item: any) => ({
@@ -753,9 +753,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                  value: formState.ruangan_otmil_id,
-                                  label: formState.nama_ruangan_otmil,
-                                }
+                                value: formState.ruangan_otmil_id,
+                                label: formState.nama_ruangan_otmil,
+                              }
                               : formState.ruangan_otmil_id
                           }
                           options={ruangan.map((item: any) => ({
@@ -902,18 +902,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4 text-center">
                     <p className="text-red-400">
@@ -935,9 +935,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     id="t-data-ubah"
                     type="submit"
                     disabled={buttonLoad}
@@ -970,9 +969,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     id="t-data"
                     disabled={buttonLoad}

@@ -105,6 +105,7 @@ export const AddInmateModal = ({
       foto_wajah: '',
       nama: '',
       pangkat_id: '',
+      nama_pangkat: '',
       matra_id: '',
       nrp: '',
       alamat: '',
@@ -1153,17 +1154,17 @@ export const AddInmateModal = ({
     let gambarTitle: string | undefined;
     let gambarDescription: string | undefined;
 
-    if (isEdit){
+    if (isEdit) {
       gambarElement = ".f-edit-gambar";
       gambarTitle = "Tombol Edit Gambar";
       gambarDescription = "Tombol edit foto tersangka"
-    } else if (!isDetail && !isEdit){
+    } else if (!isDetail && !isEdit) {
       gambarElement = ".f-unggah-gambar";
       gambarTitle = "Tombol Unggah Gambar";
       gambarDescription = "Tombol unggah foto tersangka";
     }
 
-    if (isEdit && gambarElement && gambarTitle && gambarDescription){
+    if (isEdit && gambarElement && gambarTitle && gambarDescription) {
       steps.splice(0, 0, {
         element: gambarElement,
         popover: {
@@ -1171,7 +1172,7 @@ export const AddInmateModal = ({
           description: gambarDescription,
         },
       });
-    } else if (!isEdit && !isDetail && gambarElement && gambarTitle && gambarDescription){
+    } else if (!isEdit && !isDetail && gambarElement && gambarTitle && gambarDescription) {
       steps.splice(0, 0, {
         element: gambarElement,
         popover: {
@@ -1506,7 +1507,7 @@ export const AddInmateModal = ({
                                 isEdit || isDetail
                                   ? {
                                     value: formState.pangkat_id,
-                                    label: formState.pangkat,
+                                    label: formState.nama_pangkat,
                                   }
                                   : formState.pangkat_id
                               }
