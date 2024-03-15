@@ -63,7 +63,10 @@ const SignIn = () => {
   };
 
   const registerOptions = {
-    nrp: { required: 'nrp tidak boleh kosong' },
+    nrp: {
+      required: 'nrp tidak boleh kosong',
+      maxLength: { value: 18, message: 'nrp maksimal 18 karakter' },
+    },
     password: { required: 'Password tidak boleh kosong' },
   };
 
@@ -100,11 +103,10 @@ const SignIn = () => {
               </h2>
 
               <p
-                className={` ${
-                  error
+                className={` ${error
                     ? 'block bg-red-500 text-white text-center mb-6 rounded-md py-2'
                     : 'hidden'
-                }`}
+                  }`}
               >
                 {errorName}
               </p>
@@ -165,9 +167,8 @@ const SignIn = () => {
 
                 <div className="mb-5">
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
