@@ -19,7 +19,9 @@ import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -33,6 +35,9 @@ interface Item {
 }
 
 const CaseTypeList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -103,8 +108,16 @@ const CaseTypeList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -143,12 +156,17 @@ const CaseTypeList = () => {
       .then((res) => {
         setKategoriPerkara(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
   const fetchData = async () => {
@@ -168,10 +186,15 @@ const CaseTypeList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -228,10 +251,14 @@ const CaseTypeList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -257,10 +284,14 @@ const CaseTypeList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -286,10 +317,14 @@ const CaseTypeList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -334,44 +369,46 @@ const CaseTypeList = () => {
   };
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.f-jenis-perkara',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari jenis perkara',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-jenis-perkara',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari jenis perkara',
           },
-          {
-            element: '.f-select-perkara',
-            popover: {
-              title: 'Jenis Perkara',
-              description: 'Tempat menentukan jenis perkara',
-            },
+        },
+        {
+          element: '.f-select-perkara',
+          popover: {
+            title: 'Jenis Perkara',
+            description: 'Tempat menentukan jenis perkara',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari nama perkara',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama perkara',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel nama perkara' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel nama perkara',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data perkara',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data perkara',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };

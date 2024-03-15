@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 import BackgroundSecurityImage from '../images/security-background.jpg';
 

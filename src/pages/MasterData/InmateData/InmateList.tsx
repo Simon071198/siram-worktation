@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
   apiReadAllWBP,
@@ -21,10 +21,13 @@ import ToolsTip from '../../../components/ToolsTip';
 import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 const InmateList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -162,10 +165,14 @@ const InmateList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -194,13 +201,15 @@ const InmateList = () => {
 
       // return true
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
-
-      // return false
     }
   };
 
@@ -224,10 +233,14 @@ const InmateList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -271,10 +284,14 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -308,12 +325,17 @@ const InmateList = () => {
       .then((res) => {
         setKategoriPerkara(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, [currentPage, pageSize]);
 
   useEffect(() => {
@@ -366,10 +388,14 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -385,12 +411,17 @@ const InmateList = () => {
       .then((res) => {
         setHunian(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   //untuk excel
@@ -531,44 +562,46 @@ const InmateList = () => {
   // Kodingan Driver Tutorial
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.kotak-pencarian',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari nama tersangka',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.kotak-pencarian',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari nama tersangka',
           },
-          {
-            element: '.kotak-pencarian-ruangan',
-            popover: {
-              title: 'Ruangan',
-              description: 'Tempat menentukan ruangan',
-            },
+        },
+        {
+          element: '.kotak-pencarian-ruangan',
+          popover: {
+            title: 'Ruangan',
+            description: 'Tempat menentukan ruangan',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari nama tersangka',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama tersangka',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel data tersangka' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel data tersangka',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data tersangka',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data tersangka',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };

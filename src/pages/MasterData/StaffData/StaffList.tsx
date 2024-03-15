@@ -18,6 +18,8 @@ import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 
@@ -28,6 +30,9 @@ interface Item {
 }
 
 const StaffList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -170,10 +175,14 @@ const StaffList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -228,10 +237,14 @@ const StaffList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -242,12 +255,17 @@ const StaffList = () => {
       .then((res) => {
         setPangkatData(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   // function untuk menampilkan modal detail
@@ -304,10 +322,14 @@ const StaffList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -333,10 +355,14 @@ const StaffList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -362,10 +388,14 @@ const StaffList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -382,7 +412,26 @@ const StaffList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Petugas', 'Pangkat', 'Matra', 'NRP', 'Lokasi Kesatuan', 'Kesatuan', 'Jabatan', 'Divisi', 'Pendidikan Militer', 'keahlian', 'Agama', 'Tempat Lahir', 'Tanggal Lahir', 'Status Kawin', 'Provinsi', 'Kota', 'Alamat','Jenis Kelamin'],
+      [
+        'Nama Petugas',
+        'Pangkat',
+        'Matra',
+        'NRP',
+        'Lokasi Kesatuan',
+        'Kesatuan',
+        'Jabatan',
+        'Divisi',
+        'Pendidikan Militer',
+        'keahlian',
+        'Agama',
+        'Tempat Lahir',
+        'Tanggal Lahir',
+        'Status Kawin',
+        'Provinsi',
+        'Kota',
+        'Alamat',
+        'Jenis Kelamin',
+      ],
       ...data.map((item: any) => [
         item.nama,
         item.nama_pangkat,

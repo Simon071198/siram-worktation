@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import UserOne from '../images/user/user-01.png';
-import { HiDotsVertical, HiOutlineTrash, HiPencilAlt,HiOutlineKey } from 'react-icons/hi';
+import {
+  HiDotsVertical,
+  HiOutlineTrash,
+  HiPencilAlt,
+  HiOutlineKey,
+} from 'react-icons/hi';
 
-const DropdownActionWithPass = (props:any) => {
-    const { handleEditClick,handleDeleteClick,handleUbahPassword} = props
+const DropdownActionWithPass = (props: any) => {
+  const { handleEditClick, handleDeleteClick, handleUbahPassword } = props;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -44,7 +49,6 @@ const DropdownActionWithPass = (props:any) => {
         <HiDotsVertical></HiDotsVertical>
       </button>
 
-      
       <div
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
@@ -59,7 +63,7 @@ const DropdownActionWithPass = (props:any) => {
           <HiPencilAlt className="w-5 h-5" />
           Ubah
         </button>
-        <div className='border-[0.5px] border-slate-200'></div>
+        <div className="border-[0.5px] border-slate-200"></div>
         <button
           onClick={handleUbahPassword}
           className="z-40 flex items-center gap-2 text-sm  font-medium duration-300 ease-in-out hover:text-red-500 lg:text-base "
@@ -67,7 +71,7 @@ const DropdownActionWithPass = (props:any) => {
           <HiOutlineKey className="w-5 h-5" />
           Ganti&nbsp;Katasandi
         </button>
-        <div className='border-[0.5px] border-slate-200'></div>
+        <div className="border-[0.5px] border-slate-200"></div>
         <button
           onClick={handleDeleteClick}
           className="z-40 flex items-center gap-2 text-sm  font-medium duration-300 ease-in-out hover:text-red-500 lg:text-base "
@@ -75,7 +79,6 @@ const DropdownActionWithPass = (props:any) => {
           <HiOutlineTrash className="w-5 h-5" />
           Hapus
         </button>
-        
       </div>
       {/* <!-- Dropdown End --> */}
     </div>

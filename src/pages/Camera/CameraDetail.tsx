@@ -1,12 +1,9 @@
-import DataCamera from "./DataCamera";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import DataCamera from './DataCamera';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 export default function CameraDetail() {
-
-
   const { id } = useParams();
-
 
   let params = {
     // from: `${startDate} 00:00`,
@@ -16,8 +13,8 @@ export default function CameraDetail() {
   function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
   // useEffect(() => {
@@ -33,7 +30,7 @@ export default function CameraDetail() {
   // }, [id]);
   return (
     <>
-      <DataCamera id={id}  />
+      <DataCamera id={id} />
     </>
   );
 }

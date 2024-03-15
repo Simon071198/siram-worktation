@@ -4,7 +4,9 @@ import axios from 'axios';
 import { apiVisitorRealtimeLogList } from '../../../services/api';
 
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -41,6 +43,9 @@ const DataNotFoundModal = ({ open, onClose, message }) => {
 };
 
 export default function DoorLog() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -142,20 +147,35 @@ export default function DoorLog() {
   }
 
   let fetch = async () => {
-    let params = {
-      device_id: selectedDevice,
-      country_id: selectedCountry,
-      age: selectedAge,
-      analytics: selectedAnalytics,
-      name: selectedName,
-      gender: selectedGender,
-    };
-    await setLoading(true);
-    let data = await apiVisitorRealtimeLogList(params);
-    setData(data);
-    setLoading(false);
-    console.log(data);
+    try {
+      let params = {
+        device_id: selectedDevice,
+        country_id: selectedCountry,
+        age: selectedAge,
+        analytics: selectedAnalytics,
+        name: selectedName,
+        gender: selectedGender,
+      };
+
+      await setLoading(true); // Set loading state to true
+
+      let data = await apiVisitorRealtimeLogList(params);
+      setData(data);
+      setLoading(false);
+      console.log(data);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
   };
+
   useEffect(() => {
     fetch();
   }, [

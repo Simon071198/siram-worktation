@@ -6,10 +6,12 @@ import {
   apiDeviceDetail,
   apiVisitorRealtimeLogList,
 } from '../../services/api.js';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
+import { Alerts } from './AlertCamera.js';
+import { Error403Message } from '../../utils/constants.js';
 
 const stylesListComent = {
   inline: {
@@ -18,6 +20,9 @@ const stylesListComent = {
 };
 
 const DataCamera = (props) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [state, setState] = useState({
     groupId: '',
     groupShow: [],
@@ -73,8 +78,6 @@ const DataCamera = (props) => {
     // fetchDataInmateRealtime();
     setInterval(fetchDataInmateRealtime, 5000);
 
-
-    
     fetchDataAndSendRequest(); // Call the function to initiate the process
   }, [props.id]);
 
@@ -87,8 +90,16 @@ const DataCamera = (props) => {
         ...prevState,
         dataVisitorLog: res,
       }));
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -143,8 +154,16 @@ const DataCamera = (props) => {
       // sendRequest('startLiveView', {
       //   listViewCameraData: JSON.stringify(state.listViewCamera),
       // });
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -167,7 +186,7 @@ const DataCamera = (props) => {
     const dateObj = new Date(timestamp);
     const day = dateObj.getDate();
     const month = new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(
-      dateObj
+      dateObj,
     );
     const year = dateObj.getFullYear();
     const time = dateObj.toLocaleTimeString('id-ID', { hour12: false });
@@ -214,7 +233,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url='http://192.168.1.135:5000/stream/192.168.1.63_.m3u8'
+                url="http://192.168.1.135:5000/stream/192.168.1.63_.m3u8"
                 width="100%"
                 height="100%"
                 playing={true}
@@ -236,10 +255,10 @@ const DataCamera = (props) => {
 
   const { deviceDetail, dataVisitorLog } = state;
   const unrecognizedRows = dataVisitorLog.filter(
-    (row) => row.visitor_name === 'unrecognized'
+    (row) => row.visitor_name === 'unrecognized',
   );
   const faceDetectionRows = dataVisitorLog.filter(
-    (row) => row.visitor_name !== 'unrecognized'
+    (row) => row.visitor_name !== 'unrecognized',
   );
 
   return (

@@ -15,6 +15,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Shift {
   shift_id: any;
@@ -34,6 +36,9 @@ const AddPetugasShiftGrup = ({
   defaultValue,
   isDetail,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -178,10 +183,15 @@ const AddPetugasShiftGrup = ({
         setStaff(staff.data.records);
         setPenugasan(penugasan.data.records);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -222,10 +232,15 @@ const AddPetugasShiftGrup = ({
           shift_id: '',
           nama_shift: '',
         });
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };

@@ -8,6 +8,9 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import Select from 'react-select';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertGateway';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddGatewayModalProps {
@@ -43,6 +46,9 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_gateway: '',
@@ -267,8 +273,16 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();

@@ -24,6 +24,8 @@ import 'driver.js/dist/driver.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { da } from 'date-fns/locale';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -76,6 +78,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       zona_waktu: '',
     },
   );
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const modalContainerRef = useRef(null);
   const [errors, setErrors] = useState<string[]>([]);
@@ -511,7 +516,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const saksiFilter = kasus.filter(
         (item: any) => item.kasus_id === selectedOption.value,
       )[0];
-      console.log(saksiFilter, "saksiFilter")
+      console.log(saksiFilter, 'saksiFilter');
       if (saksiFilter) {
         const saksiMap = saksiFilter.saksi.map((item: any) => ({
           label: item.nama_saksi,
@@ -519,7 +524,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         }));
         setGetSaksi(saksiMap);
 
-        setFormState({ ...formState, nomor_kasus: saksiFilter.nomor_kasus, kasus_id: saksiFilter.kasus_id, nama_kasus: saksiFilter.nama_kasus });
+        setFormState({
+          ...formState,
+          nomor_kasus: saksiFilter.nomor_kasus,
+          kasus_id: saksiFilter.kasus_id,
+          nama_kasus: saksiFilter.nama_kasus,
+        });
         console.log('getSaksi', getSaksi);
       } else {
         setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
@@ -553,7 +563,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
     });
-  }
+  };
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
 
@@ -577,7 +587,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       perubahan_jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
     });
-  }
+  };
 
   const handleWaktuMulai = (e: any) => {
     console.log('1213', e);
@@ -602,7 +612,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       waktu_mulai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
     });
-  }
+  };
   const handleWaktuSelesai = (e: any) => {
     console.log('1213', e);
 
@@ -626,7 +636,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       waktu_selesai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
     });
-  }
+  };
 
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
@@ -650,7 +660,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         zona_waktu: zonaWaktu,
       });
     }
-  }
+  };
   useEffect(() => {
     Promise.all([
       getTimeZone(),
@@ -683,9 +693,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       });
       setJenisSidang(uniqueData);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -701,9 +716,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       setJaksa(response.data.records);
       // console.log('JAKSA', response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -717,9 +737,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiHakimRead(params, token);
       setHakim(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -733,9 +758,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiReadAllWBP(params, token);
       setWbp(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -749,9 +779,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiKasusRead(params, token);
       setKasus(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -765,9 +800,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiPengadilanMiliterRead(params, token);
       setPengadilanMiliter(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -781,9 +821,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiAhliRead(params, token);
       setAhli(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -797,9 +842,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const response = await apiReadSaksi(params, token);
       setSaksi(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -1133,9 +1183,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                              value: formState.jenis_persidangan_id,
-                              label: formState.nama_jenis_persidangan,
-                            }
+                                value: formState.jenis_persidangan_id,
+                                label: formState.nama_jenis_persidangan,
+                              }
                             : formState.jenis_persidangan_id
                         }
                         name="jenis_persidangan_id"
@@ -1175,9 +1225,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState?.oditurHolder?.map((item: any) => ({
-                            value: item.oditur_penuntut_id,
-                            label: item.nama_oditur,
-                          }))
+                              value: item.oditur_penuntut_id,
+                              label: item.nama_oditur,
+                            }))
                           : ''
                       }
                       placeholder={'Pilih oditur penuntut'}
@@ -1296,9 +1346,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                              value: formState.oditur_penuntut_id,
-                              label: formState.nama_oditur,
-                            }
+                                value: formState.oditur_penuntut_id,
+                                label: formState.nama_oditur,
+                              }
                             : formState.oditur_penuntut_id
                         }
                         placeholder={'Pilih ketua oditur'}
@@ -1307,10 +1357,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         isDisabled={isDetail}
                         name="odi_penuntut_id"
                         styles={customStyles}
-                        options={jaksa.filter((item) => formState?.oditur_penuntut_id?.includes(item.oditur_penuntut_id)).map((item: any) => ({
-                          value: item.oditur_penuntut_id,
-                          label: item.nama_oditur,
-                        }))}
+                        options={jaksa
+                          .filter((item) =>
+                            formState?.oditur_penuntut_id?.includes(
+                              item.oditur_penuntut_id,
+                            ),
+                          )
+                          .map((item: any) => ({
+                            value: item.oditur_penuntut_id,
+                            label: item.nama_oditur,
+                          }))}
                         onChange={handleSelectKetuaHakim}
                       />
                       {/* <Select
@@ -1368,9 +1424,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                              value: formState.kasus_id,
-                              label: formState.nama_kasus,
-                            }
+                                value: formState.kasus_id,
+                                label: formState.nama_kasus,
+                              }
                             : formState.kasus_id
                         }
                         placeholder={'Pilih kasus'}
@@ -1453,9 +1509,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         defaultValue={
                           isEdit || isDetail
                             ? {
-                              value: formState.pengadilan_militer_id,
-                              label: formState.nama_pengadilan_militer,
-                            }
+                                value: formState.pengadilan_militer_id,
+                                label: formState.nama_pengadilan_militer,
+                              }
                             : formState.pengadilan_militer_id
                         }
                         isClearable={true}
@@ -1616,7 +1672,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         <DatePicker
                           selected={
                             formState.perubahan_jadwal_sidang
-                              ? dayjs(formState.perubahan_jadwal_sidang).toDate()
+                              ? dayjs(
+                                  formState.perubahan_jadwal_sidang,
+                                ).toDate()
                               : dayjs().toDate()
                           }
                           onChange={handlePerubahanJadwal}
@@ -1765,14 +1823,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.ahliHolder.map((item: any) => ({
-                            value: item.ahli_id,
-                            label:
-                              item.nama_ahli +
-                              ' ' +
-                              '(' +
-                              item.bidang_ahli +
-                              ')',
-                          }))
+                              value: item.ahli_id,
+                              label:
+                                item.nama_ahli +
+                                ' ' +
+                                '(' +
+                                item.bidang_ahli +
+                                ')',
+                            }))
                           : formState.ahli_id
                       }
                       placeholder={'Pilih ahli'}
@@ -1810,21 +1868,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       defaultValue={
                         isEdit || isDetail
                           ? formState.saksiHolder.map((item: any) => ({
-                            value: item.saksi_id,
-                            label: item.nama_saksi,
-                          }))
+                              value: item.saksi_id,
+                              label: item.nama_saksi,
+                            }))
                           : formState.saksi_id
                       }
                       value={
                         isEdit || isDetail
                           ? formState.saksiHolder.map((item: any) => ({
-                            value: item.saksi_id,
-                            label: item.nama_saksi,
-                          }))
+                              value: item.saksi_id,
+                              label: item.nama_saksi,
+                            }))
                           : getSaksi.map((item: any) => ({
-                            value: item.value,
-                            label: item.label,
-                          }))
+                              value: item.value,
+                              label: item.label,
+                            }))
                       }
                       placeholder={'Pilih saksi'}
                       isClearable={true}
@@ -1857,8 +1915,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     <div className="flex items-center">
                       <p className="text-white">Pengacara</p>
                       <p
-                        className={`${pengacaraEror ? 'block' : 'hidden'
-                          } ml-4 text-red-400 text-sm`}
+                        className={`${
+                          pengacaraEror ? 'block' : 'hidden'
+                        } ml-4 text-red-400 text-sm`}
                       >
                         Masukan nama pengacara
                       </p>
@@ -1901,8 +1960,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         )}
                       </div>
                       <div
-                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${formState.pengacara?.length === 0 ? 'hidden' : 'block'
-                          }`}
+                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${
+                          formState.pengacara?.length === 0 ? 'hidden' : 'block'
+                        }`}
                       >
                         {/* {isDetail || isEdit
                           ? formState.pengacara?.map(
@@ -2081,8 +2141,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
-                              }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                              isDetail ? 'hidden' : 'block'
+                            }`}
                           >
                             <button
                               className="p-[2px]"
@@ -2118,8 +2179,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
-                              }`}
+                            className={`flex justify-center mt-3 ${
+                              isDetail ? 'block' : 'hidden'
+                            }`}
                           >
                             <button
                               type="button"
@@ -2208,18 +2270,18 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
               .length > 0 && (
               <div className="error mt-4">
@@ -2234,8 +2296,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-ubah"
@@ -2268,8 +2331,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-tambah"

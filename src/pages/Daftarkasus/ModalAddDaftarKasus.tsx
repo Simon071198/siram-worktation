@@ -16,6 +16,8 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -53,6 +55,9 @@ export const AddDaftarKasusModal = ({
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
   //state
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -224,12 +229,17 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataJenisPerkara(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Oditur = async () => {
@@ -240,12 +250,17 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataOditurPenyidik(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const handleWaktuKejadian = (e: any) => {
@@ -269,7 +284,7 @@ export const AddDaftarKasusModal = ({
     setFormState({
       ...formState,
       waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
   };
   const handleWaktuPelaporan = (e: any) => {
@@ -293,7 +308,7 @@ export const AddDaftarKasusModal = ({
     setFormState({
       ...formState,
       waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
   };
 
@@ -319,7 +334,7 @@ export const AddDaftarKasusModal = ({
         zona_waktu: zonaWaktu,
       });
     }
-  }
+  };
   useEffect(() => {
     Promise.all([
       getTimeZone(),
@@ -348,12 +363,17 @@ export const AddDaftarKasusModal = ({
           prevPihakTerlibat.concat(tersangka),
         );
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Saksi = async () => {
@@ -371,12 +391,17 @@ export const AddDaftarKasusModal = ({
         }));
         setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const status = async () => {
@@ -385,12 +410,17 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataStatusWBP(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const customStyles = {
@@ -777,24 +807,24 @@ export const AddDaftarKasusModal = ({
                       Tanggal Kejadian Kasus
                     </label>
                     <div className="flex flex-row">
-                    <DatePicker
-                      selected={
-                        formState.waktu_kejadian
-                          ? dayjs(formState.waktu_kejadian).toDate()
-                          : dayjs().toDate()
-                      }
-                      showTimeInput
-                      timeFormat="HH:mm"
-                      onChange={handleWaktuKejadian}
-                      timeCaption="Time"
-                      dateFormat="dd/MM/yyyy HH:mm"
-                      customTimeInput={<ExampleCustomTimeInput />}
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
-                      name="waktu_kejadian"
-                      disabled={false}
-                      locale="id"
-                    />
-                    <input
+                      <DatePicker
+                        selected={
+                          formState.waktu_kejadian
+                            ? dayjs(formState.waktu_kejadian).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        onChange={handleWaktuKejadian}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
+                        name="waktu_kejadian"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"
@@ -820,25 +850,25 @@ export const AddDaftarKasusModal = ({
                       Tanggal Pelaporan Kasus
                     </label>
                     <div className="flex flex-row">
-                    <DatePicker
-                      selected={
-                        formState.waktu_pelaporan_kasus
-                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
-                          : dayjs().toDate()
-                      }
-                      showTimeInput
-                      timeFormat="HH:mm"
-                      // timeIntervals={15}
-                      onChange={handleWaktuPelaporan}
-                      timeCaption="Time"
-                      dateFormat="dd/MM/yyyy HH:mm"
-                      customTimeInput={<ExampleCustomTimeInput />}
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
-                      name="waktu_pelaporan_kasus"
-                      disabled={false}
-                      locale="id"
-                    />
-                    <input
+                      <DatePicker
+                        selected={
+                          formState.waktu_pelaporan_kasus
+                            ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        // timeIntervals={15}
+                        onChange={handleWaktuPelaporan}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
+                        name="waktu_pelaporan_kasus"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"

@@ -3,13 +3,18 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { apiGatewayLog, apiVisitorLogList } from '../../../services/api';
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../../../components/Pagination';
 import Loader from '../../../common/Loader';
 import * as xlsx from 'xlsx';
 import dayjs from 'dayjs';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
 
 export default function GatewayLog() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
@@ -51,11 +56,9 @@ export default function GatewayLog() {
 
   // const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
 
-  console.log(data,"Ini Data Boss QQ");
-  
+  console.log(data, 'Ini Data Boss QQ');
 
   const handleExportClick = async () => {
-
     const dataToExcel = [
       [
         'Nama Prajurit Binaan',
@@ -218,7 +221,15 @@ export default function GatewayLog() {
       setRows(responseLog.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      console.log('ERROR GATEWAY', e.message);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -254,8 +265,8 @@ export default function GatewayLog() {
                         <input
                           name="Name"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedName}
-                        // onChange={(e) => setSelectedName(e.target.value)}
+                          // value={selectedName}
+                          // onChange={(e) => setSelectedName(e.target.value)}
                         />
                       </div>
 
@@ -265,8 +276,8 @@ export default function GatewayLog() {
                           type="number"
                           name="Age"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedAge}
-                        // onChange={(e) => setSelectedAge(e.target.value)}
+                          // value={selectedAge}
+                          // onChange={(e) => setSelectedAge(e.target.value)}
                         />
                       </div>
 
@@ -275,8 +286,8 @@ export default function GatewayLog() {
                         <select
                           name="Select Gender"
                           className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                        // value={selectedGender}
-                        // onChange={(e) => setSelectedGender(e.target.value)}
+                          // value={selectedGender}
+                          // onChange={(e) => setSelectedGender(e.target.value)}
                         >
                           <option value="">Semua Gender</option>
                           <option value="true">Pria</option>
@@ -315,7 +326,7 @@ export default function GatewayLog() {
                       name="Select Device"
                       // value={selectedDevice}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleDeviceChange}
+                      // onChange={handleDeviceChange}
                     >
                       <option value="">Semua Perangkat</option>
 
@@ -333,7 +344,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={startDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleStartDateChange}
+                      // onChange={handleStartDateChange}
                     />
                   </div>
 
@@ -343,7 +354,7 @@ export default function GatewayLog() {
                       type="date"
                       // value={endDate}
                       className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
-                    // onChange={handleEndDateChange}
+                      // onChange={handleEndDateChange}
                     />
                   </div>
                 </div>
@@ -352,7 +363,7 @@ export default function GatewayLog() {
                 <button
                   className="bg-blue-500 text-white px-2 rounded-md py-1"
                   type="button"
-                onClick={handleExportClick}
+                  onClick={handleExportClick}
                 >
                   Export Excel
                 </button>
