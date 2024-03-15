@@ -426,7 +426,7 @@ const BAPList = () => {
         'Agenda Penyidikan',
         'nomor kasus',
         'nama kasus',
-        'nama',
+        'nama wbp',
         'nrp wbp',
         'nama saksi',
       ],
