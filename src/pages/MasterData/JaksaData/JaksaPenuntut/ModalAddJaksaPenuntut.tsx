@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Alerts } from './AlertJaksaPenuntut';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -16,27 +19,26 @@ export const AddJaksaPenuntutModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      nama_oditur:'',
-      nip:'',
-      alamat:'',
-    }
-  )
+      nama_oditur: '',
+      nip: '',
+      alamat: '',
+    },
+  );
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-
+  const [filter, setFilter] = useState('');
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -47,6 +49,44 @@ export const AddJaksaPenuntutModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Oditur',
+            description: 'Isi nama oditur',
+          },
+        },
+        {
+          element: '.i-nip',
+          popover: {
+            title: 'NIP',
+            description: 'Isi NIP',
+          },
+        },
+        {
+          element: '.i-alamat',
+          popover: {
+            title: 'Alamat',
+            description: 'Isi alamat dengan lengkap',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data oditur penuntut`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -139,10 +179,31 @@ export const AddJaksaPenuntutModal = ({
                     {isDetail
                       ? 'Detail Data Oditur Penuntut'
                       : isEdit
-                      ? 'Edit Data Oditur Penuntut'
-                      : 'Tambah Data Oditur Penuntut'}
+                        ? 'Edit Data Oditur Penuntut'
+                        : 'Tambah Data Oditur Penuntut'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-65">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-55">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -161,7 +222,7 @@ export const AddJaksaPenuntutModal = ({
                     Nama Oditur
                   </label>
                   <input
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                     name="nama_oditur"
                     placeholder="Nama Oditur"
                     onChange={handleChange}
@@ -170,11 +231,11 @@ export const AddJaksaPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : '',
                     )}
                   </p>
                 </div>
-                
+
                 {/* NIP */}
                 <div className="form-group w-full mt-4">
                   <label
@@ -184,7 +245,7 @@ export const AddJaksaPenuntutModal = ({
                     NIP
                   </label>
                   <input
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nip"
                     name="nip"
                     placeholder="NIP"
                     onChange={handleChange}
@@ -193,11 +254,11 @@ export const AddJaksaPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nip' ? 'Masukan NIP' : ''
+                      item === 'nip' ? 'Masukan NIP' : '',
                     )}
                   </p>
                 </div>
-                
+
                 {/* Alamat */}
                 <div className="form-group w-full mt-4">
                   <label
@@ -207,7 +268,7 @@ export const AddJaksaPenuntutModal = ({
                     Alamat
                   </label>
                   <input
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-alamat"
                     name="alamat"
                     placeholder="Alamat"
                     onChange={handleChange}
@@ -216,7 +277,7 @@ export const AddJaksaPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'alamat' ? 'Masukan Alamat' : ''
+                      item === 'alamat' ? 'Masukan Alamat' : '',
                     )}
                   </p>
                 </div>
@@ -228,7 +289,7 @@ export const AddJaksaPenuntutModal = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond
@@ -264,6 +325,7 @@ export const AddJaksaPenuntutModal = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -298,6 +360,7 @@ export const AddJaksaPenuntutModal = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

@@ -58,6 +58,9 @@ const InventarisList = () => {
   const [rows, setRows] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  console.log(editData,"ini data EDIT BOSS QQ");
+  
+
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
   };
@@ -69,8 +72,10 @@ const InventarisList = () => {
   };
 
   const handleEditClick = (item: any) => {
-    console.log(item, 'item item');
-    setEditData(item);
+    const { nama_ruangan_lemasmil, ...filteredData } = item;
+    // console.log(filteredData,"ini filter data BOSS");
+    // console.log(item, 'item item');
+    setEditData(filteredData);
     setModalEditOpen(true);
   };
 
