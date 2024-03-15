@@ -15,14 +15,15 @@ import { AddTipeModal } from './ModalAddTipe';
 import { DeleteTipeModal } from './ModalDeleteTipe';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 // import ToolsTip from 'renderer/components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
 import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -34,6 +35,9 @@ interface Item {
 }
 
 const TipeList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -123,10 +127,14 @@ const TipeList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -180,10 +188,15 @@ const TipeList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      setIsLoading(false);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -242,10 +255,14 @@ const TipeList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -271,10 +288,14 @@ const TipeList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -300,10 +321,14 @@ const TipeList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -331,37 +356,39 @@ const TipeList = () => {
   };
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.f-tipe-aset',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari tipe aset',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-tipe-aset',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari tipe aset',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari tipe aset',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari tipe aset',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel tipe aset' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel tipe aset',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data tipe aset',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data tipe aset',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };
@@ -423,12 +450,12 @@ const TipeList = () => {
             </button>
 
             <button
-            onClick={exportToExcel}
-            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
-          >
-            Export&nbsp;Excel
-          </button>
-          <div className="w-10">
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
+            >
+              Export&nbsp;Excel
+            </button>
+            <div className="w-10">
               <button>
                 <HiQuestionMarkCircle
                   values={filter}

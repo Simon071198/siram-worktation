@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   apiChangePassword,
@@ -19,6 +19,7 @@ import DropdownAction from '../../components/DropdownAction';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { Error403Message } from '../../utils/constants';
 
 // interface Item {
 //   nama_dokumen_bap: string;
@@ -27,6 +28,7 @@ import 'driver.js/dist/driver.css';
 
 const BAPList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -96,10 +98,14 @@ const BAPList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -190,10 +196,14 @@ const BAPList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -322,10 +332,14 @@ const BAPList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -351,10 +365,14 @@ const BAPList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: 'warning',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -380,10 +398,14 @@ const BAPList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: 'warning',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -491,24 +513,22 @@ const BAPList = () => {
           <h4 className="mb-6 text-xl font-semibold text-black dark:text-white">
             Data Pencatatan BAP
           </h4>
-          <div className='flex gap-3'>
-
-          <button
-            className='text-black rounded-md font-semibold w-20 h-10 bg-green-500'
-            onClick={() => navigate('/daftar-sidang')}
-          >
-            Sidang
-          </button>
-          {!isOperator && (
+          <div className="flex gap-3">
             <button
-              onClick={handleModalAddOpen}
-
-              className="text-black rounded-md bg-blue-300 w-20 h-10"
+              className="text-black rounded-md font-semibold w-20 h-10 bg-green-500"
+              onClick={() => navigate('/daftar-sidang')}
             >
-              Tambah
+              Sidang
             </button>
-          )}
-        </div>
+            {!isOperator && (
+              <button
+                onClick={handleModalAddOpen}
+                className="text-black rounded-md bg-blue-300 w-20 h-10"
+              >
+                Tambah
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col">

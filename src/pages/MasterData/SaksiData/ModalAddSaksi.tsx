@@ -6,6 +6,8 @@ import { apiReadKasus } from '../../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -30,8 +32,10 @@ export const AddSaksiModal = ({
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
-  //state
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  //state
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -136,19 +140,23 @@ export const AddSaksiModal = ({
   }, []);
 
   // const Kasusdata = async () => {
-  //   let params = {
-
-  //   }
-  //   await apiReadKasus(params,token)
-  //   .then((res) => {
-  //     setDataKasus(res.data.records)
-  //   })
-  //   .catch((err)=>
-  //   Alerts.fire({
-  //     icon:'error',
-  //     title: err.massage,
-  //   }))
-  // }
+  //   let params = {};
+  //   await apiReadKasus(params, token)
+  //     .then((res) => {
+  //       setDataKasus(res.data.records);
+  //     })
+  //     .catch((e: any) => {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     });
+  // };
 
   const customStyles = {
     container: (provided: any) => ({

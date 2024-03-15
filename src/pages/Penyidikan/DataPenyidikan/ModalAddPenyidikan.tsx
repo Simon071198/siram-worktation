@@ -6,10 +6,13 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import utc from 'dayjs/plugin/utc';
+import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Alerts } from './AlertPenyidikan';
+import { Error403Message } from '../../../utils/constants';
 
 dayjs.locale('id');
 dayjs.extend(utc);
@@ -41,6 +44,9 @@ export const AddPenyidikanModal = ({
     zona_waktu: defaultValue?.zona_waktu,
   });
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
@@ -53,28 +59,41 @@ export const AddPenyidikanModal = ({
       pageSize: Number.MAX_SAFE_INTEGER,
     };
     const fetchData = async () => {
-      const kasus = await apiReadKasus(params, token);
-      setDataKasus(kasus.data.records);
-      setIsLoading(false);
-      const timeZone = dayjs().format('Z');
-      let zonaWaktu;
-      switch (timeZone) {
-        case '+07:00':
-          zonaWaktu = 'WIB';
-          break;
-        case '+08:00':
-          zonaWaktu = 'WITA';
-          break;
-        case '+09:00':
-          zonaWaktu = 'WIT';
-          break;
-        default:
-          zonaWaktu = 'Zona Waktu Tidak Dikenal';
-      }
-      if (!formState?.zona_waktu) {
-        setFormState({
-          ...formState,
-          zona_waktu: zonaWaktu,
+      try {
+        const kasus = await apiReadKasus(params, token);
+        setDataKasus(kasus.data.records);
+        setIsLoading(false);
+        const timeZone = dayjs().format('Z');
+        let zonaWaktu;
+        switch (timeZone) {
+          case '+07:00':
+            zonaWaktu = 'WIB';
+            break;
+          case '+08:00':
+            zonaWaktu = 'WITA';
+            break;
+          case '+09:00':
+            zonaWaktu = 'WIT';
+            break;
+          default:
+            zonaWaktu = 'Zona Waktu Tidak Dikenal';
+        }
+        if (!formState?.zona_waktu) {
+          setFormState({
+            ...formState,
+            zona_waktu: zonaWaktu,
+          });
+        }
+      } catch (e: any) {
+        setIsLoading(false);
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };

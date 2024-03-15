@@ -12,6 +12,8 @@ import { Alerts } from './AlertInventaris';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 interface AddInventarisModalProps {
   closeModal: () => void;
@@ -33,6 +35,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   isEdit,
   token,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_aset: '',
@@ -320,9 +325,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       setRuangan(response.data.records);
       setIsLoading(false);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -336,9 +346,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       // console.log(response,'RUANGAN')
       setTipeAset(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };

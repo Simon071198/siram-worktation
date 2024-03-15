@@ -18,13 +18,18 @@ import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Item {
   nama_kategori_perkara: string;
 }
 
 const KategoriPerkaraList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -84,8 +89,16 @@ const KategoriPerkaraList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -127,10 +140,15 @@ const KategoriPerkaraList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -187,10 +205,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -216,10 +238,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -245,10 +271,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -288,37 +318,39 @@ const KategoriPerkaraList = () => {
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.f-kategori-perkara',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari kategori perkara',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-kategori-perkara',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari kategori perkara',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari kategori perkara',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari kategori perkara',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel kategori perkara' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel kategori perkara',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data kategori perkara',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data kategori perkara',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };

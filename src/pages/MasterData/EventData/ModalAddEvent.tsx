@@ -10,13 +10,15 @@ import {
 } from '../../../services/api';
 import { Alerts } from './AlertEvent';
 // import Select from 'react-select/dist/declarations/src/Select';
-import Select from "react-select"
+import Select from 'react-select';
 import dayjs from 'dayjs';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface AddVisitorModalProps {
   closeModal: () => void;
@@ -55,6 +57,9 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState({
     kegiatan_id: defaultValue?.kegiatan_id ?? '',
     nama_kegiatan: defaultValue?.nama_kegiatan ?? '',
@@ -70,7 +75,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     jenis_ruangan_otmil: defaultValue?.jenis_ruangan_otmil ?? '',
     nama_lokasi_otmil: defaultValue?.nama_lokasi_otmil ?? '',
     nama_zona: defaultValue?.status_zona_otmil ?? '',
-    zona_waktu: defaultValue?.zona_waktu ??'',
+    zona_waktu: defaultValue?.zona_waktu ?? '',
   });
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -362,7 +367,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
         zona_waktu: zonaWaktu,
       });
     }
-  }
+  };
 
   const handleWaktuMulai = (e: any) => {
     console.log('test', e);
@@ -384,11 +389,11 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     }
 
     // console.log('Formatted Date:', formattedDate);
-  console.log('Zona Waktu:', zonaWaktu);
+    console.log('Zona Waktu:', zonaWaktu);
     setFormState({
       ...formState,
       waktu_mulai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
   };
 
@@ -413,14 +418,12 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     setFormState({
       ...formState,
       waktu_selesai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,  
+      zona_waktu: zonaWaktu,
     });
   };
 
-
-
   useEffect(() => {
-    getTimeZone()
+    getTimeZone();
     const fetchData = async () => {
       let params = {
         pageSize: 1000,
@@ -450,8 +453,16 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
@@ -468,12 +479,17 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       .then((res) => {
         setruanganotmil(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const lokasi = async () => {
@@ -484,12 +500,17 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       .then((res) => {
         setlokasiotmil(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const handleRuanganChange = (e: any) => {
@@ -736,14 +757,14 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         disabled={false}
                         locale="id"
                       />
-                    <input
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         // name="zona_waktu"
                         value={formState?.zona_waktu}
                         disabled
                       />
-                      </div>
+                    </div>
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'waktu_mulai_kegiatan'
@@ -761,7 +782,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       Waktu Akhir Kegiatan
                     </label>
                     <div className="flex flex-row">
-                    {/* <input
+                      {/* <input
                       type="datetime-local"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-akhir"
                       name="waktu_selesai_kegiatan"
@@ -769,12 +790,12 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       value={formState.waktu_selesai_kegiatan}
                       disabled={isDetail}
                     /> */}
-                    <DatePicker
+                      <DatePicker
                         selected={
                           formState.waktu_selesai_kegiatan
                             ? dayjs(formState.waktu_selesai_kegiatan).toDate()
                             : dayjs().toDate()
-                        }                        
+                        }
                         onChange={handleWaktuSelesai}
                         showTimeInput
                         timeFormat="HH:mm"
@@ -786,7 +807,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         disabled={false}
                         locale="id"
                       />
-                    <input
+                      <input
                         type="text"
                         className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                         name="zona_waktu"

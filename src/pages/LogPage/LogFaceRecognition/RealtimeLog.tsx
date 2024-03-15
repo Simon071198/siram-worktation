@@ -4,10 +4,12 @@ import axios from 'axios';
 import { apiVisitorRealtimeLogList } from '../../../services/api';
 
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -44,6 +46,9 @@ const DataNotFoundModal = ({ open, onClose, message }) => {
 };
 
 export default function Realtime() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -205,20 +210,35 @@ export default function Realtime() {
   }
 
   let fetch = async () => {
-    let params = {
-      device_id: selectedDevice,
-      country_id: selectedCountry,
-      age: selectedAge,
-      analytics: selectedAnalytics,
-      name: selectedName,
-      gender: selectedGender,
-    };
-    await setLoading(true);
-    let data = await apiVisitorRealtimeLogList(params);
-    setData(data);
-    setLoading(false);
-    console.log(data);
+    try {
+      let params = {
+        device_id: selectedDevice,
+        country_id: selectedCountry,
+        age: selectedAge,
+        analytics: selectedAnalytics,
+        name: selectedName,
+        gender: selectedGender,
+      };
+
+      setLoading(true);
+      let data = await apiVisitorRealtimeLogList(params);
+      setData(data);
+      console.log(data);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
   useEffect(() => {
     fetch();
   }, [

@@ -7,7 +7,10 @@ import {
 import Select from 'react-select';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertRoom';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddRoomModalProps {
@@ -35,6 +38,9 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   // const tokenItem = localStorage.getItem('token');
   // let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -98,15 +104,53 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     };
     let params = {};
 
-    apiReadAlllokasiOtmil(params, token).then((res: any) => {
-      setLokasi(res.data.records);
-    });
-    apiReadZona(token).then((res: any) => {
-      setZona(res.data.records);
-    });
-    apiReadAllRuanganSummary(parameter, token).then((res: any) => {
-      setTotalWbp(res.data.records);
-    });
+    apiReadAlllokasiOtmil(params, token)
+      .then((res: any) => {
+        setLokasi(res.data.records);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+
+    apiReadZona(token)
+      .then((res: any) => {
+        setZona(res.data.records);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+
+    apiReadAllRuanganSummary(parameter, token)
+      .then((res: any) => {
+        setTotalWbp(res.data.records);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   // useEffect untuk mengambil data dari api
@@ -200,7 +244,6 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
           title: 'Nama ruangan',
           description: 'Isi nama ruangan',
         },
-
       },
       {
         element: '.f-jenis-ruangan-modal',
@@ -208,7 +251,6 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
           title: 'Jenis ruangan ',
           description: 'Pilih jenis ruangan',
         },
-
       },
       {
         element: '.f-zona-ruangan',
@@ -293,14 +335,16 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         : 'Tambah Data Ruangan'}
                   </h3>
                 </div>
-                {!isDetail && (<button className='pr-[440px]'>
-                  <HiQuestionMarkCircle
-                    // values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>)}
+                {!isDetail && (
+                  <button className="pr-[440px]">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}

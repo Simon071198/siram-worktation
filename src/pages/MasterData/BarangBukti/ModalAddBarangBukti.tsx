@@ -6,6 +6,8 @@ import { apiReadKasus } from '../../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -20,6 +22,9 @@ export const AddBarangBuktiModal = ({
   isEdit,
   token,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       // nama_kasus:'',
@@ -270,12 +275,17 @@ export const AddBarangBuktiModal = ({
       .then((res) => {
         setDataKasus(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const customStyles = {
@@ -639,9 +649,9 @@ export const AddBarangBuktiModal = ({
                           defaultValue={
                             isEdit || isDetail || isKasus
                               ? {
-                                value: formState.kasus_id,
-                                label: formState.nama_kasus,
-                              }
+                                  value: formState.kasus_id,
+                                  label: formState.nama_kasus,
+                                }
                               : formState.kasus_id
                           }
                           placeholder={'Pilih Kasus'}
@@ -776,7 +786,7 @@ export const AddBarangBuktiModal = ({
                       className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       type="text"
                       name="nama_jenis_perkara"
-                      placeholder='Nama Jenis Perkara'
+                      placeholder="Nama Jenis Perkara"
                       value={formState.nama_jenis_perkara}
                       onChange={handleChange}
                       disabled={isDetail}
@@ -813,8 +823,9 @@ export const AddBarangBuktiModal = ({
                       {formState.pdf_file_base64 ? (
                         <div className="grid grid-cols-1 ">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
-                              }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                              isDetail ? 'hidden' : 'block'
+                            }`}
                           >
                             <p className="p-[2px]" onClick={handleRemoveDoc}>
                               <svg
@@ -847,8 +858,9 @@ export const AddBarangBuktiModal = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
-                              }`}
+                            className={`flex justify-center mt-3 ${
+                              isDetail ? 'block' : 'hidden'
+                            }`}
                           >
                             <button
                               type="button"
@@ -917,8 +929,9 @@ export const AddBarangBuktiModal = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-ubah"
@@ -951,8 +964,9 @@ export const AddBarangBuktiModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                       id="b-tambah"
@@ -987,18 +1001,18 @@ export const AddBarangBuktiModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                      <>
-                        <br />
-                        <div className="error">
-                          {errors
-                            .filter((item: string) =>
-                              item.startsWith('INVALID_ID'),
-                            )[0]
-                            .replace('INVALID_ID_', '')}{' '}
-                          is not a valid bond
-                        </div>
-                      </>
-                    )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

@@ -9,6 +9,8 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import Select from 'react-select';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -20,6 +22,9 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
   onSubmit,
   defaultValue,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -141,10 +146,15 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
             (item: any) => !statusPengganti.includes(item.petugas_id),
           );
           setStaff(availableStaff);
-        } catch (error: any) {
+        } catch (e: any) {
+          if (e.response.status === 403) {
+            navigate('/auth/signin', {
+              state: { forceLogout: true, lastPage: location.pathname },
+            });
+          }
           Alerts.fire({
-            icon: 'error',
-            title: error.message,
+            icon: e.response.status === 403 ? 'warning' : 'error',
+            title: e.response.status === 403 ? Error403Message : e.message,
           });
         }
       }
@@ -191,10 +201,15 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
             value: staffFilter[0]?.grup_petugas_id,
             label: staffFilter[0]?.nama_grup_petugas,
           });
-        } catch (error: any) {
+        } catch (e: any) {
+          if (e.response.status === 403) {
+            navigate('/auth/signin', {
+              state: { forceLogout: true, lastPage: location.pathname },
+            });
+          }
           Alerts.fire({
-            icon: 'error',
-            title: error.message,
+            icon: e.response.status === 403 ? 'warning' : 'error',
+            title: e.response.status === 403 ? Error403Message : e.message,
           });
         }
       }
@@ -206,10 +221,15 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
           (item: any) => item.grup_petugas_id !== defaultValue.grup_petugas_id,
         );
         setGrupPetugas(filterGrup);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };

@@ -8,6 +8,9 @@ import Select from 'react-select';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
+import { Alerts } from './AlertVisitor';
 
 interface AddVisitorModalProps {
   closeModal: () => void;
@@ -39,6 +42,9 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama: '',
@@ -274,8 +280,16 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
         setnameWBP(wbp.data.records);
 
         setIsLoading(false);
-      } catch (err) {
-        console.error(err);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
 
@@ -306,8 +320,16 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
         } else {
           throw new Error('Terjadi kesalahan saat mencari data.');
         }
-      } catch (error) {
-        console.error(error);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     }
   }
