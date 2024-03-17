@@ -159,7 +159,7 @@ const AhliList = () => {
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiReadAllStaff(params, token);
+      const response = await apiAhliRead(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
