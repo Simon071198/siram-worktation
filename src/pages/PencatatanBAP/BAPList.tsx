@@ -53,6 +53,7 @@ const BAPList = () => {
   const [searchData, setSearchData] = useState({
     nomor_kasus: '',
     nama_kasus: '',
+    nomor_penyidikan: ''
   });
 
   const tokenItem = localStorage.getItem('token');
@@ -87,7 +88,8 @@ const BAPList = () => {
         filter: {
           nama_dokumen_bap: filter,
           nomor_kasus: searchData.nomor_kasus,
-          nama_kasus: searchData.nama_kasus
+          nama_kasus: searchData.nama_kasus,
+          nomor_penyidikan: searchData.nomor_penyidikan
           // lokasi_otmil: 'Cimahi',
         },
         page: currentPage,
@@ -490,9 +492,9 @@ const BAPList = () => {
             </div>
             <div className="w-full search-nomor">
               <SearchInputButton
-                value={searchData.nomor_kasus}
+                value={searchData.nomor_penyidikan}
                 placehorder="Cari Nomor Penyidikan"
-                onChange={(e) => setSearchData({...searchData, nomor_kasus: e.target.value})}
+                onChange={(e) => setSearchData({...searchData, nomor_penyidikan: e.target.value})}
               />
             </div>
             <div className="w-full search-kasus">

@@ -8,6 +8,7 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertCaseType';
 import { Error403Message } from '../../../utils/constants';
+import { set } from 'react-hook-form';
 
 // interface
 interface AddCaseTypeModalProps {
@@ -23,7 +24,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   onSubmit,
   defaultValue,
   isDetail,
-  isEdit,
+  isEdit
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,6 +34,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
       nama_jenis_perkara: '',
       pasal: '',
       kategori_perkara_id: '',
+      nama_kategori_perkara: '',
       // vonis_bulan_perkara: '',
       // vonis_hari_perkara : '',
       // vonis_tahun_perkara: '',
@@ -42,7 +44,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   //state
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const [kategori_perkara, setkategoriperkara] = useState([]);
+  const [kategoriPerkara, setkategoriperkara] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -196,32 +198,61 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   };
 
   useEffect(() => {
-    const fetchDataKategori = async () => {
-      let params = {
-        pageSize: 1000,
-      };
-      try {
-        const perka = await apiReadKategoriPerkara(params, token);
-        const kategori = perka.data.records;
-        setkategoriperkara(kategori);
+    Promise.all([
+      KategotiPerkara(),
+    ]).then(() => {
+      setIsLoading(false);
+    });
+  }, []);
 
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
+  const KategotiPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadKategoriPerkara(params, token)
+      .then((res) => {
+        setkategoriperkara(res.data.records);
+    })
+    .catch((e: any) => {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
         });
       }
-    };
-    fetchDataKategori();
-  }, []);
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    });
+  }
+
+  // useEffect(() => {
+  //   const fetchDataKategori = async () => {
+  //     let params = {
+  //       pageSize: 1000,
+  //     };
+  //     try {
+  //       const perka = await apiReadKategoriPerkara(params, token);
+  //       const kategori = perka.data.records;
+  //       setkategoriperkara(kategori);
+
+  //       setTimeout(() => {
+  //         setIsLoading(false);
+  //       }, 500);
+  //     } catch (e: any) {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     }
+  //   };
+  //   fetchDataKategori();
+  // }, []);
 
   const modalStyles: any = {
     backdrop: {
@@ -401,22 +432,6 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     >
                       Nama Kategori Perkara
                     </label>
-                    {/* <select
-                      className="w-full rounded border border-stroke   py-3 pl-3 pr-6.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="kategori_perkara_id"
-                      onChange={handleChange}
-                      value={formState.kategori_perkara_id}
-                      disabled={isDetail}
-                    >
-                      <option disabled value="">
-                        Pilih Kategori Perkara
-                      </option>
-                      {kategori_perkara.map((item: any) => (
-                        <option value={item.kategori_perkara_id}>
-                          {item.nama_kategori_perkara}
-                        </option>
-                      ))}
-                    </select> */}
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -425,7 +440,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                       isDisabled={isDetail}
                       isClearable={true}
                       isSearchable={true}
-                      placeholder="Pilih Pendidikan"
+                      placeholder="Pilih kategori perkara"
                       defaultValue={
                         isEdit || isDetail
                           ? {
@@ -434,7 +449,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                             }
                           : formState.kategori_perkara_id
                       }
-                      options={kategori_perkara.map((item: any) => ({
+                      options={kategoriPerkara.map((item: any) => ({
                         value: item.kategori_perkara_id,
                         label: item.nama_kategori_perkara,
                       }))}

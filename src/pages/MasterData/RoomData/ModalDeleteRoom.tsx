@@ -13,6 +13,7 @@ export const DeleteRoomModal: React.FC<RoomModalProps> = ({
 }) => {
   const [formState, setFormState] = useState(defaultValue || {});
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
+  const [buttonLoad, setButtonLoad] = useState(false);
 
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
@@ -32,8 +33,10 @@ export const DeleteRoomModal: React.FC<RoomModalProps> = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    setButtonLoad(true);
     onSubmit(formState);
     closeModal();
+    setButtonLoad(false);
   };
 
   const modalStyles: any = {

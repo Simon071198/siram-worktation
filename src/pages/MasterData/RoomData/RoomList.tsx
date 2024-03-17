@@ -214,8 +214,8 @@ const RoomList = () => {
   // function untuk menampilkan modal delete
   const handleDeleteClick = (item: any) => {
     const ruangDel: any = {
-      nama_ruangan_otmil: item.nama_ruangan_otmil,
       ruangan_otmil_id: item.ruangan_otmil_id,
+      nama_ruangan_otmil: item.nama_ruangan_otmil,
     };
     setDeleteData(ruangDel);
     setModalDeleteOpen(true);
@@ -235,40 +235,35 @@ const RoomList = () => {
     setModalEditOpen(false);
   };
 
-  // function untuk menghapus data
-  const handleSubmitDeleteRuangan = () => {
-    let params = {};
-    apiDeleteAllRuangan(params, token)
-      .then((res) => {
-        if (res.data.status === 'OK') {
-          Alerts.fire({
-            icon: 'success',
-            title: 'Berhasil menghapus data',
-          });
-          setModalDeleteOpen(false);
-          setData(res.data.records);
-          handleCloseAddModal(); //tutup modal
-          currentPage === 1 ? fetchData() : setCurrentPage(1);
-        } else {
-          Alerts.fire({
-            icon: 'error',
-            title: 'Gagal menghapus data',
-          });
-        }
-      })
-      .catch((e: any) => {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
+  const handleSubmitDeleteRuangan = async (params: any) => {
+    try {
+      const responseDelete = await apiDeleteAllRuangan(params, token);
+      if (responseDelete.data.status === 'OK') {
         Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
+          icon: 'success',
+          title: 'Berhasil menghapus data',
         });
+        setModalDeleteOpen(false);
+        fetchData();
+      } else if (responseDelete.data.status === 'No') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal hapus data',
+        });
+      } else {
+        throw new Error(responseDelete.data.message);
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
-
-    setModalDeleteOpen(false);
+    }
   };
 
   // function untuk menambah data
