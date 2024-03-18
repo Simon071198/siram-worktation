@@ -12,16 +12,24 @@ import {
 import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
-import ToolsTip from 'renderer/components/ToolsTip';
+// import ToolsTip from 'renderer/components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Item {
   nama_kategori_perkara: string;
 }
 
 const KategoriPerkaraList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -81,8 +89,16 @@ const KategoriPerkaraList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -124,10 +140,15 @@ const KategoriPerkaraList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -184,10 +205,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -213,10 +238,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -242,10 +271,14 @@ const KategoriPerkaraList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -271,7 +304,7 @@ const KategoriPerkaraList = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `Data-JenisPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+      `Data-KategoriPerkara ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
   useEffect(() => {
@@ -284,6 +317,44 @@ const KategoriPerkaraList = () => {
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
+  const handleClickTutorial = () => {
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-kategori-perkara',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari kategori perkara',
+          },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari kategori perkara',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel kategori perkara',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data kategori perkara',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -291,7 +362,7 @@ const KategoriPerkaraList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-15 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="f-kategori-perkara w-full">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari kategori perkara"
@@ -301,7 +372,7 @@ const KategoriPerkaraList = () => {
               />
             </div>
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className="tombol-pencarian rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -324,20 +395,30 @@ const KategoriPerkaraList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
-        <div className="flex justify-between items-center mb-3">
+        <div className=" flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Kategori Perkara
           </h4>
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="b-tambah text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
             >
               Tambah
             </button>

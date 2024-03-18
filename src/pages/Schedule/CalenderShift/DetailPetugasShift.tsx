@@ -11,6 +11,8 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { Alerts } from '../GrupShift/Alert';
 import { BiLoaderAlt } from 'react-icons/bi';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Schedule {
   schedule_id: any;
@@ -29,6 +31,9 @@ interface Staff {
   // tambahkan atribut lain sesuai kebutuhan
 }
 const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -74,6 +79,21 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
 
   const [schedule, setSchedule] = useState<Schedule[]>([]);
   const [shift, setShift] = useState<Shift[]>([]);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
   const [waktu, setWaktu] = useState({
     waktu_mulai: shift[0]?.waktu_mulai,
     waktu_selesai: shift[0]?.waktu_selesai,
@@ -192,10 +212,15 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
         setStaff(staff.data.records);
         setPenugasan(penugasan.data.records);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -455,25 +480,27 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     })}
                   </div>
                 </div>
-                <div className="flex space-x-4">
-                  <button
-                    onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <>
-                        <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                    Submit
-                  </button>
-                </div>
+                {!isOperator && (
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={handleSubmit}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                        }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <>
+                          <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      Submit
+                    </button>
+                  </div>
+                )}
+
               </div>
             </div>
           </>

@@ -16,11 +16,11 @@ export const AddOditurPenuntutModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      nama_oditur:'',
-      nip:'',
-      alamat:'',
-    }
-  )
+      nama_oditur: '',
+      nip: '',
+      alamat: '',
+    },
+  );
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,15 +28,13 @@ export const AddOditurPenuntutModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
 
-
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -139,8 +137,8 @@ export const AddOditurPenuntutModal = ({
                     {isDetail
                       ? 'Detail Data Oditur Penuntut'
                       : isEdit
-                      ? 'Edit Data Oditur Penuntut'
-                      : 'Tambah Data Oditur Penuntut'}
+                        ? 'Edit Data Oditur Penuntut'
+                        : 'Tambah Data Oditur Penuntut'}
                   </h3>
                 </div>
                 <strong
@@ -170,11 +168,11 @@ export const AddOditurPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nip' ? 'Masukan NIP' : ''
+                      item === 'nip' ? 'Masukan NIP' : '',
                     )}
                   </p>
                 </div>
-                
+
                 {/* nama oditur */}
                 <div className="form-group w-full h-22">
                   <label
@@ -193,11 +191,11 @@ export const AddOditurPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : '',
                     )}
                   </p>
                 </div>
-                
+
                 {/* Alamat */}
                 <div className="form-group w-full h-22">
                   <label
@@ -216,102 +214,103 @@ export const AddOditurPenuntutModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'alamat' ? 'Masukan Alamat' : ''
+                      item === 'alamat' ? 'Masukan Alamat' : '',
                     )}
                   </p>
                 </div>
-                
+
                 <div className={`mt-3 ${isDetail ? 'h-full' : 'h-15'}`}>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Oditur Penuntut
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Oditur Penuntut
-                  </button>
-                )}
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Oditur Penuntut
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Oditur Penuntut
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
                     </div>
-                  </>
-                )}
-                {errors.length > 0 && (
-                  <div className="error text-center">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
+                  )}
                 </div>
               </form>
             </div>

@@ -7,6 +7,10 @@ import {
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import Select from 'react-select';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertKamera';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddKameraModalProps {
@@ -42,6 +46,9 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState<any>({
     kamera_id: defaultValue?.deviceId ?? '',
     nama_kamera: defaultValue?.deviceName ?? '',
@@ -234,7 +241,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   };
 
   const handleRuanganChange = (e: any) => {
-    const selectedRuangan = e.target.value;
+    const selectedRuangan = e.value;
 
     // Temukan data ruangan berdasarkan ID yang dipilih
     const selectedData = ruanganotmil.find(
@@ -290,8 +297,16 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
@@ -315,6 +330,91 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
       transform: 'translate(-50%, -50%)',
       // Add your other modal styles here
     },
+  };
+
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
   };
 
   //return
@@ -548,7 +648,20 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <label htmlFor="ruangan_otmil_id">
                       Pilih Ruangan otmil:
                     </label>
-                    <select
+                    <Select
+                      className="basic-single p-otmil"
+                      classNamePrefix="select"
+                      isSearchable
+                      isDisabled={isDetail}
+                      styles={customStyles}
+                      name="ruangan_otmil_id"
+                      options={ruanganotmil.map((item) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
+                      onChange={handleRuanganChange}
+                    />
+                    {/* <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-ruang"
@@ -565,7 +678,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                           {item.nama_ruangan_otmil}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'

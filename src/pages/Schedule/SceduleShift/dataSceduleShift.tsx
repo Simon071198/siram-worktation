@@ -9,6 +9,8 @@ import {
 import { Alerts } from './Alert';
 import Loader from '../../../common/Loader';
 import { DeleteShiftModal } from './deleteDataShift';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Item {
   nama_shift: any;
@@ -18,6 +20,9 @@ interface Item {
 }
 
 const DataSceduleShift = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [dataShift, setDataShift] = useState([
     {
       nama_shift: '',
@@ -34,6 +39,21 @@ const DataSceduleShift = () => {
   const [modalAddOpen, setModalAddOpen] = useState(false);
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
   const [deleteData, setDeleteData] = useState({
     shift_id: '',
   });
@@ -63,54 +83,82 @@ const DataSceduleShift = () => {
           throw new Error(response.data.message);
         }
         setIsLoading(false);
-      } catch (error) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: 'Gagal memuat data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
     data();
   }, []);
 
-  //add Data Shift
   const handleAddShift = async (params: any) => {
-    const data = {
-      params: params,
-      token: token,
-    };
-    const AddData = await apiCreatShift(data);
-    if (AddData.data.status === 'OK') {
-      handleCloseAddModal();
-      const response = await apiReadAllShift(token, token);
+    try {
+      const data = {
+        params: params,
+        token: token,
+      };
+      const AddData = await apiCreatShift(data);
+      if (AddData.data.status === 'OK') {
+        handleCloseAddModal();
+        const response = await apiReadAllShift(token, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        setDataShift(response.data.records);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menambah data',
+        });
+      }
+    } catch (e: any) {
+      console.error('Error adding shift data:', e);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menambah data',
-      });
-      setDataShift(response.data.records);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menambah data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
 
-  //Update Data Shift
   const handleEditShift = async (params: any) => {
-    const AddData = await apiEditShift(params, token);
-    if (AddData.data.status === 'OK') {
-      handleCloseAddModal();
-      const response = await apiReadAllShift(token, token);
+    try {
+      const AddData = await apiEditShift(params, token);
+      if (AddData.data.status === 'OK') {
+        handleCloseAddModal();
+        const response = await apiReadAllShift(token, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengedit data',
+        });
+        setDataShift(response.data.records);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal mengedit data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil mengedit data',
-      });
-      setDataShift(response.data.records);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal mengedit data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -132,24 +180,36 @@ const DataSceduleShift = () => {
   };
 
   const handleSubmitDeleteShift = async (params: any) => {
-    const data = {};
-    const AddData = await apiDeleteShift(params, token);
-    if (AddData.data.status === 'OK') {
-      handleCloseDeleteModal();
-      const response = await apiReadAllShift(data, token);
+    try {
+      const data = {};
+      const AddData = await apiDeleteShift(params, token);
+      if (AddData.data.status === 'OK') {
+        handleCloseDeleteModal();
+        const response = await apiReadAllShift(data, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
+        });
+        setDataShift(response.data.records);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menghapus data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menghapus data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
-      setDataShift(response.data.records);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menghapus data',
-      });
+    } finally {
+      setModalDeleteOpen(false);
     }
-
-    setModalDeleteOpen(false);
   };
 
   return isLoading ? (
@@ -191,12 +251,14 @@ const DataSceduleShift = () => {
           <h1 className="text-xl font-semibold text-black dark:text-white">
             Data Jam Shift Kerja
           </h1>
-          <button
-            onClick={() => setModalAddOpen(!modalAddOpen)}
-            className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(!modalAddOpen)}
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
+          )}
         </div>
         <div className="flex flex-col mb-5  ">
           <div className="rounded-b-md rounded-t-md">
@@ -241,18 +303,23 @@ const DataSceduleShift = () => {
                             >
                               Detail
                             </button>
-                            <button
-                              onClick={() => handleEditClick(item)}
-                              className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(item.shift_id)}
-                              className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
-                            >
-                              Delete
-                            </button>
+                            {!isOperator && (
+                              <>
+                                <button
+                                  onClick={() => handleEditClick(item)}
+                                  className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClick(item.shift_id)}
+                                  className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+
                           </div>
                         </li>
                       </>

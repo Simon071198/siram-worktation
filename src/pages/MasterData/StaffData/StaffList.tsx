@@ -18,6 +18,8 @@ import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 
@@ -28,6 +30,9 @@ interface Item {
 }
 
 const StaffList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -47,6 +52,7 @@ const StaffList = () => {
   const [pangkatData, setPangkatData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [isAdmin, setIsAdmin] = useState<boolean>();
   const [filteran, setFilteran] = useState('');
 
   const tokenItem = localStorage.getItem('token');
@@ -170,10 +176,14 @@ const StaffList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -228,10 +238,14 @@ const StaffList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -242,12 +256,17 @@ const StaffList = () => {
       .then((res) => {
         setPangkatData(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   // function untuk menampilkan modal detail
@@ -304,10 +323,14 @@ const StaffList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -333,10 +356,14 @@ const StaffList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -362,10 +389,14 @@ const StaffList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -380,14 +411,57 @@ const StaffList = () => {
     console.log(isOperator, 'Operator');
   }, [isOperator]);
 
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'admin') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+
+    console.log(isAdmin, 'Admin');
+  }, [isAdmin]);
+
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Petugas', 'Jabatan', 'Pangkat', 'Divisi'],
+      [
+        'Nama Petugas',
+        'Pangkat',
+        'Matra',
+        'NRP',
+        'Lokasi Kesatuan',
+        'Kesatuan',
+        'Jabatan',
+        'Divisi',
+        'Pendidikan Militer',
+        'keahlian',
+        'Agama',
+        'Tempat Lahir',
+        'Tanggal Lahir',
+        'Status Kawin',
+        'Provinsi',
+        'Kota',
+        'Alamat',
+        'Jenis Kelamin',
+      ],
       ...data.map((item: any) => [
         item.nama,
-        item.jabatan,
         item.nama_pangkat,
+        item.nama_matra,
+        item.nrp,
+        item.nama_lokasi_kesatuan,
+        item.nama_kesatuan,
+        item.jabatan,
         item.divisi,
+        item.nama_pendidikan,
+        item.nama_bidang_keahlian,
+        item.nama_agama,
+        item.tempat_lahir,
+        item.tanggal_lahir,
+        item.nama_status_kawin,
+        item.nama_provinsi,
+        item.nama_kota,
+        item.alamat,
+        item.jenis_kelamin === '1' ? 'Laki-laki' : 'Perempuan',
       ]),
     ];
 
@@ -477,7 +551,7 @@ const StaffList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Petugas
           </h4>
-          {!isOperator && (
+          {!isOperator && !isAdmin && (
             <button
               onClick={() => setModalAddOpen(true)}
               className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
@@ -487,7 +561,7 @@ const StaffList = () => {
           )}
         </div>
         <div className="flex flex-col">
-          {isOperator ? (
+          {isOperator || isAdmin ? (
             <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-3">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -537,7 +611,7 @@ const StaffList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ? (
+                    {isOperator || isAdmin ? (
                       <>
                         <div
                           className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize"

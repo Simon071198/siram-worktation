@@ -17,14 +17,15 @@ import Loader from '../../../common/Loader';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
   nomor_penyidikan: string;
   wbp_profile_id: string;
   kasus_id: string;
-  alasan_penyidikan: string;
+  // alasan_penyidikan: string;
   lokasi_penyidikan: string;
   waktu_penyidikan: string;
   agenda_penyidikan: string;
@@ -40,8 +41,10 @@ interface Item {
 }
 
 const PenyidikanList = () => {
-  // useState untuk menampung data dari API
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
   const [editData, setEditData] = useState<Item | null>(null);
@@ -68,21 +71,8 @@ const PenyidikanList = () => {
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
-    // try {
-    //   const response = await apiReadPenyidikan({ filter: { nama: newFilter } });
-
-    //   if (response.data.status === 'OK') {
-    //     const result = response.data;
-    //     setData(result.records);
-    //     setPages(response.data.pagination.totalPages);
-    //     setRows(response.data.pagination.totalRecords);
-    //   } else {
-    //     throw new Error('Terjadi kesalahan saat mencari data.');
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
+
   const handleSearchClick = async () => {
     try {
       let params = {
@@ -108,10 +98,14 @@ const PenyidikanList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -188,6 +182,7 @@ const PenyidikanList = () => {
     setIsLoading(true);
     try {
       const response = await apiReadPenyidikan(params, token);
+      // console.log('api response :', response);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -197,10 +192,14 @@ const PenyidikanList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -327,10 +326,14 @@ const PenyidikanList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -360,9 +363,14 @@ const PenyidikanList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.mesage,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -389,10 +397,14 @@ const PenyidikanList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -409,7 +421,7 @@ const PenyidikanList = () => {
     const dataToExcel = [
       [
         'nomor penyidikan',
-        'alasan penyidikan',
+        // 'alasan penyidikan',
         'lokasi penyidikan',
         'waktu penyidikan',
         'agenda penyidikan',
@@ -420,7 +432,7 @@ const PenyidikanList = () => {
       ],
       ...data.map((item: any) => [
         item.nomor_penyidikan,
-        item.alasan_penyidikan,
+        // item.alasan_penyidikan,
         item.lokasi_penyidikan,
         item.waktu_penyidikan,
         item.agenda_penyidikan,
@@ -501,28 +513,28 @@ const PenyidikanList = () => {
             Data Penyidikan
           </h4>
 
-<div className='flex gap-3'>
-
-          <button
-          className='text-black rounded-md font-semibold py-2 px-3 bg-green-500'
-          onClick={() => navigate('/pencatatan-bap')}
-          >
-            BAP
-          </button>
-          {!isOperator && (
+          <div className="flex gap-3">
             <button
-              onClick={handleModalAddOpen}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500"
+              onClick={() => navigate('/pencatatan-bap')}
             >
-              Tambah
+              BAP
             </button>
-          )}
-</div>
+            {!isOperator && (
+              <button
+                onClick={handleModalAddOpen}
+                className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+              >
+                Tambah
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex flex-col">
           <div
-            className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
-              }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
+            className={`grid ${
+              isOperator ? 'grid-cols-4' : 'grid-cols-5'
+            }  rounded-t-md bg-gray-2 dark:bg-slate-600 `}
           >
             <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -561,8 +573,9 @@ const PenyidikanList = () => {
               {data.map((item: any) => {
                 return (
                   <div
-                    className={`grid ${isOperator ? 'grid-cols-4' : 'grid-cols-5'
-                      } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`grid ${
+                      isOperator ? 'grid-cols-4' : 'grid-cols-5'
+                    } border-t border-slate-600 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nomor_penyidikan}
                   >
                     <div

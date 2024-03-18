@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MenuItem from '../components/MenuItem';
 import Logo from '../images/logo/logo.png';
 import { PiIdentificationCardThin } from 'react-icons/pi';
@@ -151,13 +151,13 @@ const routes = [
   {
     id: 10,
     name: 'Kamera Live',
-    link: '/kamera-dev-test',
+    link: '/kamera',
     icon: CameraIcon,
   },
   {
     id: 10,
     name: 'Kamera Playback',
-    link: '/kamera-playback',
+    link: '/camera-playback',
     icon: CameraIcon,
   },
   {
@@ -196,7 +196,6 @@ const routes = [
     link: '/tutorial-data',
     icon: <IoDocumentText size={80} />,
   },
-
 ];
 
 // const MainMenu = () => {

@@ -11,7 +11,7 @@ import { AddHakimModal } from './ModalAddHakim';
 import { DeleteHakimModal } from './ModalDeleteHakim';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
 

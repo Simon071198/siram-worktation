@@ -4,10 +4,15 @@ import axios from 'axios';
 import { apiVisitorRealtimeLogList } from '../../../services/api';
 
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
+import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
+
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -44,6 +49,9 @@ const DataNotFoundModal = ({ open, onClose, message }) => {
 };
 
 export default function Realtime() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -153,12 +161,42 @@ export default function Realtime() {
   };
 
   const handleExportClick = () => {
-    if (data && data.length > 0) {
-      exportToCSV(data, 'exported_data.csv');
-    } else {
-      setShowModal(true);
-      setModalMessage('No data found to export.');
-    }
+
+    const dataToExcel = [
+      [
+        'Nama',
+        'Gender',
+        'Usia',
+        'Status',
+        'Nama Kamera',
+        'Tipe Lokasi',
+        'Nama Lokasi',
+      ],
+      ...data.map((item: any) => [
+        item.nama,
+        item.gender,
+        item.usia,
+        item.status,
+        item.nama_kamera,
+        item.tipe_lokasi,
+        item.nama_lokasi,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-LogRealTime ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+
+    // if (data && data.length > 0) {
+    //   exportToCSV(data, 'exported_data.csv');
+    // } else {
+    //   setShowModal(true);
+    //   setModalMessage('No data found to export.');
+    // }
   };
 
   const handleCloseModal = () => {
@@ -205,20 +243,35 @@ export default function Realtime() {
   }
 
   let fetch = async () => {
-    let params = {
-      device_id: selectedDevice,
-      country_id: selectedCountry,
-      age: selectedAge,
-      analytics: selectedAnalytics,
-      name: selectedName,
-      gender: selectedGender,
-    };
-    await setLoading(true);
-    let data = await apiVisitorRealtimeLogList(params);
-    setData(data);
-    setLoading(false);
-    console.log(data);
+    try {
+      let params = {
+        device_id: selectedDevice,
+        country_id: selectedCountry,
+        age: selectedAge,
+        analytics: selectedAnalytics,
+        name: selectedName,
+        gender: selectedGender,
+      };
+
+      setLoading(true);
+      let data = await apiVisitorRealtimeLogList(params);
+      setData(data);
+      console.log(data);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
   useEffect(() => {
     fetch();
   }, [
@@ -463,7 +516,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/gema_admin_api' +
+                        'http://dev.transforme.co.id/siram_admin_api' +
                         item.image
                       }
                       alt=""

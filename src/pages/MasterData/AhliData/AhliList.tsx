@@ -20,10 +20,14 @@ import { AddAhliModal } from './ModalAddAhli';
 import { DeleteAhliModal } from './ModalDeleteAhli';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -37,6 +41,9 @@ interface Item {
 }
 
 const AhliList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -51,7 +58,7 @@ const AhliList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
-  const [filterJabatan, setFilterJabatan] = useState('');
+  const [filterAhli, setFilterAhli] = useState('');
   const [filterPangkat, setFilterPangkat] = useState('');
   const [pangkatData, setPangkatData] = useState([]);
   const [pageSize, setPageSize] = useState(10);
@@ -75,6 +82,44 @@ const AhliList = () => {
   //   }
   // },[])
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama ahli',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Klik untuk mencari nama ahli',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data ahli',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
@@ -94,9 +139,9 @@ const AhliList = () => {
     // }
   };
 
-  const handleFilterChangeJabatan = (e: any) => {
+  const handleFilterChangeAhli = (e: any) => {
     const newFilter = e.target.value;
-    setFilterJabatan(newFilter);
+    setFilterAhli(newFilter);
   };
 
   const handleFilterChangePangkat = (e: any) => {
@@ -108,14 +153,13 @@ const AhliList = () => {
     try {
       let params = {
         filter: {
-          nama: filter,
-          jabatan: filterJabatan,
-          nama_pangkat: filterPangkat,
+          nama_ahli: filter,
+          bidang_ahli: filterAhli,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiReadAllStaff(params, token);
+      const response = await apiAhliRead(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -126,10 +170,14 @@ const AhliList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -183,10 +231,14 @@ const AhliList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -245,10 +297,14 @@ const AhliList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -274,10 +330,14 @@ const AhliList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -303,10 +363,14 @@ const AhliList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -323,12 +387,11 @@ const AhliList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Petugas', 'Jabatan', 'Pangkat', 'Divisi'],
+      ['Nama Ahli', 'Bidang Ahli', 'Bukti Ahli'],
       ...data.map((item: any) => [
-        item.nama,
-        item.jabatan,
-        item.nama_pangkat,
-        item.divisi,
+        item.nama_ahli,
+        item.bidang_ahli,
+        item.bukti_keahlian,
       ]),
     ];
 
@@ -347,63 +410,53 @@ const AhliList = () => {
     <div className="container py-[16px]">
       <div className=" rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
-          {/* <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-          <div className="w-full">
-            <SearchInputButton
-              value={filter}
-              placehorder="Cari nama petugas"
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="w-full">
-            <SearchInputButton
-              value={filterJabatan}
-              placehorder="Cari jabatan"
-              onChange={handleFilterChangeJabatan}
-            />
-          </div>
-          <select
-            value={filterPangkat}
-            onChange={handleFilterChangePangkat}
-            className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-          >
-            <option value="">Semua pangkat</option>
-            {pangkatData.map((item: any) => (
-              <option value={item.nama_pangkat}>
-                {item.nama_pangkat}
-              </option>
-            ))}
-          </select>
-
-          <button
-            className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
-            type="button"
-            onClick={handleSearchClick}
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-5 w-5 text-black"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd"
+          <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
+            <div className="w-full search">
+              <SearchInputButton
+                value={filter}
+                placehorder="Cari nama ahli"
+                onChange={handleFilterChange}
               />
-            </svg>
-          </button>
+            </div>
 
-          <button
-            onClick={exportToExcel}
-            className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
-          >
-            Export&nbsp;Excel
-          </button>
-        </div> */}
+            <button
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
+              type="button"
+              onClick={handleSearchClick}
+              id="button-addon1"
+              data-te-ripple-init
+              data-te-ripple-color="light"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-5 w-5 text-black"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <button
+              onClick={exportToExcel}
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
+            >
+              Export&nbsp;Excel
+            </button>
+
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-between items-center mb-3">
@@ -413,7 +466,7 @@ const AhliList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

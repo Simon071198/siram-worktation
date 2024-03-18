@@ -8,8 +8,14 @@ import {
   apiWatchlistHistory,
   webserviceurl,
 } from '../../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertDatabaseSearch';
+import { Error403Message } from '../../utils/constants';
 
 export default function DatabaseSearch() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [imagePreview, setImagePreview]: any = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -87,11 +93,21 @@ export default function DatabaseSearch() {
 
   const handleCardClick = async (data: any) => {
     setSelectedCard(data);
-    apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(
-      (res) => {
+    apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 })
+      .then((res) => {
         setDetailDpo(res.records);
-      },
-    );
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
     setIsModalOpen(true); // Open the modal when a card is clicked
   };
 

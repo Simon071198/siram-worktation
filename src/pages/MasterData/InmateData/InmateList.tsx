@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
   apiReadAllWBP,
@@ -21,10 +21,15 @@ import ToolsTip from '../../../components/ToolsTip';
 import DropdownAction from '../../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+
+import dayjs from 'dayjs';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 const InmateList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -162,10 +167,14 @@ const InmateList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -194,13 +203,15 @@ const InmateList = () => {
 
       // return true
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
-
-      // return false
     }
   };
 
@@ -224,10 +235,14 @@ const InmateList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -271,10 +286,14 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -308,12 +327,17 @@ const InmateList = () => {
       .then((res) => {
         setKategoriPerkara(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, [currentPage, pageSize]);
 
   useEffect(() => {
@@ -366,10 +390,14 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -385,12 +413,17 @@ const InmateList = () => {
       .then((res) => {
         setHunian(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   //untuk excel
@@ -405,33 +438,35 @@ const InmateList = () => {
         'Lokasi Kesatuan',
         'Provinsi',
         'Kota',
-        'alamat',
-        'tempat lahir',
-        'tanggal lahir',
-        'nama pendidikan',
-        'keahlian',
-        'nomor tahanan',
-        'riwayat penyakit',
-        'nama hunuian wbp',
-        'nama keluarga',
-        'hubungan dengan keluarga',
-        'nomor keluarga',
-        'nama matra',
-        'nama kasus',
-        'no kasus',
-        'jenis perkara',
-        'kategori perkara',
-        'pasal',
-        'vonis tahun',
-        'vonis bulan',
-        'vonis hari',
-        'waktu kejadian',
-        'waktu kejadian',
+        'Alamat',
+        'Tempat Lahir',
+        'Tanggal Lahir',
+        'Nama Pendidikan',
+        'Keahlian',
+        'Agama',
+        'Status Pernikahan',
+        'Nomor Tahanan',
+        'Riwayat Penyakit',
+        'Nama Hunian WBP',
+        'Nama Keluarga',
+        'Hubungan dengan Keluarga',
+        'Nomor Kontak Keluarga',
+        'Nama Matra',
+        'Nama Kasus',
+        'No Kasus',
+        'Jenis Perkara',
+        'Kategori Perkara',
+        'Pasal',
+        'Vonis Tahun',
+        'Vonis Bulan',
+        'Vonis Hari',
+        'Lokasi Kasus',
+        'Waktu Kejadian',
         'DMAC',
-        'nama gelang',
-        'tanggal pasang',
-        'tanggal aktivasi',
-        'lokasi tahanan',
+        'Nama Gelang',
+        'Tanggal Pasang',
+        'Tanggal Aktivasi',
+        'Lokasi Tahanan',
       ],
       ...data.map((item: any) => [
         item.nama,
@@ -444,10 +479,10 @@ const InmateList = () => {
         item.alamat,
         item.tempat_lahir,
         item.tanggal_lahir,
-        item.nama_agama,
-        item.nama_status_kawin,
         item.nama_pendidikan,
         item.nama_bidang_keahlian,
+        item.nama_agama,
+        item.nama_status_kawin,
         item.nomor_tahanan,
         item.wbp_sickness,
         item.nama_hunian_wbp_otmil,
@@ -476,7 +511,7 @@ const InmateList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(wb, `Data-Tersangka ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,);
   };
 
   // const modalRefs = data.map(() => useRef(null));
@@ -531,44 +566,46 @@ const InmateList = () => {
   // Kodingan Driver Tutorial
 
   const handleClickTutorial = () => {
-    const driverObj: any =
-      driver({
-        showProgress: true,
-        steps: [
-          {
-            element: '.kotak-pencarian',
-            popover: {
-              title: 'Search',
-              description: 'Tempat mencari nama tersangka',
-            },
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.kotak-pencarian',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari nama tersangka',
           },
-          {
-            element: '.kotak-pencarian-ruangan',
-            popover: {
-              title: 'Ruangan',
-              description: 'Tempat menentukan ruangan',
-            },
+        },
+        {
+          element: '.kotak-pencarian-ruangan',
+          popover: {
+            title: 'Ruangan',
+            description: 'Tempat menentukan ruangan',
           },
-          {
-            element: '.tombol-pencarian',
-            popover: {
-              title: 'Button Search',
-              description: 'Click button untuk mencari nama tersangka',
-            },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama tersangka',
           },
-          {
-            element: '.excel',
-            popover: { title: 'Excel', description: 'Mendapatkan file excel data tersangka' },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel data tersangka',
           },
-          {
-            element: '.b-tambah',
-            popover: {
-              title: 'Tambah',
-              description: 'Menambahkan data tersangka',
-            },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data tersangka',
           },
-        ],
-      });
+        },
+      ],
+    });
 
     driverObj.drive();
   };
@@ -658,21 +695,25 @@ const InmateList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Tersangka
           </h4>
-          <div className="flex gap-3">
-            <button
-              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500"
-              onClick={() => navigate('/daftar-kasus')}
-            >
-              Daftar Kasus
-            </button>
-            {!isOperator && (
+          <div className="flex flex-row space-x-4 space-x">
+            <div>
               <button
-                onClick={() => setModalAddOpen(true)}
-                className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                onClick={() => navigate('/daftar-kasus')}
               >
-                Tambah
+                Daftar Kasus
               </button>
-            )}
+            </div>
+            <div>
+              {!isOperator && (
+                <button
+                  onClick={() => setModalAddOpen(true)}
+                  className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+                >
+                  Tambah
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

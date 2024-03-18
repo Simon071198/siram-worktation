@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // import DocViewer, { DocViewerRenderers } from "@react-pdf-viewer/core";
 import { apiReadPenyidikan } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { Alerts } from './AlertBAP';
+import { Error403Message } from '../../utils/constants';
 
 interface AddBAPModalProps {
   closeModal: () => void;
@@ -35,6 +38,9 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
     },
   );
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const modalContainerRef = useRef(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [dataPenyidikan, setDataPenyidikan] = useState([]);
@@ -44,7 +50,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState('');  
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -189,29 +195,30 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
     const maxSizeInBytes = 10 * 1024 * 1024; // 5 MB, adjust as needed
-  
+
     if (file) {
       if (file.size > maxSizeInBytes) {
         // File size exceeds the limit, handle the error as you wish
         console.log('File size exceeds the limit.');
-        toast.error("File size exceeds limit of 10MB. Please reduce file size and try again.")
+        toast.error(
+          'File size exceeds limit of 10MB. Please reduce file size and try again.',
+        );
         return;
       }
-  
+
       const reader = new FileReader();
-  
+
       reader.onloadend = async () => {
         await setFormState({ ...formState, pdf_file_base64: reader.result });
         // console.log(formState.pdf_file_base64, 'Preview');
         // console.log(file, 'Preview');
         // console.log(reader.result, 'Preview');
       };
-      
+
       reader.readAsDataURL(file);
       // console.log(formState.pdf_file_base64, 'Preview');
     }
   };
-  
 
   const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
   console.log(formState, 'ada');
@@ -277,7 +284,17 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       setIsLoading(false);
       setDataPenyidikan(result);
     } catch (e: any) {
+      setIsLoading(false);
       console.log(e.message);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -753,7 +770,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                       )}
                                   </div>
                               )}
-                              {formState.pdf_file_base64 && (
+                              {/* {formState.pdf_file_base64 && (
                                   <div className="">
                                           <embed
                                               src={`${formState.pdf_file_base64}`}
@@ -766,9 +783,10 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                           />
                                    
                                   </div>
-                              )}
+                              )} */}
+
                           </div>
-                      </div>
+                        </div>
                         <p className="text-center text-sm text-blue-500">
                           Dokumen terupload !
                         </p>
