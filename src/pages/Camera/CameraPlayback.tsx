@@ -242,76 +242,119 @@ const CameraPlayback = () => {
     }
   }, [currentVideoIndex]);
 
-  return (
-    <div className="flex flex-col items-center justify-center">
-      {selectedCamera ? (
-        <h1 className="text-2xl font-bold mb-4">
-          {selectedCamera.nama_kamera} -{' '}
-          {selectedCamera.nama_lokasi_lemasmil
-            ? selectedCamera.nama_lokasi_lemasmil
-            : selectedCamera.nama_lokasi_otmil}
-        </h1>
-      ) : (
-        <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
-      )}
-      <div className="flex justify-around gap-4 mb-4">
-        <select onChange={handleCameraChange} className="p-kamera">
-          <option value="">Select a Camera</option>
-          {dataAllCamera.map((data, index) => (
-            <option key={data.kamera_id} value={index}>
-              {data.nama_kamera}
-            </option>
-          ))}
-        </select>
+  const handleRecordingClick = (recording: any) => {
+    console.log('Recording clicked:', recording);
+    // Di sini Anda dapat menambahkan logika untuk memutar rekaman yang dipilih di React Player
+  };
+  const recordings = [
+    { id: 1, name: 'Recording 1', url: 'http://example.com/recording1.m3u8' },
+    { id: 2, name: 'Recording 2', url: 'http://example.com/recording2.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 4', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 5', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 6', url: 'http://example.com/recording3.m3u8' },
+    { id: 7, name: 'Recording 7', url: 'http://example.com/recording7.m3u8' },
+    { id: 8, name: 'Recording 8', url: 'http://example.com/recording8.m3u8' },
+    { id: 9, name: 'Recording 9', url: 'http://example.com/recording9.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
+    // Tambahkan data rekaman lainnya jika diperlukan
+  ];
 
-        <input
-          type="date"
-          value={date}
-          onChange={handleDateChange}
-          className="i-date"
-        />
-        <input
-          type="time"
-          value={timeStart}
-          onChange={handleTimeStartChange}
-          className="i-time"
-        />
-        <input
-          type="time"
-          value={timeFinish}
-          onChange={handleTimeFinishChange}
-          className="i-times"
-        />
-        <div className="w-5">
-          <button>
-            <HiQuestionMarkCircle
-              values={filter}
-              aria-placeholder="Show tutorial"
-              // onChange={}
-              onClick={handleClickTutorial}
-            />
-          </button>
+  return (
+    <div className="flex items-center justify-center gap-4">
+      <div className="flex flex-col items-center justify-center">
+        {selectedCamera ? (
+          <h1 className="text-2xl font-bold mb-4">
+            {selectedCamera.nama_kamera} -{' '}
+            {selectedCamera.nama_lokasi_lemasmil
+              ? selectedCamera.nama_lokasi_lemasmil
+              : selectedCamera.nama_lokasi_otmil}
+          </h1>
+        ) : (
+          <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
+        )}
+        <div className="flex justify-around gap-4 mb-4">
+          <select onChange={handleCameraChange} className="p-kamera">
+            <option value="">Select a Camera</option>
+            {dataAllCamera.map((data, index) => (
+              <option key={data.kamera_id} value={index}>
+                {data.nama_kamera}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={date}
+            onChange={handleDateChange}
+            className="i-date"
+          />
+          <input
+            type="time"
+            value={timeStart}
+            onChange={handleTimeStartChange}
+            className="i-time"
+          />
+          <input
+            type="time"
+            value={timeFinish}
+            onChange={handleTimeFinishChange}
+            className="i-times"
+          />
+          <div className="w-5">
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+          </div>
         </div>
-      </div>
-      {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
-      <div className="player-wrapper r-player">
-        <ReactPlayer
-          className="react-player"
-          url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"
-          // url={playlistPlayback[currentVideoIndex]}
-          playing={true}
-          playsinline={true}
-          controls={true}
-          ref={playerRef}
-          onEnded={handleVideoEnded}
-          onError={handleVideoError}
-          // key={currentVideoIndex}
-        />
+        {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
+        <div className="player-wrapper r-player">
+          <ReactPlayer
+            className="react-player"
+            url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"
+            // url={playlistPlayback[currentVideoIndex]}
+            playing={true}
+            playsinline={true}
+            controls={true}
+            ref={playerRef}
+            onEnded={handleVideoEnded}
+            onError={handleVideoError}
+            // key={currentVideoIndex}
+          />
+        </div>
       </div>
       {/* ) : ( */}
       {/* <h1>No video available for the selected camera and time range.</h1> */}
       {/* )} */}
       {/* </div> */}
+      <div className="box flex flex-col h-80 w-1/4 overflow-auto">
+        <h2 className="text-xl font-bold mb-2">Recordings</h2>
+        <ul>
+          {recordings.map((recording, index) => (
+            <li
+              className="cursor-pointer"
+              key={index}
+              onClick={() => handleRecordingClick(recording)}
+            >
+              {recording.name}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
