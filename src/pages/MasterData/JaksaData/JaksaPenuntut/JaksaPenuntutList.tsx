@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Loader from '../../../../common/Loader';
 import { Alerts } from './AlertJaksaPenuntut';
 import {
-  apiReadJaksapenuntut,
-  apiDeleteJaksapenuntut,
-  apiCreateJaksapenuntut,
-  apiUpdateJaksapenuntut,
+  apiReadOditurPenuntut,
+  apiDeleteOditurPenuntut,
+  apiCreateOditurPenuntut,
+  apiUpdateOditurPenuntut,
 } from '../../../../services/api';
 import { AddJaksaPenuntutModal } from './ModalAddJaksaPenuntut';
 import { DeleteJaksaPenuntut } from './ModalDeleteJaksaPenuntut';
@@ -150,7 +150,7 @@ const JaksaPenuntutList = () => {
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiReadJaksapenuntut(params, token);
+      const response = await apiReadOditurPenuntut(params, token);
 
       if (response.data.status === 'OK') {
         const result = response.data;
@@ -212,7 +212,7 @@ const JaksaPenuntutList = () => {
 
     setIsLoading(true);
     try {
-      const response = await apiReadJaksapenuntut(param, token);
+      const response = await apiReadOditurPenuntut(param, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -269,9 +269,9 @@ const JaksaPenuntutList = () => {
   };
 
   // function untuk menghapus data
-  const handleSubmitDeleteDataPetugas = async (params: any) => {
+  const handleSubmitDeleteOditurPenuntut = async (params: any) => {
     try {
-      const responseDelete = await apiDeleteJaksapenuntut(params, token);
+      const responseDelete = await apiDeleteOditurPenuntut(params, token);
       if (responseDelete.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -304,7 +304,7 @@ const JaksaPenuntutList = () => {
   const handleSubmitAddDataPetugas = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
-      const responseCreate = await apiCreateJaksapenuntut(params, token);
+      const responseCreate = await apiCreateOditurPenuntut(params, token);
       if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -337,7 +337,7 @@ const JaksaPenuntutList = () => {
   const handleSubmitEditDataPetugas = async (params: any) => {
     console.log(params, 'edit');
     try {
-      const responseEdit = await apiUpdateJaksapenuntut(params, token);
+      const responseEdit = await apiUpdateOditurPenuntut(params, token);
       if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
@@ -655,7 +655,7 @@ const JaksaPenuntutList = () => {
           {modalDeleteOpen && (
             <DeleteJaksaPenuntut
               closeModal={handleCloseDeleteModal}
-              onSubmit={handleSubmitDeleteDataPetugas}
+              onSubmit={handleSubmitDeleteOditurPenuntut}
               defaultValue={deleteData}
             />
           )}

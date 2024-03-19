@@ -453,10 +453,18 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                         value: item.kategori_perkara_id,
                         label: item.nama_kategori_perkara,
                       }))}
+                      onChange={(e: any) => {
+                        setFormState({
+                          ...formState,
+                          kategori_perkara_id: e.value,
+                          nama_kategori_perkara: e.label,
+                        });
+                      }
+                      }
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'kategori_perkara_id'
+                        item === 'nama_kategori_perkara'
                           ? 'Pilih Kategori Perkara'
                           : '',
                       )}
