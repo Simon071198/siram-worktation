@@ -86,10 +86,13 @@ const InmateList = () => {
       foto_wajah: item?.foto_wajah,
       nama: item?.nama,
       pangkat_id: item?.pangkat_id,
+      nama_pangkat: item?.nama_pangkat,
       matra_id: item?.matra_id,
+      nama_matra: item?.nama_matra,
       nrp: item?.nrp,
       alamat: item?.alamat,
       kesatuan_id: item?.kesatuan_id,
+      nama_kesatuan: item?.nama_kesatuan,
       nama_kontak_keluarga: item?.nama_kontak_keluarga,
       nomor_kontak_keluarga: item?.nomor_kontak_keluarga,
       hubungan_kontak_keluarga: item?.hubungan_kontak_keluarga,
@@ -99,19 +102,24 @@ const InmateList = () => {
       nama_kota: item?.nama_kota,
       jenis_kelamin: item?.jenis_kelamin,
       agama_id: item?.agama_id,
+      nama_agama: item?.nama_agama,
       tanggal_lahir: item?.tanggal_lahir,
       tempat_lahir: item?.tempat_lahir,
       status_kawin_id: item?.status_kawin_id,
+      nama_status_kawin: item?.nama_status_kawin,
       pendidikan_id: item?.pendidikan_id,
+      nama_pendidikan: item?.nama_pendidikan,
       is_sick: item?.is_sick,
       wbp_sickness: item?.wbp_sickness,
       tanggal_ditahan_otmil: item?.tanggal_ditahan_otmil,
       tanggal_masa_penahanan_otmil: item?.tanggal_masa_penahanan_otmil,
       bidang_keahlian_id: item?.bidang_keahlian_id,
+      nama_bidang_keahlian: item?.nama_bidang_keahlian,
       gelang_id: item?.gelang_id,
       DMAC: item?.DMAC,
       residivis: item?.residivis,
       hunian_wbp_otmil_id: item?.hunian_wbp_otmil_id,
+      nama_hunian_wbp_otmil: item?.nama_hunian_wbp_otmil,
       nomor_tahanan: item?.nomor_tahanan,
       is_isolated: item?.is_isolated,
       akses_ruangan_otmil_id: newAksesRuangOtmil,
@@ -124,7 +132,6 @@ const InmateList = () => {
       tanggal_penetapan_terpidana: item?.tanggal_penetapan_terpidana,
     };
 
-    console.log('NEW EDIT', newEditItem);
     setEditData(newEditItem);
     setModalEditOpen(true);
   };
@@ -184,7 +191,7 @@ const InmateList = () => {
 
     try {
       const responseAdd = await apiCreateWBP(params, token);
-      if (responseAdd.data.status === 'OK') {
+      if (responseAdd.data[1].status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil membuat data',
@@ -297,6 +304,7 @@ const InmateList = () => {
       });
     }
   };
+
 
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
@@ -457,9 +465,9 @@ const InmateList = () => {
         'Jenis Perkara',
         'Kategori Perkara',
         'Pasal',
-        'Vonis Tahun',
-        'Vonis Bulan',
-        'Vonis Hari',
+        // 'Vonis Tahun',
+        // 'Vonis Bulan',
+        // 'Vonis Hari',
         'Lokasi Kasus',
         'Waktu Kejadian',
         'DMAC',
@@ -495,9 +503,9 @@ const InmateList = () => {
         item.nama_jenis_perkara,
         item.nama_kategori_perkara,
         item.pasal,
-        item.vonis_tahun_perkara,
-        item.vonis_bulan_perkara,
-        item.vonis_hari_perkara,
+        // item.vonis_tahun_perkara,
+        // item.vonis_bulan_perkara,
+        // item.vonis_hari_perkara,
         item.lokasi_kasus,
         item.waktu_kejadian,
         item.DMAC,
