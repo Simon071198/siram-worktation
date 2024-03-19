@@ -162,7 +162,7 @@ export const AddInmateModal = ({
       // nama_gateway:''
     },
   );
-
+  console.log(formState, 'ff');
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
   const modalContainerRef = useRef(null);
@@ -1231,13 +1231,13 @@ export const AddInmateModal = ({
     let gambarDescription: string | undefined;
 
     if (isEdit) {
-      gambarElement = ".f-edit-gambar";
-      gambarTitle = "Tombol Edit Gambar";
-      gambarDescription = "Tombol edit foto tersangka"
+      gambarElement = '.f-edit-gambar';
+      gambarTitle = 'Tombol Edit Gambar';
+      gambarDescription = 'Tombol edit foto tersangka';
     } else if (!isDetail && !isEdit) {
-      gambarElement = ".f-unggah-gambar";
-      gambarTitle = "Tombol Unggah Gambar";
-      gambarDescription = "Tombol unggah foto tersangka";
+      gambarElement = '.f-unggah-gambar';
+      gambarTitle = 'Tombol Unggah Gambar';
+      gambarDescription = 'Tombol unggah foto tersangka';
     }
 
     if (isEdit && gambarElement && gambarTitle && gambarDescription) {
@@ -1248,8 +1248,13 @@ export const AddInmateModal = ({
           description: gambarDescription,
         },
       });
-
-    } else if (!isEdit && !isDetail && gambarElement && gambarTitle && gambarDescription) {
+    } else if (
+      !isEdit &&
+      !isDetail &&
+      gambarElement &&
+      gambarTitle &&
+      gambarDescription
+    ) {
       steps.splice(0, 0, {
         element: gambarElement,
         popover: {
@@ -1593,9 +1598,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.pangkat_id,
-                                    label: formState.nama_pangkat,
-                                  }
+                                      value: formState.pangkat_id,
+                                      label: formState.nama_pangkat,
+                                    }
                                   : formState.pangkat_id
                               }
                               isDisabled={isDetail}
