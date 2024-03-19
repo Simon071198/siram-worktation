@@ -125,6 +125,8 @@ const SidangList = () => {
       jadwal_sidang: item?.jadwal_sidang,
       perubahan_jadwal_sidang: item?.perubahan_jadwal_sidang,
       kasus_id: item?.kasus_id,
+      nama_kasus: item?.nama_kasus,
+      nomor_kasus: item?.nomor_kasus,
       masa_tahanan_tahun: item?.masa_tahanan_tahun,
       masa_tahanan_bulan: item?.masa_tahanan_bulan,
       masa_tahanan_hari: item?.masa_tahanan_hari,
@@ -132,7 +134,9 @@ const SidangList = () => {
       juru_sita: item?.juru_sita,
       pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
       jenis_persidangan_id: item?.jenis_persidangan_id,
+      nama_jenis_persidangan: item?.nama_jenis_persidangan,
       pengadilan_militer_id: item?.pengadilan_militer_id,
+      nama_pengadilan_militer: item?.nama_pengadilan_militer,
       nama_dokumen_persidangan: item?.nama_dokumen_persidangan,
       hasil_vonis: item?.hasil_vonis,
       ahliHolder: newArrayAhli,
@@ -156,7 +160,7 @@ const SidangList = () => {
     setDetailData(detailItem);
     setModalDetailOpen(true);
   };
-
+  console.log('detail data', detailData);
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -259,6 +263,8 @@ const SidangList = () => {
       jadwal_sidang: item?.jadwal_sidang,
       perubahan_jadwal_sidang: item?.perubahan_jadwal_sidang,
       kasus_id: item?.kasus_id,
+      nama_kasus: item?.nama_kasus,
+      nomor_kasus: item?.nomor_kasus,
       masa_tahanan_tahun: item?.masa_tahanan_tahun,
       masa_tahanan_bulan: item?.masa_tahanan_bulan,
       masa_tahanan_hari: item?.masa_tahanan_hari,
@@ -266,9 +272,10 @@ const SidangList = () => {
       juru_sita: item?.juru_sita,
       pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
       jenis_persidangan_id: item?.jenis_persidangan_id,
+      nama_jenis_persidangan: item?.nama_jenis_persidangan,
       pengadilan_militer_id: item?.pengadilan_militer_id,
+      nama_pengadilan_militer: item?.nama_pengadilan_militer,
       nama_dokumen_persidangan: item?.nama_dokumen_persidangan,
-      // pdf_file_base64:item?.pdf_file_base64,
       hasil_vonis: item?.hasil_vonis,
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
@@ -276,7 +283,6 @@ const SidangList = () => {
       pengacaraHolder: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
-      // hakim_id:[],
       // role_ketua_hakim_holder: {
       //   hakim_id: hakimKetua.hakim_id,
       //   nama_hakim: hakimKetua.nama_hakim,
@@ -315,6 +321,7 @@ const SidangList = () => {
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
+        console.log(responseCreate, 'crrr');
         fetchData();
       } else if (responseCreate.data.status === 'error') {
         const errorCreate = responseCreate.data.message;
@@ -737,8 +744,8 @@ const SidangList = () => {
               {data.map((item: any) => {
                 return (
                   <div>
-                    {isOperator ?
-                      (<div className="grid grid-cols-4 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                    {isOperator ? (
+                      <div className="grid grid-cols-4 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
                         <div
                           onClick={() => handleDetailClick(item)}
                           className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
@@ -771,58 +778,60 @@ const SidangList = () => {
                           className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
                         >
                           <p className="hidden text-black dark:text-white sm:block text-center">
-                            {item?.sidang_oditur && item.sidang_oditur.length > 0
+                            {item?.sidang_oditur &&
+                            item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                (item: any) => item.ketua_oditur === '1',
-                              )?.nama_oditur || ''
+                                  (item: any) => item.ketua_oditur === '1',
+                                )?.nama_oditur || ''
                               : ''}
                           </p>
                         </div>
                       </div>
-                      ) : (
-                        <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                          >
-                            <p className="hidden text-black dark:text-white sm:block">
-                              {item.nama_wbp}
-                            </p>
-                          </div>
+                    ) : (
+                      <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nama_wbp}
+                          </p>
+                        </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
-                          >
-                            <p className="hidden text-black dark:text-white sm:block">
-                              {item.nama_jenis_persidangan}
-                            </p>
-                          </div>
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nama_jenis_persidangan}
+                          </p>
+                        </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
-                          >
-                            <p className="hidden text-black dark:text-white sm:block">
-                              {item.jadwal_sidang}
-                            </p>
-                          </div>
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.jadwal_sidang}
+                          </p>
+                        </div>
 
-                          <div
-                            onClick={() => handleDetailClick(item)}
-                            className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
-                          >
-                            <p className="hidden text-black dark:text-white sm:block text-center">
-                              {item?.sidang_oditur && item.sidang_oditur.length > 0
-                                ? item?.sidang_oditur?.find(
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block text-center">
+                            {item?.sidang_oditur &&
+                            item.sidang_oditur.length > 0
+                              ? item?.sidang_oditur?.find(
                                   (item: any) => item.ketua_oditur === '1',
                                 )?.nama_oditur || ''
-                                : ''}
-                            </p>
-                          </div>
+                              : ''}
+                          </p>
+                        </div>
 
-                          <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
-                            {/* <button
+                        <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                          {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
                       >
@@ -834,14 +843,15 @@ const SidangList = () => {
                       >
                         Hapus
                       </button> */}
-                            <div className="relative">
-                              <DropdownAction
-                                handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() => handleDeleteClick(item)}
-                              ></DropdownAction>
-                            </div>
+                          <div className="relative">
+                            <DropdownAction
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            ></DropdownAction>
                           </div>
-                        </div>)}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="border-t border-slate-600"></div>
                   </div>
