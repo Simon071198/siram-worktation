@@ -104,7 +104,7 @@ export const AddStaffModal = ({
       pangkat_id: '',
       matra_id: '',
       kesatuan_id: '',
-      kode_lokasi: '',
+      // kode_lokasi: '',
       jabatan: '',
       divisi: '',
       nrp: '',
@@ -368,6 +368,37 @@ export const AddStaffModal = ({
     setFormState({ ...formState, kota_id: e?.value });
   };
 
+  const handleSelectAgama = (e: any) => {
+    setFormState({ ...formState, agama_id: e?.value });
+  };
+
+  const handleSelectStatusKawin = (e: any) => {
+    setFormState({ ...formState, status_kawin_id: e?.value });
+  };
+
+  const handleSelectPendidikan = (e: any) => {
+    setFormState({ ...formState, pendidikan_id: e?.value });
+  };
+
+  const handleSelectPangkat = (e: any) => {
+    setFormState({ ...formState, pangkat_id: e?.value });
+  };
+
+  const handleSelectLokasiKesatuan = (e: any) => {
+    setFormState({ ...formState, lokasi_kesatuan_id: e?.value });
+  };
+
+  const handleSelectKesatuan = (e: any) => {
+    setFormState({ ...formState, kesatuan_id: e?.value });
+  };
+
+  const handleSelectMatra = (e: any) => {
+    setFormState({ ...formState, matra_id: e?.value });
+  };
+
+  const handleSelectBidangKeahlian = (e: any) => {
+    setFormState({ ...formState, bidang_keahlian_id: e?.value });
+  };
   // const handleChangeKesatuan = async (e: any) => {
   //   setFormState({ ...formState, [e.target.name]: e.target.value });
   //   let filteredKesatuan = kesatuan.filter(
@@ -394,6 +425,8 @@ export const AddStaffModal = ({
     }
   };
 
+  console.log(formState,'State')
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formState, 'From State');
@@ -1000,6 +1033,7 @@ export const AddStaffModal = ({
                             value: item.pangkat_id,
                             label: item.nama_pangkat,
                           }))}
+                          onChange={handleSelectPangkat}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1038,6 +1072,7 @@ export const AddStaffModal = ({
                             value: item.matra_id,
                             label: item.nama_matra,
                           }))}
+                          onChange={handleSelectMatra}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1118,6 +1153,7 @@ export const AddStaffModal = ({
                             value: item.lokasi_kesatuan_id,
                             label: item.nama_lokasi_kesatuan,
                           }))}
+                          onChange={handleSelectLokasiKesatuan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1174,6 +1210,7 @@ export const AddStaffModal = ({
                             value: item.kesatuan_id,
                             label: item.nama_kesatuan,
                           }))}
+                          onChange={handleSelectKesatuan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1256,6 +1293,7 @@ export const AddStaffModal = ({
                             value: item.pendidikan_id,
                             label: item.nama_pendidikan,
                           }))}
+                          onChange={handleSelectPendidikan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1293,6 +1331,7 @@ export const AddStaffModal = ({
                             value: item.bidang_keahlian_id,
                             label: item.nama_bidang_keahlian,
                           }))}
+                          onChange={handleSelectBidangKeahlian}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1362,6 +1401,7 @@ export const AddStaffModal = ({
                             value: item.agama_id,
                             label: item.nama_agama,
                           }))}
+                          onChange={handleSelectAgama}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1466,6 +1506,7 @@ export const AddStaffModal = ({
                             value: item.status_kawin_id,
                             label: item.nama_status_kawin,
                           }))}
+                          onChange={handleSelectStatusKawin}
                         />
 
                         <p className="error-text">

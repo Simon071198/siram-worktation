@@ -370,9 +370,18 @@ const StaffList = () => {
 
   // function untuk mengubah data
   const handleSubmitEditDataPetugas = async (params: any) => {
-    console.log(params, 'edit');
+    console.log(params, 'EDIT NI');
+    let newData = {}
+  
+    if(params.foto_wajah.startsWith('data:image/')){
+      newData={...params}
+    } else {
+      newData = { ...params,foto_wajah:''}
+    }
+    console.log(newData,'Data')
+
     try {
-      const responseEdit = await apiUpdateAllStaff(params, token);
+      const responseEdit = await apiUpdateAllStaff(newData, token);
       if (responseEdit.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
