@@ -108,11 +108,11 @@ export const AddStaffModal = ({
       jabatan: '',
       divisi: '',
       nrp: '',
+      lokasi_kesatuan_id : '',
       lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
       nama_lokasi_otmil: dataAdmin.nama_lokasi_otmil,
     },
   );
-  // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
   const navigate = useNavigate();
   const location = useLocation();
