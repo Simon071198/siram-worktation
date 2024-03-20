@@ -27,11 +27,15 @@ interface Item {
   nama: string;
   alamat: string;
   tanggal_lahir: any;
+  petugas_id?:any;
 }
 
 const StaffList = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dataUser : any= localStorage.getItem("dataUser");
+  const convertDataUser = JSON.parse(dataUser);
 
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
@@ -285,7 +289,11 @@ const StaffList = () => {
 
   // function untuk menampilkan modal delete
   const handleDeleteClick = (item: Item) => {
-    setDeleteData(item);
+    let params:any = {
+      petugas_id:convertDataUser.petugas_id,
+      target_petugas_id:item.petugas_id
+    }
+    setDeleteData(params);
     setModalDeleteOpen(true);
   };
 
@@ -334,7 +342,7 @@ const StaffList = () => {
       });
     }
   };
-
+  
   // function untuk menambah data
   const handleSubmitAddDataPetugas = async (params: any) => {
     console.log('DATA DARI LIST', params);
