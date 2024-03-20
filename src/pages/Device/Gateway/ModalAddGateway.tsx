@@ -569,6 +569,10 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                         label: item.nama_ruangan_otmil,
                       }))}
                       onChange={handleRuanganChange}
+                      value={{
+                        value: formState.ruangan_otmil_id,
+                        label: formState.nama_ruangan_otmil,
+                      }}
                     />
                     {/* <select
                       id="ruangan_otmil_id"

@@ -100,15 +100,14 @@ export const AddInmateModal = ({
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
 
-  console.log(isDetail);
-  console.log(isEdit);
-
+  // console.log(isDetail);
+  // console.log(isEdit);
   const [formState, setFormState] = useState(
     defaultValue || {
       foto_wajah: '',
       nama: '',
       pangkat_id: '',
-      nama_pangkat: '',
+      // nama_pangkat: '',
       matra_id: '',
       nrp: '',
       alamat: '',
@@ -151,10 +150,10 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
-      penyakit: '',
-      berat_badan: '',
-      tinggi_badan: '',
-      pola_makan: '',
+      // penyakit: '',
+      // berat_badan: '',
+      // tinggi_badan: '',
+      // pola_makan: '',
       // zona_hijau: [],
       // zona_kuning: [],
       // zona_merah: [],
@@ -162,6 +161,9 @@ export const AddInmateModal = ({
       // nama_gateway:''
     },
   );
+
+  console.log(formState,'EDIT BOYS')
+
 
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
@@ -344,9 +346,41 @@ export const AddInmateModal = ({
         });
       }
     } else {
-      console.log('tanpa if');
+      // console.log('tanpa if');
       setFormState({ ...formState, [e.target.name]: e.target.value });
     }
+  };
+
+  const handleSelectPangkat = (e: any) => {
+    setFormState({ ...formState, pangkat_id: e?.value });
+  };
+
+  const handleSelectAgama = (e: any) => {
+    setFormState({ ...formState, agama_id: e?.value });
+  };
+
+  const handleSelectKesatuan = (e: any) => {
+    setFormState({ ...formState, kesatuan_id: e?.value });
+  };
+
+  const handleSelectStatusKawin = (e: any) => {
+    setFormState({ ...formState, status_kawin_id: e?.value });
+  };
+
+  const handleSelectBidangKeahlian = (e: any) => {
+    setFormState({ ...formState, bidang_keahlian_id: e?.value });
+  };
+
+  const handleSelectHunianTahanan = (e: any) => {
+    setFormState({ ...formState, hunian_wbp_otmil_id: e?.value });
+  };
+
+  const handleSelectPendidikan = (e: any) => {
+    setFormState({ ...formState, pendidikan_id: e?.value });
+  };
+
+  const handleSelectMatra = (e: any) => {
+    setFormState({ ...formState, matra_id: e?.value });
   };
 
   const handleSelectProvinsi = (e: any) => {
@@ -377,7 +411,7 @@ export const AddInmateModal = ({
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(formState, 'formState');
+    console.log(formState, 'received values');
     if (!validateForm()) return;
     setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false)); //dikasih  then ... catch
@@ -395,8 +429,8 @@ export const AddInmateModal = ({
 
       // If it's already added, show an error or handle it as needed
       setErrors([
-        ...errors,
-        `Zona ${zonaId} is already assigned to ${inputField}.`,
+          ...errors,
+          `Zona ${zonaId} is already assigned to ${inputField}.`,
       ]);
     } else {
       // If it's not added to any input, assign it to the specified input
@@ -1231,13 +1265,13 @@ export const AddInmateModal = ({
     let gambarDescription: string | undefined;
 
     if (isEdit) {
-      gambarElement = ".f-edit-gambar";
-      gambarTitle = "Tombol Edit Gambar";
-      gambarDescription = "Tombol edit foto tersangka"
+      gambarElement = '.f-edit-gambar';
+      gambarTitle = 'Tombol Edit Gambar';
+      gambarDescription = 'Tombol edit foto tersangka';
     } else if (!isDetail && !isEdit) {
-      gambarElement = ".f-unggah-gambar";
-      gambarTitle = "Tombol Unggah Gambar";
-      gambarDescription = "Tombol unggah foto tersangka";
+      gambarElement = '.f-unggah-gambar';
+      gambarTitle = 'Tombol Unggah Gambar';
+      gambarDescription = 'Tombol unggah foto tersangka';
     }
 
     if (isEdit && gambarElement && gambarTitle && gambarDescription) {
@@ -1248,8 +1282,13 @@ export const AddInmateModal = ({
           description: gambarDescription,
         },
       });
-
-    } else if (!isEdit && !isDetail && gambarElement && gambarTitle && gambarDescription) {
+    } else if (
+      !isEdit &&
+      !isDetail &&
+      gambarElement &&
+      gambarTitle &&
+      gambarDescription
+    ) {
       steps.splice(0, 0, {
         element: gambarElement,
         popover: {
@@ -1369,18 +1408,17 @@ export const AddInmateModal = ({
             </div>
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-              <div className="w-full flex justify-between mb-2  ">
-                <div>
-                  <h3 className="text-xl font-semibold text-black  dark:text-white">
+              <div className="w-full flex justify-between mb-2  items-center  ">
+                <div className='flex items-center gap-4'>
+                  <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail data Tersangka'
                       : isEdit
                         ? 'Edit data Tersangka'
                         : 'Tambah data Tersangka'}
                   </h3>
-                </div>
-                {!isDetail && (
-                  <button className="pr-[440px]">
+                  {!isDetail && (
+                  <button className="">
                     <HiQuestionMarkCircle
                       // values={filter}
                       aria-placeholder="Show tutorial"
@@ -1389,6 +1427,7 @@ export const AddInmateModal = ({
                     />
                   </button>
                 )}
+              </div>
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -1593,9 +1632,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.pangkat_id,
-                                    label: formState.nama_pangkat,
-                                  }
+                                      value: formState.pangkat_id,
+                                      label: formState.nama_pangkat,
+                                    }
                                   : formState.pangkat_id
                               }
                               isDisabled={isDetail}
@@ -1607,6 +1646,7 @@ export const AddInmateModal = ({
                                 value: item.pangkat_id,
                                 label: item.nama_pangkat,
                               }))}
+                              onChange={handleSelectPangkat}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -1641,9 +1681,10 @@ export const AddInmateModal = ({
                                   : formState.matra_id
                               }
                               options={matra.map((item: any) => ({
-                                value: item.pengunjung_id,
+                                value: item.matra_id,
                                 label: item.nama_matra,
                               }))}
+                              onChange={handleSelectMatra}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -1709,6 +1750,7 @@ export const AddInmateModal = ({
                               value: item.pendidikan_id,
                               label: item.nama_pendidikan,
                             }))}
+                            onChange={handleSelectPendidikan}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1764,6 +1806,7 @@ export const AddInmateModal = ({
                               value: item.kesatuan_id,
                               label: item.nama_kesatuan,
                             }))}
+                            onChange={handleSelectKesatuan}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1848,6 +1891,7 @@ export const AddInmateModal = ({
                               value: item.agama_id,
                               label: item.nama_agama,
                             }))}
+                            onChange={handleSelectAgama}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -2097,6 +2141,7 @@ export const AddInmateModal = ({
                               value: item.status_kawin_id,
                               label: item.nama_status_kawin,
                             }))}
+                            onChange={handleSelectStatusKawin}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -2182,64 +2227,6 @@ export const AddInmateModal = ({
                             )}
                           </p>
                         </div>
-
-                        {/* Penyakit */}
-                        <div className="f-penyakit form-group w-full ">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Penyakit (?)
-                          </label>
-                          <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="is_sick"
-                            onChange={handleChange}
-                            value={formState.is_sick}
-                            disabled={isDetail}
-                          >
-                            <option value="" disabled>
-                              Silahkan Pilih
-                            </option>
-
-                            <option value="0">Tidak</option>
-                            <option value="1">Ya</option>
-                          </select>
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'is_sick' ? 'Pilih Ya/Tidak' : '',
-                            )}
-                          </p>
-                        </div>
-
-                        {formState.is_sick === '0' ||
-                        formState.is_sick === '' ? null : (
-                          <>
-                            <div className="f-nama-penyakit form-group w-full flex flex-col">
-                              <label
-                                className="  block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Nama Penyakit
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="wbp_sickness"
-                                placeholder="Nama Penyakit"
-                                onChange={handleChange}
-                                value={formState.wbp_sickness}
-                                disabled={isDetail}
-                              />
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'wbp_sickness'
-                                    ? 'Masukan nama penyakit'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -2416,7 +2403,7 @@ export const AddInmateModal = ({
                       {isDetail && (
                         <div className=" grid grid-cols-3 gap-4">
                           {/* Vonis Tahun */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2438,10 +2425,10 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
 
                           {/* Vonis Bulan */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2463,10 +2450,10 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
 
                           {/* Vonis Hari */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2488,7 +2475,7 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                       )}
                       <div className="grid grid-cols-1 gap-4">
@@ -2563,6 +2550,7 @@ export const AddInmateModal = ({
                                 value: item.bidang_keahlian_id,
                                 label: item.nama_bidang_keahlian,
                               }))}
+                              onChange={handleSelectBidangKeahlian}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2731,6 +2719,7 @@ export const AddInmateModal = ({
                                 value: item.hunian_wbp_otmil_id,
                                 label: item.nama_hunian_wbp_otmil,
                               }))}
+                              onChange={handleSelectHunianTahanan}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -3050,33 +3039,66 @@ export const AddInmateModal = ({
                       <div className="flex flex-col gap-4">
                         <div className="grid grid-cols-1 gap-4">
                           <div className="grid grid-cols-2 gap-4">
-                            {/* Penyakit */}
-                            <div className="f-kesehatan-penyakit form-group w-full flex flex-col">
+                                  {/* Penyakit */}
+                        <div className="f-penyakit form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Penyakit (?)
+                          </label>
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_sick"
+                            onChange={handleChange}
+                            value={formState.is_sick}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Silahkan Pilih
+                            </option>
+
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_sick' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {formState.is_sick === '0' ||
+                        formState.is_sick === '' ? null : (
+                          <>
+                            <div className="f-nama-penyakit form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
                               >
-                                Penyakit
+                                Nama Penyakit
                               </label>
                               <input
                                 className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="penyakit"
-                                placeholder="Nama penyakit"
+                                name="wbp_sickness"
+                                placeholder="Nama Penyakit"
                                 onChange={handleChange}
-                                value={formState.penyakit}
+                                value={formState.wbp_sickness}
                                 disabled={isDetail}
                               />
                               <p className="error-text">
                                 {errors.map((item) =>
-                                  item === 'penyakit'
+                                  item === 'wbp_sickness'
                                     ? 'Masukan nama penyakit'
                                     : '',
                                 )}
                               </p>
                             </div>
+                          </>
+                        )}
 
                             {/* Berat Badan */}
-                            <div className="f-berat-badan form-group w-full flex flex-col">
+                            {/* <div className="f-berat-badan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -3098,10 +3120,10 @@ export const AddInmateModal = ({
                                     : '',
                                 )}
                               </p>
-                            </div>
+                            </div> */}
 
                             {/* Tinggi Badan */}
-                            <div className="f-tinggi-badan form-group w-full flex flex-col">
+                            {/* <div className="f-tinggi-badan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -3123,7 +3145,7 @@ export const AddInmateModal = ({
                                     : '',
                                 )}
                               </p>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </div>
@@ -3139,7 +3161,7 @@ export const AddInmateModal = ({
                         <div className="grid grid-cols-1 gap-4">
                           <div className="grid grid-cols-2 gap-4">
                             {/* Pola Makan */}
-                            <div className="f-pola-makan form-group w-full flex flex-col">
+                            {/* <div className="f-pola-makan form-group w-full flex flex-col">
                               <label
                                 className="  block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -3161,7 +3183,7 @@ export const AddInmateModal = ({
                                     : '',
                                 )}
                               </p>
-                            </div>
+                            </div> */}
 
                             {/* Jenis Olahraga */}
                             <div className="f-jenis-olahraga form-group w-full flex flex-col">
