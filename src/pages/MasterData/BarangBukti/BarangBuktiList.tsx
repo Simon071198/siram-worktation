@@ -325,24 +325,6 @@ const AhliList = () => {
   // function untuk mengubah data
   const handleSubmitEdit = async (params: any) => {
     console.log(params, 'edit');
-    // const editValue = {
-    //   kasus_id: params.kasus_id,
-    //   nama_bukti_kasus: params.nama_bukti_kasus,
-    //   nomor_barang_bukti: params.nomor_barang_bukti,
-    //   dokumen_barang_bukti: '',
-    //   gambar_barang_bukti: '',
-    //   keterangan: params.keterangan,
-    //   pdf_file_base64: '',
-    //   tanggal_diambil: params.tanggal_diambil,
-    //   jenis_perkara_id: params.jenis_perkara_id,
-    //   nama_jenis_perkara: params.nama_jenis_perkara,
-    //   longitude: params.longitude,
-    //   nomor_kasus: params.nomor_kasus,
-    //   nama_kasus: params.nama_kasus,
-    //   barang_bukti_kasus_id: params.barang_bukti_kasus_id,
-    // }
-    // console.log(editValue);
-
     try {
       const responseEdit = await apiUpdateBarangBukti(params, token);
       if (responseEdit.data.status === 'OK') {

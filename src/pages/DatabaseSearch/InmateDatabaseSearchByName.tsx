@@ -11,8 +11,14 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertDatabaseSearch';
 import { Error403Message } from '../../utils/constants';
+import { apiPelacakanTersangka } from '../../services/api';
 
 export default function InmateDatabaseSearchByName() {
+
+  // interface Item {
+  //   kamera_log: string;
+  // }
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,7 +34,37 @@ export default function InmateDatabaseSearchByName() {
   const [detailWatchlist, setDetailDpo] = useState([{}]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  // const [data, setData] = useState<Item[]>([]);
+  const [data, setData] = useState([]);
   const [filter, setFilter] = useState('');
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+
+  const [errors, setErrors] = useState<string[]>([]);
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataUserLogin = dataUserItem ? JSON.parse(dataUserItem) : null;
+  const dataLokasiOtmilId = dataUserLogin?.lokasi_otmil_id ?? null;
+  const dataLokasiLemasmilId = dataUserLogin?.lokasi_lemasmil_id ?? null;
+
+  console.log(dataLokasiOtmilId, dataLokasiLemasmilId);
+
+  console.log(dataUserLogin);
+
+  const validateForm = () => {
+    let errorFields: any = [];
+
+    if (errorFields.length > 0) {
+      console.log(errorFields);
+      setErrors(errorFields);
+      return false;
+    }
+    setErrors([]);
+    return true;
+  };
 
   const handleClose = (event: any, reason: any) => {
     if (reason === 'clickaway') {
@@ -38,6 +74,71 @@ export default function InmateDatabaseSearchByName() {
     setIsFound(false);
     setIsNotFound(false);
   };
+
+  const handleFilterChange = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilter(newFilter);
+  };
+
+  const handleSearchClick = async () => {
+    if (!filter.trim()) {
+      setErrors(['Nama prajurit tidak boleh kosong']);
+      return;
+    }
+
+    console.log("Hai Sayang");
+    setErrors([])
+    let params = {
+      filter: {
+        nama_tersangka: filter,
+        lokasi_otmil_id: dataLokasiOtmilId
+      },
+      // page:1,
+      // pageSize:1
+    };
+    try {
+      const response = await apiPelacakanTersangka(params, token);
+      if (response.status === 200) {
+        const result = response.data;
+        setData(result.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
+        throw new Error('Terjadi kesalahan saat mencari data.');
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  }
+
+  console.log(data, "ini data Boss QQ");
+  console.log(pages);
+  console.log(rows);
+
+  const handleEnterKeyPress = (event: any) => {
+    if (event.key === 'Enter') {
+      handleSearchClick();
+      console.log('ENTER DIPNCET');
+    }
+  };
+
+  useEffect(() => {
+    // Menambahkan event listener untuk tombol "Enter" pada komponen ini
+    document.addEventListener('keypress', handleEnterKeyPress);
+
+    // Membersihkan event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener('keypress', handleEnterKeyPress);
+    };
+  }, [filter]);
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -121,6 +222,8 @@ export default function InmateDatabaseSearchByName() {
     }
   };
 
+  console.log(filter);
+
   return (
     <div>
       <div className="relative w-full h-60 bg-boxdark shadow-md">
@@ -158,8 +261,9 @@ export default function InmateDatabaseSearchByName() {
                 <input
                   className="w-[400px] text-lg focus-visible:outline-none text-black i-cari"
                   placeholder="Cari prajurit binaan"
+                  onChange={handleFilterChange}
                 ></input>
-                <button id="b-search">
+                <button id="b-search" onClick={handleSearchClick}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -177,150 +281,94 @@ export default function InmateDatabaseSearchByName() {
                     />
                   </svg>
                 </button>
-              </div>
+              </div>              
             </div>
+            {errors.length > 0 && (
+                  <div className="text-red-500 mt-2">
+                    {errors.map((error, index) => (
+                      <p key={index}>{error}</p>
+                    ))}
+                  </div>
+                )}
           </div>
         </div>
       </div>
-      <div className="mt-5 mb-5">
+
+      {data?.length === 0 ? (<div className="mt-5 mb-5">
         <div className="flex items-center justify-center">
           <div className="w-full border-b border-white opacity-30 "></div>
-          <p className="w-full text-center text-white">HASIL PENCARIAN</p>
+          <p className="w-full text-center text-white">CARI NAMA PRAJURIT</p>
           <div className="w-full border-b border-white opacity-30 "></div>
+        </div>
+        <div className="flex justify-center p-4 w-ful">
+          <p className="w-full text-center text-white">No Data</p>
         </div>
       </div>
 
-      <div className="h-[400px] overflow-y-scroll">
-        <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px]">
-          <div className=" grid grid-cols-1 gap-6 d-hasil">
-            <div className="bg-boxdark px-4 py-4 flex">
-              <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                <img
-                  src="https://source.unsplash.com/random/150x150"
-                  alt="picture"
-                  className="object-cover"
-                ></img>
-              </div>
-              <div className="ml-10 grid grid-cols-1 items-center">
-                <div className="flex flex-col w-full">
-                  <p className="text-3xl font-bold text-white">
-                    Bagas Arya Pradipta
-                  </p>
-                  <p className="text-2xl font-base text-slate-500">
-                    Bagas Arya Pradipta
-                  </p>
-                </div>
-                <div className="flex flex-col mt-6 item-center  w-full">
-                  <p className="text-lg">Keterangan</p>
-                  <div className="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      width="15"
-                      height="15"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-
-                    <p className="text-md">16/01/2023 10:11</p>
-                  </div>
-                </div>
-              </div>
+      ) : (
+        <>
+          <div className="mt-5 mb-5">
+            <div className="flex items-center justify-center">
+              <div className="w-full border-b border-white opacity-30 "></div>
+              <p className="w-full text-center text-white">HASIL PENCARIAN</p>
+              <div className="w-full border-b border-white opacity-30 "></div>
             </div>
+          </div>
+          <div className="h-[400px] overflow-y-scroll">
+            <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px]">
+              <div className="grid grid-cols-1 gap-6 d-hasil">
+                {data.map((item: any) =>
+                  item.kamera_log.map((kamera: any) => (
+                    <div className="bg-boxdark px-4 py-4 flex">
+                      <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
+                        <img
+                          src={'https://dev.transforme.co.id/siram_admin_api' +
+                            kamera.image_kamera_log}
+                          alt="picture"
+                          className="object-cover w-[150px] h-[150px]"
+                        ></img>
+                      </div>
+                      <div className="ml-10 grid grid-cols-1 items-center">
+                        <div className="flex flex-col w-full">
+                          <p className="text-3xl font-bold text-white">
+                            {item.nama_tersangka}
+                          </p>
+                          <p className="text-2xl font-base text-slate-500">
+                            {item.nama_tersangka}
+                          </p>
+                        </div>
+                        <div className="flex flex-col mt-6 item-center  w-full">
+                          <p className="text-lg">Keterangan</p>
+                          <div className="flex items-center gap-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              width="15"
+                              height="15"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
 
-            <div className="bg-boxdark px-4 py-4 flex">
-              <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                <img
-                  src="https://source.unsplash.com/random/150x150"
-                  alt="picture"
-                  className="object-cover"
-                ></img>
-              </div>
-              <div className="ml-10 grid grid-cols-1 items-center">
-                <div className="flex flex-col w-full">
-                  <p className="text-3xl font-bold text-white">
-                    Bagas Arya Pradipta
-                  </p>
-                  <p className="text-2xl font-base text-slate-500">
-                    Bagas Arya Pradipta
-                  </p>
-                </div>
-                <div className="flex flex-col mt-6 item-center  w-full">
-                  <p className="text-lg">Keterangan</p>
-                  <div className="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      width="15"
-                      height="15"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-
-                    <p className="text-md">16/01/2023 10:11</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-boxdark px-4 py-4 flex">
-              <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                <img
-                  src="https://source.unsplash.com/random/150x150"
-                  alt="picture"
-                  className="object-cover"
-                ></img>
-              </div>
-              <div className="ml-10 grid grid-cols-1 items-center">
-                <div className="flex flex-col w-full">
-                  <p className="text-3xl font-bold text-white">
-                    Bagas Arya Pradipta
-                  </p>
-                  <p className="text-2xl font-base text-slate-500">
-                    Bagas Arya Pradipta
-                  </p>
-                </div>
-                <div className="flex flex-col mt-6 item-center  w-full">
-                  <p className="text-lg">Keterangan</p>
-                  <div className="flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      width="15"
-                      height="15"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-
-                    <p className="text-md">16/01/2023 10:11</p>
-                  </div>
-                </div>
+                            <p className="text-md">{kamera.timestamp_kamera_log}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+
+      )}
     </div>
     // <>
     //   <div>
