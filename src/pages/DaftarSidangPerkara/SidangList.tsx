@@ -145,6 +145,7 @@ const SidangList = () => {
       pengacaraHolder: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
+      hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
       // role_ketua_hakim_holder: {
       //   hakim_id: hakimKetua.hakim_id,
       //   nama_hakim: hakimKetua.nama_hakim,
@@ -283,6 +284,7 @@ const SidangList = () => {
       pengacaraHolder: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
+      hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
       // role_ketua_hakim_holder: {
       //   hakim_id: hakimKetua.hakim_id,
       //   nama_hakim: hakimKetua.nama_hakim,
