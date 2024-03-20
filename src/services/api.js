@@ -19,6 +19,26 @@ function removeBase64Prefix(base64String) {
   return base64String;
 }
 
+// api filter pelacakan tersangka
+export async function apiPelacakanTersangka(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/filter_tersangka.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // api realtime
 export async function apiRealtimeLog(params, token) {
   try {
