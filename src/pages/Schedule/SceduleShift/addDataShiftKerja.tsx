@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -17,13 +20,14 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
 }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState('');
 
   const [dataShift, setDataShift] = useState(
     defaultValue || {
       nama_shift: '',
       waktu_mulai: '',
       waktu_selesai: '',
-    }
+    },
   );
 
   const [errors, setErrors] = useState({
@@ -55,11 +59,11 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
   }, [closeModal]);
 
   const validateForm = () => {
-    const newErrors = ({
+    const newErrors = {
       nama_shift: '',
       waktu_mulai: '',
       waktu_selesai: '',
-    });
+    };
     if (
       dataShift.nama_shift &&
       dataShift.waktu_mulai &&
@@ -74,25 +78,65 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
       return true;
     } else {
       if (!dataShift.nama_shift) {
-        newErrors.nama_shift='Isi Nama Shift';
+        newErrors.nama_shift = 'Isi Nama Shift';
       }
       if (!dataShift.waktu_mulai) {
-        newErrors.waktu_mulai= 'Isi Waktu Mulai' ;
+        newErrors.waktu_mulai = 'Isi Waktu Mulai';
       }
       if (!dataShift.waktu_selesai) {
-        newErrors.waktu_selesai= 'Isi Waktu selesai' ;
-      } 
-      setErrors(newErrors)
+        newErrors.waktu_selesai = 'Isi Waktu selesai';
+      }
+      setErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return false;
       }
-      return true
+      return true;
     }
   };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Shift',
+            description: 'Isi nama shift',
+          },
+        },
+        {
+          element: '.i-mulai',
+          popover: {
+            title: 'Waktu Mulai',
+            description: 'Menentukan waktu mulai',
+          },
+        },
+        {
+          element: '.i-selesai',
+          popover: {
+            title: 'Waktu Selesai',
+            description: 'Menentukan waktu selesai',
+          },
+        },
+
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setDataShift({ ...dataShift, [e.target.name]: e.target.value });
   };
@@ -137,8 +181,35 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                {isDetail ? "Data Shift Kerja": isEdit ? "Edit Data Shift Kerja" : "Tambah Data Shift Kerja"}
+                {isDetail
+                  ? 'Data Shift Kerja'
+                  : isEdit
+                    ? 'Edit Data Shift Kerja'
+                    : 'Tambah Data Shift Kerja'}
               </h1>
+
+              {/* <div className="w-10"> */}
+              {isDetail ? null : isEdit ? (
+                <button className="pr-55">
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+              ) : (
+                <button className="pr-45">
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+              )}
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -158,7 +229,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                     </label>
                     <input
                       name="nama_shift"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nama"
                       disabled={isDetail}
                       value={dataShift.nama_shift}
                       onChange={handleChange}
@@ -180,7 +251,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                       <input
                         name="waktu_mulai"
                         type="time"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-mulai"
                         disabled={isDetail}
                         value={dataShift.waktu_mulai}
                         onChange={handleChange}
@@ -201,7 +272,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                       <input
                         name="waktu_selesai"
                         type="time"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-selesai"
                         disabled={isDetail}
                         value={dataShift.waktu_selesai}
                         onChange={handleChange}
@@ -216,7 +287,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
                 </div>
                 {isDetail ? null : (
                   <button
-                    className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                    className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 b-submit"
                     type="submit"
                   >
                     Submit

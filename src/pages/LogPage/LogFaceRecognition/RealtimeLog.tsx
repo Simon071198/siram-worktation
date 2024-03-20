@@ -4,7 +4,15 @@ import axios from 'axios';
 import { apiVisitorRealtimeLogList } from '../../../services/api';
 
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
+import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
+
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -41,6 +49,9 @@ const DataNotFoundModal = ({ open, onClose, message }) => {
 };
 
 export default function Realtime() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedDevice, setSelectedDevice] = useState('');
@@ -54,6 +65,7 @@ export default function Realtime() {
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [filter, setFilter] = useState('');
 
   const handleLocationChange = (event: any) => {
     setSelectedLocation(event.target.value);
@@ -89,13 +101,102 @@ export default function Realtime() {
     }
   }
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-analitik',
+          popover: {
+            title: 'Pilih Analitik',
+            description: 'Pilih analitik yang diinginkan',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama',
+            description: 'Isi nama',
+          },
+        },
+        {
+          element: '.i-usia',
+          popover: {
+            title: 'Usia',
+            description: 'Isi usia',
+          },
+        },
+        {
+          element: '.p-gender',
+          popover: {
+            title: 'Pilih Gender',
+            description: 'Pilih gender yang diinginkan',
+          },
+        },
+        {
+          element: '.p-lokasi',
+          popover: {
+            title: 'Pilih Lokasi',
+            description: 'Pilih lokasi yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kamera',
+          popover: {
+            title: 'Pilih Kamera',
+            description: 'Pilih kamera yang diinginkan',
+          },
+        },
+        {
+          element: '.b-csv',
+          popover: {
+            title: 'Export CSV',
+            description: 'Klik untuk mendapatkan file export csv',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleExportClick = () => {
-    if (data && data.length > 0) {
-      exportToCSV(data, 'exported_data.csv');
-    } else {
-      setShowModal(true);
-      setModalMessage('No data found to export.');
-    }
+
+    const dataToExcel = [
+      [
+        'Nama',
+        'Gender',
+        'Usia',
+        'Status',
+        'Nama Kamera',
+        'Tipe Lokasi',
+        'Nama Lokasi',
+      ],
+      ...data.map((item: any) => [
+        item.nama,
+        item.gender,
+        item.usia,
+        item.status,
+        item.nama_kamera,
+        item.tipe_lokasi,
+        item.nama_lokasi,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-LogRealTime ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+
+    // if (data && data.length > 0) {
+    //   exportToCSV(data, 'exported_data.csv');
+    // } else {
+    //   setShowModal(true);
+    //   setModalMessage('No data found to export.');
+    // }
   };
 
   const handleCloseModal = () => {
@@ -142,20 +243,35 @@ export default function Realtime() {
   }
 
   let fetch = async () => {
-    let params = {
-      device_id: selectedDevice,
-      country_id: selectedCountry,
-      age: selectedAge,
-      analytics: selectedAnalytics,
-      name: selectedName,
-      gender: selectedGender,
-    };
-    await setLoading(true);
-    let data = await apiVisitorRealtimeLogList(params);
-    setData(data);
-    setLoading(false);
-    console.log(data);
+    try {
+      let params = {
+        device_id: selectedDevice,
+        country_id: selectedCountry,
+        age: selectedAge,
+        analytics: selectedAnalytics,
+        name: selectedName,
+        gender: selectedGender,
+      };
+
+      setLoading(true);
+      let data = await apiVisitorRealtimeLogList(params);
+      setData(data);
+      console.log(data);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
   useEffect(() => {
     fetch();
   }, [
@@ -198,7 +314,7 @@ export default function Realtime() {
                 <select
                   id="analytics-select"
                   name="Select Analytics"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-2 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-analitik"
                   value={selectedAnalytics}
                   onChange={(e) => setSelectedAnalytics(e.target.value)}
                 >
@@ -219,7 +335,7 @@ export default function Realtime() {
                     id="name-input"
                     type="text"
                     name="Name"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-nama"
                     value={selectedName}
                     onChange={(e) => setSelectedName(e.target.value)}
                   />
@@ -238,7 +354,7 @@ export default function Realtime() {
                     id="age-input"
                     type="text"
                     name="Age"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-usia"
                     value={selectedAge}
                     onChange={(e) => setSelectedAge(e.target.value)}
                   />
@@ -275,7 +391,7 @@ export default function Realtime() {
                   <select
                     id="gender-select"
                     name="Select Gender"
-                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-gender"
                     value={selectedGender}
                     onChange={(e) => setSelectedGender(e.target.value)}
                   >
@@ -295,7 +411,7 @@ export default function Realtime() {
                 <select
                   id="location-select"
                   name="Select Location"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-lokasi"
                   value={selectedLocation}
                   onChange={handleLocationChange}
                 >
@@ -316,7 +432,7 @@ export default function Realtime() {
                 <select
                   id="device-select"
                   name="Select Device"
-                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  className="w-full rounded-md border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-3.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-kamera"
                   value={selectedDevice}
                   onChange={handleDeviceChange}
                 >
@@ -333,7 +449,7 @@ export default function Realtime() {
 
           <button
             onClick={handleExportClick}
-            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded"
+            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded b-csv"
           >
             Export CSV
           </button>
@@ -344,7 +460,21 @@ export default function Realtime() {
           />
         </div>
       </div>
-      <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
+      <div className="w-full flex justify-between">
+        <div>
+          <h3 className="font-semibold mb-4 text-2xl">Log Realtime</h3>
+        </div>
+
+        <button>
+          <HiQuestionMarkCircle
+            values={filter}
+            aria-placeholder="Show tutorial"
+            // onChange={}
+            onClick={handleClickTutorial}
+          />
+        </button>
+      </div>
+
       {selectedAnalytics == 'unrecognized' ? (
         <div className="flex flex-col">
           <div className="grid grid-cols-5 rounded-t-md bg-gray-2 dark:bg-meta-4 dark:bg-slate-600 sm:grid-cols-5">
@@ -386,7 +516,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/gema_admin_api' +
+                        'http://dev.transforme.co.id/siram_admin_api' +
                         item.image
                       }
                       alt=""

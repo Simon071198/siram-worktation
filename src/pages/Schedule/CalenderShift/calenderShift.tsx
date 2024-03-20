@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alerts } from '../GrupShift/Alert';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
-import { BsFilter, BsPlusSquareDotted, BsTrash } from 'react-icons/bs';
+import { BsPlusSquareDotted, BsTrash } from 'react-icons/bs';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
@@ -28,6 +28,11 @@ import EditPegawaiPetugasShift from './editPegawaiShift';
 import * as xlsx from 'xlsx';
 import Select from 'react-select';
 dayjs.locale('id');
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface DaysInMonthProps {
   year: number;
@@ -79,6 +84,9 @@ interface Schedule {
 }
 
 const shiftJaga = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //Get Token
   const getToken = localStorage.getItem('token');
   let tokenItem = getToken ? JSON.parse(getToken) : null;
@@ -104,6 +112,7 @@ const shiftJaga = () => {
   const [modalAddPegawaiShift, setModalAddPegawaiShift] = useState(false);
   const [Modaldelete, setModalDelete] = useState(false);
   const [modalDeleteSchedule, setModalDeleteSchedule] = useState(false);
+  const [filter, setFilter] = useState('');
 
   // dropdown
   const [openFilter, setOpenFilter] = useState(false);
@@ -126,6 +135,22 @@ const shiftJaga = () => {
   //Schedule Read
   const [loadSchedule, setLoadSchedule] = useState(false);
   const [schedule, setSchedule] = useState<Schedule[]>([]);
+
+  //Validasi Operator
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
 
   //Pegawai
   const [staff, setStaff] = useState<any[]>([
@@ -186,10 +211,15 @@ const shiftJaga = () => {
         setStaffFilter(staff.data.records);
         setStaff(staff.data.records);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -198,6 +228,65 @@ const shiftJaga = () => {
 
   const handleCloseFilter = () => {
     setOpenFilter(false);
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-grup',
+          popover: {
+            title: 'Grup',
+            description: 'Pilih grup yang diinginkan',
+          },
+        },
+        {
+          element: '.p-semua',
+          popover: {
+            title: 'Semua Grup',
+            description: 'Pilih semua grup yang diinginkan',
+          },
+        },
+        {
+          element: '.p-tanggal',
+          popover: {
+            title: 'Pilih Tanggal',
+            description: 'Pilih tanggal yang diinginkan',
+          },
+        },
+        {
+          element: '.b-jadwal',
+          popover: {
+            title: 'Buat Jadwal',
+            description: 'Klik untuk membuat jadwal',
+          },
+        },
+        {
+          element: '#b-ubah',
+          popover: {
+            title: 'Ubah Jadwal',
+            description: `Klik untuk mengubah jadwal`,
+          },
+        },
+        {
+          element: '#b-hapus',
+          popover: {
+            title: 'Hapus Jadwal',
+            description: `Klik untuk menghapus jadwal`,
+          },
+        },
+        {
+          element: '.b-excel',
+          popover: {
+            title: 'Export Excel',
+            description: `Klik untuk mengexport excel`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -351,10 +440,15 @@ const shiftJaga = () => {
           });
         }
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -381,10 +475,15 @@ const shiftJaga = () => {
           }
         }
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -410,10 +509,15 @@ const shiftJaga = () => {
           }
         }
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -431,10 +535,15 @@ const shiftJaga = () => {
           setLoadSchedule(!loadSchedule);
         }, 500);
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -470,10 +579,15 @@ const shiftJaga = () => {
           }
         }
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -514,10 +628,15 @@ const shiftJaga = () => {
           }, 500);
         }
       }
-    } catch (error: any) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -720,13 +839,25 @@ const shiftJaga = () => {
       )}
       <div className="flex justify-between items-center mb-4">
         <h1 className="font-bold text-xl w-2/5">Kalender Jadwal Shift Kerja</h1>
+
+        <div className="w-10">
+          <button>
+            <HiQuestionMarkCircle
+              values={filter}
+              aria-placeholder="Show tutorial"
+              // onChange={}
+              onClick={handleClickTutorial}
+            />
+          </button>
+        </div>
       </div>
+
       <div className="flex h-8 items-center mt-2">
         <div className="flex space-x-2 w-1/2 items-center">
           <h1>Filter : </h1>
           <div className="w-1/3">
             <Select
-              className="text-black"
+              className="text-black p-grup"
               styles={customStyles}
               onChange={handleChangeSelectFilter}
               options={selectFilter}
@@ -735,7 +866,7 @@ const shiftJaga = () => {
           </div>
           <div className={` ${openGrup ? 'hidden' : 'w-1/3'}`}>
             <Select
-              className="text-black capitalize"
+              className="text-black capitalize p-semua"
               isDisabled
               styles={customStyles}
               options={grupPetugasOption}
@@ -757,7 +888,7 @@ const shiftJaga = () => {
             <label htmlFor="tanggal">Pilih Tanggal :</label>
             <div className="">
               <DatePicker
-                className="rounded text-black text-center w-36"
+                className="rounded text-black text-center w-36 p-tanggal"
                 selected={selectedDate.toDate()}
                 onChange={handleDateChange}
                 dateFormat="dd MMMM yyyy"
@@ -766,30 +897,34 @@ const shiftJaga = () => {
               />
             </div>
           </div>
+          {!isOperator && (
+            <>
+              <button
+                className="bg-blue-500 text-white px-2 rounded-sm text-sm py-1 b-jadwal"
+                onClick={() => setModalAddScheduleOpen(true)}
+              >
+                Buat Jadwal
+              </button>
+              <button
+                onClick={handleHapusPetugasShift}
+                className={`${hapusPetugasShift ? 'block' : 'hidden'
+                  } bg-blue-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
+                id="b-ubah"
+              >
+                Ubah Jadwal
+              </button>
+              <button
+                onClick={handleHapusPetugasShift}
+                className={`${!hapusPetugasShift ? 'block' : 'hidden'
+                  } bg-red-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
+                id="b-hapus"
+              >
+                Hapus Jadwal
+              </button>
+            </>
+          )}
           <button
-            className="bg-blue-500 text-white px-2 rounded-sm text-sm py-1"
-            onClick={() => setModalAddScheduleOpen(true)}
-          >
-            Buat Jadwal
-          </button>
-          <button
-            onClick={handleHapusPetugasShift}
-            className={`${
-              hapusPetugasShift ? 'block' : 'hidden'
-            } bg-blue-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
-          >
-            Ubah Jadwal
-          </button>
-          <button
-            onClick={handleHapusPetugasShift}
-            className={`${
-              !hapusPetugasShift ? 'block' : 'hidden'
-            } bg-red-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
-          >
-            Hapus Jadwal
-          </button>
-          <button
-            className="bg-blue-500 text-white px-2 rounded-sm text-sm py-1"
+            className="bg-blue-500 text-white px-2 rounded-sm text-sm py-1 b-excel"
             onClick={() => exportToExcel()}
           >
             Export Excel
@@ -800,16 +935,14 @@ const shiftJaga = () => {
         <div className="flex w-full">
           <div className="w-1/6 bg-slate-600 flex justify-between mr-1">
             <h2
-              className={`${
-                !openGrup ? '' : 'hidden'
-              } pl-3 flex items-center h-full`}
+              className={`${!openGrup ? '' : 'hidden'
+                } pl-3 flex items-center h-full`}
             >
               Nama Grup
             </h2>
             <h2
-              className={`${
-                openGrup ? '' : 'hidden'
-              } pl-3 flex items-center h-full`}
+              className={`${openGrup ? '' : 'hidden'
+                } pl-3 flex items-center h-full`}
             >
               Nama Pegawai
             </h2>
@@ -953,9 +1086,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             case shift[1].nama_shift:
                               shiftBackgroundColor = 'bg-orange-500';
@@ -964,9 +1097,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             case shift[2].nama_shift:
                               shiftBackgroundColor = 'bg-blue-500';
@@ -975,9 +1108,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             default:
                               shiftBackgroundColor = 'bg-red-600';
@@ -1034,9 +1167,8 @@ const shiftJaga = () => {
                                       onClick={() =>
                                         handleOpenDeleteSchedule(dataAdd)
                                       }
-                                      className={`${
-                                        hapusPetugasShift ? 'block' : 'hidden'
-                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      className={`${hapusPetugasShift ? 'block' : 'hidden'
+                                        } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
                                     >
                                       <BsTrash className="w-full h-full" />
                                     </button>
@@ -1044,9 +1176,8 @@ const shiftJaga = () => {
                                       onClick={() =>
                                         handleOpenAddModal(dataAdd)
                                       }
-                                      className={`${
-                                        !hapusPetugasShift ? 'block' : 'hidden'
-                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      className={`${!hapusPetugasShift ? 'block' : 'hidden'
+                                        } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
                                     >
                                       <BsPlusSquareDotted className="w-full h-full" />
                                     </button>
@@ -1166,9 +1297,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             case shift[1].nama_shift:
                               shiftBackgroundColor = 'bg-orange-500';
@@ -1177,9 +1308,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             case shift[2].nama_shift:
                               shiftBackgroundColor = 'bg-blue-500';
@@ -1188,9 +1319,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
+                                  .split(':')
+                                  .slice(0, 2)
+                                  .join(':')}`;
                               break;
                             default:
                               shiftBackgroundColor = 'bg-red-600';

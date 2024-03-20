@@ -6,6 +6,13 @@ import {
   apiReadZona,
 } from '../../../services/api';
 import { webpack } from 'webpack';
+import Select from 'react-select';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertGelang';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddGelangModalProps {
@@ -41,6 +48,9 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_gelang: '',
@@ -73,6 +83,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
   const [ruanganotmil, setruanganotmil] = useState<ruangan[]>([]);
   const [lokasiotmil, setlokasiotmil] = useState<lokasi[]>([]);
   const [namaWBP, setnamaWBP] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -126,6 +137,168 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
     return true;
   };
 
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Gelang',
+            description: 'Isi nama gelang',
+          },
+        },
+        {
+          element: '.i-dmac',
+          popover: {
+            title: 'DMAC',
+            description: 'Isi DMAC',
+          },
+        },
+        {
+          element: '.i-baterai',
+          popover: { title: 'Baterai', description: 'Isi baterai' },
+        },
+        {
+          element: '.i-pasang',
+          popover: {
+            title: 'Tanggal Pasang',
+            description: 'Menentukan tanggal pasang',
+          },
+        },
+        {
+          element: '.i-aktivasi',
+          popover: {
+            title: 'Tanggal Aktivasi',
+            description: 'Menentukan tanggal aktivasi',
+          },
+        },
+        {
+          element: '.p-otmil',
+          popover: {
+            title: 'Pilih Ruangan Otmil',
+            description: 'Pilih ruangan otmil yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jenis',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Isi jenis ruangan',
+          },
+        },
+        {
+          element: '.i-lokasi',
+          popover: {
+            title: 'Nama Lokasi Otmil',
+            description: 'Pilih nama lokasi otmil',
+          },
+        },
+        {
+          element: '.i-zona',
+          popover: {
+            title: 'Zona',
+            description: 'Isi zona',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data gelang`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -146,12 +319,16 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
   };
 
   const handleRuanganChange = (e: any) => {
-    const selectedRuangan = e.target.value;
+    // console.log('12345', e);
+
+    const selectedRuangan = e.value;
+    // console.log('selectedData');
 
     // Temukan data ruangan berdasarkan ID yang dipilih
     const selectedData = ruanganotmil.find(
       (item) => item.ruangan_otmil_id === selectedRuangan,
     );
+
     if (selectedData) {
       setFormState({
         ...formState,
@@ -205,8 +382,16 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
@@ -292,6 +477,29 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                         : 'Tambah Data Gelang'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -309,7 +517,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       Nama Gelang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_gelang"
                       placeholder="Nama Gelang"
                       onChange={handleChange}
@@ -331,7 +539,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       dmac
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-dmac"
                       name="dmac"
                       placeholder="dmac"
                       onChange={handleChange}
@@ -353,7 +561,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       baterai
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-baterai"
                       name="baterai"
                       placeholder="baterai"
                       onChange={handleChange}
@@ -377,7 +585,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                     </label>
                     <input
                       type="date"
-                      className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pasang"
                       name="tanggal_pasang"
                       onChange={handleChange}
                       value={formState.tanggal_pasang}
@@ -400,7 +608,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                     </label>
                     <input
                       type="date"
-                      className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke   py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-aktivasi"
                       name="tanggal_aktivasi"
                       onChange={handleChange}
                       value={formState.tanggal_aktivasi}
@@ -417,9 +625,22 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
 
                   <div className="form-group w-full h-22">
                     <label htmlFor="ruangan_otmil_id">
-                      Pilih Ruangan otmil:
+                      Pilih Ruangan Otmil:
                     </label>
-                    <select
+                    <Select
+                      className="basic-single p-otmil"
+                      classNamePrefix="select"
+                      isSearchable
+                      isDisabled={isDetail}
+                      styles={customStyles}
+                      name="ruangan_otmil_id"
+                      options={ruanganotmil.map((item) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
+                      onChange={handleRuanganChange}
+                    />
+                    {/* <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
@@ -436,7 +657,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                           {item.nama_ruangan_otmil}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'
@@ -451,7 +672,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail || isEdit}
@@ -472,7 +693,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lokasi"
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail || isEdit}
@@ -490,7 +711,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                     <input
                       type="text"
                       id="nama_zona"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-zona"
                       name="nama_zona"
                       onChange={handleChange}
                       defaultValue={formState.status_zona_ruangan_otmil}
@@ -534,6 +755,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -568,6 +790,7 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

@@ -4,15 +4,23 @@ import { Alerts } from './AlertDaftarKasus';
 import {
   apiReadAllWBP,
   apiReadJaksaPenyidik,
-  apiReadKategoriPerkara,
-  apiReadOditur,
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
 } from '../../services/api';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
-const dataUserItem = localStorage.getItem('dataUser');
-const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface WBP {
   wbp_profile_id: string;
@@ -42,10 +50,14 @@ export const AddDaftarKasusModal = ({
     oditur_penyidik_id: [],
     saksi_id: [],
     keteranganSaksis: [],
+    zona_waktu: '',
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
   //state
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +70,7 @@ export const AddDaftarKasusModal = ({
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
   const [dataSaksi, setDataSaksi] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
 
@@ -101,6 +114,100 @@ export const AddDaftarKasusModal = ({
     return true;
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.input-nomor',
+          popover: {
+            title: 'Nomor Kasus',
+            description: 'Isi nomor kasus',
+          },
+        },
+        {
+          element: '.input-nama',
+          popover: {
+            title: 'Nama Kasus',
+            description: 'Isi nama kasus',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Perkara',
+            description: 'Pilih jenis perkara yang diinginkan',
+          },
+        },
+        {
+          element: '.input-lokasi',
+          popover: {
+            title: 'Lokasi Kasus',
+            description: 'Isi lokasi kasus',
+          },
+        },
+        {
+          element: '.i-kejadian',
+          popover: {
+            title: 'Tanggal Kejadian Kasus',
+            description: 'Menentukan tanggal kejadian kasus',
+          },
+        },
+        {
+          element: '.i-pelaporan',
+          popover: {
+            title: 'Tanggal Pelaporan Kasus',
+            description: 'Menentukan tanggal pelaporan kasus',
+          },
+        },
+        {
+          element: '.i-jumlah',
+          popover: {
+            title: 'Jumlah Penyidikan',
+            description: 'Isi jumlah penyidikan',
+          },
+        },
+        {
+          element: '.p-oditur',
+          popover: {
+            title: 'Oditur Penyidikan',
+            description: 'Pilih oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Ketua Oditur Penyidikan',
+            description: 'Pilih ketua oditur penyidikan yang diinginkan',
+          },
+        },
+        {
+          element: '.p-pihak',
+          popover: {
+            title: 'Pihak Terlibat',
+            description: 'Pilih pihak terlibat yang diinginkan',
+          },
+        },
+        {
+          element: '.d-nama',
+          popover: {
+            title: 'Nama Tersangka',
+            description: 'Isi dengan lengkap keterangan',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data kasus`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -122,12 +229,17 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataJenisPerkara(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Oditur = async () => {
@@ -138,16 +250,94 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataOditurPenyidik(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
+  const handleWaktuKejadian = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+  const handleWaktuPelaporan = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  };
   useEffect(() => {
     Promise.all([
+      getTimeZone(),
       tersangka(),
       Saksi(),
       status(),
@@ -173,12 +363,17 @@ export const AddDaftarKasusModal = ({
           prevPihakTerlibat.concat(tersangka),
         );
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Saksi = async () => {
@@ -196,12 +391,17 @@ export const AddDaftarKasusModal = ({
         }));
         setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const status = async () => {
@@ -210,12 +410,17 @@ export const AddDaftarKasusModal = ({
       .then((res) => {
         setDataStatusWBP(res.data.records);
       })
-      .catch((err) =>
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const customStyles = {
@@ -303,6 +508,14 @@ export const AddDaftarKasusModal = ({
       color: 'white',
     }),
   };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const modalStyles: any = {
     backdrop: {
@@ -472,6 +685,20 @@ export const AddDaftarKasusModal = ({
                         : 'Tambah Data Daftar Kasus'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : (
+                  <button className="pr-65">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -490,7 +717,7 @@ export const AddDaftarKasusModal = ({
                       Nomor Kasus
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nomor"
                       name="nomor_kasus"
                       placeholder="Nomor Kasus"
                       onChange={handleChange}
@@ -513,7 +740,7 @@ export const AddDaftarKasusModal = ({
                       Nama Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nama"
                       name="nama_kasus"
                       placeholder="Nama Kasus"
                       onChange={handleChange}
@@ -535,7 +762,7 @@ export const AddDaftarKasusModal = ({
                       Jenis Perkara
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-jenis"
                       options={jenisPerkaraOpstions}
                       isDisabled={isDetail}
                       onChange={handleSelectPerkara}
@@ -558,7 +785,7 @@ export const AddDaftarKasusModal = ({
                       Lokasi Kasus
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
                       name="lokasi_kasus"
                       placeholder="Lokasi Kasus"
                       onChange={handleChange}
@@ -579,14 +806,32 @@ export const AddDaftarKasusModal = ({
                     >
                       Tanggal Kejadian Kasus
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_kejadian"
-                      placeholder="Tanggal Kejadian Kasus"
-                      onChange={handleChange}
-                      disabled={isDetail}
-                    />
+                    <div className="flex flex-row">
+                      <DatePicker
+                        selected={
+                          formState.waktu_kejadian
+                            ? dayjs(formState.waktu_kejadian).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        onChange={handleWaktuKejadian}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
+                        name="waktu_kejadian"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
@@ -604,14 +849,33 @@ export const AddDaftarKasusModal = ({
                     >
                       Tanggal Pelaporan Kasus
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_pelaporan_kasus"
-                      placeholder="Tanggal Pelaporan Kasus"
-                      onChange={handleChange}
-                      disabled={isDetail}
-                    />
+                    <div className="flex flex-row">
+                      <DatePicker
+                        selected={
+                          formState.waktu_pelaporan_kasus
+                            ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        // timeIntervals={15}
+                        onChange={handleWaktuPelaporan}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
+                        name="waktu_pelaporan_kasus"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
@@ -632,7 +896,7 @@ export const AddDaftarKasusModal = ({
                       Jumlah Penyidikan
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jumlah"
                       name="waktu_pelaporan_kasus"
                       placeholder="Jumlah Penyidikan"
                       onChange={handleChange}
@@ -656,7 +920,7 @@ export const AddDaftarKasusModal = ({
                       Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize text-white p-oditur"
                       isMulti
                       options={OditurPenyidikOpstions}
                       isDisabled={isDetail}
@@ -681,7 +945,7 @@ export const AddDaftarKasusModal = ({
                       Ketua Oditur Penyidik
                     </label>
                     <Select
-                      className="capitalize"
+                      className="capitalize p-ketua"
                       options={ketuaOditurPenyidik}
                       isDisabled={isDetail}
                       onChange={handleSelectKetuaOditur}
@@ -707,7 +971,7 @@ export const AddDaftarKasusModal = ({
                     Pihak Terlibat
                   </label>
                   <Select
-                    className="capitalize"
+                    className="capitalize p-pihak"
                     isMulti
                     options={pihakTerlibat}
                     isDisabled={isDetail}
@@ -809,7 +1073,7 @@ export const AddDaftarKasusModal = ({
                       Saksi
                     </label>
 
-                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                    <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t d-nama">
                       <div className="form-group w-2/6">
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -888,6 +1152,7 @@ export const AddDaftarKasusModal = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -922,6 +1187,7 @@ export const AddDaftarKasusModal = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

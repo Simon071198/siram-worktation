@@ -4,6 +4,13 @@ import {
   apiReadAlllokasiOtmil,
   apiReadZona,
 } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import Select from 'react-select';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertKamera';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 interface AddKameraModalProps {
@@ -39,6 +46,9 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   isDetail,
   isEdit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState<any>({
     kamera_id: defaultValue?.deviceId ?? '',
     nama_kamera: defaultValue?.deviceName ?? '',
@@ -70,6 +80,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   const [NamaZona, setNamaZona] = useState<namazona[]>([]);
   const [ruanganotmil, setruanganotmil] = useState<ruangan[]>([]);
   const [lokasiotmil, setlokasiotmil] = useState<lokasi[]>([]);
+  const [filter, setFilter] = useState('');
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -123,6 +134,93 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
     return true;
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Kamera',
+            description: 'Isi nama kamera',
+          },
+        },
+        {
+          element: '.i-url',
+          popover: {
+            title: 'URL RSTP',
+            description: 'Isi URL RSTP',
+          },
+        },
+        {
+          element: '.i-alamat',
+          popover: {
+            title: 'Alamat IP',
+            description: 'Isi alamat IP',
+          },
+        },
+        {
+          element: '#p-status',
+          popover: {
+            title: 'Status Kamera',
+            description: 'Pilih status kamera yang diinginkan',
+          },
+        },
+        {
+          element: '.i-merk',
+          popover: {
+            title: 'Merk',
+            description: 'Isi merk kamera',
+          },
+        },
+        {
+          element: '.i-model',
+          popover: {
+            title: 'Model',
+            description: 'Isi model kamera',
+          },
+        },
+        {
+          element: '.p-ruang',
+          popover: {
+            title: 'Pilih Ruangan Otmil',
+            description: 'Pilih ruangan otmil yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jenis',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Isi jenis ruangan',
+          },
+        },
+        {
+          element: '.i-lokasi',
+          popover: {
+            title: 'Nama Lokasi Otmil',
+            description: 'Isi nama lokasi otmil',
+          },
+        },
+        {
+          element: '.i-zona',
+          popover: {
+            title: 'Zona',
+            description: 'Isi zona kamera',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data kamera`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -143,7 +241,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
   };
 
   const handleRuanganChange = (e: any) => {
-    const selectedRuangan = e.target.value;
+    const selectedRuangan = e.value;
 
     // Temukan data ruangan berdasarkan ID yang dipilih
     const selectedData = ruanganotmil.find(
@@ -199,8 +297,16 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
@@ -224,6 +330,91 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
       transform: 'translate(-50%, -50%)',
       // Add your other modal styles here
     },
+  };
+
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
   };
 
   //return
@@ -282,6 +473,29 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                         : 'Tambah Data Kamera'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -299,7 +513,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       Nama kamera
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_kamera"
                       placeholder="Nama Kamera"
                       onChange={handleChange}
@@ -321,7 +535,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       URL RSTP
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-url"
                       name="url_rtsp"
                       placeholder="URL RSTP"
                       onChange={handleChange}
@@ -343,7 +557,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       Alamat IP
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-alamat"
                       name="ip_address"
                       placeholder="Alamat IP"
                       onChange={handleChange}
@@ -370,6 +584,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       onChange={handleChange}
                       value={formState.status_kamera}
                       disabled={isDetail}
+                      id="p-status"
                     >
                       <option disabled value="">
                         Pilih status
@@ -393,7 +608,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       Merk
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-merk"
                       name="merk"
                       placeholder="Merk"
                       onChange={handleChange}
@@ -415,7 +630,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       model
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-model"
                       name="model"
                       placeholder="model"
                       onChange={handleChange}
@@ -433,10 +648,23 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <label htmlFor="ruangan_otmil_id">
                       Pilih Ruangan otmil:
                     </label>
-                    <select
+                    <Select
+                      className="basic-single p-otmil"
+                      classNamePrefix="select"
+                      isSearchable
+                      isDisabled={isDetail}
+                      styles={customStyles}
+                      name="ruangan_otmil_id"
+                      options={ruanganotmil.map((item) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
+                      onChange={handleRuanganChange}
+                    />
+                    {/* <select
                       id="ruangan_otmil_id"
                       name="ruangan_otmil_id"
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-ruang"
                       value={formState.ruangan_otmil_id}
                       onChange={handleRuanganChange}
                       disabled={isDetail}
@@ -450,7 +678,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                           {item.nama_ruangan_otmil}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'ruangan_otmil_id'
@@ -465,7 +693,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail || isEdit}
@@ -486,7 +714,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lokasi"
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail || isEdit}
@@ -504,7 +732,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     <input
                       type="text"
                       id="nama_zona"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-zona"
                       name="nama_zona"
                       onChange={handleChange}
                       defaultValue={formState.status_zona_ruangan_otmil}
@@ -528,6 +756,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -562,6 +791,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

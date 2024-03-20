@@ -20,10 +20,14 @@ import {
   apiMatraRead,
   apiStatusWbp,
 } from '../../../services/api';
-import { useFetcher } from 'react-router-dom';
+import { useFetcher, useLocation, useNavigate } from 'react-router-dom';
 import { deflate } from 'zlib';
 import { Alerts } from './AlertInmate';
 import { TbLockSquareRoundedFilled } from 'react-icons/tb';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 interface Kota {
   kota_id: string;
@@ -76,6 +80,9 @@ export const AddInmateModal = ({
   token,
   dataWbp,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [pangkat, setPangkat] = useState([]);
   const [kategoriJahat, setKategoriJahat] = useState([]);
   const [jenisPerkara, setJenisPerkara] = useState([]);
@@ -93,11 +100,14 @@ export const AddInmateModal = ({
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
 
+  // console.log(isDetail);
+  // console.log(isEdit);
   const [formState, setFormState] = useState(
     defaultValue || {
       foto_wajah: '',
       nama: '',
       pangkat_id: '',
+      // nama_pangkat: '',
       matra_id: '',
       nrp: '',
       alamat: '',
@@ -122,6 +132,7 @@ export const AddInmateModal = ({
       // vonis_bulan: '',
       // vonis_hari: '',
       tanggal_ditahan_otmil: '',
+      tanggal_masa_penahanan_otmil: '',
       bidang_keahlian_id: '',
       gelang_id: '',
       DMAC: '',
@@ -137,6 +148,12 @@ export const AddInmateModal = ({
       tanggal_penetapan_tersangka: '',
       tanggal_penetapan_terdakwa: '',
       tanggal_penetapan_terpidana: '',
+      zat_adiktif: '',
+      jenis_olahraga: '',
+      // penyakit: '',
+      // berat_badan: '',
+      // tinggi_badan: '',
+      // pola_makan: '',
       // zona_hijau: [],
       // zona_kuning: [],
       // zona_merah: [],
@@ -144,6 +161,9 @@ export const AddInmateModal = ({
       // nama_gateway:''
     },
   );
+
+  console.log(formState,'EDIT BOYS')
+
 
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
@@ -326,9 +346,41 @@ export const AddInmateModal = ({
         });
       }
     } else {
-      console.log('tanpa if');
+      // console.log('tanpa if');
       setFormState({ ...formState, [e.target.name]: e.target.value });
     }
+  };
+
+  const handleSelectPangkat = (e: any) => {
+    setFormState({ ...formState, pangkat_id: e?.value });
+  };
+
+  const handleSelectAgama = (e: any) => {
+    setFormState({ ...formState, agama_id: e?.value });
+  };
+
+  const handleSelectKesatuan = (e: any) => {
+    setFormState({ ...formState, kesatuan_id: e?.value });
+  };
+
+  const handleSelectStatusKawin = (e: any) => {
+    setFormState({ ...formState, status_kawin_id: e?.value });
+  };
+
+  const handleSelectBidangKeahlian = (e: any) => {
+    setFormState({ ...formState, bidang_keahlian_id: e?.value });
+  };
+
+  const handleSelectHunianTahanan = (e: any) => {
+    setFormState({ ...formState, hunian_wbp_otmil_id: e?.value });
+  };
+
+  const handleSelectPendidikan = (e: any) => {
+    setFormState({ ...formState, pendidikan_id: e?.value });
+  };
+
+  const handleSelectMatra = (e: any) => {
+    setFormState({ ...formState, matra_id: e?.value });
   };
 
   const handleSelectProvinsi = (e: any) => {
@@ -359,7 +411,7 @@ export const AddInmateModal = ({
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(formState, 'formState');
+    console.log(formState, 'received values');
     if (!validateForm()) return;
     setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false)); //dikasih  then ... catch
@@ -377,8 +429,8 @@ export const AddInmateModal = ({
 
       // If it's already added, show an error or handle it as needed
       setErrors([
-        ...errors,
-        `Zona ${zonaId} is already assigned to ${inputField}.`,
+          ...errors,
+          `Zona ${zonaId} is already assigned to ${inputField}.`,
       ]);
     } else {
       // If it's not added to any input, assign it to the specified input
@@ -488,12 +540,17 @@ export const AddInmateModal = ({
         setZona(res.data.records);
         setAutocompleteDataZona(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const getAllKategoriPerkara = async () => {
@@ -502,12 +559,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setKategoriJahat(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const getAllJenisPerkara = async () => {
@@ -518,12 +580,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setJenisPerkara(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const pangkatData = async () => {
@@ -532,12 +599,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setPangkat(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kotaData = async () => {
@@ -545,12 +617,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setKota(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const provinsiData = async () => {
@@ -558,12 +635,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setProvinsi(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const agamaData = async () => {
@@ -571,12 +653,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setAgama(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const statusKawinData = async () => {
@@ -584,12 +671,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setStatusKawin(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const pendidikanData = async () => {
@@ -597,12 +689,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setPendidikan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const keahlianData = async () => {
@@ -610,12 +707,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setKeahlian(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kesatuanData = async () => {
@@ -623,12 +725,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setKesatuan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const hunianData = async () => {
@@ -641,12 +748,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setHunian(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const gelangData = async () => {
@@ -662,12 +774,17 @@ export const AddInmateModal = ({
         // const filter = result.filter((item:any)=>!dataGelangId.includes(item.gelang_id))
         setGelang(result);
       }, token)
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const matraData = async () => {
@@ -684,12 +801,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setMatra(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const statusWbpData = async () => {
@@ -706,12 +828,17 @@ export const AddInmateModal = ({
       .then((res) => {
         setStatusWbp(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const handleRemoveFoto = () => {
@@ -830,6 +957,408 @@ export const AddInmateModal = ({
     }),
   };
 
+  // Kodingan Driver Tutorial
+
+  const handleClickTutorial = () => {
+    const steps = [
+      // {
+      //   element: '.f-unggah-gambar',
+      //   popover: {
+      //     title: 'Tombol Unggah Gambar',
+      //     description: 'Tombol unggah foto tersangka',
+      //   },
+
+      // },
+      {
+        element: '.t-remove-gambar',
+        popover: {
+          title: 'Tombol Remove Gambar',
+          description: 'Tombol remove foto tersangka',
+        },
+      },
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama tersangka',
+          description: 'Isi nama tersangka',
+        },
+      },
+      {
+        element: '.f-pangkat',
+        popover: {
+          title: 'Pangkat tersangka',
+          description: 'Pilih pangkat tersangka',
+        },
+      },
+      {
+        element: '.f-matra',
+        popover: {
+          title: 'Matra tersangka',
+          description: 'Pilih matra tersangka',
+        },
+      },
+      {
+        element: '.f-nrp',
+        popover: {
+          title: 'Nomor registrasi pegawai tersangka',
+          description: 'Isi nomor registrasi pegawai tersangka',
+        },
+      },
+      {
+        element: '.f-pendidikan',
+        popover: {
+          title: 'Pendidikan militer tersangka',
+          description: 'Pilih Pendidikan militer tersangka',
+        },
+      },
+      {
+        element: '.f-kesatuan',
+        popover: {
+          title: 'Kesatuan tersangka',
+          description: 'Pilih kesatuan tersangka',
+        },
+      },
+      {
+        element: '.f-kelamin',
+        popover: {
+          title: 'Jenis Kelamin tersangka',
+          description: 'Pilih jenis kelamin tersangka',
+        },
+      },
+      {
+        element: '.f-agama',
+        popover: {
+          title: 'Agama tersangka',
+          description: 'Pilih agama tersangka',
+        },
+      },
+      {
+        element: '.f-tempat-lahir',
+        popover: {
+          title: 'Tempat lahir tersangka',
+          description: 'Isi tempat lahir tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-lahir',
+        popover: {
+          title: 'Tanggal lahir tersangka',
+          description: 'Isi tanggal lahir tersangka',
+        },
+      },
+      {
+        element: '.f-provinsi',
+        popover: {
+          title: 'Provinsi domisili tersangka',
+          description: 'Pilih provinsi domisili tersangka',
+        },
+      },
+      {
+        element: '.f-kota',
+        popover: {
+          title: 'Kota domisili tersangka',
+          description: 'Pilih kota domisili tersangka',
+        },
+      },
+      {
+        element: '.f-alamat',
+        popover: {
+          title: 'Alamat domisili tersangka',
+          description: 'Isi alamat domisili tersangka',
+        },
+      },
+      {
+        element: '.f-status-kawin',
+        popover: {
+          title: 'Status perkawinan tersangka',
+          description: 'Pilih status perkawinan tersangka',
+        },
+      },
+      {
+        element: '.f-nama-keluarga',
+        popover: {
+          title: 'Nama keluarga tersangka',
+          description: 'Isi nama keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-status-keluarga',
+        popover: {
+          title: 'Status keluarga tersangka',
+          description: 'Isi status keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-kontak-keluarga',
+        popover: {
+          title: 'Nomor kontak keluarga tersangka',
+          description: 'Isi nomor kontak keluarga tersangka',
+        },
+      },
+      {
+        element: '.f-penyakit',
+        popover: {
+          title: 'Status penyakit tersangka',
+          description: 'Pilih status penyakit tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-ditahan',
+        popover: {
+          title: 'Tanggal ditahan tersangka',
+          description: 'Isi tanggal ditahan tersangka',
+        },
+      },
+      {
+        element: '.f-keahlian',
+        popover: {
+          title: 'Keahlian tersangka',
+          description: 'Isi keahlian tersangka',
+        },
+      },
+      {
+        element: '.f-gelang',
+        popover: {
+          title: 'Merek gelang tersangka',
+          description: 'Pilih merek gelang tersangka',
+        },
+      },
+      {
+        element: '.f-dmac-gelang',
+        popover: {
+          title: 'Kode DMAC gelang tersangka',
+          description: 'Isi kode DMAC gelang tersangka',
+        },
+      },
+      {
+        element: '.f-residivis',
+        popover: {
+          title: 'Residivis tersangka',
+          description: 'Pilih residivis tersangka',
+        },
+      },
+      {
+        element: '.f-hunian-tahanan',
+        popover: {
+          title: 'Tempat hunian tahanan tersangka',
+          description: 'Pilih tempat hunian tahanan tersangka',
+        },
+      },
+      {
+        element: '.f-nomor-tahanan',
+        popover: {
+          title: 'Nomor tahanan tersangka',
+          description: 'Isi tahanan tersangka',
+        },
+      },
+      {
+        element: '.f-status-terisolasi',
+        popover: {
+          title: 'Status terisolasi tersangka',
+          description: 'Pilih status terisolasi tersangka',
+        },
+      },
+      {
+        element: '.f-status-tersangka',
+        popover: {
+          title: 'Status Wbp tersangka',
+          description: 'Pilih status Wbp tersangka',
+        },
+      },
+      {
+        element: '.f-tanggal-masa-penahanan',
+        popover: {
+          title: 'Tanggal masa penahanan tersangka',
+          description: 'Isi tanggal masa penahanan tersangka',
+        },
+      },
+      {
+        element: '.f-kesehatan-penyakit',
+        popover: {
+          title: 'Nama penyakit tersangka',
+          description: 'Isi nama penyakit tersangka',
+        },
+      },
+      {
+        element: '.f-berat-badan',
+        popover: {
+          title: 'Berat badan tersangka',
+          description: 'Isi berat badan tersangka',
+        },
+      },
+      {
+        element: '.f-tinggi-badan',
+        popover: {
+          title: 'Tinggi badan tersangka',
+          description: 'Isi tinggi badan tersangka',
+        },
+      },
+      {
+        element: '.f-pola-makan',
+        popover: {
+          title: 'Nama pola makan tersangka',
+          description: 'Isi nama pola makan tersangka',
+        },
+      },
+      {
+        element: '.f-jenis-olahraga',
+        popover: {
+          title: 'Jenis olahraga tersangka',
+          description: 'Pilih jenis olahraga tersangka',
+        },
+      },
+      {
+        element: '.f-zat-adiktif',
+        popover: {
+          title: 'Zat adiktif tersangka',
+          description: 'Pilih zat adiktif tersangka',
+        },
+      },
+      {
+        element: '.akses-zona',
+        popover: {
+          title: 'Zona akses tersangka',
+          description: 'Pilih zona akses tersangka',
+        },
+      },
+      {
+        element: '.zona-hijau',
+        popover: {
+          title: 'Zona hijau tersangka',
+          description: 'Daftar zona hijau tersangka',
+        },
+      },
+      {
+        element: '.zona-merah',
+        popover: {
+          title: 'Zona merah tersangka',
+          description: 'Daftar zona merah tersangka',
+        },
+      },
+      {
+        element: '.tombol-submit',
+        popover: {
+          title: 'Tombol Submit tersangka',
+          description: 'Klik tombol submit tersangka',
+        },
+      },
+    ];
+
+    // Kondisi Status Penyakit Tersangka
+
+    if (formState.is_sick === '1') {
+      steps.splice(20, 0, {
+        element: '.f-nama-penyakit',
+        popover: {
+          title: 'Nama penyakit tersangka',
+          description: 'Isi nama penyakit tersangka',
+        },
+      });
+    }
+
+    // Kondisi Status Penyakit Tersangka
+
+    // Kondisi Tambah,Edit,Detail
+
+    let gambarElement: string | undefined;
+    let gambarTitle: string | undefined;
+    let gambarDescription: string | undefined;
+
+    if (isEdit) {
+      gambarElement = '.f-edit-gambar';
+      gambarTitle = 'Tombol Edit Gambar';
+      gambarDescription = 'Tombol edit foto tersangka';
+    } else if (!isDetail && !isEdit) {
+      gambarElement = '.f-unggah-gambar';
+      gambarTitle = 'Tombol Unggah Gambar';
+      gambarDescription = 'Tombol unggah foto tersangka';
+    }
+
+    if (isEdit && gambarElement && gambarTitle && gambarDescription) {
+      steps.splice(0, 0, {
+        element: gambarElement,
+        popover: {
+          title: gambarTitle,
+          description: gambarDescription,
+        },
+      });
+    } else if (
+      !isEdit &&
+      !isDetail &&
+      gambarElement &&
+      gambarTitle &&
+      gambarDescription
+    ) {
+      steps.splice(0, 0, {
+        element: gambarElement,
+        popover: {
+          title: gambarTitle,
+          description: gambarDescription,
+        },
+      });
+    }
+
+    // Kondisi Tambah,Edit,Detail
+
+    // Kondisi Status Wbp Tersangka
+
+    let tanggalElement: string | undefined;
+    let tanggalTitle: string | undefined;
+    let tanggalDescription: string | undefined;
+
+    if (
+      formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+    ) {
+      tanggalElement = '.f-tanggal-terpidana';
+      tanggalTitle = 'Tanggal terpidana tersangka';
+      tanggalDescription = 'Isi tanggal terpidana tersangka';
+    } else if (
+      formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+    ) {
+      tanggalElement = '.f-tanggal-terdakwa';
+      tanggalTitle = 'Tanggal terpidana tersangka';
+      tanggalDescription = 'Isi tanggal terpidana tersangka';
+    } else if (
+      formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
+    ) {
+      tanggalElement = '.f-tanggal-tersangka';
+      tanggalTitle = 'Tanggal penetapan tersangka';
+      tanggalDescription = 'Isi tanggal penetapan tersangka';
+    }
+
+    if (
+      formState.is_sick === '1' &&
+      tanggalElement &&
+      tanggalTitle &&
+      tanggalDescription
+    ) {
+      steps.splice(30, 0, {
+        element: tanggalElement,
+        popover: {
+          title: tanggalTitle,
+          description: tanggalDescription,
+        },
+      });
+    } else if (tanggalElement && tanggalTitle && tanggalDescription) {
+      steps.splice(29, 0, {
+        element: tanggalElement,
+        popover: {
+          title: tanggalTitle,
+          description: tanggalDescription,
+        },
+      });
+    }
+
+    // Kondisi Status Wbp Tersangka
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
+  };
+
   return (
     // <div
     //   ref={modalContainerRef}
@@ -879,16 +1408,26 @@ export const AddInmateModal = ({
             </div>
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-              <div className="w-full flex justify-between mb-2  ">
-                <div>
-                  <h3 className="text-xl font-semibold text-black  dark:text-white">
+              <div className="w-full flex justify-between mb-2  items-center  ">
+                <div className='flex items-center gap-4'>
+                  <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail data Tersangka'
                       : isEdit
                         ? 'Edit data Tersangka'
                         : 'Tambah data Tersangka'}
                   </h3>
-                </div>
+                  {!isDetail && (
+                  <button className="">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+              </div>
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -962,13 +1501,13 @@ export const AddInmateModal = ({
                               />
                               <div className="flex gap-2">
                                 <label htmlFor="image-upload">
-                                  <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                                  <div className="f-edit-gambar cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
                                     Edit Gambar
                                   </div>
                                 </label>
                                 <button
                                   onClick={handleRemoveFoto}
-                                  className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                                  className="t-remove-gambar cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -1020,14 +1559,14 @@ export const AddInmateModal = ({
                               />
                               <div className="flex gap-2">
                                 <label htmlFor="image-upload">
-                                  <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                                  <div className="f-unggah-gambar cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
                                     Unggah Gambar
                                   </div>
                                 </label>
 
                                 <button
                                   onClick={handleRemoveFoto}
-                                  className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                                  className="t-remove-gambar cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -1056,7 +1595,7 @@ export const AddInmateModal = ({
 
                         <div className="flex flex-col gap-4 ">
                           {/* Nama */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-nama form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1079,7 +1618,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Pangkat */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-pangkat form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1094,7 +1633,7 @@ export const AddInmateModal = ({
                                 isEdit || isDetail
                                   ? {
                                       value: formState.pangkat_id,
-                                      label: formState.pangkat,
+                                      label: formState.nama_pangkat,
                                     }
                                   : formState.pangkat_id
                               }
@@ -1107,6 +1646,7 @@ export const AddInmateModal = ({
                                 value: item.pangkat_id,
                                 label: item.nama_pangkat,
                               }))}
+                              onChange={handleSelectPangkat}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -1116,7 +1656,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Matra */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-matra form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1141,9 +1681,10 @@ export const AddInmateModal = ({
                                   : formState.matra_id
                               }
                               options={matra.map((item: any) => ({
-                                value: item.pengunjung_id,
+                                value: item.matra_id,
                                 label: item.nama_matra,
                               }))}
+                              onChange={handleSelectMatra}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -1153,7 +1694,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* NRP */}
-                          <div className="form-group w-full flex flex-col">
+                          <div className="f-nrp form-group w-full flex flex-col">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1181,7 +1722,7 @@ export const AddInmateModal = ({
 
                       <div className="grid grid-cols-2 gap-4 mt-5">
                         {/* Pendidikan*/}
-                        <div className="form-group w-full flex flex-col ">
+                        <div className="f-pendidikan form-group w-full flex flex-col ">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1209,6 +1750,7 @@ export const AddInmateModal = ({
                               value: item.pendidikan_id,
                               label: item.nama_pendidikan,
                             }))}
+                            onChange={handleSelectPendidikan}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1220,7 +1762,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kesatuan */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kesatuan form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1264,6 +1806,7 @@ export const AddInmateModal = ({
                               value: item.kesatuan_id,
                               label: item.nama_kesatuan,
                             }))}
+                            onChange={handleSelectKesatuan}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1273,7 +1816,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Jenis Kelamin */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kelamin form-group w-full flex flex-col">
                           <label
                             className=" block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1303,7 +1846,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Agama */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-agama form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1348,6 +1891,7 @@ export const AddInmateModal = ({
                               value: item.agama_id,
                               label: item.nama_agama,
                             }))}
+                            onChange={handleSelectAgama}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1357,7 +1901,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Tempat Lahir */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-tempat-lahir form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1382,7 +1926,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Tanggal Lahir */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-tanggal-lahir form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1407,7 +1951,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Provinsi */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-provinsi form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1462,7 +2006,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kota */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kota form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1528,7 +2072,7 @@ export const AddInmateModal = ({
                         </div>
                       </div>
                       {/* Alamat */}
-                      <div className="form-group w-full flex flex-col">
+                      <div className="f-alamat form-group w-full flex flex-col">
                         <label
                           className=" block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
@@ -1552,7 +2096,7 @@ export const AddInmateModal = ({
 
                       <div className="grid grid-cols-2 gap-4 ">
                         {/* Status Kawin */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-status-kawin form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1597,6 +2141,7 @@ export const AddInmateModal = ({
                               value: item.status_kawin_id,
                               label: item.nama_status_kawin,
                             }))}
+                            onChange={handleSelectStatusKawin}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1608,7 +2153,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kontak Keluarga Nama */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-nama-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1633,7 +2178,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Status Keluarga */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-status-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1659,7 +2204,7 @@ export const AddInmateModal = ({
                         </div>
 
                         {/* Kontak Keluarga no HP */}
-                        <div className="form-group w-full flex flex-col">
+                        <div className="f-kontak-keluarga form-group w-full flex flex-col">
                           <label
                             className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
@@ -1682,64 +2227,6 @@ export const AddInmateModal = ({
                             )}
                           </p>
                         </div>
-
-                        {/* Penyakit */}
-                        <div className="form-group w-full ">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Penyakit (?)
-                          </label>
-                          <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="is_sick"
-                            onChange={handleChange}
-                            value={formState.is_sick}
-                            disabled={isDetail}
-                          >
-                            <option value="" disabled>
-                              Silahkan Pilih
-                            </option>
-
-                            <option value="0">Tidak</option>
-                            <option value="1">Ya</option>
-                          </select>
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'is_sick' ? 'Pilih Ya/Tidak' : '',
-                            )}
-                          </p>
-                        </div>
-
-                        {formState.is_sick === '0' ||
-                        formState.is_sick === '' ? null : (
-                          <>
-                            <div className="form-group w-full flex flex-col">
-                              <label
-                                className="  block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Nama Penyakit
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="wbp_sickness"
-                                placeholder="Nama Penyakit"
-                                onChange={handleChange}
-                                value={formState.wbp_sickness}
-                                disabled={isDetail}
-                              />
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'wbp_sickness'
-                                    ? 'Masukan nama penyakit'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1916,7 +2403,7 @@ export const AddInmateModal = ({
                       {isDetail && (
                         <div className=" grid grid-cols-3 gap-4">
                           {/* Vonis Tahun */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1938,10 +2425,10 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
 
                           {/* Vonis Bulan */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1963,10 +2450,10 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
 
                           {/* Vonis Hari */}
-                          <div className="form-group w-full ">
+                          {/* <div className="form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -1988,13 +2475,13 @@ export const AddInmateModal = ({
                                   : '',
                               )}
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                       )}
                       <div className="grid grid-cols-1 gap-4">
                         <div className="grid grid-cols-2 gap-4">
                           {/* Tanggal diTahan */}
-                          <div className="form-group w-full ">
+                          <div className="f-tanggal-ditahan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2019,7 +2506,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Keahlian */}
-                          <div className="form-group w-full ">
+                          <div className="f-keahlian form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2063,6 +2550,7 @@ export const AddInmateModal = ({
                                 value: item.bidang_keahlian_id,
                                 label: item.nama_bidang_keahlian,
                               }))}
+                              onChange={handleSelectBidangKeahlian}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2074,7 +2562,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Gelang */}
-                          <div className="form-group w-full ">
+                          <div className="f-gelang form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2149,7 +2637,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* DMAC Gelang */}
-                          <div className="form-group w-full ">
+                          <div className="f-dmac-gelang form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2173,7 +2661,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Residivis */}
-                          <div className="form-group w-full ">
+                          <div className="f-residivis form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2203,7 +2691,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Hunian Tahanan */}
-                          <div className="form-group w-full ">
+                          <div className="f-hunian-tahanan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2231,6 +2719,7 @@ export const AddInmateModal = ({
                                 value: item.hunian_wbp_otmil_id,
                                 label: item.nama_hunian_wbp_otmil,
                               }))}
+                              onChange={handleSelectHunianTahanan}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2242,7 +2731,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Nomor Tahanan*/}
-                          <div className="form-group w-full ">
+                          <div className="f-nomor-tahanan form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2268,7 +2757,7 @@ export const AddInmateModal = ({
                           </div>
 
                           {/* Terisolasi */}
-                          <div className="form-group w-full ">
+                          <div className="f-status-terisolasi form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2297,7 +2786,7 @@ export const AddInmateModal = ({
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           {/* Status Wbp*/}
-                          <div className="form-group w-full ">
+                          <div className="f-status-tersangka form-group w-full ">
                             <label
                               className="  block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2432,7 +2921,7 @@ export const AddInmateModal = ({
                             <>
                               {/* Tanggal Penetapan Terpidana*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2459,7 +2948,7 @@ export const AddInmateModal = ({
 
                               {/* Tanggal Penetapan Terdakwa*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2486,7 +2975,7 @@ export const AddInmateModal = ({
 
                               {/* Tanggal Penetapan Tersangka*/}
                               <div
-                                className={`form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                                className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
                               >
                                 <label
                                   className="  block text-sm font-medium text-black dark:text-white"
@@ -2512,6 +3001,260 @@ export const AddInmateModal = ({
                               </div>
                             </>
                           )}
+
+                          {/* Tanggal Masa Penahanan */}
+                          <div className="f-tanggal-masa-penahanan form-group w-full ">
+                            <label
+                              className="  block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Tanggal Masa Penahanan
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                              name="tanggal_masa_penahanan_otmil"
+                              onChange={handleChange}
+                              value={formState.tanggal_masa_penahanan_otmil}
+                              disabled={isDetail}
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'tanggal_masa_penahanan_otmil'
+                                  ? 'Masukan tanggal masa penahanan'
+                                  : '',
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----- DATA KESEHATAN ----- */}
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Data Kesehatan
+                      </p>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="grid grid-cols-2 gap-4">
+                                  {/* Penyakit */}
+                        <div className="f-penyakit form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Penyakit (?)
+                          </label>
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_sick"
+                            onChange={handleChange}
+                            value={formState.is_sick}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Silahkan Pilih
+                            </option>
+
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_sick' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {formState.is_sick === '0' ||
+                        formState.is_sick === '' ? null : (
+                          <>
+                            <div className="f-nama-penyakit form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Nama Penyakit
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="wbp_sickness"
+                                placeholder="Nama Penyakit"
+                                onChange={handleChange}
+                                value={formState.wbp_sickness}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'wbp_sickness'
+                                    ? 'Masukan nama penyakit'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                            {/* Berat Badan */}
+                            {/* <div className="f-berat-badan form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Berat Badan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="berat_badan"
+                                placeholder="Berapa berat badan"
+                                onChange={handleChange}
+                                value={formState.berat_badan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'berat_badan'
+                                    ? 'Masukan berat badan'
+                                    : '',
+                                )}
+                              </p>
+                            </div> */}
+
+                            {/* Tinggi Badan */}
+                            {/* <div className="f-tinggi-badan form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tinggi Badan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tinggi_badan"
+                                placeholder="Berapa tinggi badan"
+                                onChange={handleChange}
+                                value={formState.tinggi_badan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tinggi_badan'
+                                    ? 'Masukan tinggi badan'
+                                    : '',
+                                )}
+                              </p>
+                            </div> */}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ----- DATA PERILAKU ----- */}
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Data Perilaku
+                      </p>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Pola Makan */}
+                            {/* <div className="f-pola-makan form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Pola Makan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="pola_makan"
+                                placeholder="Nama pola makan"
+                                onChange={handleChange}
+                                value={formState.pola_makan}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'pola_makan'
+                                    ? 'Masukan nama pola makan'
+                                    : '',
+                                )}
+                              </p>
+                            </div> */}
+
+                            {/* Jenis Olahraga */}
+                            <div className="f-jenis-olahraga form-group w-full flex flex-col">
+                              <label
+                                className=" block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Jenis Olahraga
+                              </label>
+                              <select
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="jenis_olahraga"
+                                onChange={handleChange}
+                                value={formState.jenis_olahraga}
+                                disabled={isDetail}
+                              >
+                                <option disabled value="">
+                                  Pilih Jenis Olahraga
+                                </option>
+                                <option value="0">Futsal</option>
+                                <option value="1">Voli</option>
+                                <option value="2">Badminton</option>
+                                <option value="3">Berenang</option>
+                                <option value="4">Golf</option>
+                                <option value="5">Basket</option>
+                                <option value="6">Sepak Bola</option>
+                              </select>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'jenis_olahraga'
+                                    ? 'Pilih jenis olahraga'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Konsumsi Zat Adiktif */}
+                            <div className="f-zat-adiktif form-group w-full flex flex-col">
+                              <label
+                                className=" block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Jenis Zat Adiktif
+                              </label>
+                              <select
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="zat_adiktif"
+                                onChange={handleChange}
+                                value={formState.zat_adiktif}
+                                disabled={isDetail}
+                              >
+                                <option disabled value="">
+                                  Pilih Jenis Zat Adiktif
+                                </option>
+                                <option value="0">Nikotin</option>
+                                <option value="1">Alkohol</option>
+                                <option value="2">Kafein</option>
+                                <option value="3">Amfetamin</option>
+                                <option value="4">Ganja</option>
+                                <option value="5">Kokain</option>
+                                <option value="6">Heroin</option>
+                              </select>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'zat_adiktif'
+                                    ? 'Pilih jenis zat adiktif'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2519,13 +3262,13 @@ export const AddInmateModal = ({
                     {isDetail ? null : (
                       <>
                         {/*  Akses Zona  */}
-                        <div className=" grid grid-cols-3 gap-5 justify-normal pt-4">
+                        <div className="grid grid-cols-3 gap-5 justify-normal pt-4">
                           <div className="w-full col-span-3">
                             <h3 className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                               Akses Zona
                             </h3>
 
-                            <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg ">
+                            <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg akses-zona">
                               {isEdit
                                 ? autocompleteDataZona
                                     ?.filter(
@@ -2647,7 +3390,7 @@ export const AddInmateModal = ({
 
                     {/*  Zona  */}
                     <div className=" grid grid-cols-2 gap-5 justify-normal pt-4">
-                      <div className="w-full ">
+                      <div className="zona-hijau w-full ">
                         <h3 className="text-md font-semibold mb-2">
                           Zona Hijau
                         </h3>
@@ -2775,7 +3518,7 @@ export const AddInmateModal = ({
 
                   </div> */}
 
-                      <div className="w-full ">
+                      <div className="zona-merah w-full ">
                         <h3 className="text-md font-semibold mb-2">
                           Zona Merah
                         </h3>
@@ -2947,7 +3690,7 @@ export const AddInmateModal = ({
 
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                       buttonLoad ? 'bg-slate-400' : ''
                     }`}
                     type="submit"
@@ -2981,7 +3724,7 @@ export const AddInmateModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                       buttonLoad ? 'bg-slate-400' : ''
                     }`}
                     type="submit"

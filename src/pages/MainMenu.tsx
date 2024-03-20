@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MenuItem from '../components/MenuItem';
 import Logo from '../images/logo/logo.png';
 import { PiIdentificationCardThin } from 'react-icons/pi';
 import { VscLaw } from 'react-icons/vsc';
+import { IoDocumentText } from 'react-icons/io5';
 
 import {
   CameraIcon,
@@ -150,13 +151,13 @@ const routes = [
   {
     id: 10,
     name: 'Kamera Live',
-    link: '/kamera-dev-test',
+    link: '/kamera',
     icon: CameraIcon,
   },
   {
     id: 10,
     name: 'Kamera Playback',
-    link: '/kamera-playback',
+    link: '/camera-playback',
     icon: CameraIcon,
   },
   {
@@ -188,6 +189,12 @@ const routes = [
     name: 'Version',
     link: '/version',
     icon: LogIcon,
+  },
+  {
+    id: 16,
+    name: 'Tutorial',
+    link: '/tutorial-data',
+    icon: <IoDocumentText size={80} />,
   },
 ];
 

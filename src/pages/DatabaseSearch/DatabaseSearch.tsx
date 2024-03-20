@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 import {
   apiVisitorSearch,
   apiWatchlistHistory,
   webserviceurl,
 } from '../../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertDatabaseSearch';
+import { Error403Message } from '../../utils/constants';
 
 export default function DatabaseSearch() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [imagePreview, setImagePreview]: any = useState(null);
   const [searchResult, setSearchResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,6 +24,7 @@ export default function DatabaseSearch() {
   const [detailWatchlist, setDetailDpo] = useState([{}]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [filter, setFilter] = useState('');
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -27,10 +37,34 @@ export default function DatabaseSearch() {
     }
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.d-unggah',
+          popover: {
+            title: 'Pencarian Berdasarkan Gambar',
+            description: 'Klik untuk unggah gambar yang ingin dicari',
+          },
+        },
+        {
+          element: '.d-hasil',
+          popover: {
+            title: 'Hasil Pencarian',
+            description: 'Menampilkan hasil pencarian berdasarkan gambar',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleRemoveFoto = () => {
     setImagePreview(null);
     const inputElement = document.getElementById(
-      'image-upload'
+      'image-upload',
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
@@ -59,11 +93,21 @@ export default function DatabaseSearch() {
 
   const handleCardClick = async (data: any) => {
     setSelectedCard(data);
-    apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 }).then(
-      (res) => {
+    apiWatchlistHistory({ visitorId: data.visitor_id, pageSize: 5 })
+      .then((res) => {
         setDetailDpo(res.records);
-      }
-    );
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
     setIsModalOpen(true); // Open the modal when a card is clicked
   };
 
@@ -90,7 +134,21 @@ export default function DatabaseSearch() {
       <div className="relative w-full bg-boxdark shadow-md">
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 "></div>
         <div className="mx-4 relative ">
-          <h1 className="py-4 text-white text-xl">Pencarian di Database</h1>
+          <div className="w-full flex justify-between">
+            <h1 className="py-4 text-white text-xl">Pencarian di Database</h1>
+
+            {/* <div className="w-5"> */}
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+            {/* </div> */}
+          </div>
+
           <div className="border-[0.1px] border-b border-white opacity-30 "></div>
           <div className="mt-5 grid grid-cols-1 gap-4 text-center">
             <div className="flex flex-col justify-center  text-white">
@@ -105,7 +163,7 @@ export default function DatabaseSearch() {
             <div className="w-full flex flex-col gap-2">
               <div className="flex justify-center">
                 <div
-                  className={`w-[500px] h-70 items-center flex justify-center  rounded border border-blue-500 bg-gray p-1 dark:bg-meta-4 ${
+                  className={`d-unggah w-[500px] h-70 items-center flex justify-center  rounded border border-blue-500 bg-gray p-1 dark:bg-meta-4 ${
                     imagePreview ? '' : 'mb-4'
                   }`}
                 >
@@ -189,7 +247,10 @@ export default function DatabaseSearch() {
               </div>
               {imagePreview && (
                 <div className="flex justify-center mb-4">
-                  <button onClick={handleSearch} className="bg-primary text-white px-6 py-1 rounded-md cursor-pointer w-[500px]">
+                  <button
+                    onClick={handleSearch}
+                    className="bg-primary text-white px-6 py-1 rounded-md cursor-pointer w-[500px]"
+                  >
                     <div className="flex items-center justify-center gap-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +287,7 @@ export default function DatabaseSearch() {
 
       <div className="">
         <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px] ">
-          <div className=" grid grid-cols-1 gap-6">
+          <div className=" grid grid-cols-1 gap-6 d-hasil">
             <div className="bg-boxdark px-4 py-4 flex">
               <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
                 <img
@@ -268,8 +329,6 @@ export default function DatabaseSearch() {
                 </div>
               </div>
             </div>
-
-          
           </div>
         </div>
       </div>

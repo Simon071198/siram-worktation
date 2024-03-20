@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -42,7 +45,7 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setDataAddPenugasan({
       ...dataAddPenugasan,
@@ -55,6 +58,31 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
     } else {
       return true;
     }
+  };
+  const [filter, setFilter] = useState('');
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Penugasan',
+            description: 'Isi nama penugasan',
+          },
+        },
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,6 +127,18 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Tambah Data Shift Kerja
               </h1>
+
+              {/* <div className="w-10"> */}
+              <button className="pr-45">
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -120,7 +160,7 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
                       onChange={handleChange}
                       value={dataAddPenugasan.nama_penugasan}
                       name="nama_penugasan"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nama"
                     />
                     <div className="h-3">
                       <h1 className="pl-2 text-xs text-red-500">{error}</h1>
@@ -128,7 +168,7 @@ const ModalAddPenugasan: React.FC<AddRoomModalProps> = ({
                   </div>
                 </div>
                 <button
-                  className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                  className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 b-submit"
                   type="submit"
                 >
                   Submit

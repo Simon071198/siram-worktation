@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Select from 'react-select';
 import { clearScreenDown } from 'readline';
 import {
   apiReadAllRole,
@@ -8,6 +9,11 @@ import {
   apiTipeAsetRead,
 } from '../../services/api';
 import { Alerts } from './AlertInventaris';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 interface AddInventarisModalProps {
   closeModal: () => void;
@@ -29,6 +35,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   isEdit,
   token,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_aset: '',
@@ -51,6 +60,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   const [tipeAset, setTipeAset]: any = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -67,6 +77,192 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleSelectTipeBarang = (e: any) => {
+    // setSelectedOption(e)
+    setFormState({ ...formState, tipe_aset_id: e?.value });
+  };
+
+  const handleSelectRuangan = (e: any) => {
+    // setSelectedOption(e)
+    setFormState({ ...formState, ruangan_otmil_id: e?.value });
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.b-unggah-gambar',
+          popover: {
+            title: `${isEdit ? 'Edit' : 'Unggah'} Gambar`,
+            description: 'Upload gambar profile',
+          },
+        },
+        {
+          element: '.input-name',
+          popover: {
+            title: 'Nama Barang',
+            description: 'Isi nama barang',
+          },
+        },
+        {
+          element: '.s-number',
+          popover: { title: 'Serial Number', description: 'Isi serial number' },
+        },
+        {
+          element: '.t-barang',
+          popover: {
+            title: 'Tipe Barang',
+            description: 'Pilih tipe barang',
+          },
+        },
+        {
+          element: '.input-merek',
+          popover: {
+            title: 'Merek',
+            description: 'Isi nama merek',
+          },
+        },
+        {
+          element: '.input-model',
+          popover: {
+            title: 'Model',
+            description: 'Isi nama model',
+          },
+        },
+        {
+          element: '.p-ruangan',
+          popover: {
+            title: 'Ruangan',
+            description: 'Pilih ruangan yang sesuai',
+          },
+        },
+        {
+          element: '.p-kondisi',
+          popover: {
+            title: 'Kondisi',
+            description: 'Pilih kondisi yang sesuai',
+          },
+        },
+        {
+          element: '.t-keterangan',
+          popover: {
+            title: 'Keterangan',
+            description: 'Isi keterangan dengan lengkap',
+          },
+        },
+        {
+          element: '.t-masuk',
+          popover: {
+            title: 'Tanggal Masuk',
+            description: 'Menentukan tanggal masuk',
+          },
+        },
+        {
+          element: '.m-garansi',
+          popover: {
+            title: 'Masa Garansi',
+            description: 'Menentukan tanggal masa garansi',
+          },
+        },
+        {
+          element: `${isEdit ? '#t-data-ubah' : '#t-data'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'} Data Inventaris`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data inventaris`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
   };
 
   const handleRemoveFoto = () => {
@@ -90,11 +286,11 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'nama_ruangan_lemasmil' &&
+        // key !== 'nama_ruangan_lemasmil' &&
         key !== 'status_zona_lemasmil' &&
         key !== 'updated_at' &&
         key !== 'garansi' &&
-        key !== 'nama_tipe' &&
+        // key !== 'nama_tipe' &&
         key !== 'ruangan_lemasmil_id'
       ) {
         if (!value) {
@@ -139,9 +335,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       setRuangan(response.data.records);
       setIsLoading(false);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -155,9 +356,14 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       // console.log(response,'RUANGAN')
       setTipeAset(response.data.records);
     } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: e.message,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -238,6 +444,29 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         : 'Tambah Data Inventaris'}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-70">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -299,7 +528,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-unggah-gambar">
                                 Edit Gambar
                               </div>
                             </label>
@@ -358,7 +587,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-unggah-gambar">
                                 Unggah Gambar
                               </div>
                             </label>
@@ -404,7 +633,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           Nama barang
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-name"
                           onChange={handleChange}
                           name="nama_aset"
                           placeholder="Nama barang"
@@ -427,7 +656,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           Serial number
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary s-number"
                           onChange={handleChange}
                           name="serial_number"
                           placeholder="Serial number"
@@ -451,22 +680,30 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         >
                           Tipe barang
                         </label>
-                        <select
-                          onChange={handleChange}
+                        <Select
+                          className="basic-single t-barang"
+                          classNamePrefix="select"
+                          styles={customStyles}
                           name="tipe_aset_id"
-                          value={formState.tipe_aset_id}
-                          disabled={isDetail}
-                          className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
-                        >
-                          <option disabled value="">
-                            Pilih tipe
-                          </option>
-                          {tipeAset.map((item: any) => (
-                            <option value={item.tipe_aset_id}>
-                              {item.nama_tipe}
-                            </option>
-                          ))}
-                        </select>
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih tipe aset"
+                          // value={formState.tipe_aset_id}
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.tipe_aset_id,
+                                label: formState.nama_tipe,
+                              }
+                              : formState.tipe_aset_id
+                          }
+                          options={tipeAset.map((item: any) => ({
+                            value: item.tipe_aset_id,
+                            label: item.nama_tipe,
+                          }))}
+                          onChange={handleSelectTipeBarang}
+                        />
                         <p className="error-text absolute -bottom-5">
                           {errors.map((item) =>
                             item === 'tipe_aset_id' ? 'Pilih tipe' : '',
@@ -487,7 +724,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           Merek
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-merek"
                           onChange={handleChange}
                           placeholder="Merek"
                           name="merek"
@@ -509,7 +746,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           Model
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-model"
                           onChange={handleChange}
                           placeholder="Model"
                           name="model"
@@ -530,22 +767,30 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         >
                           Ruangan
                         </label>
-                        <select
-                          onChange={handleChange}
+
+                        <Select
+                          className="basic-single p-ruangan"
+                          classNamePrefix="select"
+                          styles={customStyles}
                           name="ruangan_otmil_id"
-                          value={formState.ruangan_otmil_id}
-                          disabled={isDetail}
-                          className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
-                        >
-                          <option disabled value="">
-                            Pilih ruangan
-                          </option>
-                          {ruangan.map((item: any) => (
-                            <option value={item.ruangan_otmil_id}>
-                              {item.nama_ruangan_otmil}
-                            </option>
-                          ))}
-                        </select>
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Ruangan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.ruangan_otmil_id,
+                                label: formState.nama_ruangan_otmil,
+                              }
+                              : formState.ruangan_otmil_id
+                          }
+                          options={ruangan.map((item: any) => ({
+                            value: item.ruangan_otmil_id,
+                            label: item.nama_ruangan_otmil,
+                          }))}
+                          onChange={handleSelectRuangan}
+                        />
                         <p className="error-text bottom-0 absolute">
                           {errors.map((item) =>
                             item === 'ruangan_otmil_id' ? 'Pilih ruangan' : '',
@@ -589,7 +834,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           name="kondisi"
                           value={formState.kondisi}
                           disabled={isDetail}
-                          className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                          className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary p-kondisi"
                         >
                           <option disabled value="">
                             Pilih kondisi
@@ -615,7 +860,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         Keterangan
                       </label>
                       <textarea
-                        className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-keterangan"
                         onChange={handleChange}
                         placeholder="Keterangan"
                         name="keterangan"
@@ -640,7 +885,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         </label>
                         <input
                           type="date"
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary t-masuk"
                           name="tanggal_masuk"
                           onChange={handleChange}
                           value={formState.tanggal_masuk}
@@ -665,7 +910,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         </label>
                         <input
                           type="date"
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary m-garansi"
                           name="garansi"
                           onChange={handleChange}
                           value={formState.garansi}
@@ -685,18 +930,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 {errors.length > 0 && (
                   <div className="error mt-4 text-center">
                     <p className="text-red-400">
@@ -718,9 +963,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                    id="t-data-ubah"
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -752,10 +997,10 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
+                    id="t-data"
                     disabled={buttonLoad}
                   >
                     {buttonLoad ? (

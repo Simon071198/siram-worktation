@@ -5,6 +5,11 @@ import { BsTrash } from 'react-icons/bs';
 import Select from 'react-select';
 import { apiReadAllStaff, apiUpdateAllStaff } from '../../../services/api';
 import { Alerts } from '../SceduleShift/Alert';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -23,6 +28,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   onSubmit,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -49,6 +57,8 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
 
   //data petugas grup
   const [staff, setStaff] = useState<Staff[]>([]);
+
+  const [filter, setFilter] = useState('');
 
   //data all petugas
   const [newStaff, setNewStaff] = useState<Staff[]>([]);
@@ -103,10 +113,15 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
 
         setStaff(staff.data.records);
         setNewStaff(staffNew.data.records);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -136,6 +151,51 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
       | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setGrupedit({ ...grupEdit, [e.target.name]: e.target.value });
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Grup',
+            description: 'Isi nama grup',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Nama Ketua Grup',
+            description: 'Pilih nama ketua grup',
+          },
+        },
+        {
+          element: '.p-grup',
+          popover: {
+            title: 'Anggota Grup',
+            description: 'Pilih anggota grup dan klik tambah',
+          },
+        },
+        {
+          element: '.d-grup',
+          popover: {
+            title: 'Nama Ketua Grup',
+            description: 'Menampilkan nama ketua grup',
+          },
+        },
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: `Klik submit`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChangeSelect = (selectedOption: any) => {
@@ -201,48 +261,85 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   };
 
   const handleAddPetugas = async () => {
-    const addDataPetugas = await apiUpdateAllStaff(addStaff, token);
-    if (addDataPetugas.data.status === 'OK') {
-      const filter = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: dataGrup.grup_petugas_id,
-        },
-      };
-      const filter2 = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: '',
-        },
-      };
-      const staff = await apiReadAllStaff(filter, token);
-      const staffNew = await apiReadAllStaff(filter2, token);
-      setStaff(staff.data.records);
-      setNewStaff(staffNew.data.records);
+    try {
+      const addDataPetugas = await apiUpdateAllStaff(addStaff, token);
+      if (addDataPetugas.data.status === 'OK') {
+        const filter = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: dataGrup.grup_petugas_id,
+          },
+        };
+        const filter2 = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: '',
+          },
+        };
+        const staff = await apiReadAllStaff(filter, token);
+        const staffNew = await apiReadAllStaff(filter2, token);
+        setStaff(staff.data.records);
+        setNewStaff(staffNew.data.records);
+      } else {
+        // Handle the case when addDataPetugas.data.status is not 'OK'
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menambahkan petugas',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
-  const handleDeletePetugas = async (item: any) => {
-    const updatedItem = { ...item, grup_petugas_id: null };
-    console.log('delete:', updatedItem);
 
-    const addDataPetugas = await apiUpdateAllStaff(updatedItem, token);
-    if (addDataPetugas.data.status === 'OK') {
-      const filter = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: dataGrup.grup_petugas_id,
-        },
-      };
-      const filter2 = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: '',
-        },
-      };
-      const staff = await apiReadAllStaff(filter, token);
-      const staffNew = await apiReadAllStaff(filter2, token);
-      setStaff(staff.data.records);
-      setNewStaff(staffNew.data.records);
+  const handleDeletePetugas = async (item: any) => {
+    try {
+      const updatedItem = { ...item, grup_petugas_id: null };
+      console.log('delete:', updatedItem);
+
+      const addDataPetugas = await apiUpdateAllStaff(updatedItem, token);
+      if (addDataPetugas.data.status === 'OK') {
+        const filter = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: dataGrup.grup_petugas_id,
+          },
+        };
+        const filter2 = {
+          pageSize: Number.MAX_SAFE_INTEGER,
+          filter: {
+            grup_petugas_id: '',
+          },
+        };
+        const staff = await apiReadAllStaff(filter, token);
+        const staffNew = await apiReadAllStaff(filter2, token);
+        setStaff(staff.data.records);
+        setNewStaff(staffNew.data.records);
+      } else {
+        // Handle the case when addDataPetugas.data.status is not 'OK'
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menghapus petugas',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -375,6 +472,18 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Edit Grup Shift Kerja
               </h1>
+
+              {/* <div className="w-10"> */}
+              <button className="pr-70">
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -394,7 +503,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                     </label>
                     <input
                       name="nama_grup_petugas"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary i-nama"
                       value={grupEdit.nama_grup_petugas}
                       onChange={handleChange}
                     />
@@ -414,7 +523,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                       Ketua Grup
                     </label>
                     <Select
-                      className="w-full mr-3 dark:text-black capitalize"
+                      className="w-full mr-3 dark:text-black capitalize p-ketua"
                       placeholder="Tambah Anggota Grup"
                       styles={customStyles}
                       defaultValue={ketuaGrupOption}
@@ -428,7 +537,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                   >
                     Anggota Grup
                   </label>
-                  <div className="flex jutify-between">
+                  <div className="flex jutify-between p-grup">
                     <Select
                       className="w-full mr-3 dark:text-black capitalize"
                       placeholder="Tambah Anggota Grup"
@@ -470,7 +579,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                       </label>
                     </div>
                   </div>
-                  <div className="w-full h-64 overflow-y-auto">
+                  <div className="w-full h-64 overflow-y-auto d-grup">
                     {staff.map((item: any) => {
                       return (
                         <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke border-primary my-1 dark:text-gray dark:bg-slate-800 ">
@@ -512,7 +621,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                   </div>
                 </div>
                 <button
-                  className="btn mt-2 w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                  className="btn mt-2 w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 b-submit"
                   type="submit"
                 >
                   Submit

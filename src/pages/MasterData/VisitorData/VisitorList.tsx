@@ -5,18 +5,23 @@ import {
   apiUpdateVisitor,
   apiDeletePengunjung,
   apiDeleteVisitor,
-} from '../../services/api';
+} from '../../../services/api';
 import { AddVisitorModal } from './ModalAddVisitor';
 import { Alerts } from './AlertVisitor';
-import Loader from '../../common/Loader';
+import Loader from '../../../common/Loader';
 import { DeleteVisitorModal } from './ModalDeleteVisitor';
 import SearchInputButton from '../Search';
-import Pagination from '../../components/Pagination';
+import Pagination from '../../../components/Pagination';
 import * as xlsx from 'xlsx';
-import ToolsTip from 'renderer/components/ToolsTip';
+import ToolsTip from '../../../components/ToolsTip';
 import { HiOutlineTrash, HiPencilAlt } from 'react-icons/hi';
-import DropdownAction from '../../components/DropdownAction';
+import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Item {
   nama: string;
@@ -25,6 +30,9 @@ interface Item {
 }
 
 const VisitorList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
   const [editData, setEditData] = useState<Item | null>(null);
@@ -69,6 +77,44 @@ const VisitorList = () => {
     // }
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama pengunjung',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama pengunjung',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data pengunjung',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
   };
@@ -91,8 +137,16 @@ const VisitorList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -141,10 +195,15 @@ const VisitorList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -201,10 +260,14 @@ const VisitorList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -230,10 +293,14 @@ const VisitorList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -259,10 +326,14 @@ const VisitorList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -296,7 +367,7 @@ const VisitorList = () => {
         item.nik,
         item.tempat_lahir,
         item.tanggal_lahir,
-        item.jenis_kelamin,
+        item.jenis_kelamin === '1' ? 'Laki-laki' : 'Perempuan',
         item.nama_provinsi,
         item.nama_kota,
         item.alamat,
@@ -321,7 +392,7 @@ const VisitorList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari nama"
@@ -331,7 +402,7 @@ const VisitorList = () => {
               />
             </div>
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -354,10 +425,21 @@ const VisitorList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+
+            {/* <div className="w-full"> */}
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+            {/* </div> */}
           </div>
         </div>
         <div className="flex justify-between mb-3">
@@ -367,7 +449,7 @@ const VisitorList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

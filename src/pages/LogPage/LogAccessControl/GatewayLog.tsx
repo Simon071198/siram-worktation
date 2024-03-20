@@ -3,16 +3,28 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { apiGatewayLog, apiVisitorLogList } from '../../../services/api';
 import { webserviceurl } from '../../../services/api';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../../../components/Pagination';
 import Loader from '../../../common/Loader';
+import * as xlsx from 'xlsx';
+import dayjs from 'dayjs';
+import { Alerts } from '../AlertLog';
+import { Error403Message } from '../../../utils/constants';
 
 export default function GatewayLog() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
   let [startDate, setStartDate] = useState('');
   let [endDate, setEndDate] = useState('');
 
@@ -44,7 +56,38 @@ export default function GatewayLog() {
 
   // const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
 
-  const handleExportClick = () => {
+  console.log(data, 'Ini Data Boss QQ');
+
+  const handleExportClick = async () => {
+    const dataToExcel = [
+      [
+        'Nama Prajurit Binaan',
+        'No DMAC Gelang',
+        'Lokasi OTMIL',
+        'Lokasi Ruangan',
+        'Zonasi Gateway',
+        'Jenis Ruangan OTMIL',
+        'Time Stamp',
+      ],
+      ...data.map((item: any) => [
+        item.nama_wbp,
+        item.gmac,
+        item.nama_ruangan_otmil,
+        item.nama_lokasi_otmil,
+        item.status_zona_ruangan_otmil,
+        item.jenis_ruangan_otmil,
+        item.timestamp,
+      ]),
+    ];
+
+    const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(
+      wb,
+      `Data-Gateway-Log ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
+
     // if (data && data.length > 0) {
     //   exportToCSV(data, 'exported_data.csv');
     // } else {
@@ -168,17 +211,25 @@ export default function GatewayLog() {
 
   const getGatewayLog = async () => {
     try {
-      setIsLoading(true);
       let params = {
         filter: '',
       };
-      const responseLog = await apiGatewayLog(params);
+      setIsLoading(true);
+      const responseLog = await apiGatewayLog(params, token);
       setData(responseLog.data.records);
       setPages(responseLog.data.pagination.totalPages);
       setRows(responseLog.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      console.log('ERROR GATEWAY', e.message);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -312,7 +363,7 @@ export default function GatewayLog() {
                 <button
                   className="bg-blue-500 text-white px-2 rounded-md py-1"
                   type="button"
-                  // onClick={handleExportClick}
+                  onClick={handleExportClick}
                 >
                   Export Excel
                 </button>

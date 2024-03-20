@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import { Alerts } from './AlertDaftarKasus';
 import {
@@ -17,6 +18,10 @@ import DropdownAction from '../../components/DropdownAction';
 import dayjs from 'dayjs';
 import { EditDaftarKasusModal } from './modalEditdaftarKasus';
 import { AddBarangBuktiModal } from '../MasterData/BarangBukti/ModalAddBarangBukti';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { Error403Message } from '../../utils/constants';
 
 interface Item {
   nama_kasus: string;
@@ -24,6 +29,9 @@ interface Item {
 }
 
 const DaftarKasus = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -65,6 +73,44 @@ const DaftarKasus = () => {
     setFilter(newFilter);
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama kasus',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama kasus',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan daftar kasus',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleSearchClick = async () => {
     try {
       const params = {
@@ -88,10 +134,14 @@ const DaftarKasus = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -145,10 +195,14 @@ const DaftarKasus = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -204,10 +258,14 @@ const DaftarKasus = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -233,10 +291,14 @@ const DaftarKasus = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -262,10 +324,14 @@ const DaftarKasus = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -407,10 +473,14 @@ const DaftarKasus = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -422,7 +492,7 @@ const DaftarKasus = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari Nama Kasus"
@@ -431,7 +501,7 @@ const DaftarKasus = () => {
             </div>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -454,10 +524,21 @@ const DaftarKasus = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -465,201 +546,211 @@ const DaftarKasus = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Daftar Kasus
           </h4>
-          {!isOperator && (
-            <button
-              onClick={handleModalAddOpen}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-            >
-              Tambah
-            </button>
-          )}
-        </div>
-        <div className="">
-          <div
-            className={`${
-              isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
-          >
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nomer Kasus
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nama Kasus
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Tanggal Pelaporan
-              </h5>
-            </div>
-
-            <div className="p-2.5 xl:p-5 justify-center flex">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Tanggal Kejadian
-              </h5>
-            </div>
-
-            {isOperator ? null : (
-              <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Aksi
-                </h5>
-              </div>
-            )}
-          </div>
-
-          {data.length === 0 ? (
-            <div className="flex justify-center p-4 w-ful">No Data</div>
-          ) : (
-            <>
-              {data.map((item: any) => {
-                return (
-                  <div>
-                    <div
-                      className={`${
-                        isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
-                      key={item.nama_kasus}
-                    >
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.nomor_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.nama_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate dark:text-white capitalize">
-                          {item.waktu_pelaporan_kasus}
-                        </p>
-                      </div>
-
-                      <div
-                        onClick={() => handleDetailClick(item)}
-                        className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
-                      >
-                        <p className=" text-black truncate text-center dark:text-white capitalize">
-                          {item.waktu_kejadian}
-                        </p>
-                      </div>
-                      {isOperator ? (
-                        <></>
-                      ) : (
-                        <>
-                          <div className="hidden items-center  justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
-                            <div className="relative">
-                              <DropdownAction
-                                kasus={true}
-                                handleAddClick={() =>
-                                  handleAddBarangBuktiClick(item)
-                                }
-                                handleEditClick={() => handleEditClick(item)}
-                                handleDeleteClick={() =>
-                                  handleDeleteClick(item)
-                                }
-                              >
-                                <button></button>
-                              </DropdownAction>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="border-t border-slate-600"></div>
-                  </div>
-                );
-              })}
-            </>
-          )}
-
-          {modalDetailOpen && (
-            <EditDaftarKasusModal
-              closeModal={() => setModalDetailOpen(false)}
-              onSubmit={handleSubmitAdd}
-              defaultValue={detailData}
-              isDetail={true}
-              token={token}
-            />
-          )}
-          {modalEditOpen && (
-            <EditDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitEdit}
-              defaultValue={editData}
-              isEdit={true}
-              token={token}
-            />
-          )}
-          {modalAddBarangBukti && (
-            <AddBarangBuktiModal
-              isKasus={true}
-              defaultValue={detailData}
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitAddBarangBukti}
-              token={token}
-            />
-          )}
-          {modalAddOpen && (
-            <AddDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitAdd}
-              defaultValue={nomorKasus}
-              token={token}
-            />
-          )}
-          {modalDeleteOpen && (
-            <DeleteDaftarKasusModal
-              closeModal={handleCloseModal}
-              onSubmit={handleSubmitDelete}
-              defaultValue={deleteData}
-            />
-          )}
-        </div>
-
-        {data.length === 0 ? null : (
-          <div className="mt-5">
-            <div className="flex gap-4 items-center ">
-              <p>
-                Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
-              </p>
-              <select
-                value={pageSize}
-                onChange={handleChangePageSize}
-                className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+          <div className="flex flex-row space-x-4 space-x">
+            <div>
+              <button
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                onClick={() => navigate('/penyidikan')}
               >
-                <option value="10">10</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="1000">1000</option>
-              </select>
+                Penyidikan
+              </button>
             </div>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={pages}
-              onChangePage={handleChagePage}
-            />
+            <div>
+              {!isOperator && (
+                <button
+                  onClick={handleModalAddOpen}
+                  className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+                >
+                  Tambah
+                </button>
+              )}
+            </div>
           </div>
+        </div>
+      </div>
+      <div className="">
+        <div
+          className={`${
+            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+        >
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Nomer Kasus
+            </h5>
+          </div>
+
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Nama Kasus
+            </h5>
+          </div>
+
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Tanggal Pelaporan
+            </h5>
+          </div>
+
+          <div className="p-2.5 xl:p-5 justify-center flex">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Tanggal Kejadian
+            </h5>
+          </div>
+
+          {isOperator ? null : (
+            <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Aksi
+              </h5>
+            </div>
+          )}
+        </div>
+
+        {data.length === 0 ? (
+          <div className="flex justify-center p-4 w-ful">No Data</div>
+        ) : (
+          <>
+            {data.map((item: any) => {
+              return (
+                <div>
+                  <div
+                    className={`${
+                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    key={item.nama_kasus}
+                  >
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nomor_kasus}
+                      </p>
+                    </div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.nama_kasus}
+                      </p>
+                    </div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate dark:text-white capitalize">
+                        {item.waktu_pelaporan_kasus}
+                      </p>
+                    </div>
+
+                    <div
+                      onClick={() => handleDetailClick(item)}
+                      className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                    >
+                      <p className=" text-black truncate text-center dark:text-white capitalize">
+                        {item.waktu_kejadian}
+                      </p>
+                    </div>
+                    {isOperator ? (
+                      <></>
+                    ) : (
+                      <>
+                        <div className="hidden items-center  justify-center p-2.5 sm:flex xl:p-5 flex-wrap lg:flex-nowrap gap-2">
+                          <div className="relative">
+                            <DropdownAction
+                              kasus={true}
+                              handleAddClick={() =>
+                                handleAddBarangBuktiClick(item)
+                              }
+                              handleEditClick={() => handleEditClick(item)}
+                              handleDeleteClick={() => handleDeleteClick(item)}
+                            >
+                              <button></button>
+                            </DropdownAction>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <div className="border-t border-slate-600"></div>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {modalDetailOpen && (
+          <EditDaftarKasusModal
+            closeModal={() => setModalDetailOpen(false)}
+            onSubmit={handleSubmitAdd}
+            defaultValue={detailData}
+            isDetail={true}
+            token={token}
+          />
+        )}
+        {modalEditOpen && (
+          <EditDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitEdit}
+            defaultValue={editData}
+            isEdit={true}
+            token={token}
+          />
+        )}
+        {modalAddBarangBukti && (
+          <AddBarangBuktiModal
+            isKasus={true}
+            defaultValue={detailData}
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAddBarangBukti}
+            token={token}
+          />
+        )}
+        {modalAddOpen && (
+          <AddDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAdd}
+            defaultValue={nomorKasus}
+            token={token}
+          />
+        )}
+        {modalDeleteOpen && (
+          <DeleteDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitDelete}
+            defaultValue={deleteData}
+          />
         )}
       </div>
+
+      {data.length === 0 ? null : (
+        <div className="mt-5">
+          <div className="flex gap-4 items-center ">
+            <p>
+              Total Rows: {rows} Page: {rows ? currentPage : null} of {pages}
+            </p>
+            <select
+              value={pageSize}
+              onChange={handleChangePageSize}
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+            >
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pages}
+            onChangePage={handleChagePage}
+          />
+        </div>
+      )}
     </div>
   );
 };

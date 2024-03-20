@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Alerts } from './AlertAhli';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -19,7 +22,7 @@ export const AddAhliModal = ({
       nama_ahli: '',
       bidang_ahli: '',
       bukti_keahlian: '',
-    }
+    },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -30,20 +33,17 @@ export const AddAhliModal = ({
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
+  const [filter, setFilter] = useState('');
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      
-      if(key !== 'bukti_keahlian'){
-
+      if (key !== 'bukti_keahlian') {
         if (!value) {
           errorFields.push(key);
         }
       }
-
-    
     }
 
     if (errorFields.length > 0) {
@@ -54,6 +54,44 @@ export const AddAhliModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Ahli',
+            description: 'Isi nama ahli',
+          },
+        },
+        {
+          element: '.i-bidang',
+          popover: {
+            title: 'Bidang Ahli',
+            description: 'Isi bidang ahli',
+          },
+        },
+        {
+          element: '.i-bukti',
+          popover: {
+            title: 'Bukti Ahli',
+            description: 'Isi bukti ahli',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data ahli`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -146,10 +184,31 @@ export const AddAhliModal = ({
                     {isDetail
                       ? 'Detail Data Ahli'
                       : isEdit
-                      ? 'Edit Data Ahli'
-                      : 'Tambah Data Ahli'}
+                        ? 'Edit Data Ahli'
+                        : 'Tambah Data Ahli'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-95">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-90">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -168,7 +227,7 @@ export const AddAhliModal = ({
                       Nama Ahli
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_ahli"
                       placeholder="Nama ahli"
                       onChange={handleChange}
@@ -177,7 +236,7 @@ export const AddAhliModal = ({
                     />
                     <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'nama_ahli' ? 'Masukan nama' : ''
+                        item === 'nama_ahli' ? 'Masukan nama' : '',
                       )}
                     </p>
                   </div>
@@ -190,7 +249,7 @@ export const AddAhliModal = ({
                       Bidang Ahli
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bidang"
                       name="bidang_ahli"
                       placeholder="Bidang ahli"
                       onChange={handleChange}
@@ -199,7 +258,7 @@ export const AddAhliModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'bidang_ahli' ? 'Masukan bidang' : ''
+                        item === 'bidang_ahli' ? 'Masukan bidang' : '',
                       )}
                     </p>
                   </div>
@@ -212,7 +271,7 @@ export const AddAhliModal = ({
                       Bukti Ahli
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
                       name="bukti_keahlian"
                       placeholder="Bukti ahli"
                       onChange={handleChange}
@@ -221,13 +280,14 @@ export const AddAhliModal = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'bukti_keahlian' ? 'Masukan bukti keahlian' : ''
+                        item === 'bukti_keahlian'
+                          ? 'Masukan bukti keahlian'
+                          : '',
                       )}
                     </p>
                   </div>
                 </div>
 
-                
                 {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
                   .length > 0 && (
                   <div className="error mt-4">
@@ -243,97 +303,100 @@ export const AddAhliModal = ({
                 )} */}
 
                 <div className={` ${isDetail ? 'h-full' : 'h-15'} mt-4`}>
-                {/* <br></br> */}
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Ahli
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Ahli
-                  </button>
-                )}
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
+                  {/* <br></br> */}
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                      id="b-ubah"
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Ahli
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                      id="b-tambah"
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Ahli
+                    </button>
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
                     </div>
-                  </>
-                )}
-                {errors.length > 0 && (
-                  <div className="error text-center">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
+                  )}
                 </div>
               </form>
             </div>

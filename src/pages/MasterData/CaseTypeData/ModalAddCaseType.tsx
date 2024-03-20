@@ -1,6 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Select from 'react-select/dist/declarations/src/Select';
+// import Select from 'react-select/dist/declarations/src/Select';
+import Select from 'react-select';
 import { apiReadKategoriPerkara } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertCaseType';
+import { Error403Message } from '../../../utils/constants';
+import { set } from 'react-hook-form';
 
 // interface
 interface AddCaseTypeModalProps {
@@ -16,13 +24,17 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   onSubmit,
   defaultValue,
   isDetail,
-  isEdit,
+  isEdit
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_jenis_perkara: '',
       pasal: '',
       kategori_perkara_id: '',
+      nama_kategori_perkara: '',
       // vonis_bulan_perkara: '',
       // vonis_hari_perkara : '',
       // vonis_tahun_perkara: '',
@@ -32,7 +44,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   //state
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const [kategori_perkara, setkategoriperkara] = useState([]);
+  const [kategoriPerkara, setkategoriperkara] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -81,6 +93,91 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     return true;
   };
 
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
+
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -101,24 +198,61 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   };
 
   useEffect(() => {
-    const fetchDataKategori = async () => {
-      let params = {
-        pageSize: 1000,
-      };
-      try {
-        const perka = await apiReadKategoriPerkara(params, token);
-        const kategori = perka.data.records;
-        setkategoriperkara(kategori);
-
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-      } catch (err) {
-        throw err;
-      }
-    };
-    fetchDataKategori();
+    Promise.all([
+      KategotiPerkara(),
+    ]).then(() => {
+      setIsLoading(false);
+    });
   }, []);
+
+  const KategotiPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadKategoriPerkara(params, token)
+      .then((res) => {
+        setkategoriperkara(res.data.records);
+    })
+    .catch((e: any) => {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    });
+  }
+
+  // useEffect(() => {
+  //   const fetchDataKategori = async () => {
+  //     let params = {
+  //       pageSize: 1000,
+  //     };
+  //     try {
+  //       const perka = await apiReadKategoriPerkara(params, token);
+  //       const kategori = perka.data.records;
+  //       setkategoriperkara(kategori);
+
+  //       setTimeout(() => {
+  //         setIsLoading(false);
+  //       }, 500);
+  //     } catch (e: any) {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     }
+  //   };
+  //   fetchDataKategori();
+  // }, []);
 
   const modalStyles: any = {
     backdrop: {
@@ -138,6 +272,46 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
       transform: 'translate(-50%, -50%)',
       // Add your other modal styles here
     },
+  };
+
+  const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.f-nama',
+        popover: {
+          title: 'Nama perkara',
+          description: 'Isi nama perkara',
+        },
+      },
+      {
+        element: '.f-pasal',
+        popover: {
+          title: 'Nomor pasal ',
+          description: 'Isi nomor pasal perkara',
+        },
+      },
+      {
+        element: '.f-kategori',
+        popover: {
+          title: 'Kategori perkara',
+          description: 'Pilih kategori perkara',
+        },
+      },
+      {
+        element: `${isEdit ? '.b-ubah-modal' : '.b-tambah-modal'}`,
+        popover: {
+          title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+          description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data perkara`,
+        },
+      },
+    ];
+
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
   };
 
   //return
@@ -185,6 +359,16 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                         : 'Tambah Jenis Perkara'}
                   </h3>
                 </div>
+                {!isDetail && (
+                  <button className="pr-[440px]">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -194,7 +378,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-1 justify-normal">
-                  <div className="form-group w-full h-22">
+                  <div className="f-nama form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -218,7 +402,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </p>
                   </div>
 
-                  <div className="form-group w-full h-22">
+                  <div className="f-pasal form-group w-full h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -241,32 +425,46 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   </div>
 
                   {/* kategori perkara id start */}
-                  <div className="form-group w-full flex flex-col h-22">
+                  <div className="f-kategori form-group w-full flex flex-col h-22">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Nama Kategori Perkara
                     </label>
-                    <select
-                      className="w-full rounded border border-stroke   py-3 pl-3 pr-6.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      styles={customStyles}
                       name="kategori_perkara_id"
-                      onChange={handleChange}
-                      value={formState.kategori_perkara_id}
-                      disabled={isDetail}
-                    >
-                      <option disabled value="">
-                        Pilih Kategori Perkara
-                      </option>
-                      {kategori_perkara.map((item: any) => (
-                        <option value={item.kategori_perkara_id}>
-                          {item.nama_kategori_perkara}
-                        </option>
-                      ))}
-                    </select>
+                      isDisabled={isDetail}
+                      isClearable={true}
+                      isSearchable={true}
+                      placeholder="Pilih kategori perkara"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.kategori_perkara_id,
+                              label: formState.nama_kategori_perkara,
+                            }
+                          : formState.kategori_perkara_id
+                      }
+                      options={kategoriPerkara.map((item: any) => ({
+                        value: item.kategori_perkara_id,
+                        label: item.nama_kategori_perkara,
+                      }))}
+                      onChange={(e: any) => {
+                        setFormState({
+                          ...formState,
+                          kategori_perkara_id: e.value,
+                          nama_kategori_perkara: e.label,
+                        });
+                      }
+                      }
+                    />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'kategori_perkara_id'
+                        item === 'nama_kategori_perkara'
                           ? 'Pilih Kategori Perkara'
                           : '',
                       )}
@@ -349,7 +547,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                         buttonLoad ? 'bg-slate-400' : ''
                       }`}
                       type="submit"
@@ -383,7 +581,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                         buttonLoad ? 'bg-slate-400' : ''
                       }`}
                       type="submit"

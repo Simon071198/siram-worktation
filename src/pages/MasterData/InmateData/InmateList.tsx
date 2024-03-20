@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
   apiReadAllWBP,
@@ -19,8 +19,17 @@ import { HiDotsVertical, HiPencilAlt, HiOutlineTrash } from 'react-icons/hi';
 import * as xlsx from 'xlsx';
 import ToolsTip from '../../../components/ToolsTip';
 import DropdownAction from '../../../components/DropdownAction';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+
+import dayjs from 'dayjs';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 const InmateList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [data, setData] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [editData, setEditData] = useState([]);
@@ -77,10 +86,13 @@ const InmateList = () => {
       foto_wajah: item?.foto_wajah,
       nama: item?.nama,
       pangkat_id: item?.pangkat_id,
+      nama_pangkat: item?.nama_pangkat,
       matra_id: item?.matra_id,
+      nama_matra: item?.nama_matra,
       nrp: item?.nrp,
       alamat: item?.alamat,
       kesatuan_id: item?.kesatuan_id,
+      nama_kesatuan: item?.nama_kesatuan,
       nama_kontak_keluarga: item?.nama_kontak_keluarga,
       nomor_kontak_keluarga: item?.nomor_kontak_keluarga,
       hubungan_kontak_keluarga: item?.hubungan_kontak_keluarga,
@@ -90,18 +102,24 @@ const InmateList = () => {
       nama_kota: item?.nama_kota,
       jenis_kelamin: item?.jenis_kelamin,
       agama_id: item?.agama_id,
+      nama_agama: item?.nama_agama,
       tanggal_lahir: item?.tanggal_lahir,
       tempat_lahir: item?.tempat_lahir,
       status_kawin_id: item?.status_kawin_id,
+      nama_status_kawin: item?.nama_status_kawin,
       pendidikan_id: item?.pendidikan_id,
+      nama_pendidikan: item?.nama_pendidikan,
       is_sick: item?.is_sick,
       wbp_sickness: item?.wbp_sickness,
       tanggal_ditahan_otmil: item?.tanggal_ditahan_otmil,
+      tanggal_masa_penahanan_otmil: item?.tanggal_masa_penahanan_otmil,
       bidang_keahlian_id: item?.bidang_keahlian_id,
+      nama_bidang_keahlian: item?.nama_bidang_keahlian,
       gelang_id: item?.gelang_id,
       DMAC: item?.DMAC,
       residivis: item?.residivis,
       hunian_wbp_otmil_id: item?.hunian_wbp_otmil_id,
+      nama_hunian_wbp_otmil: item?.nama_hunian_wbp_otmil,
       nomor_tahanan: item?.nomor_tahanan,
       is_isolated: item?.is_isolated,
       akses_ruangan_otmil_id: newAksesRuangOtmil,
@@ -114,7 +132,6 @@ const InmateList = () => {
       tanggal_penetapan_terpidana: item?.tanggal_penetapan_terpidana,
     };
 
-    console.log('NEW EDIT', newEditItem);
     setEditData(newEditItem);
     setModalEditOpen(true);
   };
@@ -157,10 +174,14 @@ const InmateList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -170,7 +191,7 @@ const InmateList = () => {
 
     try {
       const responseAdd = await apiCreateWBP(params, token);
-      if (responseAdd.data.status === 'OK') {
+      if (responseAdd.data[1].status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil membuat data',
@@ -189,13 +210,15 @@ const InmateList = () => {
 
       // return true
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
-
-      // return false
     }
   };
 
@@ -219,10 +242,14 @@ const InmateList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -266,13 +293,18 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
+
 
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
@@ -303,12 +335,17 @@ const InmateList = () => {
       .then((res) => {
         setKategoriPerkara(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, [currentPage, pageSize]);
 
   useEffect(() => {
@@ -361,10 +398,14 @@ const InmateList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -380,12 +421,17 @@ const InmateList = () => {
       .then((res) => {
         setHunian(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   //untuk excel
@@ -400,33 +446,35 @@ const InmateList = () => {
         'Lokasi Kesatuan',
         'Provinsi',
         'Kota',
-        'alamat',
-        'tempat lahir',
-        'tanggal lahir',
-        'nama pendidikan',
-        'keahlian',
-        'nomor tahanan',
-        'riwayat penyakit',
-        'nama hunuian wbp',
-        'nama keluarga',
-        'hubungan dengan keluarga',
-        'nomor keluarga',
-        'nama matra',
-        'nama kasus',
-        'no kasus',
-        'jenis perkara',
-        'kategori perkara',
-        'pasal',
-        'vonis tahun',
-        'vonis bulan',
-        'vonis hari',
-        'waktu kejadian',
-        'waktu kejadian',
+        'Alamat',
+        'Tempat Lahir',
+        'Tanggal Lahir',
+        'Nama Pendidikan',
+        'Keahlian',
+        'Agama',
+        'Status Pernikahan',
+        'Nomor Tahanan',
+        'Riwayat Penyakit',
+        'Nama Hunian WBP',
+        'Nama Keluarga',
+        'Hubungan dengan Keluarga',
+        'Nomor Kontak Keluarga',
+        'Nama Matra',
+        'Nama Kasus',
+        'No Kasus',
+        'Jenis Perkara',
+        'Kategori Perkara',
+        'Pasal',
+        // 'Vonis Tahun',
+        // 'Vonis Bulan',
+        // 'Vonis Hari',
+        'Lokasi Kasus',
+        'Waktu Kejadian',
         'DMAC',
-        'nama gelang',
-        'tanggal pasang',
-        'tanggal aktivasi',
-        'lokasi tahanan',
+        'Nama Gelang',
+        'Tanggal Pasang',
+        'Tanggal Aktivasi',
+        'Lokasi Tahanan',
       ],
       ...data.map((item: any) => [
         item.nama,
@@ -439,10 +487,10 @@ const InmateList = () => {
         item.alamat,
         item.tempat_lahir,
         item.tanggal_lahir,
-        item.nama_agama,
-        item.nama_status_kawin,
         item.nama_pendidikan,
         item.nama_bidang_keahlian,
+        item.nama_agama,
+        item.nama_status_kawin,
         item.nomor_tahanan,
         item.wbp_sickness,
         item.nama_hunian_wbp_otmil,
@@ -455,9 +503,9 @@ const InmateList = () => {
         item.nama_jenis_perkara,
         item.nama_kategori_perkara,
         item.pasal,
-        item.vonis_tahun_perkara,
-        item.vonis_bulan_perkara,
-        item.vonis_hari_perkara,
+        // item.vonis_tahun_perkara,
+        // item.vonis_bulan_perkara,
+        // item.vonis_hari_perkara,
         item.lokasi_kasus,
         item.waktu_kejadian,
         item.DMAC,
@@ -471,7 +519,7 @@ const InmateList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, 'data.xlsx');
+    xlsx.writeFile(wb, `Data-Tersangka ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,);
   };
 
   // const modalRefs = data.map(() => useRef(null));
@@ -523,6 +571,53 @@ const InmateList = () => {
     setHoveredIndex(false);
   };
 
+  // Kodingan Driver Tutorial
+
+  const handleClickTutorial = () => {
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.kotak-pencarian',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari nama tersangka',
+          },
+        },
+        {
+          element: '.kotak-pencarian-ruangan',
+          popover: {
+            title: 'Ruangan',
+            description: 'Tempat menentukan ruangan',
+          },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama tersangka',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel data tersangka',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data tersangka',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -530,7 +625,7 @@ const InmateList = () => {
       <div className="rounded-sm border  border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full kotak-pencarian">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari nama"
@@ -553,7 +648,7 @@ const InmateList = () => {
             <select
               value={filterHunian}
               onChange={handleFilterChangeHunian}
-              className="w-full rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="kotak-pencarian-ruangan w-full rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
             >
               <option value="">Semua ruang</option>
               {hunian.map((item: any) => (
@@ -564,7 +659,7 @@ const InmateList = () => {
             </select>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className="tombol-pencarian rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -587,10 +682,20 @@ const InmateList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -598,15 +703,26 @@ const InmateList = () => {
           <h4 className="text-xl font-semibold text-black dark:text-white">
             Data Tersangka
           </h4>
-
-          {!isOperator && (
-            <button
-              onClick={() => setModalAddOpen(true)}
-              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-            >
-              Tambah
-            </button>
-          )}
+          <div className="flex flex-row space-x-4 space-x">
+            <div>
+              <button
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                onClick={() => navigate('/daftar-kasus')}
+              >
+                Daftar Kasus
+              </button>
+            </div>
+            <div>
+              {!isOperator && (
+                <button
+                  onClick={() => setModalAddOpen(true)}
+                  className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
+                >
+                  Tambah
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="">

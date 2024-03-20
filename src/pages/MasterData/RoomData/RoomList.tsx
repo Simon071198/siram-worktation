@@ -14,6 +14,11 @@ import {
 } from '../../../services/api';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -31,6 +36,9 @@ interface Item {
 }
 
 const RoomList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -112,8 +120,16 @@ const RoomList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
   };
 
@@ -165,10 +181,15 @@ const RoomList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -193,8 +214,8 @@ const RoomList = () => {
   // function untuk menampilkan modal delete
   const handleDeleteClick = (item: any) => {
     const ruangDel: any = {
-      nama_ruangan_otmil: item.nama_ruangan_otmil,
       ruangan_otmil_id: item.ruangan_otmil_id,
+      nama_ruangan_otmil: item.nama_ruangan_otmil,
     };
     setDeleteData(ruangDel);
     setModalDeleteOpen(true);
@@ -214,69 +235,100 @@ const RoomList = () => {
     setModalEditOpen(false);
   };
 
-  // function untuk menghapus data
-  const handleSubmitDeleteRuangan = () => {
-    let params = {};
-    apiDeleteAllRuangan(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+  const handleSubmitDeleteRuangan = async (params: any) => {
+    try {
+      const responseDelete = await apiDeleteAllRuangan(params, token);
+      if (responseDelete.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
-        setData(res.data.records);
-        handleCloseAddModal(); //tutup modal
-        currentPage === 1 ? fetchData() : setCurrentPage(1);
-      } else {
+        fetchData();
+      } else if (responseDelete.data.status === 'No') {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal menghapus data',
+          title: 'Gagal hapus data',
+        });
+      } else {
+        throw new Error(responseDelete.data.message);
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
         });
       }
-    });
-
-    setModalDeleteOpen(false);
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
   };
 
   // function untuk menambah data
   const handleSubmitAddRuangan = async (params: Params) => {
-    apiCreateAllRuanganOtmil(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+    apiCreateAllRuanganOtmil(params, token)
+      .then((res) => {
+        if (res.data.status === 'OK') {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil menambah data',
+          });
+          setData(res.data.records);
+          handleCloseAddModal(); //tutup modal
+          currentPage === 1 ? fetchData() : setCurrentPage(1);
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Gagal menambah data',
+          });
+          handleCloseAddModal(); //tutup modal
+        }
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil menambah data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-        setData(res.data.records);
-        handleCloseAddModal(); //tutup modal
-        currentPage === 1 ? fetchData() : setCurrentPage(1);
-      } else {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal menambah data',
-        });
-        handleCloseAddModal(); //tutup modal
-      }
-    });
+      });
   };
 
   // function untuk mengubah data
   const handleSubmitEditRuangan = async (params: Params) => {
-    apiUpdateAllRuanganOtmil(params, token).then((res) => {
-      if (res.data.status === 'OK') {
+    apiUpdateAllRuanganOtmil(params, token)
+      .then((res) => {
+        if (res.data.status === 'OK') {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil mengubah data',
+          });
+          setModalDeleteOpen(false);
+          setEdit(!edit);
+          handleCloseEditModal(); //tutup modal
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Gagal mengubah data',
+          });
+        }
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil mengubah data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-        setModalDeleteOpen(false);
-        setEdit(!edit);
-        handleCloseEditModal(); //tutup modal
-      } else {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal mengubah data',
-        });
-      }
-    });
+      });
   };
 
   useEffect(() => {
@@ -309,6 +361,51 @@ const RoomList = () => {
     );
   };
 
+  const handleClickTutorial = () => {
+    const driverObj: any = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.f-ruangan',
+          popover: {
+            title: 'Search',
+            description: 'Tempat mencari nama ruangan',
+          },
+        },
+        {
+          element: '.f-jenis-ruangan',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Tempat memilih jenis ruangan',
+          },
+        },
+        {
+          element: '.tombol-pencarian',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama ruangan',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel ruangan',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data nama ruangan',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -316,7 +413,7 @@ const RoomList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="w-full flex justify-center">
           <div className="mb-3 flex items-center px-2 justify-center rounded space-x-1 bg-slate-600 py-1">
-            <div className="w-full">
+            <div className="f-ruangan w-full">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari Ruangan"
@@ -325,7 +422,7 @@ const RoomList = () => {
               />
             </div>
             <select
-              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="f-jenis-ruangan rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
               name="jenis_ruangan_otmil"
               value={filterJenisRuangan}
               onChange={handleFilterChangeJenisRuangan}
@@ -337,7 +434,7 @@ const RoomList = () => {
               <option value="Kamar">Kamar</option>
             </select>
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className="tombol-pencarian rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -359,10 +456,20 @@ const RoomList = () => {
             </button>
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+            <div className="w-10">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex justify-between mb-3">
@@ -372,7 +479,7 @@ const RoomList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

@@ -14,6 +14,11 @@ import {
   apiStatusKawin,
 } from '../../../services/api';
 import { Alerts } from './AlertStaff';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // interface
 // interface AddStaffModalProps {
@@ -99,7 +104,7 @@ export const AddStaffModal = ({
       pangkat_id: '',
       matra_id: '',
       kesatuan_id: '',
-      kode_lokasi: '',
+      // kode_lokasi: '',
       jabatan: '',
       divisi: '',
       nrp: '',
@@ -108,6 +113,9 @@ export const AddStaffModal = ({
     },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   //state
   const [pangkat, setPangkat] = useState<Pangkat[]>([]);
@@ -120,6 +128,7 @@ export const AddStaffModal = ({
   const [keahlian, setKeahlian] = useState<Keahlian[]>([]);
   const [kesatuan, setKesatuan] = useState<Kesatuan[]>([]);
   const [matra, setMatra] = useState([]);
+  const [filter, setFilter] = useState('');
 
   const [filteredKesatuan, setFilteredKesatuan] = useState(kesatuan);
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -188,6 +197,163 @@ export const AddStaffModal = ({
     return true;
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: `${isEdit ? '.b-edit' : '.b-unggah'}`,
+          popover: {
+            title: `${isEdit ? 'Edit Gambar' : 'Unggah Gambar'}`,
+            description: `Klik untuk ${isEdit ? 'mengedit' : 'mengunggah'} gambar`,
+          },
+        },
+        {
+          element: '.b-del',
+          popover: {
+            title: 'Button Delete',
+            description: 'Klik untuk menghapus gambar',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama',
+            description: 'Isi nama petugas',
+          },
+        },
+        {
+          element: '#p-pangkat',
+          popover: {
+            title: 'Pangkat',
+            description: 'Pilih pangkat yang diinginkan',
+          },
+        },
+        {
+          element: '.p-matra',
+          popover: {
+            title: 'Matra',
+            description: 'Pilih matra petugas',
+          },
+        },
+        {
+          element: '.i-nrp',
+          popover: {
+            title: 'NRP',
+            description: 'Isi nrp petugas',
+          },
+        },
+        {
+          element: '.p-lokasi',
+          popover: {
+            title: 'Pilih Lokasi Petugas',
+            description: 'Pilih lokasi petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kesatuan',
+          popover: {
+            title: 'Pilih Kesatuan',
+            description: 'Pilih kesatuan petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jabatan',
+          popover: {
+            title: 'Jabatan',
+            description: 'Isi jabatan petugas',
+          },
+        },
+        {
+          element: '.i-divisi',
+          popover: {
+            title: 'Divisi',
+            description: 'Isi divisi petugas',
+          },
+        },
+        {
+          element: '.p-militer',
+          popover: {
+            title: 'Pendidikan Militer',
+            description: 'Pilih kesatuan petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-ahli',
+          popover: {
+            title: 'Keahlian',
+            description: 'Pilih keahlian petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-jenis',
+          popover: {
+            title: 'Jenis Kelamin',
+            description: 'Pilih jenis kelamin',
+          },
+        },
+        {
+          element: '.p-agama',
+          popover: {
+            title: 'Agama',
+            description: 'Pilih agama',
+          },
+        },
+        {
+          element: '.i-lahir',
+          popover: {
+            title: 'Tempat Lahir',
+            description: 'Isi tempat lahir',
+          },
+        },
+        {
+          element: '.i-tanggal',
+          popover: {
+            title: 'Tanggal Lahir',
+            description: 'Menentukan tanggal lahir',
+          },
+        },
+        {
+          element: '.p-status',
+          popover: {
+            title: 'Status Kawin',
+            description: 'Pilih status kawin',
+          },
+        },
+        {
+          element: '.p-provin',
+          popover: {
+            title: 'Provinsi',
+            description: 'Pilih provinsi',
+          },
+        },
+        {
+          element: '.p-kota',
+          popover: {
+            title: 'Kota',
+            description: 'Pilih kota',
+          },
+        },
+        {
+          element: '.t-alamat',
+          popover: {
+            title: 'Alamat',
+            description: 'Isi alamat dengan lengkap',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data petugas`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -202,6 +368,37 @@ export const AddStaffModal = ({
     setFormState({ ...formState, kota_id: e?.value });
   };
 
+  const handleSelectAgama = (e: any) => {
+    setFormState({ ...formState, agama_id: e?.value });
+  };
+
+  const handleSelectStatusKawin = (e: any) => {
+    setFormState({ ...formState, status_kawin_id: e?.value });
+  };
+
+  const handleSelectPendidikan = (e: any) => {
+    setFormState({ ...formState, pendidikan_id: e?.value });
+  };
+
+  const handleSelectPangkat = (e: any) => {
+    setFormState({ ...formState, pangkat_id: e?.value });
+  };
+
+  const handleSelectLokasiKesatuan = (e: any) => {
+    setFormState({ ...formState, lokasi_kesatuan_id: e?.value });
+  };
+
+  const handleSelectKesatuan = (e: any) => {
+    setFormState({ ...formState, kesatuan_id: e?.value });
+  };
+
+  const handleSelectMatra = (e: any) => {
+    setFormState({ ...formState, matra_id: e?.value });
+  };
+
+  const handleSelectBidangKeahlian = (e: any) => {
+    setFormState({ ...formState, bidang_keahlian_id: e?.value });
+  };
   // const handleChangeKesatuan = async (e: any) => {
   //   setFormState({ ...formState, [e.target.name]: e.target.value });
   //   let filteredKesatuan = kesatuan.filter(
@@ -228,6 +425,8 @@ export const AddStaffModal = ({
     }
   };
 
+  console.log(formState,'State')
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formState, 'From State');
@@ -245,12 +444,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setPangkat(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const lokasiKesatuanData = async () => {
@@ -258,12 +462,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setLokasi(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kotaData = async () => {
@@ -271,12 +480,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKota(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const matraData = async () => {
@@ -289,12 +503,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setMatra(res.data.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const provinsiData = async () => {
@@ -302,12 +521,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setProvinsi(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const agamaData = async () => {
@@ -315,12 +539,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setAgama(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const statusKawinData = async () => {
@@ -328,12 +557,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setStatusKawin(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const pendidikanData = async () => {
@@ -341,12 +575,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setPendidikan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const keahlianData = async () => {
@@ -354,12 +593,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKeahlian(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const kesatuanData = async () => {
@@ -367,12 +611,17 @@ export const AddStaffModal = ({
       .then((res) => {
         setKesatuan(res);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.message,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   //return
@@ -551,6 +800,29 @@ export const AddStaffModal = ({
                         : 'Tambah Data Petugas'}
                   </h3>
                 </div>
+
+                {/* <div className="w-5"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-75">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -577,7 +849,7 @@ export const AddStaffModal = ({
                       </div>
                     )}
                     {isEdit && (
-                      <div className="form-group w-full h-fit ">
+                      <div className="form-group w-full h-fit">
                         <div className="mt-1 flex flex-col items-center">
                           {formState.foto_wajah ? (
                             formState.foto_wajah.startsWith('data:image/') ? (
@@ -613,13 +885,13 @@ export const AddStaffModal = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-edit">
                                 Edit Gambar
                               </div>
                             </label>
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -648,7 +920,7 @@ export const AddStaffModal = ({
                       </div>
                     )}
                     {!isEdit && !isDetail && (
-                      <div className="form-group w-full h-fit ">
+                      <div className="form-group w-full h-fit">
                         <div className=" mt-1 flex flex-col items-center">
                           {formState.foto_wajah ? (
                             <img
@@ -672,14 +944,14 @@ export const AddStaffModal = ({
                           />
                           <div className="flex gap-2">
                             <label htmlFor="image-upload">
-                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded">
+                              <div className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-1 px-4 rounded b-unggah">
                                 Unggah Gambar
                               </div>
                             </label>
 
                             <button
                               onClick={handleRemoveFoto}
-                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded"
+                              className="cursor-pointer bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-1 px-2 rounded b-del"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -718,7 +990,7 @@ export const AddStaffModal = ({
                           Nama
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                           name="nama"
                           placeholder="Nama"
                           onChange={handleChange}
@@ -741,13 +1013,14 @@ export const AddStaffModal = ({
                         </label>
                         <Select
                           className="basic-single"
+                          id="p-pangkat"
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={
                             isEdit || isDetail
                               ? {
                                   value: formState.pangkat_id,
-                                  label: formState.pangkat,
+                                  label: formState.nama_pangkat,
                                 }
                               : formState.pangkat_id
                           }
@@ -760,6 +1033,7 @@ export const AddStaffModal = ({
                             value: item.pangkat_id,
                             label: item.nama_pangkat,
                           }))}
+                          onChange={handleSelectPangkat}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -778,7 +1052,7 @@ export const AddStaffModal = ({
                         </label>
 
                         <Select
-                          className="basic-single"
+                          className="basic-single p-matra"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -798,6 +1072,7 @@ export const AddStaffModal = ({
                             value: item.matra_id,
                             label: item.nama_matra,
                           }))}
+                          onChange={handleSelectMatra}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -815,7 +1090,7 @@ export const AddStaffModal = ({
                           NRP
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nrp"
                           name="nrp"
                           placeholder="NRP"
                           onChange={handleChange}
@@ -858,7 +1133,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-lokasi"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -878,6 +1153,7 @@ export const AddStaffModal = ({
                             value: item.lokasi_kesatuan_id,
                             label: item.nama_lokasi_kesatuan,
                           }))}
+                          onChange={handleSelectLokasiKesatuan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -914,7 +1190,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-kesatuan"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -934,6 +1210,7 @@ export const AddStaffModal = ({
                             value: item.kesatuan_id,
                             label: item.nama_kesatuan,
                           }))}
+                          onChange={handleSelectKesatuan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -951,7 +1228,7 @@ export const AddStaffModal = ({
                           Jabatan
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jabatan"
                           name="jabatan"
                           placeholder="Jabatan"
                           onChange={handleChange}
@@ -973,7 +1250,7 @@ export const AddStaffModal = ({
                           Divisi
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-divisi"
                           name="divisi"
                           placeholder="Divisi"
                           onChange={handleChange}
@@ -996,14 +1273,14 @@ export const AddStaffModal = ({
                           Pendidikan Militer
                         </label>
                         <Select
-                          className="basic-single"
+                          className="basic-single p-militer"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
                           isClearable={true}
                           isSearchable={true}
                           name="pendidikan_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Pendidikan"
                           defaultValue={
                             isEdit || isDetail
                               ? {
@@ -1016,6 +1293,7 @@ export const AddStaffModal = ({
                             value: item.pendidikan_id,
                             label: item.nama_pendidikan,
                           }))}
+                          onChange={handleSelectPendidikan}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1032,32 +1310,15 @@ export const AddStaffModal = ({
                         >
                           Keahlian
                         </label>
-
-                        {/* <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="bidang_keahlian_id"
-                          onChange={handleChange}
-                          value={formState.bidang_keahlian_id}
-                          disabled={isDetail}
-                        >
-                          <option disabled value="">
-                            Pilih keahlian
-                          </option>
-                          {keahlian.map((item) => (
-                            <option value={item.bidang_keahlian_id}>
-                              {item.nama_bidang_keahlian}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-ahli"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
                           isClearable={true}
                           isSearchable={true}
                           name="bidang_keahlian_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Keahlian"
                           defaultValue={
                             isEdit || isDetail
                               ? {
@@ -1070,6 +1331,7 @@ export const AddStaffModal = ({
                             value: item.bidang_keahlian_id,
                             label: item.nama_bidang_keahlian,
                           }))}
+                          onChange={handleSelectBidangKeahlian}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1089,7 +1351,7 @@ export const AddStaffModal = ({
                           Jenis Kelamin
                         </label>
                         <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary p-jenis"
                           name="jenis_kelamin"
                           onChange={handleChange}
                           value={formState.jenis_kelamin}
@@ -1118,31 +1380,15 @@ export const AddStaffModal = ({
                         >
                           Agama
                         </label>
-                        {/* <select
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="agama_id"
-                          onChange={handleChange}
-                          value={formState.agama_id}
-                          disabled={isDetail}
-                        >
-                          <option value="" disabled>
-                            Pilih agama
-                          </option>
-                          {agama.map((item) => (
-                            <option value={item.agama_id}>
-                              {item.nama_agama}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-agama"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
                           isClearable={true}
                           isSearchable={true}
                           name="agama_id"
-                          placeholder="Pilih Kesatuan"
+                          placeholder="Pilih Agama"
                           defaultValue={
                             isEdit || isDetail
                               ? {
@@ -1155,6 +1401,7 @@ export const AddStaffModal = ({
                             value: item.agama_id,
                             label: item.nama_agama,
                           }))}
+                          onChange={handleSelectAgama}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1172,7 +1419,7 @@ export const AddStaffModal = ({
                           Tempat Lahir
                         </label>
                         <input
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lahir"
                           name="tempat_lahir"
                           placeholder="Tempat Lahir"
                           onChange={handleChange}
@@ -1197,7 +1444,7 @@ export const AddStaffModal = ({
                         </label>
                         <input
                           type="date"
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-tanggal"
                           name="tanggal_lahir"
                           onChange={handleChange}
                           value={formState.tanggal_lahir}
@@ -1239,7 +1486,7 @@ export const AddStaffModal = ({
                             ))}
                           </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-status"
                           classNamePrefix="select"
                           styles={customStyles}
                           isDisabled={isDetail}
@@ -1259,6 +1506,7 @@ export const AddStaffModal = ({
                             value: item.status_kawin_id,
                             label: item.nama_status_kawin,
                           }))}
+                          onChange={handleSelectStatusKawin}
                         />
 
                         <p className="error-text">
@@ -1298,7 +1546,7 @@ export const AddStaffModal = ({
                           ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-provin"
                           classNamePrefix="select"
                           defaultValue={
                             isEdit || isDetail
@@ -1356,7 +1604,7 @@ export const AddStaffModal = ({
                             ))}
                         </select> */}
                         <Select
-                          className="basic-single"
+                          className="basic-single p-kota"
                           classNamePrefix="select"
                           defaultValue={
                             isEdit || isDetail
@@ -1400,7 +1648,7 @@ export const AddStaffModal = ({
                           Alamat
                         </label>
                         <textarea
-                          className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                          className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-alamat"
                           name="alamat"
                           placeholder="Alamat"
                           onChange={handleChange}
@@ -1425,6 +1673,7 @@ export const AddStaffModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -1459,6 +1708,7 @@ export const AddStaffModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg

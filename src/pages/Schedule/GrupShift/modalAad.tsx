@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiReadAllStaff } from '../../../services/api';
 import { Alerts } from './Alert';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -23,6 +28,9 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
   defaultValue,
   isDetail,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -38,6 +46,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     },
   );
   const [staff, setStaff] = useState<Staff[]>([]); // Staff[] adalah tipe array dari objek Staff
+  const [filter, setFilter] = useState('');
 
   const [errors, setErrors] = useState<string[]>([]);
   const [errors2, setErrors2] = useState<string[]>([]);
@@ -56,10 +65,15 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
       try {
         const staff = await apiReadAllStaff(filter, token);
         setStaff(staff.data.records);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -104,6 +118,37 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     } else {
       return true;
     }
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Grup',
+            description: 'Isi nama grup',
+          },
+        },
+        {
+          element: '.p-ketua',
+          popover: {
+            title: 'Nama Ketua Grup',
+            description: 'Pilih nama ketua grup',
+          },
+        },
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: `Klik submit`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (
@@ -157,6 +202,20 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Tambah Grup
               </h1>
+
+              {/* <div className="w-10"> */}
+              {isDetail ? null : (
+                <button className="pr-70">
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+              )}
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -175,7 +234,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                   </label>
                   <input
                     name="nama_grup_petugas"
-                    className="capitalize w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark:bg-meta-4 dark:text-white dark:focus-border-primary"
+                    className="capitalize w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark:bg-meta-4 dark:text-white dark:focus-border-primary i-nama"
                     disabled={isDetail}
                     value={dataGrup.nama_grup_petugas}
                     onChange={handleChange}
@@ -203,7 +262,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                   </label>
                   <select
                     name="ketua_grup"
-                    className="capitalize w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:text-white dark:focus-border-primary"
+                    className="capitalize w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:text-white dark:focus-border-primary p-ketua"
                     disabled={isDetail}
                     value={dataGrup.ketua_grup}
                     onChange={handleChange}
@@ -238,7 +297,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                 </div>
                 {isDetail ? null : (
                   <button
-                    className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                    className="btn w-full flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 b-submit"
                     type="submit"
                   >
                     Submit

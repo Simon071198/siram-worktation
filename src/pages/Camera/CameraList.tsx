@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   apiLocationOnlineDeviceList,
   allKameraLemasmil,
   allKameraOtmil,
 } from '../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Alerts } from './AlertCamera';
+import { Error403Message } from '../../utils/constants';
 
 const CameraList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [filter, setFilter] = useState('');
   const [dense, setDense] = React.useState(false);
   const [accordionState, setAccordionState] = useState({
     accordion1: false,
@@ -16,22 +25,58 @@ const CameraList = () => {
   let [locationDeviceList, setLocationDeviceList] = useState([]);
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([]);
   let [locationDeviceListLemasmil, setLocationDeviceListLemasmil] = useState(
-    []
+    [],
   );
   useEffect(() => {
-    apiLocationOnlineDeviceList().then((res) => {
-      setLocationDeviceList(res);
-    });
+    apiLocationOnlineDeviceList()
+      .then((res) => {
+        setLocationDeviceList(res);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
 
-    allKameraOtmil().then((res) => {
-      setLocationDeviceListOtmil(res);
-      console.log(res, 'res otmil');
-    });
+    allKameraOtmil()
+      .then((res) => {
+        setLocationDeviceListOtmil(res);
+        console.log(res, 'res otmil');
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
 
-    allKameraLemasmil().then((res) => {
-      setLocationDeviceListLemasmil(res);
-      console.log(res, 'res lemasmil');
-    });
+    allKameraLemasmil()
+      .then((res) => {
+        setLocationDeviceListLemasmil(res);
+        console.log(res, 'res lemasmil');
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   }, []);
   //   useEffect(() => {
   //     apiLocationOnlineDeviceList().then((res) => {
@@ -39,17 +84,63 @@ const CameraList = () => {
   //     });
   //   }, []);
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '#s-lemas',
+          popover: {
+            title: 'LEMASMIL',
+            description: 'Pilih lemasmil yang diinginkan',
+          },
+        },
+        {
+          element: '#s-otmil',
+          popover: {
+            title: 'OTMIL',
+            description: 'Pilih otmil yang diinginkan',
+          },
+        },
+        {
+          element: '#s-babin',
+          popover: {
+            title: 'BABINKUM TNI (Badan Pembinaan Hukun TNI)',
+            description: 'Pilih babinkum tni yang diinginkan',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   return (
     <>
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen">
-        <div className="flex flex-col items-center">
-          <h2 className="font-bold text-xl mt-5 tracking-tight">
+        {/* <div className="flex flex-col items-center"> */}
+        <div className="w-full flex justify-center pt-5">
+          <h2 className="font-bold text-xl tracking-tight mr-3">
             Daftar Kamera
           </h2>
-          {/* <p className="text-neutral-500 text-xl mt-3">Frequenty asked questions</p> */}
+          {/* <div className="w-5"> */}
+          <button>
+            <HiQuestionMarkCircle
+              values={filter}
+              aria-placeholder="Show tutorial"
+              // onChange={}
+              onClick={handleClickTutorial}
+            />
+          </button>
+          {/* </div> */}
         </div>
+        {/* <p className="text-neutral-500 text-xl mt-3">Frequenty asked questions</p> */}
+        {/* </div> */}
+
+        {/* <div className="pl-180"> */}
+
         <div className="grid divide-y divide-neutral-200 max-w-xl mx-auto mt-8">
-          <div className="py-5">
+          <div className="py-5" id="s-lemas">
             <details className="group">
               <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
                 <span>LEMASMIL</span>
@@ -69,7 +160,7 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
+
               {locationDeviceListLemasmil.map((locationDevice, index) => (
                 <div className="pt-2 ml-[20px]" key={index}>
                   <details className="groupChild">
@@ -165,7 +256,7 @@ const CameraList = () => {
               </div> */}
             </details>
           </div>
-          <div className="py-5">
+          <div className="py-5" id="s-otmil">
             <details className="group">
               <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
                 <span>OTMIL</span>
@@ -185,7 +276,7 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
+
               {locationDeviceListOtmil.map((locationDevice, index) => (
                 <div className="pt-2 ml-[20px]" key={index}>
                   <details className="groupChild">
@@ -281,10 +372,8 @@ const CameraList = () => {
               </div> */}
             </details>
           </div>
-         
 
-          
-          <div className="py-5">
+          <div className="py-5" id="s-babin">
             <details className="group">
               <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
                 <span>BABINKUM TNI (Badan Pembinaan Hukum TNI)</span>
@@ -304,7 +393,6 @@ const CameraList = () => {
                   </svg>
                 </span>
               </summary>
-           
 
               <div className="py-5 ml-[20px]">
                 <details className="groupChild">

@@ -8,6 +8,15 @@ import {
   apiReadZona,
 } from '../../services/api';
 import Select from 'react-select';
+import dayjs from 'dayjs';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Alerts } from './AlertAktifitasPengunjung';
+import { Error403Message } from '../../utils/constants';
 
 // interface
 interface AddAktifitasPengunjungModalProps {
@@ -74,6 +83,9 @@ export const AddAktifitasPengunjung: React.FC<
     },
   );
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //state
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -85,6 +97,7 @@ export const AddAktifitasPengunjung: React.FC<
   const [dataPetugas, setDataPetugas] = useState([]);
   const [dataWBP, setDataWBP] = useState([]);
   const [Datapengunjung, setDatapengunjung] = useState<pengunjung[]>([]);
+  const [filter, setFilter] = useState('');
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -136,6 +149,100 @@ export const AddAktifitasPengunjung: React.FC<
     }
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Aktifitas',
+            description: 'Isi nama aktifitas',
+          },
+        },
+        {
+          element: '.i-waktu',
+          popover: {
+            title: 'Waktu Mulai Berkunjung',
+            description: 'Menentukan tanggal waktu mulai berkunjung',
+          },
+        },
+        {
+          element: '.i-selesai',
+          popover: {
+            title: 'Waktu Selesai Berkunjung',
+            description: 'Menentukan tanggal waktu selesai berkunjung',
+          },
+        },
+        {
+          element: '.i-tujuan',
+          popover: {
+            title: 'Tujuan Berkunjung',
+            description: 'Isi tujuan berkunjung',
+          },
+        },
+        {
+          element: '.p-ruang',
+          popover: {
+            title: 'Pilih Ruangan Otmil',
+            description: 'Pilih ruangan otmil yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jenis',
+          popover: {
+            title: 'Jenis Ruangan',
+            description: 'Isi jenis ruangan',
+          },
+        },
+        {
+          element: '.i-lokasi',
+          popover: {
+            title: 'Nama Lokasi Otmil',
+            description: 'Isi nama lokasi otmil',
+          },
+        },
+        {
+          element: '.i-zona',
+          popover: {
+            title: 'Zona',
+            description: 'Isi zona',
+          },
+        },
+        {
+          element: '.p-petugas',
+          popover: {
+            title: 'Petugas',
+            description: 'Pilih petugas yang diinginkan',
+          },
+        },
+        {
+          element: '.p-pengunjung',
+          popover: {
+            title: 'Pengunjung',
+            description: 'Pilih pengunjung yang diinginkan',
+          },
+        },
+        {
+          element: '.i-wbp',
+          popover: {
+            title: 'Nama WBP',
+            description: 'Isi nama WBP',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data aktifitas`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (
@@ -223,8 +330,82 @@ export const AddAktifitasPengunjung: React.FC<
     });
   };
 
+  const handleMulaiBerkunjung = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_mulai_kunjungan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const handleSelesaiBerkunjung = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_selesai_kunjungan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  };
   // fetch data
   useEffect(() => {
+    getTimeZone();
     const fetchData = async () => {
       let params = {
         pageSize: 1000,
@@ -258,12 +439,28 @@ export const AddAktifitasPengunjung: React.FC<
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
-      } catch (err) {
-        throw err;
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
       }
     };
     fetchData();
   }, []);
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const customStyles = {
     container: (provided: any) => ({
@@ -422,10 +619,33 @@ export const AddAktifitasPengunjung: React.FC<
                     {isDetail
                       ? 'Detail Data Aktifitas Pengunjung'
                       : isEdit
-                        ? 'Edit Data Aktifitas Pengunjung'
-                        : 'Tambah Data Aktifitas Pengunjung'}
+                        ? 'Edit Data Aktifitas '
+                        : 'Tambah Data Aktifitas '}
                   </h3>
                 </div>
+
+                {/* <div className="w-10"> */}
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-75">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+                {/* </div> */}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -443,7 +663,7 @@ export const AddAktifitasPengunjung: React.FC<
                       Nama Aktifitas
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_aktivitas_pengunjung"
                       placeholder="Nama Aktifitas"
                       onChange={handleChange}
@@ -466,15 +686,33 @@ export const AddAktifitasPengunjung: React.FC<
                     >
                       Waktu Mulai Berkunjung
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_mulai_kunjungan"
-                      placeholder="waktu mulai kunjungan"
-                      onChange={handleChange}
-                      value={formState.waktu_mulai_kunjungan}
-                      disabled={isDetail}
-                    />
+                    <div className="flex flex-row">
+                      <DatePicker
+                        selected={
+                          formState.waktu_mulai_kunjungan
+                            ? dayjs(formState.waktu_mulai_kunjungan).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleMulaiBerkunjung}
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        // timeIntervals={15}
+                        timeCaption="time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
+                        name="waktu_mulai_kunjungan"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'waktu_mulai_kunjungan'
@@ -491,15 +729,33 @@ export const AddAktifitasPengunjung: React.FC<
                     >
                       Waktu Selesai Berkunjung
                     </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      name="waktu_selesai_kunjungan"
-                      placeholder="waktu selesai kunjungan"
-                      onChange={handleChange}
-                      value={formState.waktu_selesai_kunjungan}
-                      disabled={isDetail}
-                    />
+                    <div className="flex flex-row">
+                      <DatePicker
+                        selected={
+                          formState.waktu_selesai_kunjungan
+                            ? dayjs(formState.waktu_selesai_kunjungan).toDate()
+                            : dayjs().toDate()
+                        }
+                        onChange={handleSelesaiBerkunjung}
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        // timeIntervals={1}
+                        timeCaption="Pilih Waktu"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
+                        name="waktu_selesai_kunjungan"
+                        disabled={false}
+                        locale="id"
+                      />
+                      <input
+                        type="text"
+                        className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                        name="zona_waktu"
+                        value={formState.zona_waktu}
+                        disabled
+                      />
+                    </div>
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'waktu_selesai_kunjungan'
@@ -517,7 +773,7 @@ export const AddAktifitasPengunjung: React.FC<
                       Tujuan Berkunjung
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-tujuan"
                       name="tujuan_kunjungan"
                       placeholder="Tujuan kunjungan"
                       onChange={handleChange}
@@ -541,7 +797,7 @@ export const AddAktifitasPengunjung: React.FC<
                       Pilih Ruangan otmil
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single p-ruang"
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
@@ -582,7 +838,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <input
                       type="text"
                       id="jenis_ruangan_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
                       disabled={isDetail || isEdit}
@@ -607,7 +863,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <input
                       type="text"
                       id="nama_lokasi_otmil"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lokasi"
                       name="nama_lokasi_otmil"
                       value={formState.nama_lokasi_otmil}
                       disabled={isDetail || isEdit}
@@ -632,7 +888,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <input
                       type="text"
                       id="nama_zona"
-                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-zona"
                       name="nama_zona"
                       onChange={handleChange}
                       defaultValue={formState.status_zona_ruangan_otmil}
@@ -656,7 +912,7 @@ export const AddAktifitasPengunjung: React.FC<
                       Petugas
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single p-petugas"
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
@@ -691,10 +947,10 @@ export const AddAktifitasPengunjung: React.FC<
                       className=" mb-1.5 block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      pengunjung
+                      Pengunjung
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single p-pengunjung"
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
@@ -733,7 +989,7 @@ export const AddAktifitasPengunjung: React.FC<
                     </label>
                     <input
                       type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-wbp"
                       name="nama_wbp"
                       placeholder="Nama tersangka"
                       onChange={handleChange}
@@ -770,6 +1026,7 @@ export const AddAktifitasPengunjung: React.FC<
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -804,6 +1061,7 @@ export const AddAktifitasPengunjung: React.FC<
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

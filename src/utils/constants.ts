@@ -23,3 +23,8 @@ export const notificationDummy = [
     date: '04 Jan, 2025',
   },
 ];
+
+export const version = '0.1';
+
+export const Error403Message =
+  'Sesi login sudah habis. Silahkan login kembali.';

@@ -14,6 +14,11 @@ import SearchInputButton from '../Search';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -30,6 +35,9 @@ interface Item {
 }
 
 const GelangList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -42,14 +50,20 @@ const GelangList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState({
     nama_gelang: '',
+    // dmac:'123'
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState(0);
   const [dataExcel, setDataExcel] = useState([]);
+  const [filteran, setFilteran] = useState('');
 
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [searchData, setSearchData] = useState({
+    dmac: '',
+    nama_gelang:''
+  });
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -80,7 +94,8 @@ const GelangList = () => {
   const handleSearchClick = async () => {
     let params = {
       filter: {
-        nama_gelang: filter,
+        nama_gelang: searchData.nama_gelang,
+        dmac: searchData.dmac,
         // nama_lokasi_otmil: 'Cimahi',
         lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
       },
@@ -97,9 +112,52 @@ const GelangList = () => {
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
     }
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama gelang',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama gelang',
+          },
+        },
+        {
+          element: '.excel',
+          popover: { title: 'Excel', description: 'Mendapatkan file excel' },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data perangkat gelang',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleEnterKeyPress = (event: any) => {
@@ -145,10 +203,15 @@ const GelangList = () => {
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
-    } catch (error) {
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: 'Gagal memuat data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -205,10 +268,14 @@ const GelangList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -234,10 +301,14 @@ const GelangList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -263,10 +334,14 @@ const GelangList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -293,7 +368,7 @@ const GelangList = () => {
         'Nama Ruangan Otmil',
         'Zona',
       ],
-      ...dataExcel.map((item: any) => [
+      ...data.map((item: any) => [
         item.nama_gelang,
         item.dmac,
         item.tanggal_pasang,
@@ -331,13 +406,15 @@ const GelangList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="flex w-full">
+            <div className="flex w-full search">
               <SearchInputButton
-                value={filter.nama_gelang}
+                // value={filter.nama_gelang}
                 placehorder="Cari nama Gelang"
-                onChange={handleFilterChange}
+                // onChange={handleFilterChange}
+                value={searchData.nama_gelang}
+                onChange={(e) => setSearchData({ ...searchData, nama_gelang: e.target.value })}
 
-                // onClick={handleSearchClick}
+              // onClick={handleSearchClick}
               />
               {/* <select
             className="w-3/6 text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
@@ -351,8 +428,15 @@ const GelangList = () => {
             <option value="rusak">Rusak</option>
           </select> */}
             </div>
+            <div className="flex w-full search">
+                <SearchInputButton
+                  value={searchData.dmac}
+                  placehorder="Cari Nomor DMAC"
+                  onChange={(e) => setSearchData({ ...searchData, dmac: e.target.value })}
+                />
+              </div>
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -375,10 +459,21 @@ const GelangList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
             </button>
+
+            {/* <div className="w-10"> */}
+            <button>
+              <HiQuestionMarkCircle
+                values={filteran}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+            {/* </div> */}
           </div>
         </div>
         <div className="flex justify-between items-center mb-3">
@@ -388,7 +483,7 @@ const GelangList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className=" text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

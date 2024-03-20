@@ -11,10 +11,14 @@ import { AddJenisPersidanganModal } from './ModalAddJenisPersidangan';
 import { DeleteJenisPersidanganModal } from './ModalDeleteJenisPersidangan';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as xlsx from 'xlsx';
 import DropdownAction from '../../../components/DropdownAction';
 import dayjs from 'dayjs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { Error403Message } from '../../../utils/constants';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -26,6 +30,9 @@ interface Item {
 }
 
 const JenisPersidanganList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // useState untuk menampung data dari API
   const [data, setData] = useState<Item[]>([]);
   const [detailData, setDetailData] = useState<Item | null>(null);
@@ -80,6 +87,44 @@ const JenisPersidanganList = () => {
     // }
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.search',
+          popover: {
+            title: 'Search',
+            description: 'Mencari jenis persidangan',
+          },
+        },
+        {
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Klik untuk mencari jenis persidangan',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Excel',
+            description: 'Mendapatkan file excel',
+          },
+        },
+        {
+          element: '.b-tambah',
+          popover: {
+            title: 'Tambah',
+            description: 'Menambahkan data jenis persidangan',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleSearchClick = async () => {
     try {
       const params = {
@@ -100,10 +145,14 @@ const JenisPersidanganList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -157,10 +206,14 @@ const JenisPersidanganList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -219,10 +272,14 @@ const JenisPersidanganList = () => {
         throw new Error(responseDelete.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -248,10 +305,14 @@ const JenisPersidanganList = () => {
         throw new Error(responseCreate.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -277,10 +338,14 @@ const JenisPersidanganList = () => {
         throw new Error(responseEdit.data.message);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -317,7 +382,7 @@ const JenisPersidanganList = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="w-full">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari jenis persidangan"
@@ -326,7 +391,7 @@ const JenisPersidanganList = () => {
             </div>
 
             <button
-              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium "
+              className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"
               onClick={handleSearchClick}
               id="button-addon1"
@@ -349,9 +414,18 @@ const JenisPersidanganList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
             >
               Export&nbsp;Excel
+            </button>
+
+            <button>
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
             </button>
           </div>
         </div>
@@ -363,7 +437,7 @@ const JenisPersidanganList = () => {
           {!isOperator && (
             <button
               onClick={() => setModalAddOpen(true)}
-              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+              className="  text-black rounded-md font-semibold bg-blue-300 py-2 px-3 b-tambah"
             >
               Tambah
             </button>

@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import CameraList from '../Device/Kamera/CameraList';  
-import BraceletList from '../Device/Gelang/BraceletList';
-import GatewayList from '../Device/Gateway/GatewayList';
+// import CameraList from '../Device/Kamera/CameraList';  
+// import BraceletList from '../Device/Gelang/BraceletList';
+// import GatewayList from '../Device/Gateway/GatewayList';
 const DeviceSetting = () => {
   const [selectedDevice, setSelectedDevice] = useState('0' as string);
   return (
@@ -17,7 +17,7 @@ const DeviceSetting = () => {
           <option value="2">Gateway</option>
           <option value="3">Gelang</option>
         </select>
-        {selectedDevice === '1' && <CameraList />}
+        {/* {selectedDevice === '1' && <CameraList />}
         {selectedDevice === '2' && <GatewayList />}
         {selectedDevice === '3' && <BraceletList />}
         {selectedDevice === '0' && 
@@ -29,7 +29,7 @@ const DeviceSetting = () => {
               </h4>
            
           </div>
-          </div>}
+          </div>} */}
 
 
       </div>

@@ -19,6 +19,8 @@ import dayjs from 'dayjs';
 import id from 'date-fns/locale/id';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import 'dayjs/locale/id';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Item {
   grup_petugas_id: '';
@@ -26,6 +28,9 @@ interface Item {
 }
 
 const GrupShift = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -38,6 +43,21 @@ const GrupShift = () => {
   const [modalAddOpen, setModalAddOpen] = useState(false);
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
+
   const [dataGrup, setDataGrup] = useState([
     {
       grup_petugas_id: '',
@@ -76,10 +96,15 @@ const GrupShift = () => {
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -88,25 +113,37 @@ const GrupShift = () => {
 
   //Tambah Data
   const handleAddShift = async (params: any) => {
-    const AddData = await apiCreatGrupPetugas(params, token);
+    try {
+      const AddData = await apiCreatGrupPetugas(params, token);
 
-    if (AddData.data.status === 'OK') {
-      handleCloseAddModal();
-      const params = {
-        filter: '',
-      };
-      const response = await apiReadAllGrupPetugas(params, token);
+      if (AddData.data.status === 'OK') {
+        handleCloseAddModal();
+        const params = {
+          filter: '',
+        };
+        const response = await apiReadAllGrupPetugas(params, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        setDataGrup(response.data.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menambah data',
+        });
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menambah data',
-      });
-      setDataGrup(response.data.records);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menambah data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -129,25 +166,38 @@ const GrupShift = () => {
 
   //update
   const handleEditGrup = async (params: any) => {
-    const EditData = await apiUpdateGrupPetugas(params, token);
+    try {
+      const EditData = await apiUpdateGrupPetugas(params, token);
 
-    if (EditData.data.status === 'OK') {
-      handleCloseEditModal();
-      const params = {
-        filter: '',
-      };
-      const response = await apiReadAllGrupPetugas(params, token);
+      if (EditData.data.status === 'OK') {
+        handleCloseEditModal();
+        const params = {
+          filter: '',
+        };
+        const response = await apiReadAllGrupPetugas(params, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengedit data',
+        });
+        setDataGrup(response.data.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal mengedit data',
+        });
+      }
+    } catch (e: any) {
+      console.error('Error editing data:', e);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil mengedit data',
-      });
-      setDataGrup(response.data.records);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal mengedit data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -162,24 +212,38 @@ const GrupShift = () => {
   };
 
   const handleSubmitDeleteShift = async (params: any) => {
-    const AddData = await apiDeleteGrupPetugas(params, token);
-    if (AddData.data.status === 'OK') {
-      handleCloseDeleteModal();
-      const params = {
-        filter: '',
-      };
-      const response = await apiReadAllGrupPetugas(params, token);
+    try {
+      const AddData = await apiDeleteGrupPetugas(params, token);
+
+      if (AddData.data.status === 'OK') {
+        handleCloseDeleteModal();
+        const params = {
+          filter: '',
+        };
+        const response = await apiReadAllGrupPetugas(params, token);
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
+        });
+        setDataGrup(response.data.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal menghapus data',
+        });
+      }
+    } catch (e: any) {
+      console.error('Error deleting data:', e);
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menghapus data',
-      });
-      setDataGrup(response.data.records);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-    } else {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal menghapus data',
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -236,12 +300,14 @@ const GrupShift = () => {
           <h1 className="text-xl font-semibold text-black dark:text-white">
             Data Grup Shift
           </h1>
-          <button
-            onClick={() => setModalAddOpen(!modalAddOpen)}
-            className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
-          >
-            Tambah
-          </button>
+          {!isOperator && (
+            <button
+              onClick={() => setModalAddOpen(!modalAddOpen)}
+              className="text-black rounded-md font-semibold bg-blue-300 py-2 px-3"
+            >
+              Tambah
+            </button>
+          )}
         </div>
         <div className="flex flex-col">
           <div className="rounded-b-md rounded-t-md">
@@ -297,20 +363,25 @@ const GrupShift = () => {
                               >
                                 Detail
                               </button>
-                              <button
-                                onClick={() => handleEditClick(itemGrup)}
-                                className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDeleteClick(itemGrup.grup_petugas_id)
-                                }
-                                className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
-                              >
-                                Delete
-                              </button>
+                              {!isOperator && (
+                                <>
+                                  <button
+                                    onClick={() => handleEditClick(itemGrup)}
+                                    className="py-1 text-sm px-2 text-black rounded-md bg-blue-300"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteClick(itemGrup.grup_petugas_id)
+                                    }
+                                    className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
+                                  >
+                                    Delete
+                                  </button>
+                                </>
+                              )}
+
                             </div>
                           </li>
                         </ul>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import UserOne from '../images/user/user-01.png';
 
@@ -57,7 +57,7 @@ const DropdownUser = () => {
             {dataUser.nama_petugas}
           </span>
           <span className="block text-xs capitalize text-white">
-            {dataUser.role_name}
+            {/* {dataUser.role_name} */}
           </span>
         </span>
 

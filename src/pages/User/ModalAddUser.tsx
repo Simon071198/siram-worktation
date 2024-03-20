@@ -7,6 +7,11 @@ import {
 } from '../../services/api';
 import { Alerts } from './AlertUser';
 import { set } from 'react-hook-form';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
 
 interface AddUserModalProps {
   closeModal: () => void;
@@ -30,6 +35,9 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
   dataUser,
   token,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       petugas_id: '',
@@ -53,6 +61,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const [filter, setFilter] = useState('');
 
   // const [nrp,setNrp]:any =useState()
   // const [divisi,setDivisi]:any =useState()
@@ -114,6 +123,152 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorialUbah = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '#p-role',
+          popover: {
+            title: 'Role',
+            description: 'Pilih role yang diinginkan',
+          },
+        },
+        {
+          element: '.i-email',
+          popover: {
+            title: 'Email',
+            description: 'Isi email',
+          },
+        },
+        {
+          element: '.i-phone',
+          popover: {
+            title: 'Phone',
+            description: 'Phone number',
+          },
+        },
+        {
+          element: '.i-sus',
+          popover: {
+            title: 'Suspended',
+            description: 'Pilih suspended yang diinginkan',
+          },
+        },
+        {
+          element: '.p-masa',
+          popover: {
+            title: 'Masa Berlaku Akun',
+            description: 'Menentukan tanggal masa berlaku akun',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data pengguna`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-nama',
+          popover: {
+            title: 'Nama Petugas',
+            description: 'Pilih nama petugas yang diinginkan',
+          },
+        },
+        {
+          element: '#p-role',
+          popover: {
+            title: 'Role',
+            description: 'Pilih role yang diinginkan',
+          },
+        },
+        {
+          element: '.i-nrp',
+          popover: {
+            title: 'NRP',
+            description: 'Isi NRP',
+          },
+        },
+        {
+          element: '.i-matra',
+          popover: {
+            title: 'Matra',
+            description: 'Isi matra',
+          },
+        },
+        {
+          element: '.i-jabatan',
+          popover: {
+            title: 'Jabatan',
+            description: 'Isi jabatan',
+          },
+        },
+        {
+          element: '.i-divisi',
+          popover: {
+            title: 'Divisi',
+            description: 'Isi divisi',
+          },
+        },
+        {
+          element: '.i-email',
+          popover: {
+            title: 'Email',
+            description: 'Isi email',
+          },
+        },
+        {
+          element: '.i-phone',
+          popover: {
+            title: 'Phone',
+            description: 'Phone number',
+          },
+        },
+        {
+          element: '.i-password',
+          popover: {
+            title: 'Password',
+            description: 'Isi password',
+          },
+        },
+        {
+          element: '.i-sus',
+          popover: {
+            title: 'Suspended',
+            description: 'Pilih suspended yang diinginkan',
+          },
+        },
+        {
+          element: '.p-masa',
+          popover: {
+            title: 'Masa Berlaku Akun',
+            description: 'Menentukan tanggal masa berlaku akun',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data pengguna`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -182,10 +337,14 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
         setStaffData(filter);
       }
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -202,10 +361,14 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
       const result = response.data;
       setRoleData(result.records);
     } catch (e: any) {
-      const error = e.message;
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'error',
-        title: error,
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -369,6 +532,27 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                         : 'Tambah Data Pengguna'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-80">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorialUbah}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-70">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -388,7 +572,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                         Nama Petugas
                       </label>
                       <Select
-                        className="basic-single"
+                        className="basic-single p-nama"
                         classNamePrefix="select"
                         defaultValue={formState.petugas_id}
                         placeholder={'Pilih petugas'}
@@ -425,6 +609,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       value={formState.user_role_id}
                       disabled={isDetail}
                       className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      id="p-role"
                     >
                       <option disabled value="">
                         Pilih Role
@@ -453,7 +638,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                           NRP
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-nrp"
                           onChange={handleChange}
                           name="nrp"
                           placeholder="NRP"
@@ -470,7 +655,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                           Matra
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-matra"
                           onChange={handleChange}
                           placeholder="Matra"
                           name="nama_matra"
@@ -487,7 +672,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                           Jabatan
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-jabatan"
                           onChange={handleChange}
                           placeholder="Jabatan"
                           name="jabatan"
@@ -504,7 +689,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                           Divisi
                         </label>
                         <input
-                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-divisi"
                           onChange={handleChange}
                           placeholder="Divisi"
                           name="divisi"
@@ -523,7 +708,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       Email
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-email"
                       name="email"
                       type="email"
                       onChange={handleChange}
@@ -547,7 +732,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       Phone
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-phone"
                       name="phone"
                       placeholder="Phone Number"
                       onChange={handleChange}
@@ -571,7 +756,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                         Password
                       </label>
                       <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-password"
                         name="password"
                         type="password"
                         onChange={handleChange}
@@ -600,7 +785,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                       name="is_suspended"
                       value={formState.is_suspended}
                       disabled={isDetail}
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-sus"
                     >
                       <option disabled value="">
                         Pilih
@@ -625,7 +810,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     </label>
                     <input
                       type="date"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary p-masa"
                       name="expiry_date"
                       onChange={handleChange}
                       value={formState.expiry_date}
@@ -679,6 +864,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-ubah"
                   >
                     {buttonLoad ? (
                       <svg
@@ -713,6 +899,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-tambah"
                   >
                     {buttonLoad ? (
                       <svg

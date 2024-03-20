@@ -12,7 +12,11 @@ import 'dayjs/locale/id';
 import { BiLoaderAlt } from 'react-icons/bi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 interface Shift {
   shift_id: any;
@@ -32,6 +36,9 @@ const AddPetugasShiftGrup = ({
   defaultValue,
   isDetail,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   //get Token
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
@@ -40,6 +47,21 @@ const AddPetugasShiftGrup = ({
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const [filter, setFilter] = useState('');
+  const [isOperator, setIsOperator] = useState<boolean>();
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  useEffect(() => {
+    if (dataAdmin?.role_name === 'operator') {
+      setIsOperator(true);
+    } else {
+      setIsOperator(false);
+    }
+
+    console.log(isOperator, 'Operator');
+  }, [isOperator]);
 
   const [dataPetugasShift, setDataPetugasShift] = useState(
     defaultValue || {
@@ -175,10 +197,15 @@ const AddPetugasShiftGrup = ({
         setStaff(staff.data.records);
         setPenugasan(penugasan.data.records);
         setIsLoading(false);
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -219,10 +246,15 @@ const AddPetugasShiftGrup = ({
           shift_id: '',
           nama_shift: '',
         });
-      } catch (error: any) {
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: error.message,
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
     };
@@ -259,6 +291,79 @@ const AddPetugasShiftGrup = ({
       shift_id: e.target.value,
       nama_shift: selectedSchedule[0]?.nama_shift,
     });
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.d-one',
+          popover: {
+            title: 'Tanggal Awal',
+            description: 'Menentukan tanggal awal',
+          },
+        },
+        {
+          element: '.d-second',
+          popover: {
+            title: 'Tanggal Akhir',
+            description: 'Menentukan tanggal akhir',
+          },
+        },
+        {
+          element: '.p-jadwal',
+          popover: {
+            title: 'Jadwal Shift',
+            description: 'Pilih jadwal shift yang diinginkan',
+          },
+        },
+        {
+          element: '.i-masuk',
+          popover: {
+            title: 'Waktu Masuk',
+            description: 'Menentukan waktu masuk',
+          },
+        },
+        {
+          element: '.i-pulang',
+          popover: {
+            title: 'Waktu Pulang',
+            description: 'Menentukan waktu pulang',
+          },
+        },
+        {
+          element: '.i-grup',
+          popover: {
+            title: 'Nama Grup',
+            description: 'Isi nama grup',
+          },
+        },
+        {
+          element: '.i-ketua',
+          popover: {
+            title: 'Ketua Grup',
+            description: 'Isi ketua grup',
+          },
+        },
+        {
+          element: '.d-grup',
+          popover: {
+            title: 'Nama Grup',
+            description: 'Isi nama grup',
+          },
+        },
+        {
+          element: '#b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChangePenugasan = (e: any, petugas: any) => {
@@ -375,6 +480,18 @@ const AddPetugasShiftGrup = ({
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Tambah Jadwal Shift Kerja
               </h1>
+
+              {/* <div className="w-10"> */}
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+              {/* </div> */}
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -395,7 +512,7 @@ const AddPetugasShiftGrup = ({
                     <div className="w-full flex items-center space-x-1">
                       <div className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
                         <DatePicker
-                          className="dark:text-gray dark:bg-slate-800"
+                          className="dark:text-gray dark:bg-slate-800 d-one"
                           selected={selectedDate.toDate()}
                           onChange={handleDateChange}
                           dateFormat="dd MMMM yyyy"
@@ -406,7 +523,7 @@ const AddPetugasShiftGrup = ({
                       <h1>s/d</h1>
                       <div className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
                         <DatePicker
-                          className="dark:text-gray dark:bg-slate-800"
+                          className="dark:text-gray dark:bg-slate-800 d-second"
                           selected={selectedEndDate.toDate()}
                           onChange={handleDateChangeEndDate}
                           dateFormat="dd MMMM yyyy"
@@ -429,7 +546,7 @@ const AddPetugasShiftGrup = ({
                       name="shift_id"
                       value={shiftSelect.shift_id}
                       onChange={handleChangeShift}
-                      className="capitalize w-full rounded dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:text-white dark:focus-border-primary"
+                      className="capitalize w-full rounded dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:text-white dark:focus-border-primary p-jadwal"
                     >
                       <option value="">Pilih Shift</option>
                       {shiftOptions?.map((schedule: any) => {
@@ -462,7 +579,7 @@ const AddPetugasShiftGrup = ({
                         disabled
                         value={waktu.waktu_mulai}
                         name="nama_grup_petugas"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-masuk"
                       />
                     </div>
                     <div className="form-group w-1/2 ">
@@ -476,7 +593,7 @@ const AddPetugasShiftGrup = ({
                         disabled
                         value={waktu.waktu_selesai}
                         name="nama_grup_petugas"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-pulang"
                       />
                     </div>
                   </div>
@@ -491,7 +608,7 @@ const AddPetugasShiftGrup = ({
                       <input
                         value={dataPetugasShift.nama_grup_petugas}
                         name="grup_petuas_id"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-grup"
                       />
                     </div>
                     <div className="form-group w-full">
@@ -504,7 +621,7 @@ const AddPetugasShiftGrup = ({
                       <input
                         value={dataPetugasShift.nama_ketua_grup}
                         name="nama_ketua_grup"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-ketua"
                       />
                     </div>
                   </div>
@@ -532,7 +649,7 @@ const AddPetugasShiftGrup = ({
                       </label>
                     </div>
                   </div>
-                  <div className="w-full h-36 overflow-y-auto mb-3">
+                  <div className="w-full h-36 overflow-y-auto mb-3 d-grup">
                     {staff.map((item: any) => {
                       return (
                         <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke my-1 dark:text-gray dark:bg-slate-800 ">
@@ -570,13 +687,15 @@ const AddPetugasShiftGrup = ({
                   </div>
                 </div>
                 {isDetail ? null : (
-                  <button
+                  !isOperator && (
+                    <button
                     onClick={handleSubmit}
                     className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                       buttonLoad ? 'bg-slate-400' : ''
                     }`}
                     type="submit"
                     disabled={buttonLoad}
+                    id="b-submit"
                   >
                     {buttonLoad ? (
                       <>
@@ -587,6 +706,7 @@ const AddPetugasShiftGrup = ({
                     )}
                     Submit
                   </button>
+                    )                  
                 )}
               </div>
             </div>

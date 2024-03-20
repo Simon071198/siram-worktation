@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import { Alerts } from './AlertPengadilanMiliter';
 import { apiReadKota, apiReadProvinsi } from '../../../services/api';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../../utils/constants';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -15,6 +20,9 @@ export const AddPengadilanMiliterModal = ({
   isEdit,
   token,
 }: any) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_pengadilan_militer: '',
@@ -32,6 +40,7 @@ export const AddPengadilanMiliterModal = ({
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [dataProvinsi, setDataProvinsi] = useState([]);
   const [dataKota, setDataKota] = useState([]);
+  const [filter, setFilter] = useState('');
 
   console.log(dataKota, 'kota');
   console.log(dataProvinsi, 'Provinsi');
@@ -53,6 +62,58 @@ export const AddPengadilanMiliterModal = ({
 
     setErrors([]);
     return true;
+  };
+
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Pengadilan Militer',
+            description: 'Isi nama pengadilan militer',
+          },
+        },
+        {
+          element: '.s-prov',
+          popover: {
+            title: 'Provinsi',
+            description: 'Isi provinsi',
+          },
+        },
+        {
+          element: '.p-kota',
+          popover: {
+            title: 'Kota',
+            description: 'Pilih kota yang diinginkan',
+          },
+        },
+        {
+          element: '.i-latitute',
+          popover: {
+            title: 'Latitute',
+            description: 'Isi latitute',
+          },
+        },
+        {
+          element: '.i-long',
+          popover: {
+            title: 'Longitude',
+            description: 'Isi longitude',
+          },
+        },
+        {
+          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+          popover: {
+            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data pengadilan militer`,
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
   };
 
   const handleChange = (e: any) => {
@@ -94,12 +155,17 @@ export const AddPengadilanMiliterModal = ({
       .then((res) => {
         setDataProvinsi(res.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const Kota = async () => {
@@ -110,12 +176,17 @@ export const AddPengadilanMiliterModal = ({
       .then((res) => {
         setDataKota(res.records);
       })
-      .catch((err) =>
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: err.massage,
-        }),
-      );
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
   const customStyles = {
@@ -282,6 +353,27 @@ export const AddPengadilanMiliterModal = ({
                         : 'Tambah Data Pengadilan Militer'}
                   </h3>
                 </div>
+
+                {isDetail ? null : isEdit ? (
+                  <button className="pr-65">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                ) : (
+                  <button className="pr-55">
+                    <HiQuestionMarkCircle
+                      values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -300,7 +392,7 @@ export const AddPengadilanMiliterModal = ({
                       Nama Pengadilan Militer
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_pengadilan_militer"
                       placeholder="Nama Pengadilan Militer"
                       onChange={handleChange}
@@ -325,7 +417,7 @@ export const AddPengadilanMiliterModal = ({
                       Provinsi
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single s-prov"
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
@@ -362,7 +454,7 @@ export const AddPengadilanMiliterModal = ({
                       Kota
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single p-kota"
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
@@ -403,7 +495,7 @@ export const AddPengadilanMiliterModal = ({
                       Latitute
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-latitute"
                       name="latitude"
                       placeholder="Latitute"
                       onChange={handleChange}
@@ -425,7 +517,7 @@ export const AddPengadilanMiliterModal = ({
                       Longitude
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-long"
                       name="longitude"
                       placeholder="Longitude"
                       onChange={handleChange}
@@ -463,6 +555,7 @@ export const AddPengadilanMiliterModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-ubah"
                     >
                       {buttonLoad ? (
                         <svg
@@ -497,6 +590,7 @@ export const AddPengadilanMiliterModal = ({
                       }`}
                       type="submit"
                       disabled={buttonLoad}
+                      id="b-tambah"
                     >
                       {buttonLoad ? (
                         <svg
