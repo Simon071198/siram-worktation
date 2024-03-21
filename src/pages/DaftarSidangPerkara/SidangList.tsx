@@ -142,7 +142,7 @@ const SidangList = () => {
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
-      pengacaraHolder: item?.sidang_pengacara,
+      sidang_pengacara: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
@@ -208,7 +208,7 @@ const SidangList = () => {
   };
 
   const handleEditClick = (item: any) => {
-    console.log(item, 'item item');
+    console.log(item, 'item edit');
     const newArrayJaksa: any = [];
     const newArrayAhli: any = [];
     const newArraySaksi: any = [];
@@ -281,7 +281,7 @@ const SidangList = () => {
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
-      pengacaraHolder: item?.sidang_pengacara,
+      sidang_pengacara: item?.sidang_pengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,

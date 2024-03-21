@@ -107,7 +107,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [filter, setFilter] = useState('');
 
   // useEffect untuk mengambil data dari api
-
   const validateForm = () => {
     let errorFields = [];
 
@@ -353,7 +352,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
-      const pengacaraMap = formState.pengacaraHolder.map(
+      const pengacaraMap = formState.sidang_pengacara.map(
         (item: any) => item.nama_pengacara,
       );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
@@ -448,16 +447,62 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   //     }
   //   }
   // };
+  // const handlePengacara = () => {
+  //   if (!pengacaraField) {
+  //     setPengacaraEror(true);
+  //   } else {
+  //     if (pengacaraField.trim() !== '') {
+  //       setPengacaraEror(false);
+  //       setFormState((prevState: any) => ({
+  //         ...prevState,
+  //         pengacara: [...(prevState.pengacara || []), pengacaraField],
+  //       }));
+  //       setPengacaraField('');
+  //     }
+  //   }
+  // };
+  // const handlePengacara = () => {
+  //   if (!pengacaraField) {
+  //     setPengacaraEror(true);
+  //   } else if (isEdit && !pengacaraField) {
+  //   } else {
+  //     if (pengacaraField.trim() !== '') {
+  //       setPengacaraEror(false);
+  //       setFormState((prevState: any) => {
+  //         const existingPengacara =
+  //           prevState.sidang_pengacara.map((p: any) => p.nama_pengacara) || []; // Mengambil pengacara yang sudah ada
+  //         return {
+  //           ...prevState,
+  //           pengacara: [...existingPengacara, pengacaraField], // Menambahkan pengacara baru ke daftar yang sudah ada
+  //         };
+  //       });
+  //       setPengacaraField('');
+  //     }
+  //   }
+  // };
   const handlePengacara = () => {
-    if (!pengacaraField) {
-      setPengacaraEror(true);
+    if (isEdit && !pengacaraField) {
+      // Jika mode isEdit dan pengacaraField tidak diisi
+      setFormState((prevState: any) => {
+        const existingPengacara = prevState.sidang_pengacara.map(
+          (p: any) => p.nama_pengacara,
+        ); // Ambil data pengacara yang sudah ada
+        return {
+          ...prevState,
+          pengacara: existingPengacara, // Kirim kembali data pengacara yang sudah ada
+        };
+      });
     } else {
       if (pengacaraField.trim() !== '') {
         setPengacaraEror(false);
-        setFormState((prevState: any) => ({
-          ...prevState,
-          pengacara: [...(prevState.pengacara || []), pengacaraField],
-        }));
+        setFormState((prevState: any) => {
+          const existingPengacara =
+            prevState.sidang_pengacara.map((p: any) => p.nama_pengacara) || []; // Ambil data pengacara yang sudah ada
+          return {
+            ...prevState,
+            pengacara: [...existingPengacara, pengacaraField], // Tambahkan pengacara baru ke daftar yang sudah ada
+          };
+        });
         setPengacaraField('');
       }
     }
@@ -1955,7 +2000,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </div>
 
                   {/* pengacara */}
-                  {/* pengacara */}
                   <div className="">
                     <div className="flex items-center">
                       <p className="text-white">Pengacara</p>
@@ -1974,6 +2018,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           <>
                             <input
                               type="text"
+                              defaultValue={
+                                isDetail || isEdit ? formState.pengacara : ''
+                              }
                               value={pengacaraField}
                               placeholder={isDetail ? '' : 'Masukan pengacara'}
                               onChange={handleInputPengacara}
@@ -2047,9 +2094,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               )
                             )
                           :  */}
-                        {isDetail ||
-                          (isEdit &&
-                            formState.pengacaraHolder?.map(
+                        {isDetail || isEdit
+                          ? formState.sidang_pengacara?.map(
                               (item: any, index: any) => (
                                 <div className="flex flex-row items-center">
                                   <p
@@ -2082,7 +2128,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                                   </button>
                                 </div>
                               ),
-                            ))}
+                            )
+                          : ''}
                       </div>
                     </div>
                   </div>
