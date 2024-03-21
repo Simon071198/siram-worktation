@@ -26,6 +26,7 @@ const Penugasan = lazy(
 
 const Statistic = lazy(() => import('../pages/Statistic/Statistic'));
 import CameraDetail from '../pages/Camera/CameraDetail';
+import GedungList from '../pages/MasterData/GedungData/GedungList';
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
 // const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const Map = lazy(() => import('../pages/Map/Map'));
@@ -151,6 +152,10 @@ const DaftarSaksi = lazy(
   () => import('../pages/MasterData/SaksiData/SaksiList'),
 );
 const DaftarAhli = lazy(() => import('../pages/MasterData/AhliData/AhliList'));
+
+const DaftarGedung = lazy(
+  () => import('../pages/MasterData/GedungData/GedungList'),
+);
 const DaftarJenisPersidangan = lazy(
   () => import('../pages/MasterData/JenisPersidanganData/JenisPersidanganList'),
 );
@@ -234,6 +239,11 @@ const coreRoutes = [
     path: '/ahli-data',
     title: 'ahli data',
     component: DaftarAhli,
+  },
+  {
+    path: '/data-gedung',
+    title: 'Data Gedung',
+    component: DaftarGedung,
   },
   {
     path: '/saksi-data',

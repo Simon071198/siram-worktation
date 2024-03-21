@@ -4563,3 +4563,22 @@ export async function allKameraOtmilByLocation(token) {
     throw error;
   }
 }
+
+export async function apiGedungOtmilRead(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
