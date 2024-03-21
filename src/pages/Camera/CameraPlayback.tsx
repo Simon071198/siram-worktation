@@ -43,7 +43,8 @@ const CameraPlayback = () => {
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+  // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   useEffect(() => {
     // Fetch camera data when the component mounts.
@@ -325,11 +326,11 @@ const CameraPlayback = () => {
         <div className="player-wrapper r-player">
           <ReactPlayer
             className="react-player"
-            url={forUrl}
-            // url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"
+            // url={forUrl}
+            url="http://192.168.1.111:4007/record/Camera1/2024.03.15/150842.mp4"
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
-            playsinline={true}
+            // playsinline={true}
             controls={true}
             ref={playerRef}
             // onEnded={handleVideoEnded}
