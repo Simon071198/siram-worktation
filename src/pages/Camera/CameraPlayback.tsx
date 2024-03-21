@@ -19,17 +19,17 @@ const CameraPlayback = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [baseUrl] = useState('http://192.168.1.135:4002/record/');
+  const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-
+  const [forUrl, setForurl] = useState('');
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
   const [filter, setFilter] = useState('');
-  const [date, setDate] = useState('2023-11-20');
+  const [date, setDate] = useState('2024-03-15');
   const [timeStart, setTimeStart] = useState('15:04:00');
-  const [timeFinish, setTimeFinish] = useState('18:05:00');
+  const [timeFinish, setTimeFinish] = useState('15:06:00');
   const [deviceName, setDeviceName] = useState('');
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([
     {
@@ -42,8 +42,8 @@ const CameraPlayback = () => {
   const [playlistPlayback, setPlaylistPlayback] = useState([]);
 
   const videoRef = useRef(null);
-  const playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.135:4002'));
+  let playerRef = useRef(null);
+  const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   useEffect(() => {
     // Fetch camera data when the component mounts.
@@ -73,6 +73,7 @@ const CameraPlayback = () => {
     // Handle WebSocket messages (response from the server)
     client.current.onmessage = async (message) => {
       const dataFromServer = JSON.parse(message.data);
+      console.log('data server', message.data);
       // await setDeviceName(dataFromServer.deviceName);
 
       if (dataFromServer.message === 'GET FILE FROM DIRECTORY PATH') {
@@ -88,6 +89,7 @@ const CameraPlayback = () => {
           );
         });
         setPlaylistPlayback(playlist);
+        console.log('ini playback', playlist);
       } else if (dataFromServer.message === 'FILE FROM DIRECTORY EMPTY') {
         console.log('Got reply from the server:', dataFromServer);
         setPlaylistPlayback([]);
@@ -104,6 +106,14 @@ const CameraPlayback = () => {
     };
   }, [date, selectedCamera]);
 
+  useEffect(() => {
+    if (forUrl) {
+      // Set the video URL when `forUrl` changes
+      playerRef = forUrl;
+      console.log(playerRef, 'ini url');
+    }
+  }, [forUrl]);
+  console.log('for', forUrl);
   // Function to send a request to the WebSocket server
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method, params }));
@@ -191,13 +201,7 @@ const CameraPlayback = () => {
 
   // Handle video playback errors
   const handleVideoError = (error) => {
-    console.error('Video playback error:', error);
-    console.error('Error object:', error.target.error);
-
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % playlistPlayback.length,
-    );
-    playerRef.current.seekTo(0);
+    console.log(error);
   };
 
   const handleClickTutorial = () => {
@@ -246,46 +250,24 @@ const CameraPlayback = () => {
   };
 
   // Handle video playback ended
-  const handleVideoEnded = () => {
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % playlistPlayback.length,
-    );
-    playerRef.current.seekTo(0);
-  };
+  // const handleVideoEnded = () => {
+  //   setCurrentVideoIndex(
+  //     (prevIndex) => (prevIndex + 1) % playlistPlayback.length,
+  //   );
+  //   playerRef.current.seekTo(0);
+  // };
 
   // Load the video URL when the current video index changes
   useEffect(() => {
     if (playlistPlayback[currentVideoIndex]) {
-      playerRef.current.url = playlistPlayback[currentVideoIndex];
+      playerRef = playlistPlayback[currentVideoIndex];
     }
   }, [currentVideoIndex]);
 
   const handleRecordingClick = (recording: any) => {
     console.log('Recording clicked:', recording);
-    // Di sini Anda dapat menambahkan logika untuk memutar rekaman yang dipilih di React Player
+    setForurl(recording);
   };
-  const recordings = [
-    { id: 1, name: 'Recording 1', url: 'http://example.com/recording1.m3u8' },
-    { id: 2, name: 'Recording 2', url: 'http://example.com/recording2.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 4', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 5', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 6', url: 'http://example.com/recording3.m3u8' },
-    { id: 7, name: 'Recording 7', url: 'http://example.com/recording7.m3u8' },
-    { id: 8, name: 'Recording 8', url: 'http://example.com/recording8.m3u8' },
-    { id: 9, name: 'Recording 9', url: 'http://example.com/recording9.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    { id: 3, name: 'Recording 3', url: 'http://example.com/recording3.m3u8' },
-    // Tambahkan data rekaman lainnya jika diperlukan
-  ];
 
   return (
     <div className="flex items-center justify-center gap-4">
@@ -343,13 +325,14 @@ const CameraPlayback = () => {
         <div className="player-wrapper r-player">
           <ReactPlayer
             className="react-player"
-            url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"
+            url={forUrl}
+            // url="http://192.168.1.135:4002/stream/192.168.1.63_.m3u8"
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
             playsinline={true}
             controls={true}
             ref={playerRef}
-            onEnded={handleVideoEnded}
+            // onEnded={handleVideoEnded}
             onError={handleVideoError}
             // key={currentVideoIndex}
           />
@@ -362,13 +345,13 @@ const CameraPlayback = () => {
       <div className="box flex flex-col h-80 w-1/4 overflow-auto">
         <h2 className="text-xl font-bold mb-2">Recordings</h2>
         <ul>
-          {recordings.map((recording, index) => (
+          {playlistPlayback.map((recording, index) => (
             <li
               className="cursor-pointer"
               key={index}
               onClick={() => handleRecordingClick(recording)}
             >
-              {recording.name}
+              {recording}
             </li>
           ))}
         </ul>

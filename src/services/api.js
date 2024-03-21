@@ -2439,14 +2439,13 @@ export async function apiVisitorRealtimeLogList(params) {
       parameter.filters.gender = params.gender;
     }
 
-    console.log(parameter, 'parameter');
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
       data: JSON.stringify(parameter),
     });
     // console.log(response.data);
-    console.log(response.data.records);
+
     return response.data.records;
   } catch (error) {
     console.log(error);
@@ -3938,7 +3937,7 @@ export async function apiChangePassword(params, token) {
   }
 }
 
-export async function apiGatewayLog(params,token) {
+export async function apiGatewayLog(params, token) {
   try {
     const response = await axios({
       method: 'post',

@@ -151,13 +151,13 @@ const routes = [
   {
     id: 10,
     name: 'Kamera Live',
-    link: '/kamera',
+    link: '/kamera-dev-test',
     icon: CameraIcon,
   },
   {
     id: 10,
     name: 'Kamera Playback',
-    link: '/camera-playback',
+    link: '/kamera-playback',
     icon: CameraIcon,
   },
   {
