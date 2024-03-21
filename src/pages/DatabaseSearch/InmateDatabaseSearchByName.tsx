@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertDatabaseSearch';
 import { Error403Message } from '../../utils/constants';
 import { apiPelacakanTersangka } from '../../services/api';
+import { DetailPelacakanWajahPrajurit } from './ModalDetailDatabaseSearchByName';
 
 export default function InmateDatabaseSearchByName() {
 
@@ -39,6 +40,8 @@ export default function InmateDatabaseSearchByName() {
   const [filter, setFilter] = useState('');
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [modalDetailOpen, setModalDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState({});
 
   const [errors, setErrors] = useState<string[]>([]);
   const tokenItem = localStorage.getItem('token');
@@ -73,6 +76,12 @@ export default function InmateDatabaseSearchByName() {
 
     setIsFound(false);
     setIsNotFound(false);
+  };
+
+  const handleDetailClick = (item: any) => {
+    console.log('detail', item);
+    setDetailData(item);
+    setModalDetailOpen(true);
   };
 
   const handleFilterChange = async (e: any) => {
@@ -281,15 +290,15 @@ export default function InmateDatabaseSearchByName() {
                     />
                   </svg>
                 </button>
-              </div>              
+              </div>
             </div>
             {errors.length > 0 && (
-                  <div className="text-red-500 mt-2">
-                    {errors.map((error, index) => (
-                      <p key={index}>{error}</p>
-                    ))}
-                  </div>
-                )}
+              <div className="text-red-500 mt-2">
+                {errors.map((error, index) => (
+                  <p key={index}>{error}</p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -317,57 +326,66 @@ export default function InmateDatabaseSearchByName() {
           <div className="h-[400px] overflow-y-scroll">
             <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px]">
               <div className="grid grid-cols-1 gap-6 d-hasil">
-                {data.map((item: any) =>
-                  item.kamera_log.map((kamera: any) => (
-                    <div className="bg-boxdark px-4 py-4 flex">
-                      <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                        <img
-                          src={'https://dev.transforme.co.id/siram_admin_api' +
-                            kamera.image_kamera_log}
-                          alt="picture"
-                          className="object-cover w-[150px] h-[150px]"
-                        ></img>
+                {data.map((item: any) => (
+                  <div className="bg-boxdark px-4 py-4 flex" onClick={() => handleDetailClick(item)}>
+                    <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
+                      <img
+                        src={'https://dev.transforme.co.id/siram_admin_api' +
+                        item.foto_wajah}
+                        alt="picture"
+                        className="object-cover w-[150px] h-[150px]"
+                      ></img>
+                    </div>
+                    <div className="ml-10 grid grid-cols-1 items-center">
+                      <div className="flex flex-col w-full">
+                        <p className="text-3xl font-bold text-white">
+                          {item.nama_tersangka}
+                        </p>
+                        <p className="text-2xl font-base text-slate-500">
+                          {item.nama_tersangka}
+                        </p>
                       </div>
-                      <div className="ml-10 grid grid-cols-1 items-center">
-                        <div className="flex flex-col w-full">
-                          <p className="text-3xl font-bold text-white">
-                            {item.nama_tersangka}
-                          </p>
-                          <p className="text-2xl font-base text-slate-500">
-                            {item.nama_tersangka}
-                          </p>
-                        </div>
-                        <div className="flex flex-col mt-6 item-center  w-full">
-                          <p className="text-lg">Keterangan</p>
-                          <div className="flex items-center gap-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              width="15"
-                              height="15"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
+                      <div className="flex flex-col mt-6 item-center  w-full">
+                        <p className="text-lg">Keterangan</p>
+                        <div className="flex items-center gap-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            width="15"
+                            height="15"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
 
-                            <p className="text-md">{kamera.timestamp_kamera_log}</p>
-                          </div>
+                          <p className="text-md">2023-12-05 14:32:15</p>
                         </div>
                       </div>
                     </div>
-                  ))
+                  </div>
+                )
                 )}
               </div>
             </div>
           </div>
         </>
 
+      )}
+
+      {modalDetailOpen && (
+        <DetailPelacakanWajahPrajurit
+          closeModal={() => setModalDetailOpen(false)}
+          // onSubmit={handleSubmitAddDataPetugas}
+          defaultValue={detailData}
+          isDetail={true}
+          token={token}
+        />
       )}
     </div>
     // <>
