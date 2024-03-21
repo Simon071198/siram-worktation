@@ -250,8 +250,14 @@ const routeMasterData = [
   // },
   {
     id: 13,
-    name: 'pengadilan Militer',
+    name: 'Pengadilan Militer',
     link: '/pengadilan-militer',
+    icon: <FaBuildingColumns size={25} />,
+  },
+  {
+    id: 14,
+    name: 'Data Gedung',
+    link: '/data-gedung',
     icon: <FaBuildingColumns size={25} />,
   },
 ];

@@ -4614,3 +4614,22 @@ export async function apiPengadilanMiliterRead(params: any, token: any) {
     throw error;
   }
 }
+
+export async function apiGedungOtmilRead(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
