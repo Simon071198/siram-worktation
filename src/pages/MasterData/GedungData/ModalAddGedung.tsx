@@ -4,7 +4,7 @@ import { Alerts } from './AlertGedung';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
-import { Select } from '@windmill/react-ui';
+import Select from 'react-select';
 import { apiReadAlllokasiOtmil } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
@@ -21,23 +21,27 @@ export const ModalAddGedung = ({
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_gedung_otmil: '',
-      bidang_ahli: '',
-      bukti_keahlian: '',
+      lokasi_otmil_id: '',
+      panjang: '',
+      lebar: '',
+      posisi_X: '',
+      posisi_Y: '',
     },
   );
+
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState('');
-  
+
   const [isLokasiOtmil, setIsLokasiOtmil] = useState([]);
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (key !== 'bukti_keahlian') {
+      if (key !== 'nama_lokasi_otmil') {
         if (!value) {
           errorFields.push(key);
         }
@@ -177,16 +181,14 @@ export const ModalAddGedung = ({
     driverObj.drive();
   };
 
-  const lokasiOtmilData = async () => {
-    const data = await apiReadAlllokasiOtmil({},token);
-    console.log(data.data.records, 'INI DATA');
-    setIsLokasiOtmil(data.data.records);
-  };
-
-  console.log(isLokasiOtmil, 'INI HASIL SET')
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
+
+  const handleSelectLokasiOtmil = (e: any) => {
+    setFormState({ ...formState, lokasi_otmil_id: e?.value });
+  };
+  console.log(formState, 'Test');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -206,9 +208,9 @@ export const ModalAddGedung = ({
       left: 0,
       width: '100%',
       height: '100%',
-      background: 'rgba(0, 0, 0, 0.5)', 
-      backdropFilter: 'blur(5px)', 
-      zIndex: 40, 
+      background: 'rgba(0, 0, 0, 0.5)',
+      backdropFilter: 'blur(5px)',
+      zIndex: 40,
     },
     modalContainer: {
       position: 'fixed',
@@ -218,22 +220,16 @@ export const ModalAddGedung = ({
     },
   };
 
+  const lokasiOtmilData = async () => {
+    const data = await apiReadAlllokasiOtmil({}, token);
+    setIsLokasiOtmil(data.data.records);
+  };
+
   useEffect(() => {
-    Promise.all([
-      lokasiOtmilData(),
-    ]).then(() => {
+    Promise.all([lokasiOtmilData()]).then(() => {
       setIsLoading(false);
     });
   }, []);
-
-  // useEffect(() => {
-  //   if (isDetail) {
-  //     setFormState({
-  //       ...formState,
-  //       akses_ruangan_otmil: defaultValue.akses_ruangan_otmil,
-  //     });
-  //   }
-  // }, [isDetail]);
 
   return (
     <div>
@@ -279,8 +275,8 @@ export const ModalAddGedung = ({
             </div>
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-              <div className="w-full flex justify-between">
-                <div>
+              <div className="w-full flex justify-between mb-2  items-center  ">
+                <div className="flex items-center gap-4  w-full">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail Data Gedung'
@@ -288,25 +284,25 @@ export const ModalAddGedung = ({
                         ? 'Edit Data Gedung'
                         : 'Tambah Data Gedung'}
                   </h3>
-                </div>
 
-                {isDetail ? null : isEdit ? (
-                  <button className="pr-95">
-                    <HiQuestionMarkCircle
-                      values={filter}
-                      aria-placeholder="Show tutorial"
-                      onClick={handleClickTutorial}
-                    />
-                  </button>
-                ) : (
-                  <button className="pr-90">
-                    <HiQuestionMarkCircle
-                      values={filter}
-                      aria-placeholder="Show tutorial"
-                      onClick={handleClickTutorial}
-                    />
-                  </button>
-                )}
+                  {isDetail ? null : isEdit ? (
+                    <button className="">
+                      <HiQuestionMarkCircle
+                        values={filter}
+                        aria-placeholder="Show tutorial"
+                        onClick={handleClickTutorial}
+                      />
+                    </button>
+                  ) : (
+                    <button className="">
+                      <HiQuestionMarkCircle
+                        values={filter}
+                        aria-placeholder="Show tutorial"
+                        onClick={handleClickTutorial}
+                      />
+                    </button>
+                  )}
+                </div>
 
                 <strong
                   className="text-xl align-center cursor-pointer "
@@ -317,18 +313,18 @@ export const ModalAddGedung = ({
               </div>
 
               <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 mt-4">
-                  <div className="form-group w-full relative h-22">
+                <div className="grid grid-cols-1 gap-4 mt-4">
+                  <div className="form-group w-full relative">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Nama Gedung
+                      Nama Gedung Otmil
                     </label>
                     <input
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_gedung_otmil"
-                      placeholder="Nama ahli"
+                      placeholder="Nama gedung otmil"
                       onChange={handleChange}
                       value={formState.nama_gedung_otmil}
                       disabled={isDetail}
@@ -339,7 +335,7 @@ export const ModalAddGedung = ({
                       )}
                     </p>
                   </div>
-                  {/* <div className="f-pangkat form-group w-full flex flex-col">
+                  <div className="f-pangkat form-group w-full flex flex-col">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -347,53 +343,76 @@ export const ModalAddGedung = ({
                       Lokasi Otmil
                     </label>
                     <Select
-                      className="basic-single"
+                      className="basic-single "
                       classNamePrefix="select"
                       styles={customStyles}
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.lokasi_otmil?.lokasi_otmil_id,
-                            label: formState.lokasi_otmil?.nama_lokasi_otmil,
-                          }
+                              value: formState.lokasi_otmil_id,
+                              label: formState.nama_lokasi_otmil,
+                            }
                           : formState.lokasi_otmil_id
                       }
                       isDisabled={isDetail}
                       isClearable={true}
                       isSearchable={true}
-                      placeholder="Pilih Pangkat"
+                      placeholder="Pilih Lokasi Otmil"
                       name="lokasi_otmil_id"
                       options={isLokasiOtmil.map((item: any) => ({
                         value: item.lokasi_otmil_id,
                         label: item.nama_lokasi_otmil,
                       }))}
-                      // onChange={handleSelectPangkat}
+                      onChange={handleSelectLokasiOtmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'lokasi_otmil_id' ? 'Pilih lokasi otmil' : '',
                       )}
                     </p>
-                  </div> */}
-
-                  <div className="form-group w-full relative h-22">
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div className="form-group w-full relative">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Bidang Ahli
+                      Panjang
                     </label>
                     <input
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bidang"
-                      name="bidang_ahli"
-                      placeholder="Bidang ahli"
+                      name="panjang"
+                      placeholder="Panjang"
                       onChange={handleChange}
-                      value={formState.bidang_ahli}
+                      value={formState.panjang}
                       disabled={isDetail}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'bidang_ahli' ? 'Masukan bidang' : '',
+                        item === 'panjang' ? 'Masukan panjang' : '',
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="form-group w-full relative">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Lebar
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
+                      name="lebar"
+                      placeholder="Lebar"
+                      onChange={handleChange}
+                      value={formState.lebar}
+                      disabled={isDetail}
+                    />
+                    <p className="error-text bottom-0">
+                      {errors.map((item) =>
+                        item === 'lebar' ? 'Masukan lebar' : '',
                       )}
                     </p>
                   </div>
@@ -403,21 +422,41 @@ export const ModalAddGedung = ({
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Bukti Ahli
+                      Posisi X
                     </label>
                     <input
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
-                      name="bukti_keahlian"
-                      placeholder="Bukti ahli"
+                      name="posisi_X"
+                      placeholder="Posisi X"
                       onChange={handleChange}
-                      value={formState.bukti_keahlian}
+                      value={formState.posisi_X}
                       disabled={isDetail}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'bukti_keahlian'
-                          ? 'Masukan bukti keahlian'
-                          : '',
+                        item === 'posisi_X' ? 'Masukan posisi X' : '',
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="form-group w-full h-22">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Posisi Y
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
+                      name="posisi_Y"
+                      placeholder="Posisi X"
+                      onChange={handleChange}
+                      value={formState.posisi_Y}
+                      disabled={isDetail}
+                    />
+                    <p className="error-text">
+                      {errors.map((item) =>
+                        item === 'posisi_Y' ? 'Masukan posisi Y' : '',
                       )}
                     </p>
                   </div>
@@ -457,7 +496,7 @@ export const ModalAddGedung = ({
                       ) : (
                         ''
                       )}
-                      Ubah Data Ahli
+                      Ubah Data Gedung
                     </button>
                   ) : (
                     <button
@@ -492,7 +531,7 @@ export const ModalAddGedung = ({
                       ) : (
                         ''
                       )}
-                      Tambah Data Ahli
+                      Tambah Data Gedung
                     </button>
                   )}
                   {errors.filter((item: string) =>
