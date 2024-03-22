@@ -65,6 +65,11 @@ interface Kesatuan {
   nama_kesatuan: string;
 }
 
+interface JenisPerkara {
+  jenis_perkara_id: string;
+  nama_jenis_perkara: string;
+}
+
 const dataUserItem = localStorage.getItem('dataUser');
 const tokenItem = localStorage.getItem('token');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -86,7 +91,7 @@ export const AddInmateModal = ({
 
   const [pangkat, setPangkat] = useState([]);
   const [kategoriJahat, setKategoriJahat] = useState([]);
-  const [jenisPerkara, setJenisPerkara] = useState([]);
+  const [jenisPerkara, setJenisPerkara] = useState<JenisPerkara[]>([]);
   const [kota, setKota] = useState<Kota[]>([]);
   const [provinsi, setProvinsi] = useState<Provinsi[]>([]);
   const [agama, setAgama] = useState<Agama[]>([]);
@@ -129,10 +134,10 @@ export const AddInmateModal = ({
       nama_status_wbp_kasus: '',
       // kejahatan: 'a',
       // kategori_perkara_id_jenis_perkara: '',
-      // jenis_perkara_id: '',
-      // vonis_tahun: '',
-      // vonis_bulan: '',
-      // vonis_hari: '',
+      jenis_perkara_id: '',
+      vonis_tahun_perkara: '',
+      vonis_bulan_perkara: '',
+      vonis_hari_perkara: '',
       tanggal_ditahan_otmil: '',
       tanggal_masa_penahanan_otmil: '',
       bidang_keahlian_id: '',
@@ -152,9 +157,6 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
-      vonis_tahun_perkara: '',
-      vonis_bulan_perkara: '',
-      vonis_hari_perkara: ''
       // penyakit: '',
       // berat_badan: '',
       // tinggi_badan: '',
@@ -358,6 +360,19 @@ export const AddInmateModal = ({
     // setSelectedOption(e)
     setFormState({ ...formState, kota_id: e?.value });
   };
+
+  const handleSelectJenisPerkara = (e: any) => {
+    const vonisFilter: any = jenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === e?.value,
+    );
+    setFormState({
+      ...formState,
+      jenis_perkara_id: e?.value,
+      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
+      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
+      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
+    });
+  }
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -2411,6 +2426,46 @@ export const AddInmateModal = ({
                       )}
                       <div className="grid grid-cols-1 gap-4">
                         {/* jenis perkara */}
+                        <div className="f-alamat form-group w-full flex flex-col">
+                          <label
+                            htmlFor="id"
+                            className="block text-sm font-medium text-black dark:text-white">
+                            Jenis Perkara
+                          </label>
+                          <Select
+                            className='basic-single'
+                            classNamePrefix='select'
+                            styles={customStyles}
+                            name='jenis_perkara_id'
+                            isDisabled={true}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder='Pilih Jenis Perkara'
+                            defaultValue={
+                              (isEdit || isDetail) && !formState.jenis_perkara_id // Check if in edit or detail mode and jenis_perkara_id is null
+                                ? { value: null, label: 'No Data' }
+                                : formState.jenis_perkara_id !== null // Check if jenis_perkara_id is not null
+                                  ? {
+                                    value: formState.jenis_perkara_id,
+                                    label: formState.nama_jenis_perkara,
+                                  }
+                                  : { value: null, label: 'No Data' }
+                            }
+                            options={
+                              jenisPerkara.map((item: any) => ({
+                                value: item.jenis_perkara_id,
+                                label: item.nama_jenis_perkara,
+                              }))
+                            }
+                            onChange={handleSelectJenisPerkara}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'jenis_perkara_id' ? 'Pilih jenis perkara' : ''
+                            )}
+                          </p>
+                      </div>
+
                         <div className="grid grid-cols-3 gap-4">
                           <div className="">
                             <label htmlFor="id" className="block text-sm font-medium text-black dark:text-white">
@@ -2420,9 +2475,9 @@ export const AddInmateModal = ({
                               type="text"
                               className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="vonis_tahun_perkara"
-                              onChange={handleChange}
+                              // onChange={handleChange}
                               value={formState.vonis_tahun_perkara}
-                              disabled={isDetail}
+                              disabled
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2440,9 +2495,9 @@ export const AddInmateModal = ({
                               type="text"
                               className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="vonis_bulan_perkara"
-                              onChange={handleChange}
+                              // onChange={handleChange}
                               value={formState.vonis_bulan_perkara}
-                              disabled={isDetail}
+                              disabled
                             />
                           </div>
                           <div className="form-group w-full">
@@ -2453,9 +2508,9 @@ export const AddInmateModal = ({
                               type="text"
                               className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="vonis_hari_perkara"
-                              onChange={handleChange}
+                              // onChange={handleChange}
                               value={formState.vonis_hari_perkara}
-                              disabled={isDetail}
+                              disabled
                             />
                           </div>
                         </div>
@@ -2713,12 +2768,12 @@ export const AddInmateModal = ({
                               classNamePrefix="select"
                               styles={customStyles}
                               name="status_wbp_kasus_id"
-                              isDisabled={isDetail}
+                              isDisabled={true}
                               isClearable={true}
                               isSearchable={true}
                               placeholder="Pilih Status"
                               defaultValue={
-                                isEdit || isDetail
+                                (isEdit || isDetail) && formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
                                   ? {
                                     value: formState.status_wbp_kasus_id,
                                     label: formState.nama_status_wbp_kasus,
@@ -2731,13 +2786,6 @@ export const AddInmateModal = ({
                               }))}
                               onChange={
                                 handleSelectWbpStatus
-                                // (e: any) => {
-                                //   setFormState({
-                                //     ...formState,
-                                //     status_wbp_kasus_id: e.value,
-                                //     nama_status_wbp_kasus: e.label,
-                                //   });
-                                // }
                               }
                             />
                             <p className="error-text">
