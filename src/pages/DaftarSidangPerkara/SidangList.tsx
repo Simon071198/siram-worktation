@@ -236,9 +236,9 @@ const SidangList = () => {
       }),
     );
 
-    // item?.sidang_pengacara.map((item: any) =>
-    //   newArrayPengacara.push({nama_pengacara:item?.nama_pengacara})
-    // );
+    item?.sidang_pengacara.map((item: any) =>
+      newArrayPengacara.push(item?.nama_pengacara),
+    );
 
     item?.sidang_hakim.map((item: any) =>
       newArrayHakim.push({
@@ -281,7 +281,7 @@ const SidangList = () => {
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
-      sidang_pengacara: item?.sidang_pengacara,
+      pengacara: newArrayPengacara,
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
