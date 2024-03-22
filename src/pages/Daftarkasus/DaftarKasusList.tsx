@@ -417,30 +417,32 @@ const DaftarKasus = () => {
   const exportToExcel = () => {
     const dataToExcel = [
       [
-        'nama kasus',
-        'nomer kasus',
-        'nrp',
-        'nama',
-        'nama kategori perkara',
-        'nama jenis perkara',
-        'tanggal registrasi kasus',
-        'tanggal penutupan kasus',
-        'tanggal mulai penyidikan',
-        'tanggal mulai sidang',
-        'nama oditur',
+        'Nama Kasus',
+        'Nomor Kasus',
+        'Nama Kategori Perkara',
+        'Nama Jenis Perkara',
+        'Lokasi Kasus',
+        'Tanggal Registrasi Kasus',
+        'Tanggal Kejadian Kasus',
+        'Tanggal Pelimpahan Kasus',
+        'Jumlah Penyidikan',
+        'Nama Oditur',
+        'Nama Saksi',
+        'Nama Tersangka',
       ],
       ...data.map((item: any) => [
         item.nama_kasus,
         item.nomor_kasus,
-        item.nrp,
-        item.nama,
         item.nama_kategori_perkara,
         item.nama_jenis_perkara,
-        item.tanggal_registrasi_kasus,
-        item.tanggal_penutupan_kasus,
-        item.tanggal_mulai_penyidikan,
-        item.tanggal_mulai_sidang,
-        item.nama_oditur,
+        item.lokasi_kasus,
+        item.waktu_pelaporan_kasus,
+        item.waktu_kejadian,
+        item.tanggal_pelimpahan_kasus,
+        item.penyidikan.length,
+        item.oditur_penyidik.map((oditur: any) => oditur.nama_oditur).join(', '),
+        item.saksi.map((saksi: any) => saksi.nama_saksi).join(', '),
+        item.wbp_profile.map((item: any) => item.nama).join(', '),
       ]),
     ];
 
@@ -570,9 +572,8 @@ const DaftarKasus = () => {
       </div>
       <div className="">
         <div
-          className={`${
-            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
           <div className="p-2.5 xl:p-5 justify-center flex">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -615,9 +616,8 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${
-                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
