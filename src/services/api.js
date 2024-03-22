@@ -2200,7 +2200,7 @@ export async function apiReadAlllokasiOtmil(params, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -4595,10 +4595,60 @@ export async function apiGedungOtmilRead(params, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+}
+
+export async function apiInsertGedungOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function apiUpdateGedungOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function apiDeleteGedungOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
     throw error;
   }
 }

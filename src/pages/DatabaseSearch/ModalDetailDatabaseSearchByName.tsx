@@ -1450,16 +1450,27 @@ export const DetailPelacakanWajahPrajurit = ({
                         {/* Gambar */}
 
                         {isDetail && (
-                          <div className="form-group w-full h-fit">
-                            <div className=" mt-1 flex flex-col items-center">
-                              <img
-                                className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={'https://dev.transforme.co.id/siram_admin_api' +
-                                  formState.foto_wajah}
-                                alt="Image Preview"
-                              />
+                          formState.foto_wajah === "" || formState.foto_wajah === null ?
+                            (<div className="form-group w-full h-fit">
+                              <div className=" mt-1 flex flex-col items-center">
+                                <div className="mt-4 flex flex-col justify-center items-center h-[200px]">
+                                  <p className="text-center bg-slate-500 font-bold text-white rounded-md p-3">
+                                    Tidak Ada Foto!
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                            ) : (
+                            <div className="form-group w-full h-fit">
+                              <div className=" mt-1 flex flex-col items-center">
+                                <img
+                                  className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                                  src={'https://dev.transforme.co.id/siram_admin_api' +
+                                    formState.foto_wajah}
+                                  alt="Image Preview"
+                                />
+                              </div>
+                            </div>)
                         )}
 
                         {isEdit && (
@@ -1720,56 +1731,188 @@ export const DetailPelacakanWajahPrajurit = ({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 mt-5">
-                        {/* Pendidikan*/}
-                        <div className="f-pendidikan form-group w-full flex flex-col ">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Pendidikan Militer
-                          </label>
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="pendidikan_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Pendidikan"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.pendidikan.pendidikan_id,
-                                  label: formState.pendidikan.nama_pendidikan,
-                                }
-                                : formState.pendidikan.pendidikan_id
-                            }
-                            options={pendidikan.map((item) => ({
-                              value: item.pendidikan_id,
-                              label: item.nama_pendidikan,
-                            }))}
-                            onChange={handleSelectPendidikan}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'pendidikan_id'
-                                ? 'Pilih pendidikan'
-                                : '',
-                            )}
-                          </p>
+
+
+                    </div>
+                  </div>
+
+                  {/* ----- DATA FOTO KAMERA ----- */}
+                  {formState.kamera_log.length === 0 ? (
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Foto Kamera
+                      </p>
+                      <div className="mt-4 flex flex-col justify-center items-center h-[200px]">
+                        <p className="text-center bg-slate-500 font-bold text-white rounded-md p-3">
+                          Tidak Ada Foto!
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    formState.kamera_log.length === 1 ? (<div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Foto Kamera
+                      </p>
+                      <div className="h-[350px] overflow-x-auto">
+                        <div className="flex flex-row justify-center items-center"> {/* Kontainer horizontal */}
+                          {formState.kamera_log.map((item: any) => (
+                            <div
+                              key={item.id} // Pastikan setiap elemen memiliki key yang unik
+                              className="bg-boxdark px-4 py-4 flex-shrink-0 border border-slate-400 h-full w-1/2"
+                            // onClick={() => handleDetailClick(item)}
+                            >
+                              <div className="bg-boxdark w-full h-[150px] overflow-hidden flex justify-center items-center">
+                                <img
+                                  src={'https://dev.transforme.co.id/siram_admin_api' + item.image_kamera_log}
+                                  alt="picture"
+                                  className="object-cover w-[150px] h-[150px] border border-slate-400"
+                                ></img>
+                              </div>
+                              <div className="ml-10 grid grid-cols-1 items-center">
+                                <div className="flex flex-col w-full">
+                                  <p className="text-3xl font-bold text-white">Ruangan : {item.ruangan_otmil.nama_ruangan_otmil}</p>
+                                  <p className="text-2xl font-base text-slate-500">Lokasi : {item.ruangan_otmil.lokasi_otmil.nama_lokasi_otmil}</p>
+                                </div>
+                                <div className="flex flex-col mt-6 item-center  w-full">
+                                  <p className="text-lg">Keterangan</p>
+                                  <div className="flex items-center gap-2">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth="1.5"
+                                      stroke="currentColor"
+                                      width="15"
+                                      height="15"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                      />
+                                    </svg>
+                                    <p className="text-md">{item.timestamp_kamera_log}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+                    ) : (
+                      <div className="mt-4">
+                        <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                          Foto Kamera
+                        </p>
+                        <div className="h-[350px] overflow-x-auto">
+                          <div className="flex flex-row"> {/* Kontainer horizontal */}
+                            {formState.kamera_log.map((item: any) => (
+                              <div
+                                key={item.id} // Pastikan setiap elemen memiliki key yang unik
+                                className="bg-boxdark px-4 py-4 flex-shrink-0 border border-slate-400 h-full w-1/2"
+                              // onClick={() => handleDetailClick(item)}
+                              >
+                                <div className="bg-boxdark w-full h-[150px] overflow-hidden flex justify-center items-center">
+                                  <img
+                                    src={'https://dev.transforme.co.id/siram_admin_api' + item.image_kamera_log}
+                                    alt="picture"
+                                    className="object-cover w-[150px] h-[150px] border border-slate-400"
+                                  ></img>
+                                </div>
+                                <div className="ml-10 grid grid-cols-1 items-center">
+                                  <div className="flex flex-col w-full">
+                                    <p className="text-3xl font-bold text-white">Ruangan : {item.ruangan_otmil.nama_ruangan_otmil}</p>
+                                    <p className="text-2xl font-base text-slate-500">Lokasi : {item.ruangan_otmil.lokasi_otmil.nama_lokasi_otmil}</p>
+                                  </div>
+                                  <div className="flex flex-col mt-6 item-center  w-full">
+                                    <p className="text-lg">Keterangan</p>
+                                    <div className="flex items-center gap-2">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="1.5"
+                                        stroke="currentColor"
+                                        width="15"
+                                        height="15"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                      </svg>
+                                      <p className="text-md">{item.timestamp_kamera_log}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
 
-                        {/* Kesatuan */}
-                        <div className="f-kesatuan form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Kesatuan
-                          </label>
-                          {/* <select
+                      </div>)
+
+                  )}
+
+
+                  {/* ----- DATA DETAIL TERSANGKA ----- */}
+                  <div className="mt-4">
+                    <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                      Data Detail Tersangka
+                    </p>
+                    <div className="grid grid-cols-2 gap-4 mt-5">
+                      {/* Pendidikan*/}
+                      <div className="f-pendidikan form-group w-full flex flex-col ">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Pendidikan Militer
+                        </label>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          name="pendidikan_id"
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Pendidikan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.pendidikan.pendidikan_id,
+                                label: formState.pendidikan.nama_pendidikan,
+                              }
+                              : formState.pendidikan.pendidikan_id
+                          }
+                          options={pendidikan.map((item) => ({
+                            value: item.pendidikan_id,
+                            label: item.nama_pendidikan,
+                          }))}
+                          onChange={handleSelectPendidikan}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'pendidikan_id'
+                              ? 'Pilih pendidikan'
+                              : '',
+                          )}
+                        </p>
+                      </div>
+
+                      {/* Kesatuan */}
+                      <div className="f-kesatuan form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Kesatuan
+                        </label>
+                        {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="kesatuan_id"
                             onChange={handleChange}
@@ -1785,75 +1928,75 @@ export const DetailPelacakanWajahPrajurit = ({
                               </option>
                             ))}
                           </select> */}
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="kesatuan_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Kesatuan"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.kesatuan.kesatuan_id,
-                                  label: formState.kesatuan.nama_kesatuan,
-                                }
-                                : formState.kesatuan.kesatuan_id
-                            }
-                            options={kesatuan.map((item: any) => ({
-                              value: item.kesatuan_id,
-                              label: item.nama_kesatuan,
-                            }))}
-                            onChange={handleSelectKesatuan}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'kesatuan_id' ? 'Pilih kesatuan' : '',
-                            )}
-                          </p>
-                        </div>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          name="kesatuan_id"
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Kesatuan"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.kesatuan.kesatuan_id,
+                                label: formState.kesatuan.nama_kesatuan,
+                              }
+                              : formState.kesatuan.kesatuan_id
+                          }
+                          options={kesatuan.map((item: any) => ({
+                            value: item.kesatuan_id,
+                            label: item.nama_kesatuan,
+                          }))}
+                          onChange={handleSelectKesatuan}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'kesatuan_id' ? 'Pilih kesatuan' : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Jenis Kelamin */}
-                        <div className="f-kelamin form-group w-full flex flex-col">
-                          <label
-                            className=" block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Jenis Kelamin
-                          </label>
-                          <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="jenis_kelamin"
-                            onChange={handleChange}
-                            value={formState.jenis_kelamin}
-                            disabled={isDetail}
-                          >
-                            <option disabled value="">
-                              Pilih Jenis Kelamin
-                            </option>
-                            <option value="1">Laki-laki</option>
-                            <option value="0">Perempuan</option>
-                          </select>
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'jenis_kelamin'
-                                ? 'Pilih jenis kelamin'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                      {/* Jenis Kelamin */}
+                      <div className="f-kelamin form-group w-full flex flex-col">
+                        <label
+                          className=" block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Jenis Kelamin
+                        </label>
+                        <select
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="jenis_kelamin"
+                          onChange={handleChange}
+                          value={formState.jenis_kelamin}
+                          disabled={isDetail}
+                        >
+                          <option disabled value="">
+                            Pilih Jenis Kelamin
+                          </option>
+                          <option value="1">Laki-laki</option>
+                          <option value="0">Perempuan</option>
+                        </select>
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'jenis_kelamin'
+                              ? 'Pilih jenis kelamin'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Agama */}
-                        <div className="f-agama form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Agama
-                          </label>
-                          {/* <select
+                      {/* Agama */}
+                      <div className="f-agama form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Agama
+                        </label>
+                        {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="agama_id"
                             onChange={handleChange}
@@ -1870,96 +2013,96 @@ export const DetailPelacakanWajahPrajurit = ({
                               </option>
                             ))}
                           </select> */}
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="agama_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Agama"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.agama.agama_id,
-                                  label: formState.agama.nama_agama,
-                                }
-                                : formState.agama.agama_id
-                            }
-                            options={agama.map((item: any) => ({
-                              value: item.agama_id,
-                              label: item.nama_agama,
-                            }))}
-                            onChange={handleSelectAgama}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'agama_id' ? 'Pilih agama' : '',
-                            )}
-                          </p>
-                        </div>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          name="agama_id"
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Agama"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.agama.agama_id,
+                                label: formState.agama.nama_agama,
+                              }
+                              : formState.agama.agama_id
+                          }
+                          options={agama.map((item: any) => ({
+                            value: item.agama_id,
+                            label: item.nama_agama,
+                          }))}
+                          onChange={handleSelectAgama}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'agama_id' ? 'Pilih agama' : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Tempat Lahir */}
-                        <div className="f-tempat-lahir form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Tempat Lahir
-                          </label>
-                          <input
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="tempat_lahir"
-                            placeholder="Tempat Lahir"
-                            onChange={handleChange}
-                            value={formState.tempat_lahir}
-                            disabled={isDetail}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'tempat_lahir'
-                                ? 'Masukan tempat_lahir'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                      {/* Tempat Lahir */}
+                      <div className="f-tempat-lahir form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Tempat Lahir
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[10.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="tempat_lahir"
+                          placeholder="Tempat Lahir"
+                          onChange={handleChange}
+                          value={formState.tempat_lahir}
+                          disabled={isDetail}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'tempat_lahir'
+                              ? 'Masukan tempat_lahir'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Tanggal Lahir */}
-                        <div className="f-tanggal-lahir form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Tanggal Lahir
-                          </label>
-                          <input
-                            type="date"
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="tanggal_lahir"
-                            onChange={handleChange}
-                            value={formState.tanggal_lahir}
-                            disabled={isDetail}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'tanggal_lahir'
-                                ? 'Masukan tanggal lahir'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                      {/* Tanggal Lahir */}
+                      <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Tanggal Lahir
+                        </label>
+                        <input
+                          type="date"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="tanggal_lahir"
+                          onChange={handleChange}
+                          value={formState.tanggal_lahir}
+                          disabled={isDetail}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'tanggal_lahir'
+                              ? 'Masukan tanggal lahir'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Provinsi */}
-                        <div className="f-provinsi form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Provinsi
-                          </label>
+                      {/* Provinsi */}
+                      <div className="f-provinsi form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Provinsi
+                        </label>
 
-                          {/* <select
+                        {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="provinsi_id"
                             onChange={handleChange}
@@ -1975,45 +2118,45 @@ export const DetailPelacakanWajahPrajurit = ({
                               </option>
                             ))}
                           </select> */}
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.provinsi.provinsi_id,
-                                  label: formState.provinsi.nama_provinsi,
-                                }
-                                : formState.provinsi.provinsi_id
-                            }
-                            placeholder={'Pilih provinsi'}
-                            isClearable={true}
-                            isSearchable={true}
-                            isDisabled={isDetail}
-                            name="provinsi_id"
-                            styles={customStyles}
-                            options={provinsi.map((item: any) => ({
-                              value: item.provinsi_id,
-                              label: item.nama_provinsi,
-                            }))}
-                            onChange={handleSelectProvinsi}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'provinsi_id' ? 'Pilih provinsi' : '',
-                            )}
-                          </p>
-                        </div>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.provinsi.provinsi_id,
+                                label: formState.provinsi.nama_provinsi,
+                              }
+                              : formState.provinsi.provinsi_id
+                          }
+                          placeholder={'Pilih provinsi'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="provinsi_id"
+                          styles={customStyles}
+                          options={provinsi.map((item: any) => ({
+                            value: item.provinsi_id,
+                            label: item.nama_provinsi,
+                          }))}
+                          onChange={handleSelectProvinsi}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'provinsi_id' ? 'Pilih provinsi' : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Kota */}
-                        <div className="f-kota form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Kota
-                          </label>
-                          {/* <select
+                      {/* Kota */}
+                      <div className="f-kota form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Kota
+                        </label>
+                        {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="kota_id"
                             onChange={handleChange}
@@ -2035,76 +2178,76 @@ export const DetailPelacakanWajahPrajurit = ({
                                 </option>
                               ))}
                           </select> */}
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.kota.kota_id,
-                                  label: formState.kota.nama_kota,
-                                }
-                                : formState.kota.kota_id
-                            }
-                            placeholder={'Pilih kota'}
-                            isClearable={true}
-                            isSearchable={true}
-                            isDisabled={isDetail}
-                            name="kota_id"
-                            styles={customStyles}
-                            options={kota
-                              .filter((item: any) => {
-                                return (
-                                  item.provinsi_id === formState.provinsi_id
-                                );
-                              })
-                              .map((item) => ({
-                                value: item.kota_id,
-                                label: item.nama_kota,
-                              }))}
-                            onChange={handleSelectKota}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'kota_id' ? 'Pilih Kota' : '',
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      {/* Alamat */}
-                      <div className="f-alamat form-group w-full flex flex-col">
-                        <label
-                          className=" block text-sm font-medium text-black dark:text-white"
-                          htmlFor="id"
-                        >
-                          Alamat
-                        </label>
-                        <textarea
-                          className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                          name="alamat"
-                          placeholder="Alamat"
-                          onChange={handleChange}
-                          value={formState.alamat}
-                          disabled={isDetail}
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.kota.kota_id,
+                                label: formState.kota.nama_kota,
+                              }
+                              : formState.kota.kota_id
+                          }
+                          placeholder={'Pilih kota'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="kota_id"
+                          styles={customStyles}
+                          options={kota
+                            .filter((item: any) => {
+                              return (
+                                item.provinsi_id === formState.provinsi_id
+                              );
+                            })
+                            .map((item) => ({
+                              value: item.kota_id,
+                              label: item.nama_kota,
+                            }))}
+                          onChange={handleSelectKota}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'alamat' ? 'Masukan alamat' : '',
+                            item === 'kota_id' ? 'Pilih Kota' : '',
                           )}
                         </p>
                       </div>
+                    </div>
+                    {/* Alamat */}
+                    <div className="f-alamat form-group w-full flex flex-col">
+                      <label
+                        className=" block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Alamat
+                      </label>
+                      <textarea
+                        className="w-full max-h-[94px] min-h-[94px] rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                        name="alamat"
+                        placeholder="Alamat"
+                        onChange={handleChange}
+                        value={formState.alamat}
+                        disabled={isDetail}
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'alamat' ? 'Masukan alamat' : '',
+                        )}
+                      </p>
+                    </div>
 
-                      <div className="grid grid-cols-2 gap-4 ">
-                        {/* Status Kawin */}
-                        <div className="f-status-kawin form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Status Kawin
-                          </label>
+                    <div className="grid grid-cols-2 gap-4 ">
+                      {/* Status Kawin */}
+                      <div className="f-status-kawin form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Status Kawin
+                        </label>
 
-                          {/* <select
+                        {/* <select
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="status_kawin_id"
                             onChange={handleChange}
@@ -2120,113 +2263,112 @@ export const DetailPelacakanWajahPrajurit = ({
                               </option>
                             ))}
                           </select> */}
-                          <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="status_kawin_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Status Kawin"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                  value: formState.status_kawin.status_kawin_id,
-                                  label: formState.status_kawin.nama_status_kawin,
-                                }
-                                : formState.status_kawin.status_kawin_id
-                            }
-                            options={statusKawin.map((item) => ({
-                              value: item.status_kawin_id,
-                              label: item.nama_status_kawin,
-                            }))}
-                            onChange={handleSelectStatusKawin}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'status_kawin_id'
-                                ? 'Pilih status nikah'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          name="status_kawin_id"
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Status Kawin"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                value: formState.status_kawin.status_kawin_id,
+                                label: formState.status_kawin.nama_status_kawin,
+                              }
+                              : formState.status_kawin.status_kawin_id
+                          }
+                          options={statusKawin.map((item) => ({
+                            value: item.status_kawin_id,
+                            label: item.nama_status_kawin,
+                          }))}
+                          onChange={handleSelectStatusKawin}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'status_kawin_id'
+                              ? 'Pilih status nikah'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Kontak Keluarga Nama */}
-                        <div className="f-nama-keluarga form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Nama Keluarga
-                          </label>
-                          <input
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="nama_kontak_keluarga"
-                            placeholder="Nama keluarga"
-                            onChange={handleChange}
-                            value={formState.nama_kontak_keluarga}
-                            disabled={isDetail}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'nama_kontak_keluarga'
-                                ? 'Masukan nama keluarga'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                      {/* Kontak Keluarga Nama */}
+                      <div className="f-nama-keluarga form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Nama Keluarga
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="nama_kontak_keluarga"
+                          placeholder="Nama keluarga"
+                          onChange={handleChange}
+                          value={formState.nama_kontak_keluarga}
+                          disabled={isDetail}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'nama_kontak_keluarga'
+                              ? 'Masukan nama keluarga'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Status Keluarga */}
-                        <div className="f-status-keluarga form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Status Hubungan
-                          </label>
-                          <input
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="hubungan_kontak_keluarga"
-                            placeholder="Status hubungan"
-                            onChange={handleChange}
-                            value={formState.hubungan_kontak_keluarga}
-                            disabled={isDetail}
-                          />
+                      {/* Status Keluarga */}
+                      <div className="f-status-keluarga form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Status Hubungan
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="hubungan_kontak_keluarga"
+                          placeholder="Status hubungan"
+                          onChange={handleChange}
+                          value={formState.hubungan_kontak_keluarga}
+                          disabled={isDetail}
+                        />
 
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'hubungan_kontak_keluarga'
-                                ? 'Pilih status hubungan'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'hubungan_kontak_keluarga'
+                              ? 'Pilih status hubungan'
+                              : '',
+                          )}
+                        </p>
+                      </div>
 
-                        {/* Kontak Keluarga no HP */}
-                        <div className="f-kontak-keluarga form-group w-full flex flex-col">
-                          <label
-                            className="  block text-sm font-medium text-black dark:text-white"
-                            htmlFor="id"
-                          >
-                            Nomor Kontak Keluarga
-                          </label>
-                          <input
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                            name="nomor_kontak_keluarga"
-                            placeholder="Kontak keluarga"
-                            onChange={handleChange}
-                            value={formState.nomor_kontak_keluarga}
-                            disabled={isDetail}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'nomor_kontak_keluarga'
-                                ? 'Masukan kontak keluarga'
-                                : '',
-                            )}
-                          </p>
-                        </div>
+                      {/* Kontak Keluarga no HP */}
+                      <div className="f-kontak-keluarga form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Nomor Kontak Keluarga
+                        </label>
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="nomor_kontak_keluarga"
+                          placeholder="Kontak keluarga"
+                          onChange={handleChange}
+                          value={formState.nomor_kontak_keluarga}
+                          disabled={isDetail}
+                        />
+                        <p className="error-text">
+                          {errors.map((item) =>
+                            item === 'nomor_kontak_keluarga'
+                              ? 'Masukan kontak keluarga'
+                              : '',
+                          )}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -3258,126 +3400,6 @@ export const DetailPelacakanWajahPrajurit = ({
                         </div>
                       </div>
                     </div>
-                    {/* ----- DATA KESEHATAN ----- */}
-                    {formState.kamera_log.length === 0 ? (
-                      <div className="mt-4">
-                        <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
-                          Foto Kamera
-                        </p>
-                        <div className="mt-4 flex flex-col justify-center items-center h-[200px]">
-                          <p className="text-center bg-slate-500 font-bold text-white rounded-md p-3">
-                            Tidak Ada Foto!
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="mt-4">
-                        <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
-                          Foto Kamera
-                        </p>
-                        {/* <div className="flex flex-col gap-4">
-                        <div className="h-[400px] overflow-x-auto">
-                          {formState.kamera_log.map((item: any) => (
-                            <div className="bg-boxdark px-4 py-4 flex"
-                            // onClick={() => handleDetailClick(item)}
-                            >
-                              <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                                <img
-                                  src={'https://dev.transforme.co.id/siram_admin_api' +
-                                    item.image_kamera_log}
-                                  alt="picture"
-                                  className="object-cover w-[150px] h-[150px]"
-                                ></img>
-                              </div>
-                              <div className="ml-10 grid grid-cols-1 items-center">
-                                <div className="flex flex-col w-full">
-                                  <p className="text-3xl font-bold text-white">
-                                    {formState.nama_tersangka}
-                                  </p>
-                                  <p className="text-2xl font-base text-slate-500">
-                                    {formState.nama_tersangka}
-                                  </p>
-                                </div>
-                                <div className="flex flex-col mt-6 item-center  w-full">
-                                  <p className="text-lg">Keterangan</p>
-                                  <div className="flex items-center gap-2">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      stroke="currentColor"
-                                      width="15"
-                                      height="15"
-                                    >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                      />
-                                    </svg>
-
-                                    <p className="text-md">{item.timestamp_kamera_log}</p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div> */}
-                        <div className="h-[350px] overflow-x-auto">
-                          <div className="flex flex-row"> {/* Kontainer horizontal */}
-                            {formState.kamera_log.map((item: any) => (
-                              <div
-                                key={item.id} // Pastikan setiap elemen memiliki key yang unik
-                                className="bg-boxdark px-4 py-4 flex-shrink-0 mr-4 h-[350px]"
-                              // onClick={() => handleDetailClick(item)}
-                              >
-                                <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
-                                  <img
-                                    src={'https://dev.transforme.co.id/siram_admin_api' + item.image_kamera_log}
-                                    alt="picture"
-                                    className="object-cover w-[150px] h-[150px]"
-                                  ></img>
-                                </div>
-                                <div className="ml-10 grid grid-cols-1 items-center">
-                                  <div className="flex flex-col w-full">
-                                    <p className="text-3xl font-bold text-white">{formState.nama_tersangka}</p>
-                                    <p className="text-2xl font-base text-slate-500">{formState.nama_tersangka}</p>
-                                  </div>
-                                  <div className="flex flex-col mt-6 item-center  w-full">
-                                    <p className="text-lg">Keterangan</p>
-                                    <div className="flex items-center gap-2">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        width="15"
-                                        height="15"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                      </svg>
-                                      <p className="text-md">{item.timestamp_kamera_log}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-
-
-                      </div>
-                    )}
-
-
 
                     {/*  Zona  */}
                   </div>

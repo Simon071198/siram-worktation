@@ -157,6 +157,9 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
+      vonis_tahun_perkara: '',
+      vonis_bulan_perkara: '',
+      vonis_hari_perkara: '',
       // penyakit: '',
       // berat_badan: '',
       // tinggi_badan: '',
@@ -168,9 +171,6 @@ export const AddInmateModal = ({
       // nama_gateway:''
     },
   );
-
-  console.log(formState, 'EDIT BOYS')
-
 
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
@@ -304,8 +304,7 @@ export const AddInmateModal = ({
         is_sick: e.target.value,
         wbp_sickness: newWbpSickness,
       });
-    }
-    else {
+    } else {
       // console.log('tanpa if');
       setFormState({ ...formState, [e.target.name]: e.target.value });
     }
@@ -313,7 +312,7 @@ export const AddInmateModal = ({
 
   const handleSelectStatusKasus = (e: any) => {
     setFormState({ ...formState, status_wbp_kasus_id: e?.value });
-  }
+  };
 
   const handleSelectPangkat = (e: any) => {
     setFormState({ ...formState, pangkat_id: e?.value });
@@ -345,7 +344,7 @@ export const AddInmateModal = ({
 
   const handleSelectWbpStatus = (e: any) => {
     setFormState({ ...formState, status_wbp_kasus_id: e?.value });
-  }
+  };
 
   const handleSelectMatra = (e: any) => {
     setFormState({ ...formState, matra_id: e?.value });
@@ -1330,8 +1329,6 @@ export const AddInmateModal = ({
       });
     }
 
-
-
     const driverObj: any = driver({
       showProgress: true,
       steps: steps,
@@ -1390,7 +1387,7 @@ export const AddInmateModal = ({
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
               <div className="w-full flex justify-between mb-2  items-center  ">
-                <div className='flex items-center gap-4'>
+                <div className="flex items-center gap-4">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail data Tersangka'
@@ -1613,9 +1610,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.pangkat_id,
-                                    label: formState.nama_pangkat,
-                                  }
+                                      value: formState.pangkat_id,
+                                      label: formState.nama_pangkat,
+                                    }
                                   : formState.pangkat_id
                               }
                               isDisabled={isDetail}
@@ -1656,9 +1653,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.matra_id,
-                                    label: formState.nama_matra,
-                                  }
+                                      value: formState.matra_id,
+                                      label: formState.nama_matra,
+                                    }
                                   : formState.matra_id
                               }
                               options={matra.map((item: any) => ({
@@ -1722,9 +1719,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.pendidikan_id,
-                                  label: formState.nama_pendidikan,
-                                }
+                                    value: formState.pendidikan_id,
+                                    label: formState.nama_pendidikan,
+                                  }
                                 : formState.pendidikan_id
                             }
                             options={pendidikan.map((item) => ({
@@ -1778,9 +1775,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.kesatuan_id,
-                                  label: formState.nama_kesatuan,
-                                }
+                                    value: formState.kesatuan_id,
+                                    label: formState.nama_kesatuan,
+                                  }
                                 : formState.kesatuan_id
                             }
                             options={kesatuan.map((item: any) => ({
@@ -1863,9 +1860,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.agama_id,
-                                  label: formState.nama_agama,
-                                }
+                                    value: formState.agama_id,
+                                    label: formState.nama_agama,
+                                  }
                                 : formState.agama_id
                             }
                             options={agama.map((item: any) => ({
@@ -1962,9 +1959,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.provinsi_id,
-                                  label: formState.nama_provinsi,
-                                }
+                                    value: formState.provinsi_id,
+                                    label: formState.nama_provinsi,
+                                  }
                                 : formState.provinsi_id
                             }
                             placeholder={'Pilih provinsi'}
@@ -2022,9 +2019,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.kota_id,
-                                  label: formState.nama_kota,
-                                }
+                                    value: formState.kota_id,
+                                    label: formState.nama_kota,
+                                  }
                                 : formState.kota_id
                             }
                             placeholder={'Pilih kota'}
@@ -2113,9 +2110,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.status_kawin_id,
-                                  label: formState.nama_status_kawin,
-                                }
+                                    value: formState.status_kawin_id,
+                                    label: formState.nama_status_kawin,
+                                  }
                                 : formState.status_kawin_id
                             }
                             options={statusKawin.map((item) => ({
@@ -2228,9 +2225,9 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                  value: formState.bidang_keahlian_id,
-                                  label: formState.nama_bidang_keahlian,
-                                }
+                                    value: formState.bidang_keahlian_id,
+                                    label: formState.nama_bidang_keahlian,
+                                  }
                                 : formState.bidang_keahlian_id
                             }
                             options={keahlian.map((item: any) => ({
@@ -2258,8 +2255,6 @@ export const AddInmateModal = ({
                     </p>
 
                     <div className="flex flex-col gap-4">
-
-
                       {/* Pasal */}
                       {/* <div className="hidden">
                         <p className="text-white">Pasal</p>
@@ -2468,7 +2463,10 @@ export const AddInmateModal = ({
 
                         <div className="grid grid-cols-3 gap-4">
                           <div className="">
-                            <label htmlFor="id" className="block text-sm font-medium text-black dark:text-white">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
                               Vonis Tahun
                             </label>
                             <input
@@ -2488,7 +2486,10 @@ export const AddInmateModal = ({
                             </p>
                           </div>
                           <div className="form-group w-full">
-                            <label htmlFor="id" className="block text-sm font-medium text-black dark:text-white">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
                               Vonis Bulan
                             </label>
                             <input
@@ -2501,7 +2502,10 @@ export const AddInmateModal = ({
                             />
                           </div>
                           <div className="form-group w-full">
-                            <label htmlFor="id" className="block text-sm font-medium text-black dark:text-white">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
                               Vonis Hari
                             </label>
                             <input
@@ -2561,43 +2565,43 @@ export const AddInmateModal = ({
 
                               {isDetail
                                 ? gelang.map((item: any) => (
-                                  <option value={item.gelang_id}>
-                                    {item.nama_gelang}
-                                  </option>
-                                ))
+                                    <option value={item.gelang_id}>
+                                      {item.nama_gelang}
+                                    </option>
+                                  ))
                                 : isEdit
                                   ? gelang.map((item: any) => {
-                                    const isUsed = dataWbp.some(
-                                      (wbp: any) =>
-                                        wbp.gelang_id === item.gelang_id,
-                                    );
-                                    return (
-                                      <option
-                                        value={item.gelang_id}
-                                        key={item.gelang_id}
-                                      >
-                                        {item.nama_gelang}{' '}
-                                        {isUsed
-                                          ? '(Sedang Digunakan)'
-                                          : '(Tidak Digunakan)'}
-                                      </option>
-                                    );
-                                  })
+                                      const isUsed = dataWbp.some(
+                                        (wbp: any) =>
+                                          wbp.gelang_id === item.gelang_id,
+                                      );
+                                      return (
+                                        <option
+                                          value={item.gelang_id}
+                                          key={item.gelang_id}
+                                        >
+                                          {item.nama_gelang}{' '}
+                                          {isUsed
+                                            ? '(Sedang Digunakan)'
+                                            : '(Tidak Digunakan)'}
+                                        </option>
+                                      );
+                                    })
                                   : gelang
-                                    .filter(
-                                      (item: any) =>
-                                        !dataWbp
-                                          .map(
-                                            (wbp: any) =>
-                                              wbp.gelang_id || wbp.gelang_id,
-                                          )
-                                          .includes(item.gelang_id),
-                                    )
-                                    .map((item: any) => (
-                                      <option value={item.gelang_id}>
-                                        {item.nama_gelang}
-                                      </option>
-                                    ))}
+                                      .filter(
+                                        (item: any) =>
+                                          !dataWbp
+                                            .map(
+                                              (wbp: any) =>
+                                                wbp.gelang_id || wbp.gelang_id,
+                                            )
+                                            .includes(item.gelang_id),
+                                      )
+                                      .map((item: any) => (
+                                        <option value={item.gelang_id}>
+                                          {item.nama_gelang}
+                                        </option>
+                                      ))}
                             </select>
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2680,9 +2684,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.hunian_wbp_otmil_id,
-                                    label: formState.nama_hunian_wbp_otmil,
-                                  }
+                                      value: formState.hunian_wbp_otmil_id,
+                                      label: formState.nama_hunian_wbp_otmil,
+                                    }
                                   : formState.hunian_wbp_otmil_id
                               }
                               options={hunian.map((item: any) => ({
@@ -2775,9 +2779,9 @@ export const AddInmateModal = ({
                               defaultValue={
                                 (isEdit || isDetail) && formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
                                   ? {
-                                    value: formState.status_wbp_kasus_id,
-                                    label: formState.nama_status_wbp_kasus,
-                                  }
+                                      value: formState.status_wbp_kasus_id,
+                                      label: formState.nama_status_wbp_kasus,
+                                    }
                                   : formState.status_wbp_kasus_id
                               }
                               options={statusWbp.map((item: any) => ({
@@ -2866,7 +2870,7 @@ export const AddInmateModal = ({
                           </div> */}
 
                           {formState.status_wbp_kasus_id === '' ||
-                            formState.status_wbp_kasus_id === null ? null : (
+                          formState.status_wbp_kasus_id === null ? null : (
                             <>
                               {/* Tanggal Penetapan Terpidana*/}
                               <div
@@ -3066,7 +3070,7 @@ export const AddInmateModal = ({
                             </div>
 
                             {formState.is_sick === '0' ||
-                              formState.is_sick === '' ? null : (
+                            formState.is_sick === '' ? null : (
                               <>
                                 <div className="f-nama-penyakit form-group w-full flex flex-col">
                                   <label
@@ -3268,26 +3272,83 @@ export const AddInmateModal = ({
                             <div className="border-slate-500 grid grid-cols-3 gap-5  p-2 border rounded-lg akses-zona">
                               {isEdit
                                 ? autocompleteDataZona
-                                  ?.filter(
-                                    (item: any) =>
-                                      !formState.akses_ruangan_otmil_id.includes(
-                                        item.ruangan_otmil_id,
-                                      ),
-                                  )
-                                  .map((zonaItem: any) => (
+                                    ?.filter(
+                                      (item: any) =>
+                                        !formState.akses_ruangan_otmil_id.includes(
+                                          item.ruangan_otmil_id,
+                                        ),
+                                    )
+                                    .map((zonaItem: any) => (
+                                      <div
+                                        key={zonaItem.ruangan_otmil_id}
+                                        className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${
+                                          zonaItem.nama_zona === 'Hijau'
+                                            ? 'border-green-500'
+                                            : zonaItem.nama_zona === 'Kuning'
+                                              ? 'border-yellow-500'
+                                              : zonaItem.nama_zona === 'Merah'
+                                                ? 'border-red-500'
+                                                : 'border-slate-800'
+                                        } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
+                                        data-te-ripple-color="dark"
+                                      >
+                                        <p className="text-xs capitalize font-semibold">
+                                          {' '}
+                                          {zonaItem.nama_ruangan_otmil}
+                                        </p>
+                                        <button
+                                          className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                          onClick={(e) => {
+                                            e.preventDefault(); // Prevent page reload
+                                            handleAddZona(
+                                              zonaItem.ruangan_otmil_id,
+                                              'akses_ruangan_otmil_id',
+                                            );
+                                          }}
+                                        >
+                                          Ijinkan
+                                        </button>
+                                        {/* <button
+                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
+                                    onClick={(e) => {
+                                      e.preventDefault(); // Prevent page reload
+                                      handleAddZona(
+                                        zonaItem.ruangan_otmil_id,
+                                        'zona_kuning'
+                                      );
+                                    }}
+                                  >
+                                    Awasi
+                                  </button> */}
+                                        <button
+                                          className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                                          onClick={(e) => {
+                                            e.preventDefault(); // Prevent page reload
+                                            handleAddZona(
+                                              zonaItem.ruangan_otmil_id,
+                                              'zona_merah',
+                                            );
+                                          }}
+                                        >
+                                          Larang
+                                        </button>
+                                      </div>
+                                    ))
+                                : autocompleteDataZona?.map((zonaItem: any) => (
                                     <div
                                       key={zonaItem.ruangan_otmil_id}
-                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${zonaItem.nama_zona === 'Hijau'
-                                        ? 'border-green-500'
-                                        : zonaItem.nama_zona === 'Kuning'
-                                          ? 'border-yellow-500'
-                                          : zonaItem.nama_zona === 'Merah'
-                                            ? 'border-red-500'
-                                            : 'border-slate-800'
-                                        } bg-slate-800 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
+                                      className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${
+                                        zonaItem.nama_zona === 'Hijau'
+                                          ? 'border-green-500'
+                                          : zonaItem.nama_zona === 'Kuning'
+                                            ? 'border-yellow-400'
+                                            : zonaItem.nama_zona === 'Merah'
+                                              ? 'border-red-500'
+                                              : 'border-slate-500'
+                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
                                       data-te-ripple-color="dark"
                                     >
-                                      <p className="text-xs capitalize font-semibold">
+                                      <p className="text-xs text-white capitalize font-semibold">
                                         {' '}
                                         {zonaItem.nama_ruangan_otmil}
                                       </p>
@@ -3303,18 +3364,7 @@ export const AddInmateModal = ({
                                       >
                                         Ijinkan
                                       </button>
-                                      {/* <button
-                                    className="text-white w-full bg-yellow-500 rounded-md  font-bold text-[9px]"
-                                    onClick={(e) => {
-                                      e.preventDefault(); // Prevent page reload
-                                      handleAddZona(
-                                        zonaItem.ruangan_otmil_id,
-                                        'zona_kuning'
-                                      );
-                                    }}
-                                  >
-                                    Awasi
-                                  </button> */}
+
                                       <button
                                         className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                                         onClick={(e) => {
@@ -3328,51 +3378,7 @@ export const AddInmateModal = ({
                                         Larang
                                       </button>
                                     </div>
-                                  ))
-                                : autocompleteDataZona?.map((zonaItem: any) => (
-                                  <div
-                                    key={zonaItem.ruangan_otmil_id}
-                                    className={`gap-2 py-2 [word-wrap: break-word] flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4  ${zonaItem.nama_zona === 'Hijau'
-                                      ? 'border-green-500'
-                                      : zonaItem.nama_zona === 'Kuning'
-                                        ? 'border-yellow-400'
-                                        : zonaItem.nama_zona === 'Merah'
-                                          ? 'border-red-500'
-                                          : 'border-slate-500'
-                                      } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear  hover:!shadow-none dark:text-neutral-200`}
-                                    data-te-ripple-color="dark"
-                                  >
-                                    <p className="text-xs text-white capitalize font-semibold">
-                                      {' '}
-                                      {zonaItem.nama_ruangan_otmil}
-                                    </p>
-                                    <button
-                                      className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                      onClick={(e) => {
-                                        e.preventDefault(); // Prevent page reload
-                                        handleAddZona(
-                                          zonaItem.ruangan_otmil_id,
-                                          'akses_ruangan_otmil_id',
-                                        );
-                                      }}
-                                    >
-                                      Ijinkan
-                                    </button>
-
-                                    <button
-                                      className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
-                                      onClick={(e) => {
-                                        e.preventDefault(); // Prevent page reload
-                                        handleAddZona(
-                                          zonaItem.ruangan_otmil_id,
-                                          'zona_merah',
-                                        );
-                                      }}
-                                    >
-                                      Larang
-                                    </button>
-                                  </div>
-                                ))}
+                                  ))}
                             </div>
                             {/* Display errors */}
                             {/* {errors.map((error, index) => (
@@ -3393,73 +3399,73 @@ export const AddInmateModal = ({
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
-                              <div
-                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                data-te-ripple-color="dark"
-                              >
-                                <p className="capitalize text-center">
-                                  {item.nama_ruangan_otmil}
-                                </p>
-                              </div>
-                            ))
-                            : formState.akses_ruangan_otmil_id?.map(
-                              (zonaId: any) => (
                                 <div
-                                  key={zonaId}
                                   className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
                                   data-te-ripple-color="dark"
                                 >
                                   <p className="capitalize text-center">
-                                    {
-                                      zona.find(
-                                        (zonaItem: any) =>
-                                          zonaItem.ruangan_otmil_id ===
-                                          zonaId,
-                                      )?.nama_ruangan_otmil
-                                    }
+                                    {item.nama_ruangan_otmil}
                                   </p>
-                                  <span
-                                    data-te-chip-close
-                                    onClick={() =>
-                                      handleRemoveZona(
-                                        zonaId,
-                                        'akses_ruangan_otmil_id',
-                                      )
-                                    }
-                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      stroke="currentColor"
-                                      className="h-3 w-3"
-                                    >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M6 18L18 6M6 6l12 12"
-                                      />
-                                    </svg>
-                                  </span>
                                 </div>
-                                // <div
-                                //   key={zonaId}
-                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                                // >
-                                //   <span className="text-sm">
-                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                                //   </span>
-                                //   <button
-                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                                //   >
-                                //     X
-                                //   </button>
-                                // </div>
-                              ),
-                            )}
+                              ))
+                            : formState.akses_ruangan_otmil_id?.map(
+                                (zonaId: any) => (
+                                  <div
+                                    key={zonaId}
+                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                                    data-te-ripple-color="dark"
+                                  >
+                                    <p className="capitalize text-center">
+                                      {
+                                        zona.find(
+                                          (zonaItem: any) =>
+                                            zonaItem.ruangan_otmil_id ===
+                                            zonaId,
+                                        )?.nama_ruangan_otmil
+                                      }
+                                    </p>
+                                    <span
+                                      data-te-chip-close
+                                      onClick={() =>
+                                        handleRemoveZona(
+                                          zonaId,
+                                          'akses_ruangan_otmil_id',
+                                        )
+                                      }
+                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        className="h-3 w-3"
+                                      >
+                                        <path
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M6 18L18 6M6 6l12 12"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                  // <div
+                                  //   key={zonaId}
+                                  //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                                  // >
+                                  //   <span className="text-sm">
+                                  //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                                  //   </span>
+                                  //   <button
+                                  //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                                  //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                                  //   >
+                                  //     X
+                                  //   </button>
+                                  // </div>
+                                ),
+                              )}
                         </div>
 
                         {/* Display errors */}
@@ -3575,70 +3581,70 @@ export const AddInmateModal = ({
                         <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                           {isDetail
                             ? formState.akses_ruangan_otmil.map((item: any) => (
-                              <div
-                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                data-te-ripple-color="dark"
-                              >
-                                <p className="capitalize text-center">
-                                  {item.nama_ruangan_otmil}
-                                </p>
-                              </div>
-                            ))
-                            : formState.zona_merah?.map((zonaId: any) => (
-                              <div
-                                key={zonaId}
-                                className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                                data-te-ripple-color="dark"
-                              >
-                                <p className="capitalize text-center">
-                                  {
-                                    zona.find(
-                                      (zonaItem: any) =>
-                                        zonaItem.ruangan_otmil_id === zonaId,
-                                    )?.nama_ruangan_otmil
-                                  }
-                                </p>
-                                <span
-                                  data-te-chip-close
-                                  onClick={() =>
-                                    handleRemoveZona(
-                                      zonaId,
-                                      'akses_ruangan_otmil_id',
-                                    )
-                                  }
-                                  className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                <div
+                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                  data-te-ripple-color="dark"
                                 >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                    className="h-3 w-3"
+                                  <p className="capitalize text-center">
+                                    {item.nama_ruangan_otmil}
+                                  </p>
+                                </div>
+                              ))
+                            : formState.zona_merah?.map((zonaId: any) => (
+                                <div
+                                  key={zonaId}
+                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                  data-te-ripple-color="dark"
+                                >
+                                  <p className="capitalize text-center">
+                                    {
+                                      zona.find(
+                                        (zonaItem: any) =>
+                                          zonaItem.ruangan_otmil_id === zonaId,
+                                      )?.nama_ruangan_otmil
+                                    }
+                                  </p>
+                                  <span
+                                    data-te-chip-close
+                                    onClick={() =>
+                                      handleRemoveZona(
+                                        zonaId,
+                                        'akses_ruangan_otmil_id',
+                                      )
+                                    }
+                                    className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                                   >
-                                    <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
-                                  </svg>
-                                </span>
-                              </div>
-                              // <div
-                              //   key={zonaId}
-                              //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
-                              // >
-                              //   <span className="text-sm">
-                              //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
-                              //   </span>
-                              //   <button
-                              //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
-                              //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
-                              //   >
-                              //     X
-                              //   </button>
-                              // </div>
-                            ))}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke-width="1.5"
+                                      stroke="currentColor"
+                                      className="h-3 w-3"
+                                    >
+                                      <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
+                                    </svg>
+                                  </span>
+                                </div>
+                                // <div
+                                //   key={zonaId}
+                                //   className="bg-white text-black px-2 py-1 rounded-md flex items-center space-x-1 hover:bg-red-200 h-6"
+                                // >
+                                //   <span className="text-sm">
+                                //     {zona.find((zonaItem) => zonaItem.id === zonaId)?.nama}
+                                //   </span>
+                                //   <button
+                                //     onClick={() => handleRemoveZona(zonaId, 'zona_merah')}
+                                //     className="text-red-600 hover:text-red-900 focus:outline-none p-1 hover:bg-red-200 rounded-md"
+                                //   >
+                                //     X
+                                //   </button>
+                                // </div>
+                              ))}
                         </div>
 
                         {/* Display errors */}
@@ -3649,18 +3655,18 @@ export const AddInmateModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -3685,8 +3691,9 @@ export const AddInmateModal = ({
 
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -3718,8 +3725,9 @@ export const AddInmateModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >

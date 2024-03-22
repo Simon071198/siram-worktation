@@ -6,7 +6,10 @@ import {
   apiAhliInsert,
   apiAhliRead,
   apiAhliUpdate,
+  apiDeleteGedungOtmil,
   apiGedungOtmilRead,
+  apiInsertGedungOtmil,
+  apiUpdateGedungOtmil,
 } from '../../../services/api';
 import { DeleteAhliModal } from './ModalDeleteGedung';
 import SearchInputButton from '../Search';
@@ -106,20 +109,22 @@ const GedungList = () => {
     try {
       let params = {
         filter: {
-          nama_gedung: filter,
+          nama_gedung_otmil: filter,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiAhliRead(params, token);
+      const response = await apiGedungOtmilRead(params, token);
 
-      if (response.data.status === 'OK') {
-        const result = response.data;
-        setData(result.records);
+      if (response.data.status === 200) {
+        const result = response.data.records;
+        console.log(result, 'DATA');
+        setData(result);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
+        setIsLoading(false);
       } else {
-        throw new Error('Terjadi kesalahan saat mencari data.');
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -144,15 +149,23 @@ const GedungList = () => {
     setCurrentPage(pageNumber);
   };
 
+  useEffect(() => {
+    document.addEventListener('keypress', handleEnterKeyPress);
+
+    return () => {
+      document.removeEventListener('keypress', handleEnterKeyPress);
+    };
+  }, [filter]);
+
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
     setCurrentPage(1);
   };
+
   useEffect(() => {
     fetchData();
   }, [currentPage, pageSize]);
-
 
   const fetchData = async () => {
     let param = {
@@ -166,15 +179,14 @@ const GedungList = () => {
       const response = await apiGedungOtmilRead(param, token);
       if (response.data.status === 200) {
         const result = response.data.records;
-        console.log(result, 'Value get data');
+        console.log(result, 'DATA');
         setData(result);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
         setIsLoading(false);
-      }else{
+      } else {
         throw new Error(response.data.message);
       }
-      
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -188,15 +200,33 @@ const GedungList = () => {
     }
   };
 
-  const handleDetailClick = (item: Item) => {
-    console.log('detail', item);
-    setDetailData(item);
+  const handleDetailClick = (item: any) => {
+    let newItem: any = {
+      gedung_otmil_id: item.gedung_otmil_id,
+      nama_gedung_otmil: item.nama_gedung_otmil,
+      panjang: item.panjang,
+      lebar: item.lebar,
+      posisi_X: item.posisi_X,
+      posisi_Y: item.posisi_Y,
+      lokasi_otmil_id: item.lokasi_otmil.lokasi_otmil_id,
+      nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
+    };
+    setDetailData(newItem);
     setModalDetailOpen(true);
   };
 
-  const handleEditClick = (item: Item) => {
-    console.log('edit', item);
-    setEditData(item);
+  const handleEditClick = (item: any) => {
+    let newItem: any = {
+      gedung_otmil_id: item.gedung_otmil_id,
+      nama_gedung_otmil: item.nama_gedung_otmil,
+      panjang: item.panjang,
+      lebar: item.lebar,
+      posisi_X: item.posisi_X,
+      posisi_Y: item.posisi_Y,
+      lokasi_otmil_id: item.lokasi_otmil.lokasi_otmil_id,
+      nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
+    };
+    setEditData(newItem);
     setModalEditOpen(true);
   };
 
@@ -217,23 +247,23 @@ const GedungList = () => {
     setModalEditOpen(false);
   };
 
-  const handleSubmitDeleteDataAhli = async (params: any) => {
+  const handleDeleteGedungOtmil = async (params: any) => {
     try {
-      const responseDelete = await apiAhliDelete(params, token);
-      if (responseDelete.data.status === 'OK') {
+      const response = await apiDeleteGedungOtmil(params, token);
+      if (response.data.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
         fetchData();
-      } else if (responseDelete.data.status === 'No') {
+      } else if (response.data.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
         });
       } else {
-        throw new Error(responseDelete.data.message);
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -248,23 +278,23 @@ const GedungList = () => {
     }
   };
 
-  const handleSubmitAddDataAhli = async (params: any) => {
+  const handleInsertGedungOtmil = async (params: any) => {
     try {
-      const responseCreate = await apiAhliInsert(params, token);
-      if (responseCreate.data.status === 'Ok') {
+      const response = await apiInsertGedungOtmil(params, token);
+      if (response.data.status === 201) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
         fetchData();
-      } else if (responseCreate.data.status === 'NO') {
+      } else if (response.data.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
         });
       } else {
-        throw new Error(responseCreate.data.message);
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -279,24 +309,23 @@ const GedungList = () => {
     }
   };
 
-  const handleSubmitEditDataAhli = async (params: any) => {
-    console.log(params, 'edit');
+  const handleEditDataGedungOtmil = async (params: any) => {
     try {
-      const responseEdit = await apiAhliUpdate(params, token);
-      if (responseEdit.data.status === 'OK') {
+      const response = await apiUpdateGedungOtmil(params, token);
+      if (response.data.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
         fetchData();
-      } else if (responseEdit.data.status === 'NO') {
+      } else if (response.data.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',
         });
       } else {
-        throw new Error(responseEdit.data.message);
+        throw new Error(response.data.message);
       }
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -348,7 +377,7 @@ const GedungList = () => {
             <div className="w-full search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama ahli"
+                placehorder="Cari nama gedung otmil"
                 onChange={handleFilterChange}
               />
             </div>
@@ -394,7 +423,7 @@ const GedungList = () => {
 
         <div className="flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Data Gedung
+            Data Gedung Otmil
           </h4>
           {!isOperator && (
             <button
@@ -423,7 +452,7 @@ const GedungList = () => {
             <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-3">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nama Gedung
+                  Nama Gedung
                 </h5>
               </div>
               <div className="p-2.5 xl:p-5 justify-center flex">
@@ -519,7 +548,7 @@ const GedungList = () => {
           {modalDetailOpen && (
             <ModalAddGedung
               closeModal={() => setModalDetailOpen(false)}
-              onSubmit={handleSubmitAddDataAhli}
+              onSubmit={handleInsertGedungOtmil}
               defaultValue={detailData}
               isDetail={true}
               token={token}
@@ -528,7 +557,7 @@ const GedungList = () => {
           {modalEditOpen && (
             <ModalAddGedung
               closeModal={handleCloseEditModal}
-              onSubmit={handleSubmitEditDataAhli}
+              onSubmit={handleEditDataGedungOtmil}
               defaultValue={editData}
               isEdit={true}
               token={token}
@@ -537,14 +566,14 @@ const GedungList = () => {
           {modalAddOpen && (
             <ModalAddGedung
               closeModal={handleCloseAddModal}
-              onSubmit={handleSubmitAddDataAhli}
+              onSubmit={handleInsertGedungOtmil}
               token={token}
             />
           )}
           {modalDeleteOpen && (
             <DeleteAhliModal
               closeModal={handleCloseDeleteModal}
-              onSubmit={handleSubmitDeleteDataAhli}
+              onSubmit={handleDeleteGedungOtmil}
               defaultValue={deleteData}
             />
           )}
