@@ -352,9 +352,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
-      const pengacaraMap = formState.sidang_pengacara.map(
-        (item: any) => item.nama_pengacara,
-      );
+      // const pengacaraMap = formState.sidang_pengacara.map(
+      //   (item: any) => item.nama_pengacara,
+      // );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
       const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
       setFormState({
@@ -366,7 +366,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
         ahli: ahliMap,
         saksi: saksiMap,
-        pengacara: pengacaraMap,
+        // pengacara: pengacaraMap,
         pdf_file_base64: formState.link_dokumen_persidangan,
       });
     }
@@ -433,20 +433,20 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setPengacaraField(newValue);
   };
 
-  // const handlePengacara = () => {
-  //   if (!pengacaraField) {
-  //     setPengacaraEror(true);
-  //   } else {
-  //     if (pengacaraField.trim() !== '') {
-  //       setPengacaraEror(false);
-  //       setFormState({
-  //         ...formState,
-  //         pengacara: [...formState.pengacara, pengacaraField],
-  //       });
-  //       setPengacaraField('');
-  //     }
-  //   }
-  // };
+  const handlePengacara = () => {
+    if (!pengacaraField) {
+      setPengacaraEror(true);
+    } else {
+      if (pengacaraField.trim() !== '') {
+        setPengacaraEror(false);
+        setFormState({
+          ...formState,
+          pengacara: [...formState.pengacara, pengacaraField],
+        });
+        setPengacaraField('');
+      }
+    }
+  };
   // const handlePengacara = () => {
   //   if (!pengacaraField) {
   //     setPengacaraEror(true);
@@ -480,33 +480,33 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   //     }
   //   }
   // };
-  const handlePengacara = () => {
-    if (isEdit && !pengacaraField) {
-      // Jika mode isEdit dan pengacaraField tidak diisi
-      setFormState((prevState: any) => {
-        const existingPengacara = prevState.sidang_pengacara.map(
-          (p: any) => p.nama_pengacara,
-        ); // Ambil data pengacara yang sudah ada
-        return {
-          ...prevState,
-          pengacara: existingPengacara, // Kirim kembali data pengacara yang sudah ada
-        };
-      });
-    } else {
-      if (pengacaraField.trim() !== '') {
-        setPengacaraEror(false);
-        setFormState((prevState: any) => {
-          const existingPengacara =
-            prevState.sidang_pengacara.map((p: any) => p.nama_pengacara) || []; // Ambil data pengacara yang sudah ada
-          return {
-            ...prevState,
-            pengacara: [...existingPengacara, pengacaraField], // Tambahkan pengacara baru ke daftar yang sudah ada
-          };
-        });
-        setPengacaraField('');
-      }
-    }
-  };
+  // const handlePengacara = () => {
+  //   if (isEdit && !pengacaraField) {
+  //     // Jika mode isEdit dan pengacaraField tidak diisi
+  //     setFormState((prevState: any) => {
+  //       const existingPengacara = prevState.sidang_pengacara.map(
+  //         (p: any) => p.nama_pengacara,
+  //       ); // Ambil data pengacara yang sudah ada
+  //       return {
+  //         ...prevState,
+  //         pengacara: existingPengacara, // Kirim kembali data pengacara yang sudah ada
+  //       };
+  //     });
+  //   } else {
+  //     if (pengacaraField.trim() !== '') {
+  //       setPengacaraEror(false);
+  //       setFormState((prevState: any) => {
+  //         const existingPengacara =
+  //           prevState.sidang_pengacara.map((p: any) => p.nama_pengacara) || []; // Ambil data pengacara yang sudah ada
+  //         return {
+  //           ...prevState,
+  //           pengacara: [...existingPengacara, pengacaraField], // Tambahkan pengacara baru ke daftar yang sudah ada
+  //         };
+  //       });
+  //       setPengacaraField('');
+  //     }
+  //   }
+  // };
 
   const handleRemovePengacara = (index: any) => {
     const newArrayPasal = formState.pengacara.filter(
@@ -2018,9 +2018,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           <>
                             <input
                               type="text"
-                              defaultValue={
-                                isDetail || isEdit ? formState.pengacara : ''
-                              }
+                              // defaultValue={
+                              //   isDetail || isEdit ? formState.pengacara : ''
+                              // }
                               value={pengacaraField}
                               placeholder={isDetail ? '' : 'Masukan pengacara'}
                               onChange={handleInputPengacara}
@@ -2094,42 +2094,39 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               )
                             )
                           :  */}
-                        {isDetail || isEdit
-                          ? formState.sidang_pengacara?.map(
-                              (item: any, index: any) => (
-                                <div className="flex flex-row items-center">
-                                  <p
-                                    key={index}
-                                    className="capitalize px-3 py-1 truncate w-full  rounded-md bg-boxdark border-[1px] border-slate-500  text-white"
-                                  >
-                                    {item?.nama_pengacara}
-                                  </p>
-                                  <button
-                                    className={`${isDetail ? 'hidden' : 'block'}`}
-                                    type="button"
-                                    onClick={() => {
-                                      handleRemovePengacara(index);
-                                    }}
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke-width="1.5"
-                                      stroke="currentColor"
-                                      className="w-6 h-6"
-                                    >
-                                      <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M6 18L18 6M6 6l12 12"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              ),
-                            )
-                          : ''}
+
+                        {formState.pengacara?.map((item: any, index: any) => (
+                          <div className="flex flex-row items-center">
+                            <p
+                              key={index}
+                              className="capitalize px-3 py-1 truncate w-full  rounded-md bg-boxdark border-[1px] border-slate-500  text-white"
+                            >
+                              {item}
+                            </p>
+                            <button
+                              className={`${isDetail ? 'hidden' : 'block'}`}
+                              type="button"
+                              onClick={() => {
+                                handleRemovePengacara(index);
+                              }}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
