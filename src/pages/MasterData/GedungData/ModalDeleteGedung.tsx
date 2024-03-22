@@ -10,6 +10,7 @@ export const DeleteAhliModal = ({
   const modalContainerRef: any = useRef(null);
   const [buttonLoad, setButtonLoad] = useState(false);
 
+  console.log(formState, 'KWK');
   // useEffect(() => {
   //   const handleOutsideClick = (e:any) => {
   //     if (
@@ -82,9 +83,10 @@ export const DeleteAhliModal = ({
                 Apakah Anda yakin ingin menghapus data ini?
               </p>
               <p className="text-sm text-black dark:text-white">
-                Nama petugas{' '}
-                <span className="text-red-400">{formState.nama_ahli}</span> akan
-                dihapus
+                <span className="text-red-400">
+                  {formState.nama_gedung_otmil}
+                </span>{' '}
+                akan dihapus
               </p>
             </div>
 

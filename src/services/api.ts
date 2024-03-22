@@ -4633,3 +4633,54 @@ export async function apiGedungOtmilRead(params: any, token: any) {
     throw error;
   }
 }
+
+export async function apiInsertGedungOtmil(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function apiUpdateGedungOtmil(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function apiDeleteGedungOtmil(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/gedung_otmil_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
