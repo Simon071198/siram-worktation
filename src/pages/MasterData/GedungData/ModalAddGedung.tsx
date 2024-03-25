@@ -9,7 +9,7 @@ import { apiReadAlllokasiOtmil } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
+console.log(dataAdmin, "dataAdmin")
 export const ModalAddGedung = ({
   closeModal,
   onSubmit,
@@ -21,7 +21,7 @@ export const ModalAddGedung = ({
   const [formState, setFormState] = useState(
     defaultValue || {
       nama_gedung_otmil: '',
-      lokasi_otmil_id: '',
+      lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
       panjang: '',
       lebar: '',
       posisi_X: '',
@@ -193,12 +193,14 @@ export const ModalAddGedung = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formState, 'From State');
+    formState.lokasi_otmid.id = "skdnsalknfdlksafnlka"
+    console.log(formState, 'From State with lokasi');
 
-    if (!validateForm()) return;
-    setButtonLoad(true);
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
 
-    onSubmit(formState).then(() => setButtonLoad(false));
-    console.log('berhasil');
+    // onSubmit(formState).then(() => setButtonLoad(false));
+    // console.log('berhasil');
   };
 
   const modalStyles: any = {
@@ -335,7 +337,7 @@ export const ModalAddGedung = ({
                       )}
                     </p>
                   </div>
-                  <div className="f-pangkat form-group w-full flex flex-col">
+                  {/* <div className="f-pangkat form-group w-full flex flex-col">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -370,7 +372,7 @@ export const ModalAddGedung = ({
                         item === 'lokasi_otmil_id' ? 'Pilih lokasi otmil' : '',
                       )}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="form-group w-full relative">

@@ -350,11 +350,14 @@ const GedungList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Ahli', 'Bidang Ahli', 'Bukti Ahli'],
+      ['Nama Gedung Otmil', 'Panjang', 'Lebar', 'posisi_x', 'posisi_y', 'lokasi'],
       ...data.map((item: any) => [
-        item.nama_ahli,
-        item.bidang_ahli,
-        item.bukti_keahlian,
+        item.nama_gedung_otmil,
+        item.panjang,
+        item.lebar,
+        item.posisi_X,
+        item.posisi_Y,
+        item.lokasi_otmil.nama_lokasi_otmil,
       ]),
     ];
 
@@ -363,7 +366,7 @@ const GedungList = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `Data-Ahli ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+      `Data-Gedung ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
 
