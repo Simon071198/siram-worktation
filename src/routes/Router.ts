@@ -306,8 +306,8 @@ const coreRoutes = [
     component: MasterDataKategoriPerkara,
   },
   {
-    path: '/camera-playback',
-    title: 'camera playback',
+    path: '/kamera-playback',
+    title: 'kamera playback',
     component: CameraPlayback,
   },
   {
