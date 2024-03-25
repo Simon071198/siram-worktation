@@ -350,11 +350,15 @@ const GedungList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Gedung', 'Panjang Gedung', 'Lebar gedung'],
+      ['Nama Gedung Otmil', 'Panjang', 'Lebar', 'posisi_x', 'posisi_y', 'lokasi'],
       ...data.map((item: any) => [
         item.nama_gedung_otmil,
         item.panjang,
         item.lebar,
+
+        item.posisi_X,
+        item.posisi_Y,
+        item.lokasi_otmil.nama_lokasi_otmil,
       ]),
     ];
 
