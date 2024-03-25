@@ -228,6 +228,23 @@ const DataCamera = (props) => {
     console.log(urlStream);
     return (
       <div className="w-full  p-1" key={index}>
+        {client.current.readyState !== 1 ? (
+          <h1 className="font-semibold text-xl text-red-500 mb-2 animate-pulse">
+            Error connection
+          </h1>
+        ) : (
+          ''
+        )}
+        {/* {client.current.readyState !== 1 && client.current.readyState !== 3 ? (
+          <h1 className="font-semibold text-xl text-red-500 mb-2 animate-pulse">
+            Error connection
+          </h1>
+        ) : client.current.readyState === 3 ? (
+          <h1 className="font-semibold text-xl  mb-2">Loading...</h1>
+        ) : (
+          ''
+        )} */}
+
         <div className="bg-black p-1">
           <div className="relative">
             <div className="player-wrapper">
