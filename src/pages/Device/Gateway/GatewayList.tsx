@@ -371,7 +371,8 @@ const GatewayList = () => {
       ...data.map((item: any) => [
         item.nama_gateway,
         item.gmac,
-        item.status_gateway,
+        // item.status_gateway,
+        item.status_gateway === 'tidak' ? 'tidak aktif' : item.status_gateway,
         item.nama_lokasi_otmil,
         item.nama_ruangan_otmil,
         item.status_zona_ruangan_otmil,

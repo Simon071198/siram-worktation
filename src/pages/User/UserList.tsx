@@ -299,6 +299,7 @@ const UserList = () => {
           icon: 'error',
           title: 'Gagal Delete Data',
         });
+        setModalDeleteOpen(false);
       } else {
         throw new Error(responseDelete.data.message);
       }

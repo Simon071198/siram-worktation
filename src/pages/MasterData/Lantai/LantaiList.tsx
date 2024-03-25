@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Loader from '../../../common/Loader';
-import { Alerts } from './AlertGedung';
+import { Alerts } from './AlertLantai';
 import {
-  apiAhliDelete,
-  apiAhliInsert,
-  apiAhliRead,
-  apiAhliUpdate,
-  apiDeleteGedungOtmil,
+  apiDeleteLantaiOtmil,
   apiGedungOtmilRead,
-  apiInsertGedungOtmil,
-  apiUpdateGedungOtmil,
+  apiInsertLantaiOtmil,
+  apiLantaiOtmilRead,
+  apiUpdateLantaiOtmil,
 } from '../../../services/api';
-import { DeleteAhliModal } from './ModalDeleteGedung';
+import { DeleteAhliModal } from './ModalDeleteLantai';
 import SearchInputButton from '../Search';
 import Pagination from '../../../components/Pagination';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -22,19 +19,15 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Error403Message } from '../../../utils/constants';
-import { ModalAddGedung } from './ModalAddGedung';
+import { ModalAddGedung } from './ModalAddLantai';
 
 interface Params {
   filter: string;
 }
 
-interface Item {
-  nama: string;
-  alamat: string;
-  tanggal_lahir: any;
-}
+interface Item {}
 
-const GedungList = () => {
+const LantaiList = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -70,14 +63,14 @@ const GedungList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama gedung otmil',
+            description: 'Mencari nama ahli',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Klik untuk mencari nama gedung otmil',
+            description: 'Klik untuk mencari nama ahli',
           },
         },
         {
@@ -91,7 +84,7 @@ const GedungList = () => {
           element: '.b-tambah',
           popover: {
             title: 'Tambah',
-            description: 'Menambahkan data gedung otmil',
+            description: 'Menambahkan data ahli',
           },
         },
       ],
@@ -109,12 +102,12 @@ const GedungList = () => {
     try {
       let params = {
         filter: {
-          nama_gedung_otmil: filter,
+          nama_lantai: filter,
         },
         page: currentPage,
         pageSize: pageSize,
       };
-      const response = await apiGedungOtmilRead(params, token);
+      const response = await apiLantaiOtmilRead(params, token);
 
       if (response.data.status === 200) {
         const result = response.data.records;
@@ -176,7 +169,7 @@ const GedungList = () => {
 
     setIsLoading(true);
     try {
-      const response = await apiGedungOtmilRead(param, token);
+      const response = await apiLantaiOtmilRead(param, token);
       if (response.data.status === 200) {
         const result = response.data.records;
         console.log(result, 'DATA');
@@ -202,13 +195,13 @@ const GedungList = () => {
 
   const handleDetailClick = (item: any) => {
     let newItem: any = {
-      gedung_otmil_id: item.gedung_otmil_id,
-      nama_gedung_otmil: item.nama_gedung_otmil,
+      lantai_otmil_id: item.lantai_otmil_id,
+      nama_lantai: item.nama_lantai,
       panjang: item.panjang,
       lebar: item.lebar,
       posisi_X: item.posisi_X,
       posisi_Y: item.posisi_Y,
-      lokasi_otmil_id: item.lokasi_otmil.lokasi_otmil_id,
+      lokasi_otmil_id: item?.lokasi_otmil?.id_lokasi_otmil,
       nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
     };
     setDetailData(newItem);
@@ -217,15 +210,16 @@ const GedungList = () => {
 
   const handleEditClick = (item: any) => {
     let newItem: any = {
-      gedung_otmil_id: item.gedung_otmil_id,
-      nama_gedung_otmil: item.nama_gedung_otmil,
+      lantai_otmil_id: item.lantai_otmil_id,
+      nama_lantai: item.nama_lantai,
       panjang: item.panjang,
       lebar: item.lebar,
       posisi_X: item.posisi_X,
       posisi_Y: item.posisi_Y,
-      lokasi_otmil_id: item.lokasi_otmil.lokasi_otmil_id,
+      lokasi_otmil_id: item?.lokasi_otmil?.id_lokasi_otmil,
       nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
     };
+
     setEditData(newItem);
     setModalEditOpen(true);
   };
@@ -247,9 +241,9 @@ const GedungList = () => {
     setModalEditOpen(false);
   };
 
-  const handleDeleteGedungOtmil = async (params: any) => {
+  const handleDeleteLantaiOtmil = async (params: any) => {
     try {
-      const response = await apiDeleteGedungOtmil(params, token);
+      const response = await apiDeleteLantaiOtmil(params, token);
       if (response.data.status === 200) {
         Alerts.fire({
           icon: 'success',
@@ -278,9 +272,9 @@ const GedungList = () => {
     }
   };
 
-  const handleInsertGedungOtmil = async (params: any) => {
+  const handleInsertLantaiOtmil = async (params: any) => {
     try {
-      const response = await apiInsertGedungOtmil(params, token);
+      const response = await apiInsertLantaiOtmil(params, token);
       if (response.data.status === 201) {
         Alerts.fire({
           icon: 'success',
@@ -309,9 +303,9 @@ const GedungList = () => {
     }
   };
 
-  const handleEditDataGedungOtmil = async (params: any) => {
+  const handleEditDataLantaiOtmil = async (params: any) => {
     try {
-      const response = await apiUpdateGedungOtmil(params, token);
+      const response = await apiUpdateLantaiOtmil(params, token);
       if (response.data.status === 200) {
         Alerts.fire({
           icon: 'success',
@@ -350,14 +344,14 @@ const GedungList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Gedung Otmil', 'Panjang', 'Lebar', 'posisi_x', 'posisi_y', 'lokasi'],
+      ['Nama Lantai', 'Panjang', 'Lebar', 'posisi_x', 'posisi_y', 'lokasi'],
       ...data.map((item: any) => [
-        item.nama_gedung_otmil,
+        item.nama_lantai,
         item.panjang,
         item.lebar,
         item.posisi_X,
         item.posisi_Y,
-        item.lokasi_otmil.nama_lokasi_otmil,
+        item?.lokasi_otmil?.nama_lokasi_otmil,
       ]),
     ];
 
@@ -366,7 +360,7 @@ const GedungList = () => {
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
     xlsx.writeFile(
       wb,
-      `Data-Gedung ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+      `Data-Lantai ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
 
@@ -380,7 +374,7 @@ const GedungList = () => {
             <div className="w-full search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama gedung otmil"
+                placehorder="Cari lantai otmil"
                 onChange={handleFilterChange}
               />
             </div>
@@ -426,7 +420,7 @@ const GedungList = () => {
 
         <div className="flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Data Gedung Otmil
+            Data Lantai
           </h4>
           {!isOperator && (
             <button
@@ -442,12 +436,12 @@ const GedungList = () => {
             <div className="grid grid-cols-2 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Gedung
+                  Nama Lantai
                 </h5>
               </div>
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Lokasi Gedung
+                  Lokasi Otmil
                 </h5>
               </div>
             </div>
@@ -455,12 +449,12 @@ const GedungList = () => {
             <div className="grid grid-cols-3 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-3">
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Gedung
+                  Nama Lantai
                 </h5>
               </div>
               <div className="p-2.5 xl:p-5 justify-center flex">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Lokasi Gedung
+                  Lokasi Otmil
                 </h5>
               </div>
 
@@ -483,14 +477,14 @@ const GedungList = () => {
                       <>
                         <div
                           className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                          key={item.gedung_otmil_id}
+                          key={item.lantai_otmil_id}
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
                             className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
                           >
                             <p className=" text-black dark:text-white capitalize">
-                              {item.nama_gedung_otmil}
+                              {item.nama_lantai}
                             </p>
                           </div>
 
@@ -509,14 +503,14 @@ const GedungList = () => {
                       <>
                         <div
                           className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
-                          key={item.gedung_otmil_id}
+                          key={item.lantai_otmil_id}
                         >
                           <div
                             onClick={() => handleDetailClick(item)}
                             className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
                           >
                             <p className=" text-black dark:text-white capitalize">
-                              {item.nama_gedung_otmil}
+                              {item.nama_lantai}
                             </p>
                           </div>
 
@@ -551,7 +545,7 @@ const GedungList = () => {
           {modalDetailOpen && (
             <ModalAddGedung
               closeModal={() => setModalDetailOpen(false)}
-              onSubmit={handleInsertGedungOtmil}
+              onSubmit={handleInsertLantaiOtmil}
               defaultValue={detailData}
               isDetail={true}
               token={token}
@@ -560,7 +554,7 @@ const GedungList = () => {
           {modalEditOpen && (
             <ModalAddGedung
               closeModal={handleCloseEditModal}
-              onSubmit={handleEditDataGedungOtmil}
+              onSubmit={handleEditDataLantaiOtmil}
               defaultValue={editData}
               isEdit={true}
               token={token}
@@ -569,14 +563,14 @@ const GedungList = () => {
           {modalAddOpen && (
             <ModalAddGedung
               closeModal={handleCloseAddModal}
-              onSubmit={handleInsertGedungOtmil}
+              onSubmit={handleInsertLantaiOtmil}
               token={token}
             />
           )}
           {modalDeleteOpen && (
             <DeleteAhliModal
               closeModal={handleCloseDeleteModal}
-              onSubmit={handleDeleteGedungOtmil}
+              onSubmit={handleDeleteLantaiOtmil}
               defaultValue={deleteData}
             />
           )}
@@ -611,4 +605,4 @@ const GedungList = () => {
   );
 };
 
-export default GedungList;
+export default LantaiList;
