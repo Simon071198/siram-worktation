@@ -142,26 +142,22 @@ const SidangList = () => {
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
-      sidang_pengacara: item?.sidang_pengacara,
+      pengacara: item?.sidang_pengacara?.map(
+        (item: any) => item?.nama_pengacara,
+      ),
       hakimHolder: newArrayHakim,
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
-      // role_ketua_hakim_holder: {
-      //   hakim_id: hakimKetua.hakim_id,
-      //   nama_hakim: hakimKetua.nama_hakim,
-      // },
       role_ketua_oditur_holder: {
         oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
         nama_oditur: jaksaKetua?.nama_oditur,
       },
       link_dokumen_persidangan: item.link_dokumen_persidangan,
     };
-    // console.log(jaksaKetua, 'jaksaKetua');
-    console.log('NEW ITEM DETAIl', detailItem);
     setDetailData(detailItem);
     setModalDetailOpen(true);
   };
-  console.log('detail data', detailData);
+
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -278,21 +274,23 @@ const SidangList = () => {
       nama_pengadilan_militer: item?.nama_pengadilan_militer,
       nama_dokumen_persidangan: item?.nama_dokumen_persidangan,
       hasil_vonis: item?.hasil_vonis,
+      ahli: newArrayAhli?.map((item: any) => item?.ahli_id),
       ahliHolder: newArrayAhli,
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
+      saksi: newArraySaksi?.map((item: any) => item?.saksi_id),
       pengacara: newArrayPengacara,
       hakimHolder: newArrayHakim,
+      oditur_penuntut_id: newArrayJaksa?.map(
+        (item: any) => item?.oditur_penuntut_id,
+      ),
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
-      // role_ketua_hakim_holder: {
-      //   hakim_id: hakimKetua.hakim_id,
-      //   nama_hakim: hakimKetua.nama_hakim,
-      // },
       role_ketua_oditur_holder: {
         oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
         nama_oditur: jaksaKetua?.nama_oditur,
       },
+      role_ketua_oditur: jaksaKetua?.oditur_penuntut_id,
       link_dokumen_persidangan: item.link_dokumen_persidangan,
     };
     console.log('NEW ITEM EDIT', editItem);
