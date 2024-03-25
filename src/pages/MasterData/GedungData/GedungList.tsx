@@ -70,14 +70,14 @@ const GedungList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama ahli',
+            description: 'Mencari nama gedung otmil',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Klik untuk mencari nama ahli',
+            description: 'Klik untuk mencari nama gedung otmil',
           },
         },
         {
@@ -91,7 +91,7 @@ const GedungList = () => {
           element: '.b-tambah',
           popover: {
             title: 'Tambah',
-            description: 'Menambahkan data ahli',
+            description: 'Menambahkan data gedung otmil',
           },
         },
       ],

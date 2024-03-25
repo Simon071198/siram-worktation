@@ -150,29 +150,43 @@ export const ModalAddGedung = ({
         {
           element: '.i-nama',
           popover: {
-            title: 'Nama Ahli',
-            description: 'Isi nama ahli',
+            title: 'Gedung Otmil',
+            description: 'Isi gedung otmil',
           },
         },
         {
-          element: '.i-bidang',
+          element: '.i-panjang',
           popover: {
-            title: 'Bidang Ahli',
-            description: 'Isi bidang ahli',
+            title: 'Panjang Gedung',
+            description: 'Isi panjang gedung otmil',
           },
         },
         {
-          element: '.i-bukti',
+          element: '.i-lebar',
           popover: {
-            title: 'Bukti Ahli',
-            description: 'Isi bukti ahli',
+            title: 'Lebar Gedung',
+            description: 'Isi lebar gedung otmil',
+          },
+        },
+        {
+          element: '.i-posisi-x',
+          popover: {
+            title: 'Posisi X',
+            description: 'Isi posisi x(horizontal) gedung otmil',
+          },
+        },
+        {
+          element: '.i-posisi-y',
+          popover: {
+            title: 'Posisi Y',
+            description: 'Isi posisi y(vertikal) gedung otmil',
           },
         },
         {
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data ahli`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} gedung otmil`,
           },
         },
       ],
@@ -380,7 +394,7 @@ export const ModalAddGedung = ({
                       Panjang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bidang"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-panjang"
                       name="panjang"
                       placeholder="Panjang"
                       onChange={handleChange}
@@ -402,7 +416,7 @@ export const ModalAddGedung = ({
                       Lebar
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lebar"
                       name="lebar"
                       placeholder="Lebar"
                       onChange={handleChange}
@@ -424,7 +438,7 @@ export const ModalAddGedung = ({
                       Posisi X
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-x"
                       name="posisi_X"
                       placeholder="Posisi X"
                       onChange={handleChange}
@@ -446,7 +460,7 @@ export const ModalAddGedung = ({
                       Posisi Y
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-y"
                       name="posisi_Y"
                       placeholder="Posisi X"
                       onChange={handleChange}
