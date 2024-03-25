@@ -689,7 +689,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     placeholder="Agenda Penyidikan"
                     onChange={handleChange}
                     value={formState.agenda_penyidikan}
-                    disabled={isDetail}
+                    // disabled={isDetail}
+                    disabled
                   />
                   <p className="error-text">
                     {errors?.map((item) =>
