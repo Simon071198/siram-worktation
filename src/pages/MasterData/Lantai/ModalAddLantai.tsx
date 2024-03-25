@@ -150,22 +150,36 @@ export const ModalAddGedung = ({
         {
           element: '.i-nama',
           popover: {
-            title: 'Nama Ahli',
-            description: 'Isi nama ahli',
+            title: 'Nama Lantai',
+            description: 'Isi nama lantai',
           },
         },
         {
-          element: '.i-bidang',
+          element: '.i-panjang',
           popover: {
-            title: 'Bidang Ahli',
-            description: 'Isi bidang ahli',
+            title: 'Panjang',
+            description: 'Isi panjang',
           },
         },
         {
-          element: '.i-bukti',
+          element: '.i-lebar',
           popover: {
-            title: 'Bukti Ahli',
-            description: 'Isi bukti ahli',
+            title: 'Lebar',
+            description: 'Isi lebar',
+          },
+        },
+        {
+          element: '.i-posisi-X',
+          popover: {
+            title: 'Posisi X',
+            description: 'Isi posisi x',
+          },
+        },
+        {
+          element: '.i-posisi-Y',
+          popover: {
+            title: 'Posisi Y',
+            description: 'Isi posisi y',
           },
         },
         {
@@ -314,7 +328,7 @@ export const ModalAddGedung = ({
                 <div className="grid grid-cols-1 gap-4 mt-4">
                   <div className="form-group w-full relative">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className=" block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Nama Lantai
@@ -373,13 +387,13 @@ export const ModalAddGedung = ({
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="form-group w-full relative">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className="i-panjang block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Panjang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bidang"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-panjang"
                       name="panjang"
                       placeholder="Panjang"
                       onChange={handleChange}
@@ -401,7 +415,7 @@ export const ModalAddGedung = ({
                       Lebar
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-lebar"
                       name="lebar"
                       placeholder="Lebar"
                       onChange={handleChange}
@@ -423,7 +437,7 @@ export const ModalAddGedung = ({
                       Posisi X
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-X"
                       name="posisi_X"
                       placeholder="Posisi X"
                       onChange={handleChange}
@@ -445,9 +459,9 @@ export const ModalAddGedung = ({
                       Posisi Y
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-bukti"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-Y"
                       name="posisi_Y"
-                      placeholder="Posisi X"
+                      placeholder="Posisi Y"
                       onChange={handleChange}
                       value={formState.posisi_Y}
                       disabled={isDetail}
