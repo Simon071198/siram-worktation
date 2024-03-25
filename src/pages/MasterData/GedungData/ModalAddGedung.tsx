@@ -193,14 +193,11 @@ export const ModalAddGedung = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formState, 'From State');
-    formState.lokasi_otmid.id = "skdnsalknfdlksafnlka"
-    console.log(formState, 'From State with lokasi');
+    if (!validateForm()) return;
+    setButtonLoad(true);
 
-    // if (!validateForm()) return;
-    // setButtonLoad(true);
-
-    // onSubmit(formState).then(() => setButtonLoad(false));
-    // console.log('berhasil');
+    onSubmit(formState).then(() => setButtonLoad(false));
+    console.log('berhasil');
   };
 
   const modalStyles: any = {
