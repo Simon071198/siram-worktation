@@ -260,6 +260,12 @@ const routeMasterData = [
     link: '/data-gedung',
     icon: <FaBuildingColumns size={25} />,
   },
+  {
+    id: 15,
+    name: 'Data Lantai',
+    link: '/data-lantai',
+    icon: <FaBuildingColumns size={25} />,
+  },
 ];
 
 const MasterDataList = () => {

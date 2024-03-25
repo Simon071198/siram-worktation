@@ -4652,3 +4652,75 @@ export async function apiDeleteGedungOtmil(params, token) {
     throw error;
   }
 }
+
+export async function apiLantaiOtmilRead(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/lantai_otmil_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiInsertLantaiOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/lantai_otmil_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiUpdateLantaiOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/lantai_otmil_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiDeleteLantaiOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/lantai_otmil_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

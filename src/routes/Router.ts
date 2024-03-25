@@ -156,6 +156,11 @@ const DaftarAhli = lazy(() => import('../pages/MasterData/AhliData/AhliList'));
 const DaftarGedung = lazy(
   () => import('../pages/MasterData/GedungData/GedungList'),
 );
+
+const DaftarLantai = lazy(
+  () => import('../pages/MasterData/Lantai/LantaiList'),
+);
+
 const DaftarJenisPersidangan = lazy(
   () => import('../pages/MasterData/JenisPersidanganData/JenisPersidanganList'),
 );
@@ -244,6 +249,11 @@ const coreRoutes = [
     path: '/data-gedung',
     title: 'Data Gedung',
     component: DaftarGedung,
+  },
+  {
+    path: '/data-lantai',
+    title: 'Data Lantai',
+    component: DaftarLantai,
   },
   {
     path: '/saksi-data',
