@@ -355,6 +355,7 @@ const GedungList = () => {
         item.nama_gedung_otmil,
         item.panjang,
         item.lebar,
+
         item.posisi_X,
         item.posisi_Y,
         item.lokasi_otmil.nama_lokasi_otmil,
