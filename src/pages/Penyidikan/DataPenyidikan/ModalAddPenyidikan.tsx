@@ -626,7 +626,8 @@ export const AddPenyidikanModal = ({
                       placeholder="Nama Kasus"
                       onChange={handleChange}
                       value={formState.nama_kasus}
-                      disabled={isDetail}
+                      // disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors?.map((item) =>
@@ -647,7 +648,8 @@ export const AddPenyidikanModal = ({
                       placeholder="Jenis Perkara"
                       onChange={handleChange}
                       value={formState.nama_jenis_perkara}
-                      disabled={isDetail}
+                      // disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors?.map((item) =>
@@ -670,7 +672,8 @@ export const AddPenyidikanModal = ({
                       placeholder="Kategori Perkara"
                       onChange={handleChange}
                       value={formState.nama_kategori_perkara}
-                      disabled={isDetail}
+                      // disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors?.map((item) =>
@@ -718,7 +721,8 @@ export const AddPenyidikanModal = ({
                       placeholder="NRP"
                       onChange={handleChange}
                       value={formState.nrp_wbp}
-                      disabled={isDetail}
+                      // disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors?.map((item) =>

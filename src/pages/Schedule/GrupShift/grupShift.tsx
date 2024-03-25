@@ -373,7 +373,9 @@ const GrupShift = () => {
                                   </button>
                                   <button
                                     onClick={() =>
-                                      handleDeleteClick(itemGrup.grup_petugas_id)
+                                      handleDeleteClick(
+                                        itemGrup.grup_petugas_id,
+                                      )
                                     }
                                     className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
                                   >
@@ -381,7 +383,6 @@ const GrupShift = () => {
                                   </button>
                                 </>
                               )}
-
                             </div>
                           </li>
                         </ul>
