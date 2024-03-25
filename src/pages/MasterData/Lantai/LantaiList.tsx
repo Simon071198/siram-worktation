@@ -3,7 +3,6 @@ import Loader from '../../../common/Loader';
 import { Alerts } from './AlertLantai';
 import {
   apiDeleteLantaiOtmil,
-  apiGedungOtmilRead,
   apiInsertLantaiOtmil,
   apiLantaiOtmilRead,
   apiUpdateLantaiOtmil,
@@ -63,14 +62,14 @@ const LantaiList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama ahli',
+            description: 'Mencari nama lantai',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Klik untuk mencari nama ahli',
+            description: 'Klik untuk mencari nama lantai',
           },
         },
         {
@@ -84,7 +83,7 @@ const LantaiList = () => {
           element: '.b-tambah',
           popover: {
             title: 'Tambah',
-            description: 'Menambahkan data ahli',
+            description: 'Menambahkan data lantai',
           },
         },
       ],
