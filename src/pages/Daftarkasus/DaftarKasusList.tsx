@@ -440,7 +440,9 @@ const DaftarKasus = () => {
         item.waktu_kejadian,
         item.tanggal_pelimpahan_kasus,
         item.penyidikan.length,
-        item.oditur_penyidik.map((oditur: any) => oditur.nama_oditur).join(', '),
+        item.oditur_penyidik
+          .map((oditur: any) => oditur.nama_oditur)
+          .join(', '),
         item.saksi.map((saksi: any) => saksi.nama_saksi).join(', '),
         item.wbp_profile.map((item: any) => item.nama).join(', '),
       ]),
@@ -572,8 +574,9 @@ const DaftarKasus = () => {
       </div>
       <div className="">
         <div
-          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          className={`${
+            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
           <div className="p-2.5 xl:p-5 justify-center flex">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -616,8 +619,9 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${
+                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
