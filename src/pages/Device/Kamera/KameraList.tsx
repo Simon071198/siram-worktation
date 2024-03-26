@@ -374,7 +374,7 @@ const KameraList = () => {
         item.deviceName,
         item.urlRTSP,
         item.IpAddress,
-        item.status_kamera,
+        item.status_kamera === 'tidak' ? 'tidak aktif' : item.status_kamera,
         item.merk,
         item.model,
         item.nama_lokasi_otmil,
