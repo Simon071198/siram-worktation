@@ -529,10 +529,11 @@ const SidangList = () => {
       }
     }
     const dataToExcel = [
-      keyProperty,
-      ...data.map((item: any) => {
-        const flattenedItem = flattenObject(item);
-        return Object.values(flattenedItem);
+      keyProperty.filter(property => property !== 'sidang_id'),
+  ...data.map((item: any) => {
+    const { sidang_id, ...itemWithoutSidangId } = item;
+    const flattenedItem = flattenObject(itemWithoutSidangId);
+    return Object.values(flattenedItem);
       }),
     ];
 
