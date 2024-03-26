@@ -52,6 +52,16 @@ const DataCamera = (props) => {
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
     };
+    clientFR.current.onopen = () => {
+      console.log('WebSocket FR Connected');
+    };
+    clientFR.current.onmessage = (message) => {
+      const dataFromServer = message;
+      console.log('got reply! ', dataFromServer);
+      if (dataFromServer.data.id == state.deviceDetail.kamera_id) {
+        fetchDataInmateRealtime();
+      }
+    };
     const fetchDataAndSendRequest = async () => {
       await fetchDeviceDetail(); // Wait for fetchDeviceDetail to complete before sending the request
 
@@ -95,8 +105,6 @@ const DataCamera = (props) => {
 
   const fetchDeviceDetail = async () => {
     const { id } = props;
-    console.log(props, 'props from data camera');
-    
     try {
       const res = await apiDeviceDetail(id);
       // const res = await apiDeviceDetail(id);
@@ -242,7 +250,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url="http://192.168.1.111:5000/stream/100.81.142.71_.m3u8"
+                url="http://100.81.142.71:5000/stream/100.81.142.71_.m3u8"
                 width="100%"
                 height="100%"
                 playing={true}

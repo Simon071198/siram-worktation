@@ -2830,7 +2830,10 @@ export async function apiBuilding(params) {
     const response = await axios({
       method: 'post',
       url: newwebserviceurl + 'siram_api/kamera_read_by_location_ID.php',
-      data: params,
+      data: 
+      {
+        filter : params
+      },
     });
     console.log(response, 'response');
     return response;

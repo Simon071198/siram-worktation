@@ -92,7 +92,19 @@ const CameraList = () => {
   }, []);
   let fetchData = async () => {
     try {
-      const response = await apiBuilding();
+      let dataLocal = localStorage.getItem('dataUser');
+      let dataUser = JSON.parse(dataLocal!);
+      dataUser = {
+        lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
+        lokasi_otmil_id: dataUser.lokasi_otmil_id,
+        nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+        nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+      };
+      console.log('data user', dataUser);
+
+      const response = await apiBuilding(dataUser);
+      console.log('response from apiBuilding', response);
+      
       if (response.data.status === 'OK') {
         setBuilding(response);
       } else {
@@ -143,7 +155,6 @@ const CameraList = () => {
     driverObj.drive();
   };
 
-  // const dataGedung = [
   //   {
   //     nama: 'Gedung A',
   //     lantai: [
@@ -207,10 +218,7 @@ const CameraList = () => {
   //     ],
   //   },
   // ];
-  console.log(
-    'data aaaaa',
-    building.data?.records.gedung.map((a) => a),
-  );
+  console.log('data aaaaa', building.data?.records.gedung.map((a) => a));
 
   return (
     <>
@@ -267,8 +275,8 @@ const CameraList = () => {
                             <details className="groupChild">
                               <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
                                 <span>
-                                  {a?.nama_lantai_otmil
-                                    ? a?.nama_lantai_otmil
+                                  {a?.nama_lantai
+                                    ? a?.nama_lantai
                                     : 'Undifined'}
                                 </span>
                                 <span className="transition-transform groupChild-open:rotate-180">
@@ -316,19 +324,19 @@ const CameraList = () => {
                                           >
                                             <p
                                               className={`mt-3 group-open:animate-fadeIn cursor-pointer ml-3 ${
-                                                k.status_kamera === 'aktif'
+                                                k.status_kamera == 'aktif' || k.status_kamera == 'online'
                                                   ? 'text-green-500' // warna teks hijau jika status kamera aktif
                                                   : k.status_kamera === 'rusak'
-                                                    ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
-                                                    : 'text-red-500' // warna teks merah untuk status kamera lainnya
+                                                  ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
+                                                  : 'text-red-500' // warna teks merah untuk status kamera lainnya
                                               }`}
                                             >
                                               {k.nama_kamera} (
-                                              {k.status_kamera === 'aktif'
+                                              {k.status_kamera === 'aktif'|| k.status_kamera == 'online'
                                                 ? 'aktif'
                                                 : k.status_kamera === 'rusak'
-                                                  ? 'rusak'
-                                                  : 'tidak aktif'}
+                                                ? 'rusak'
+                                                : 'tidak aktif'}
                                               )
                                             </p>
                                           </NavLink>
