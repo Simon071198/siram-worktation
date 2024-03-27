@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import {
-  apiLocationOnlineDeviceList,
-  allKameraLemasmil,
-  allKameraOtmil,
-  apiBuilding,
-} from '../../services/api';
+import { apiBuilding } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -104,7 +99,7 @@ const CameraList = () => {
 
       const response = await apiBuilding(dataUser);
       console.log('response from apiBuilding', response);
-      
+
       if (response.data.status === 'OK') {
         setBuilding(response);
       } else {
@@ -154,71 +149,7 @@ const CameraList = () => {
 
     driverObj.drive();
   };
-
-  //   {
-  //     nama: 'Gedung A',
-  //     lantai: [
-  //       {
-  //         nama: 'Lantai 1',
-  //         ruangan: [
-  //           {
-  //             nama: 'Ruangan 101',
-  //             kamera: ['Kamera A101', 'Kamera A102'],
-  //           },
-  //           {
-  //             nama: 'Ruangan 102',
-  //             kamera: ['Kamera A201', 'Kamera A202'],
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         nama: 'Lantai 2',
-  //         ruangan: [
-  //           {
-  //             nama: 'Ruangan 201',
-  //             kamera: ['Kamera B101', 'Kamera B102'],
-  //           },
-  //           {
-  //             nama: 'Ruangan 202',
-  //             kamera: ['Kamera B201', 'Kamera B202'],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     nama: 'Gedung B',
-  //     lantai: [
-  //       {
-  //         nama: 'Lantai 1',
-  //         ruangan: [
-  //           {
-  //             nama: 'Ruangan 101',
-  //             kamera: ['Kamera C101', 'Kamera C102'],
-  //           },
-  //           {
-  //             nama: 'Ruangan 102',
-  //             kamera: ['Kamera C201', 'Kamera C202'],
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         nama: 'Lantai 2',
-  //         ruangan: [
-  //           {
-  //             nama: 'Ruangan 201',
-  //             kamera: ['Kamera D101', 'Kamera D102'],
-  //           },
-  //           {
-  //             nama: 'Ruangan 202',
-  //             kamera: ['Kamera D201', 'Kamera D202'],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  // ];
-  console.log('data aaaaa', building.data?.records.gedung.map((a) => a));
+  console.log(building, 'set build');
 
   return (
     <>
@@ -295,7 +226,7 @@ const CameraList = () => {
                                   </svg>
                                 </span>
                               </summary>
-                              <div className="pt-2 ml-[20px]">
+                              <div className="mb-2 ml-[20px]">
                                 {a?.ruangan.map((r) => {
                                   return (
                                     <>
@@ -323,20 +254,22 @@ const CameraList = () => {
                                             to={`/kamera/${k.kamera_id}`}
                                           >
                                             <p
-                                              className={`mt-3 group-open:animate-fadeIn cursor-pointer ml-3 ${
-                                                k.status_kamera == 'aktif' || k.status_kamera == 'online'
+                                              className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
+                                                k.status_kamera == 'aktif' ||
+                                                k.status_kamera == 'online'
                                                   ? 'text-green-500' // warna teks hijau jika status kamera aktif
                                                   : k.status_kamera === 'rusak'
-                                                  ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
-                                                  : 'text-red-500' // warna teks merah untuk status kamera lainnya
+                                                    ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
+                                                    : 'text-red-500' // warna teks merah untuk status kamera lainnya
                                               }`}
                                             >
                                               {k.nama_kamera} (
-                                              {k.status_kamera === 'aktif'|| k.status_kamera == 'online'
+                                              {k.status_kamera === 'aktif' ||
+                                              k.status_kamera == 'online'
                                                 ? 'aktif'
                                                 : k.status_kamera === 'rusak'
-                                                ? 'rusak'
-                                                : 'tidak aktif'}
+                                                  ? 'rusak'
+                                                  : 'tidak aktif'}
                                               )
                                             </p>
                                           </NavLink>

@@ -12,7 +12,13 @@ import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { Alerts } from './AlertCamera.js';
 import { Error403Message } from '../../utils/constants.js';
-
+import { MdExpandLess, MdExpandMore } from 'react-icons/md';
+import { IoLockClosedOutline, IoLockOpenOutline } from 'react-icons/io5';
+import { PiLockKeyOpenDuotone, PiLockKeyLight } from 'react-icons/pi';
+import {
+  FaRegArrowAltCircleRight,
+  FaRegArrowAltCircleLeft,
+} from 'react-icons/fa';
 const stylesListComent = {
   inline: {
     display: 'inline',
@@ -22,12 +28,13 @@ const stylesListComent = {
 const DataCamera = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [isIconOpen, setIsIconOpen] = useState(true);
+  const [cameraSize, setCameraSize] = useState(isIconOpen ? '80%' : '100%');
   const [state, setState] = useState({
     groupId: '',
     groupShow: [],
     ffmpegIP: 'localhost',
-    baseUrl: 'http://localhost:4000/stream/',
+    baseUrl: 'http://192.168.1.111:5000/stream/',
     extenstion: '_.m3u8',
     girdView: 1,
     isFullscreenEnabled: false,
@@ -43,6 +50,10 @@ const DataCamera = (props) => {
     dataVisitorLog: [],
   });
 
+  const toggleIcon = () => {
+    setIsIconOpen((prevState) => !prevState);
+    setCameraSize((prevState) => (prevState === '100%' ? '80%' : '100%'));
+  };
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const client = useRef(new W3CWebSocket('ws://100.81.142.71:5000'));
@@ -96,7 +107,7 @@ const DataCamera = (props) => {
   const fetchDeviceDetail = async () => {
     const { id } = props;
     console.log(props, 'props from data camera');
-    
+
     try {
       const res = await apiDeviceDetail(id);
       // const res = await apiDeviceDetail(id);
@@ -220,13 +231,6 @@ const DataCamera = (props) => {
     console.log(urlStream);
     return (
       <div className="w-full  p-1" key={index}>
-        {client.current.readyState !== 1 ? (
-          <h1 className="font-semibold text-xl text-red-500 mb-2 animate-pulse">
-            Error connection
-          </h1>
-        ) : (
-          ''
-        )}
         {/* {client.current.readyState !== 1 && client.current.readyState !== 3 ? (
           <h1 className="font-semibold text-xl text-red-500 mb-2 animate-pulse">
             Error connection
@@ -237,12 +241,12 @@ const DataCamera = (props) => {
           ''
         )} */}
 
-        <div className="bg-black p-1">
+        <div className="bg-blackp-1">
           <div className="relative">
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url="http://192.168.1.111:5000/stream/100.81.142.71_.m3u8"
+                url={urlStream}
                 width="100%"
                 height="100%"
                 playing={true}
@@ -250,11 +254,6 @@ const DataCamera = (props) => {
                 controls={true}
               />
             </div>
-            {/* <div className="absolute left-4 right-4 top-2">
-              <span className="text-white text-lg font-semibold">
-                {obj.deviceName}
-              </span>
-            </div> */}
           </div>
         </div>
       </div>
@@ -270,24 +269,56 @@ const DataCamera = (props) => {
   );
 
   return (
-    <>
-      <h1 className="font-semibold ">
-        {deviceDetail && deviceDetail.nama_kamera} -{' '}
-        {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
-        {deviceDetail.nama_ruangan_lemasmil &&
-          deviceDetail.nama_ruangan_lemasmil}
-        - {deviceDetail.nama_lokasi_otmil && deviceDetail.nama_lokasi_otmil}
-        {deviceDetail.nama_lokasi_lemasmil && deviceDetail.nama_lokasi_lemasmil}
-      </h1>
-
+    <div>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-4">
+          <h1 className="font-semibold ml-1">
+            {deviceDetail && deviceDetail.nama_kamera} -{' '}
+            {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
+            {deviceDetail.nama_ruangan_lemasmil &&
+              deviceDetail.nama_ruangan_lemasmil}
+            - {deviceDetail.nama_lokasi_otmil && deviceDetail.nama_lokasi_otmil}
+            {deviceDetail.nama_lokasi_lemasmil &&
+              deviceDetail.nama_lokasi_lemasmil}
+          </h1>
+          {client.current.readyState !== 1 ? (
+            <h1 className="font-semibold text-xl text-red-500  animate-pulse">
+              Error connection
+            </h1>
+          ) : (
+            ''
+          )}
+        </div>
+        <div
+          onClick={toggleIcon}
+          className="cursor-pointer flex justify-end p-2"
+        >
+          {/* Icon to toggle */}
+          {isIconOpen ? (
+            <FaRegArrowAltCircleLeft
+              className=" hover:text-orange-200"
+              size={28}
+            />
+          ) : (
+            <FaRegArrowAltCircleRight
+              className="hover:text-orange-200"
+              size={28}
+            />
+          )}
+        </div>
+      </div>
       <div className="flex gap-4 h-[52vh] justify-between">
-        <div className="w-[80%] h-full">
+        {/* kamera */}
+        <div className={`w-[${cameraSize}] h-full`}>
           {state.listViewCamera.map((obj, index) => (
             <div key={index}>{renderStream1(obj, index)}</div>
           ))}
         </div>
-        <div className="w-[20%] h-full ml-auto">
-          <div className="w-full h-[93.3%]">
+        {/* log kamera */}
+        <div
+          className={`w-[20%] h-[87vh] ml-auto ${cameraSize === '100%' ? 'hidden' : 'block'}`}
+        >
+          <div className="w-full h-[93.3%] ">
             <div className="container">
               <p className="font-semibold text-center">
                 Kemiripan Terdeteksi: {faceDetectionRows.length}
@@ -304,26 +335,11 @@ const DataCamera = (props) => {
                           alt="Person"
                           className="w-16 h-16 rounded-5 mr-2"
                         />
-                        {/* <img
-                          src={`https://dev.transforme.co.id/siram_admin_api${row.face_pics}`}
-                          alt="Person"
-                          className="w-16 h-16 rounded-5"
-                        /> */}
                       </td>
                       <td className="w-3/4 flex flex-col items-end">
                         <p className="text-xs font-semibold">
                           {row.nama_wbp ? row.nama_wbp : row.keterangan}
                         </p>
-                        {/* <p className="text-xs">
-                          {row.gender === true
-                            ? 'Pria'
-                            : row.gender === false
-                            ? 'Wanita'
-                            : row.gender === null || row.gender === ''
-                            ? 'Unknown'
-                            : null}{' '}
-                          - {row.age} Years Old
-                        </p> */}
                         <p className="text-xs">{row.nationality}</p>
                         <p className="text-xs">
                           {formatTimestamp(row.timestamp)}
@@ -336,87 +352,160 @@ const DataCamera = (props) => {
             </div>
           </div>
         </div>
+        {/* Ikon */}
       </div>
-      {/* <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
-        <div className="w-[65%] h-full">
-          <div className="w-full">
-            <p className="font-semibold pl-5 pt-10">
-              Kemiripan Terdeteksi: {faceDetectionRows.length}
-            </p>
-            <div className="pt-1">
-              <div className="flex overflow-x-auto">
-                <div className="flex space-x-4">
-                  {faceDetectionRows?.map((row, index) => (
-                    <div key={index} className="flex-shrink-0">
-                      <img
-                        src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
-                        alt="Person"
-                        className="w-20 h-20 rounded-5 flex-wrap"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-[35%] h-full">
-          <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
-          <table className="w-full">
-            <tbody>
-              <tr className="flex justify-between">
-                <td>
-                  <span className="text-xs">IP Kamera</span>
-                </td>
-                <td>
-                  <span className="text-xs">
-                    {deviceDetail && deviceDetail.IpAddress}
-                  </span>
-                </td>
-              </tr>
-              <tr className="flex justify-between">
-                <td>
-                  <span className="text-xs">Nama Kamera</span>
-                </td>
-                <td>
-                  <span className="text-xs">
-                    {deviceDetail && deviceDetail.device_name} -{' '}
-                    {deviceDetail && deviceDetail.location}
-                  </span>
-                </td>
-              </tr>
-              <tr className="flex justify-between">
-                <td>
-                  <span className="text-xs">Total Deteksi Hari Ini</span>
-                </td>
-                <td>
-                  <span className="text-xs">20266</span>
-                </td>
-              </tr>
-              <tr className="flex justify-between">
-                <td>
-                  <span className="text-xs">Nomor Seri Analitik</span>
-                </td>
-                <td>
-                  <span className="text-xs">
-                    {deviceDetail && deviceDetail.dm_name}
-                  </span>
-                </td>
-              </tr>
-              <tr className="flex justify-between">
-                <td>
-                  <span className="text-xs">AI SNAP Record SIMILAR TO</span>
-                </td>
-                <td>
-                  <span className="text-xs">122</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div> */}
-    </>
+    </div>
   );
+  // return (
+  //   <>
+  //     <h1 className="font-semibold ">
+  //       {deviceDetail && deviceDetail.nama_kamera} -{' '}
+  //       {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
+  //       {deviceDetail.nama_ruangan_lemasmil &&
+  //         deviceDetail.nama_ruangan_lemasmil}
+  //       - {deviceDetail.nama_lokasi_otmil && deviceDetail.nama_lokasi_otmil}
+  //       {deviceDetail.nama_lokasi_lemasmil && deviceDetail.nama_lokasi_lemasmil}
+  //     </h1>
+
+  //     <div className="flex gap-4 h-[52vh] justify-between">
+  //       {/* kamera */}
+  //       <div className="w-[80%] h-full">
+  //         {state.listViewCamera.map((obj, index) => (
+  //           <div key={index}>{renderStream1(obj, index)}</div>
+  //         ))}
+  //       </div>
+  //       {/* log kamera */}
+  //       <div className="w-[20%] h-full ml-auto">
+  //         <div className="w-full h-[93.3%] ">
+  //           <div className="container">
+  //             <p className="font-semibold text-center">
+  //               Kemiripan Terdeteksi: {faceDetectionRows.length}
+  //             </p>
+  //           </div>
+  //           <div className="h-full overflow-y-auto">
+  //             <table className="w-full">
+  //               <tbody>
+  //                 {faceDetectionRows?.map((row, index) => (
+  //                   <tr key={index} className="flex items-center">
+  //                     <td className="w-1/4 flex items-center">
+  //                       <img
+  //                         src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
+  //                         alt="Person"
+  //                         className="w-16 h-16 rounded-5 mr-2"
+  //                       />
+  //                       {/* <img
+  //                         src={`https://dev.transforme.co.id/siram_admin_api${row.face_pics}`}
+  //                         alt="Person"
+  //                         className="w-16 h-16 rounded-5"
+  //                       /> */}
+  //                     </td>
+  //                     <td className="w-3/4 flex flex-col items-end">
+  //                       <p className="text-xs font-semibold">
+  //                         {row.nama_wbp ? row.nama_wbp : row.keterangan}
+  //                       </p>
+  //                       {/* <p className="text-xs">
+  //                         {row.gender === true
+  //                           ? 'Pria'
+  //                           : row.gender === false
+  //                           ? 'Wanita'
+  //                           : row.gender === null || row.gender === ''
+  //                           ? 'Unknown'
+  //                           : null}{' '}
+  //                         - {row.age} Years Old
+  //                       </p> */}
+  //                       <p className="text-xs">{row.nationality}</p>
+  //                       <p className="text-xs">
+  //                         {formatTimestamp(row.timestamp)}
+  //                       </p>
+  //                     </td>
+  //                   </tr>
+  //                 ))}
+  //               </tbody>
+  //             </table>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     {/* <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
+  //       <div className="w-[65%] h-full">
+  //         <div className="w-full">
+  //           <p className="font-semibold pl-5 pt-10">
+  //             Kemiripan Terdeteksi: {faceDetectionRows.length}
+  //           </p>
+  //           <div className="pt-1">
+  //             <div className="flex overflow-x-auto">
+  //               <div className="flex space-x-4">
+  //                 {faceDetectionRows?.map((row, index) => (
+  //                   <div key={index} className="flex-shrink-0">
+  //                     <img
+  //                       src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
+  //                       alt="Person"
+  //                       className="w-20 h-20 rounded-5 flex-wrap"
+  //                     />
+  //                   </div>
+  //                 ))}
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //       <div className="w-[35%] h-full">
+  //         <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
+  //         <table className="w-full">
+  //           <tbody>
+  //             <tr className="flex justify-between">
+  //               <td>
+  //                 <span className="text-xs">IP Kamera</span>
+  //               </td>
+  //               <td>
+  //                 <span className="text-xs">
+  //                   {deviceDetail && deviceDetail.IpAddress}
+  //                 </span>
+  //               </td>
+  //             </tr>
+  //             <tr className="flex justify-between">
+  //               <td>
+  //                 <span className="text-xs">Nama Kamera</span>
+  //               </td>
+  //               <td>
+  //                 <span className="text-xs">
+  //                   {deviceDetail && deviceDetail.device_name} -{' '}
+  //                   {deviceDetail && deviceDetail.location}
+  //                 </span>
+  //               </td>
+  //             </tr>
+  //             <tr className="flex justify-between">
+  //               <td>
+  //                 <span className="text-xs">Total Deteksi Hari Ini</span>
+  //               </td>
+  //               <td>
+  //                 <span className="text-xs">20266</span>
+  //               </td>
+  //             </tr>
+  //             <tr className="flex justify-between">
+  //               <td>
+  //                 <span className="text-xs">Nomor Seri Analitik</span>
+  //               </td>
+  //               <td>
+  //                 <span className="text-xs">
+  //                   {deviceDetail && deviceDetail.dm_name}
+  //                 </span>
+  //               </td>
+  //             </tr>
+  //             <tr className="flex justify-between">
+  //               <td>
+  //                 <span className="text-xs">AI SNAP Record SIMILAR TO</span>
+  //               </td>
+  //               <td>
+  //                 <span className="text-xs">122</span>
+  //               </td>
+  //             </tr>
+  //           </tbody>
+  //         </table>
+  //       </div>
+  //     </div> */}
+  //   </>
+  // );
 };
 
 export default DataCamera;
