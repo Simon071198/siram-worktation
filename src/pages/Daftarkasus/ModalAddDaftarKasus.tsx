@@ -7,6 +7,7 @@ import {
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
+  apiJenisPidanaRead
 } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
@@ -41,6 +42,7 @@ export const AddDaftarKasusModal = ({
     nomor_kasus: defaultValue?.nomor_kasus,
     lokasi_kasus: '',
     jenis_perkara_id: '',
+    jenis_pidana_id: '',
     kategori_perkara_id: '',
     waktu_kejadian: '',
     waktu_pelaporan_kasus: '',
@@ -69,6 +71,7 @@ export const AddDaftarKasusModal = ({
   const [dataStatusWBP, setDataStatusWBP] = useState([]);
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
   const [dataSaksi, setDataSaksi] = useState([]);
   const [filter, setFilter] = useState('');
 
@@ -242,6 +245,29 @@ export const AddDaftarKasusModal = ({
       });
   };
 
+  const jenisPidana = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiJenisPidanaRead(params, token)
+      .then((res) => {
+        setDataJenisPidana(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  console.log(dataJenisPidana);
+
   const Oditur = async () => {
     let params = {
       pageSize: 1000,
@@ -342,6 +368,7 @@ export const AddDaftarKasusModal = ({
       Saksi(),
       status(),
       jenisPerkara(),
+      jenisPidana(),
       Oditur(),
     ]).then(() => {
       setIsLoading(false);
@@ -568,6 +595,11 @@ export const AddDaftarKasusModal = ({
     label: item.nama_jenis_perkara,
   }));
 
+  const jenisPidanaOptions = dataJenisPidana.map((item: any) => ({
+    value: item.jenis_pidana_id,
+    label: item.nama_jenis_pidana,
+  }));
+
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
 
@@ -611,6 +643,8 @@ export const AddDaftarKasusModal = ({
     });
   };
 
+  
+
   const handleSelectPerkara = (e: any) => {
     const kategoriPerkara = dataJenisPerkara?.filter(
       (item: any) => item.jenis_perkara_id === e.value,
@@ -623,8 +657,32 @@ export const AddDaftarKasusModal = ({
       ...formState,
       jenis_perkara_id: e.value,
       kategori_perkara_id: kategoriPerkaraId,
+      jenis_pidana_id: kategoriPerkara ? kategoriPerkara[0].jenis_pidana_id: '',
     });
   };
+
+  const handleSelectPidana = (e: any) => {
+    // const kategoriPidana = dataJenisPidana?.filter(
+    //   (item: any) => item.jenis_pidana_id === e.value,
+    // );
+    // const kategoriPidanaId =
+    //   kategoriPidana?.length > 0
+    //     ? kategoriPidana[0]?.jenis_pidana_id
+    //     : '';
+    setFormState({
+      ...formState,
+      // jenis_perkara_id: e.value,
+      jenis_pidana_id: e.value,
+      // jenis_pidana_id: kategoriPidanaId,
+    });
+  };
+
+  // const handleChange = (e: any) => {
+  //   setFormState({ ...formState, [e.target.name]: e.target.value });
+  // };
+
+  console.log(formState);
+  
 
   return (
     // <div
@@ -782,6 +840,34 @@ export const AddDaftarKasusModal = ({
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
+                      Jenis Pidana
+                    </label>
+                    <Select
+                      className="capitalize p-jenis"
+                      name='jenis_pidana_id'
+                      options={jenisPidanaOptions}
+                      // isDisabled={isDetail}
+                      isDisabled={true}
+                      onChange={handleSelectPidana}
+                      // onChange={handleChange}
+                      placeholder="Pilih Jenis Pidana"
+                      styles={customStyles}
+                      // value={formState.jenis_pidana_id}
+                      value={jenisPidanaOptions.find(option => option.value === formState.jenis_pidana_id)}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="form-group w-full">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
                       Lokasi Kasus
                     </label>
                     <input
@@ -912,7 +998,7 @@ export const AddDaftarKasusModal = ({
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div className="form-group w-full">
+                  {/* <div className="form-group w-full">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -935,9 +1021,59 @@ export const AddDaftarKasusModal = ({
                         )}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="form-group w-full">
+                  {/* <div className="form-group w-full">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Ketua Oditur Penyidik
+                    </label>
+                    <Select
+                      className="capitalize p-ketua"
+                      options={ketuaOditurPenyidik}
+                      isDisabled={isDetail}
+                      onChange={handleSelectKetuaOditur}
+                      placeholder="Pilih Ketua Oditur"
+                      styles={customStyles}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'role_ketua_oditur_ids'
+                            ? 'Pilih Ketua Oditur Penyidik'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div> */}
+                </div>
+                <div className="form-group w-full">
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Oditur Penyidik
+                  </label>
+                  <Select
+                    className="capitalize text-white p-oditur"
+                    isMulti
+                    options={OditurPenyidikOpstions}
+                    isDisabled={isDetail}
+                    onChange={handleSelectOditurPenyidik}
+                    placeholder="Pilih Oditur Penyidik"
+                    styles={customStyles}
+                  />
+                  <div className="h-2">
+                    <p className="error-text">
+                      {errors.map((item) =>
+                        item === 'nama' ? 'Masukan Tersangka' : '',
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="form-group w-full mt-3">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -962,7 +1098,6 @@ export const AddDaftarKasusModal = ({
                       </p>
                     </div>
                   </div>
-                </div>
                 <div className="form-group w-full mt-3">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
@@ -982,19 +1117,16 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                      errors.includes('wbp_profile_ids')
-                        ? `${
-                            errors.includes('wbp_profile_ids')
-                              ? 'Tersangka'
-                              : ''
-                          } ${
-                            errors.includes('saksi_id') &&
-                            errors.includes('wbp_profile_ids')
-                              ? 'Dan'
-                              : ''
-                          } ${
-                            errors.includes('saksi_id') ? 'Saksi' : ''
-                          } Belum di Pilih`
+                        errors.includes('wbp_profile_ids')
+                        ? `${errors.includes('wbp_profile_ids')
+                          ? 'Tersangka'
+                          : ''
+                        } ${errors.includes('saksi_id') &&
+                          errors.includes('wbp_profile_ids')
+                          ? 'Dan'
+                          : ''
+                        } ${errors.includes('saksi_id') ? 'Saksi' : ''
+                        } Belum di Pilih`
                         : ''}
                     </p>
                   </div>
@@ -1047,11 +1179,10 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangans-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${
-                                  errors.includes('keterangans')
+                                placeholder={`${errors.includes('keterangans')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan'
-                                }`}
+                                  }`}
                                 onChange={(e) =>
                                   handleChangeKeteranganTersangka(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -1112,11 +1243,10 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangan-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${
-                                  errors.includes('keteranganSaksis')
+                                placeholder={`${errors.includes('keteranganSaksis')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan Saksi'
-                                }`}
+                                  }`}
                                 onChange={(e) =>
                                   handleChangeKeterangan(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -1132,24 +1262,23 @@ export const AddDaftarKasusModal = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                 <br></br>
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-ubah"
@@ -1182,9 +1311,8 @@ export const AddDaftarKasusModal = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                     type="submit"
                     disabled={buttonLoad}
                     id="b-tambah"

@@ -138,6 +138,13 @@ const DaftarKasus = () => {
           },
         },
         {
+          element: '.p-pidana',
+          popover: {
+            title: 'Jenis Pidana',
+            description: 'Pilih jenis pidana yang diinginkan',
+          },
+        },
+        {
           element: '.b-search',
           popover: {
             title: 'Button Search',
@@ -602,7 +609,7 @@ const DaftarKasus = () => {
               onChange={(e) =>
                 setSearchData({ ...searchData, nama_jenis_pidana: e.target.value })
               }
-              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-sidang"
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-pidana"
             >
               <option value="">Semua jenis pidana</option>
               {jenisPidana.map((item: any) => (
