@@ -2825,6 +2825,23 @@ export async function apiLocationDeviceList(params) {
     throw error;
   }
 }
+export async function apiBuilding(params) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/kamera_read_by_location_ID.php',
+      data: 
+      {
+        filter : params
+      },
+    });
+    console.log(response, 'response');
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 export async function apiLocationOnlineDeviceList(params) {
   try {
     const response = await axios({

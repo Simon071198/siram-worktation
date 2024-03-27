@@ -27,8 +27,7 @@ const DataCamera = (props) => {
     groupId: '',
     groupShow: [],
     ffmpegIP: 'localhost',
-    baseUrl: 'http://192.168.1.111:5000/stream/',
-    // baseUrl: 'http://localhost:4000/stream/',
+    baseUrl: 'http://localhost:4000/stream/',
     extenstion: '_.m3u8',
     girdView: 1,
     isFullscreenEnabled: false,
@@ -47,40 +46,40 @@ const DataCamera = (props) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const client = useRef(new W3CWebSocket('ws://100.81.142.71:5000'));
-
+  const clientFR = useRef(new W3CWebSocket('ws://100.81.142.71:5000'));
 
   useEffect(() => {
-    // Initialize WebSocket connection
-    client.current = new WebSocket('ws://your-websocket-url');
-
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
     };
-
-    // Cleanup function
-    return () => {
-      client.current.close(); // Close WebSocket connection when component unmounts
+    clientFR.current.onopen = () => {
+      console.log('WebSocket FR Connected');
     };
-  }, []); // Run once when component mounts
-  
-  useEffect(() => {
+    clientFR.current.onmessage = (message) => {
+      const dataFromServer = message;
+      console.log('got reply! ', dataFromServer);
+      if (dataFromServer.data.id == state.deviceDetail.kamera_id) {
+        fetchDataInmateRealtime();
+      }
+    };
     const fetchDataAndSendRequest = async () => {
-      await fetchDeviceDetail(); // Assuming fetchDeviceDetail is an async function that fetches device details
+      await fetchDeviceDetail(); // Wait for fetchDeviceDetail to complete before sending the request
 
-    
+      const date = getTodayDate();
+      setState((prevState) => ({ ...prevState, endDate: date }));
+
+      return () => {
+        // clearInterval(fetchInterval);
+        sendRequest('disconnectedLive', {
+          status: 'disconnected',
+        });
+      };
     };
-
-    // fetchDataInmateRealtime(); // If fetchDataInmateRealtime is supposed to run independently, you can uncomment this line
-
-    const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
+    // fetchDataInmateRealtime();
+    setInterval(fetchDataInmateRealtime, 5000);
 
     fetchDataAndSendRequest(); // Call the function to initiate the process
-
-    return () => {
-      clearInterval(fetchInterval); // Cleanup interval when component unmounts
-    };
   }, [props.id]);
-  // }, [props.id]);
 
   const fetchDataInmateRealtime = async () => {
     const { id } = props;
@@ -106,8 +105,6 @@ const DataCamera = (props) => {
 
   const fetchDeviceDetail = async () => {
     const { id } = props;
-    console.log(props, 'props from data camera');
-    
     try {
       const res = await apiDeviceDetail(id);
       // const res = await apiDeviceDetail(id);
@@ -170,7 +167,20 @@ const DataCamera = (props) => {
     }
   };
 
+  const componentDidUpdate = (prevProps) => {
+    if (props.id !== prevProps.id) {
+      fetchDataInmateRealtime();
+      fetchDeviceDetail();
+    }
+  };
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const formatTimestamp = (timestamp) => {
     const dateObj = new Date(timestamp);
@@ -186,12 +196,36 @@ const DataCamera = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
+  const sendRequestFR = (method, params) => {
+    clientFR.current.send(JSON.stringify({ method: method, params: params }));
+  };
 
+  const destroyCamera = (data) => {
+    console.log('destroy streaming');
+    playerRef.current.stop();
+    setState((prevState) => ({
+      ...prevState,
+      cameraplayer: null,
+    }));
+  };
+
+  const reset = () => {
+    setState((prevState) => ({
+      ...prevState,
+      selectOptionGroup: null,
+      viewListData: [],
+      listViewCamera: [],
+    }));
+  };
+
+  const pause = () => {
+    playerRef.current.stop();
+  };
 
   const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);
     var urlStream = state.baseUrl + obj.IpAddress + state.extenstion;
-    console.log(urlStream,'render stream 1');
+    console.log(urlStream);
     return (
       <div className="w-full  p-1" key={index}>
         {client.current.readyState !== 1 ? (
@@ -216,7 +250,7 @@ const DataCamera = (props) => {
             <div className="player-wrapper">
               <ReactPlayer
                 className="react-player"
-                url={urlStream}
+                url="http://100.81.142.71:5000/stream/100.81.142.71_.m3u8"
                 width="100%"
                 height="100%"
                 playing={true}

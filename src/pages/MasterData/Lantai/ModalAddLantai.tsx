@@ -5,7 +5,10 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import Select from 'react-select';
-import { apiReadAlllokasiOtmil } from '../../../services/api';
+import {
+  apiGedungOtmilRead,
+  apiReadAlllokasiOtmil,
+} from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -22,6 +25,7 @@ export const ModalAddGedung = ({
     defaultValue || {
       nama_lantai: '',
       lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
+      gedung_otmil_id: '',
       panjang: '',
       lebar: '',
       posisi_X: '',
@@ -37,11 +41,13 @@ export const ModalAddGedung = ({
   const [filter, setFilter] = useState('');
 
   const [isLokasiOtmil, setIsLokasiOtmil] = useState([]);
+  const [isGedungData, setIsGedungnData] = useState([]);
+
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (key !== 'nama_lokasi_lantai') {
+      if (key !== 'nama_lokasi_otmil') {
         if (!value) {
           errorFields.push(key);
         }
@@ -199,8 +205,8 @@ export const ModalAddGedung = ({
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleSelectLokasiOtmil = (e: any) => {
-    setFormState({ ...formState, lokasi_otmil_id: e?.value });
+  const handleSelectGedungOtmil = (e: any) => {
+    setFormState({ ...formState, gedung_otmil_id: e?.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -237,8 +243,19 @@ export const ModalAddGedung = ({
     setIsLokasiOtmil(data.data.records);
   };
 
+  const gedungData = async () => {
+    let param = {
+      filter: '',
+      page: 1,
+      pageSize: 10000,
+    };
+
+    const data = await apiGedungOtmilRead(param, token);
+    setIsGedungnData(data.data.records);
+  };
+
   useEffect(() => {
-    Promise.all([lokasiOtmilData()]).then(() => {
+    Promise.all([lokasiOtmilData(), gedungData()]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -347,12 +364,12 @@ export const ModalAddGedung = ({
                       )}
                     </p>
                   </div>
-                  {/* <div className="f-pangkat form-group w-full flex flex-col">
+                  <div className="f-pangkat form-group w-full flex flex-col">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Lokasi Otmil
+                      Gedung Otmil
                     </label>
                     <Select
                       className="basic-single "
@@ -361,28 +378,28 @@ export const ModalAddGedung = ({
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                              value: formState.lokasi_otmil_id,
-                              label: formState.nama_lokasi_lantai,
+                              value: formState.gedung_otmil_id,
+                              label: formState.nama_gedung_otmil,
                             }
-                          : formState.lokasi_otmil_id
+                          : formState.gedung_otmil_id
                       }
                       isDisabled={isDetail}
                       isClearable={true}
                       isSearchable={true}
-                      placeholder="Pilih Lokasi Otmil"
-                      name="lokasi_otmil_id"
-                      options={isLokasiOtmil.map((item: any) => ({
-                        value: item.lokasi_otmil_id,
-                        label: item.nama_lokasi_lantai,
+                      placeholder="Pilih Gedung Otmil"
+                      name="gedung_otmil_id"
+                      options={isGedungData.map((item: any) => ({
+                        value: item.gedung_otmil_id,
+                        label: item.nama_gedung_otmil,
                       }))}
-                      onChange={handleSelectLokasiOtmil}
+                      onChange={handleSelectGedungOtmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'lokasi_otmil_id' ? 'Pilih lokasi lantai' : '',
+                        item === 'lokasi_otmil_id' ? 'Pilih lokasi gedung' : '',
                       )}
                     </p>
-                  </div> */}
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="form-group w-full relative">
