@@ -8,6 +8,7 @@ import {
   apiUpdateDaftarKasus,
   apiDeleteDaftarKasus,
   apiCreateBarangBukti,
+  apiJenisPidanaRead
 } from '../../services/api';
 import { AddDaftarKasusModal } from './ModalAddDaftarKasus';
 import { DeleteDaftarKasusModal } from './ModalDeleteDaftarKasus';
@@ -37,6 +38,7 @@ const DaftarKasus = () => {
   const [detailData, setDetailData] = useState<Item | null>(null);
   const [editData, setEditData] = useState<Item | null>(null);
   const [deleteData, setDeleteData] = useState<Item | null>(null);
+  const [jenisPidana, setJenisPidana] = useState([]);
   const [modalDetailOpen, setModalDetailOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [modalAddOpen, setModalAddOpen] = useState(false);
@@ -49,6 +51,10 @@ const DaftarKasus = () => {
   const [rows, setRows] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [searchData, setSearchData] = useState({
+    nama_kasus: '',
+    nama_jenis_pidana: '',
+  });
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -162,7 +168,8 @@ const DaftarKasus = () => {
     try {
       const params = {
         filter: {
-          nama_kasus: filter,
+          nama_kasus: searchData.nama_kasus,
+          nama_jenis_pidana: searchData.nama_jenis_pidana
         },
         page: currentPage,
         pageSize: pageSize,
@@ -211,6 +218,7 @@ const DaftarKasus = () => {
 
   useEffect(() => {
     fetchData();
+    getAllJenisPidana();
   }, [currentPage, pageSize]); // Anda juga dapat menambahkan dependencies jika diperlukan
 
   useEffect(() => {
@@ -253,6 +261,42 @@ const DaftarKasus = () => {
       });
     }
   };
+
+  const getAllJenisPidana = async () => {
+    let params = {
+      filter: '',
+      pageSize: 1000,
+    };
+    try {
+      const response = await apiJenisPidanaRead(params, token);
+      // console.log('JENIS Pidana', response.data.records);
+      const data = response.data.records;
+      const uniqueData: any[] = [];
+      const trackedNames: any[] = [];
+
+      data.forEach((item: any) => {
+        if (!trackedNames.includes(item.nama_jenis_pidana)) {
+          trackedNames.push(item.nama_jenis_pidana);
+          uniqueData.push(item);
+        }
+      });
+
+      // console.log('uniqueData', uniqueData);
+      setJenisPidana(uniqueData);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
+
+  console.log(jenisPidana);  
 
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
@@ -534,6 +578,8 @@ const DaftarKasus = () => {
     }
   };
 
+  console.log(searchData);
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -543,11 +589,28 @@ const DaftarKasus = () => {
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="w-full search">
               <SearchInputButton
-                value={filter}
+                value={searchData.nama_kasus}
                 placehorder="Cari Nama Kasus"
-                onChange={handleFilterChange}
+                onChange={(e) =>
+                  setSearchData({...searchData, nama_kasus: e.target.value})
+                }
               />
             </div>
+
+            <select
+              value={searchData.nama_jenis_pidana}
+              onChange={(e) =>
+                setSearchData({ ...searchData, nama_jenis_pidana: e.target.value })
+              }
+              className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-sidang"
+            >
+              <option value="">Semua jenis pidana</option>
+              {jenisPidana.map((item: any) => (
+                <option value={item.nama_jenis_pidana}>
+                  {item.nama_jenis_pidana}
+                </option>
+              ))}
+            </select>
 
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search "
