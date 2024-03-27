@@ -620,7 +620,7 @@ const DaftarKasus = () => {
       <div className="">
         <div
           className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+            } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
         >
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nomor_kasus")}>
