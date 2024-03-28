@@ -57,7 +57,6 @@ const DataCamera = (props) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
-
   useEffect(() => {
     // Initialize WebSocket connection
     client.current = new WebSocket('ws://192.168.1.111:5000');
