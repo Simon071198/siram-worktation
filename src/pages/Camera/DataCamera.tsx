@@ -56,8 +56,8 @@ const DataCamera = (props) => {
   };
   const videoRef = useRef(null);
   const playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://100.81.142.71:5000'));
-  const clientFR = useRef(new W3CWebSocket('ws://100.81.142.71:5000'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+  const clientFR = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
 
   useEffect(() => {
     client.current.onopen = () => {
@@ -144,16 +144,16 @@ const DataCamera = (props) => {
           },
         ]),
       });
-      sendRequestFR('startFR', {
-        listViewCameraData: JSON.stringify([
-          {
-            IpAddress: res.ip_address,
-            urlRTSP: res.url_rtsp,
-            deviceName: res.nama_kamera,
-            deviceId: res.kamera_id,
-          },
-        ]),
-      });
+      // sendRequestFR('startFR', {
+      //   listViewCameraData: JSON.stringify([
+      //     {
+      //       IpAddress: res.ip_address,
+      //       urlRTSP: res.url_rtsp,
+      //       deviceName: res.nama_kamera,
+      //       deviceId: res.kamera_id,
+      //     },
+      //   ]),
+      // });
       // sendRequest('startLiveView', {
       //   listViewCameraData: JSON.stringify(state.listViewCamera),
       // });
@@ -176,7 +176,10 @@ const DataCamera = (props) => {
       fetchDeviceDetail();
     }
   };
-
+  const handleStop = () => {
+    // sendRequest('stopLiveCamera', {});
+    client.current.close();
+  };
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -199,9 +202,9 @@ const DataCamera = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  const sendRequestFR = (method, params) => {
-    clientFR.current.send(JSON.stringify({ method: method, params: params }));
-  };
+  // const sendRequestFR = (method, params) => {
+  //   clientFR.current.send(JSON.stringify({ method: method, params: params }));
+  // };
 
   const destroyCamera = (data) => {
     console.log('destroy streaming');
@@ -352,160 +355,12 @@ const DataCamera = (props) => {
             </div>
           </div>
         </div>
-        {/* Ikon */}
       </div>
+      <button onClick={handleStop} className="w-30 h-10 bg-red-400">
+        Stop
+      </button>
     </div>
   );
-  // return (
-  //   <>
-  //     <h1 className="font-semibold ">
-  //       {deviceDetail && deviceDetail.nama_kamera} -{' '}
-  //       {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
-  //       {deviceDetail.nama_ruangan_lemasmil &&
-  //         deviceDetail.nama_ruangan_lemasmil}
-  //       - {deviceDetail.nama_lokasi_otmil && deviceDetail.nama_lokasi_otmil}
-  //       {deviceDetail.nama_lokasi_lemasmil && deviceDetail.nama_lokasi_lemasmil}
-  //     </h1>
-
-  //     <div className="flex gap-4 h-[52vh] justify-between">
-  //       {/* kamera */}
-  //       <div className="w-[80%] h-full">
-  //         {state.listViewCamera.map((obj, index) => (
-  //           <div key={index}>{renderStream1(obj, index)}</div>
-  //         ))}
-  //       </div>
-  //       {/* log kamera */}
-  //       <div className="w-[20%] h-full ml-auto">
-  //         <div className="w-full h-[93.3%] ">
-  //           <div className="container">
-  //             <p className="font-semibold text-center">
-  //               Kemiripan Terdeteksi: {faceDetectionRows.length}
-  //             </p>
-  //           </div>
-  //           <div className="h-full overflow-y-auto">
-  //             <table className="w-full">
-  //               <tbody>
-  //                 {faceDetectionRows?.map((row, index) => (
-  //                   <tr key={index} className="flex items-center">
-  //                     <td className="w-1/4 flex items-center">
-  //                       <img
-  //                         src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
-  //                         alt="Person"
-  //                         className="w-16 h-16 rounded-5 mr-2"
-  //                       />
-  //                       {/* <img
-  //                         src={`https://dev.transforme.co.id/siram_admin_api${row.face_pics}`}
-  //                         alt="Person"
-  //                         className="w-16 h-16 rounded-5"
-  //                       /> */}
-  //                     </td>
-  //                     <td className="w-3/4 flex flex-col items-end">
-  //                       <p className="text-xs font-semibold">
-  //                         {row.nama_wbp ? row.nama_wbp : row.keterangan}
-  //                       </p>
-  //                       {/* <p className="text-xs">
-  //                         {row.gender === true
-  //                           ? 'Pria'
-  //                           : row.gender === false
-  //                           ? 'Wanita'
-  //                           : row.gender === null || row.gender === ''
-  //                           ? 'Unknown'
-  //                           : null}{' '}
-  //                         - {row.age} Years Old
-  //                       </p> */}
-  //                       <p className="text-xs">{row.nationality}</p>
-  //                       <p className="text-xs">
-  //                         {formatTimestamp(row.timestamp)}
-  //                       </p>
-  //                     </td>
-  //                   </tr>
-  //                 ))}
-  //               </tbody>
-  //             </table>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     {/* <div className="flex w-full h-[20vh] gap-5 mt-12 justify-between">
-  //       <div className="w-[65%] h-full">
-  //         <div className="w-full">
-  //           <p className="font-semibold pl-5 pt-10">
-  //             Kemiripan Terdeteksi: {faceDetectionRows.length}
-  //           </p>
-  //           <div className="pt-1">
-  //             <div className="flex overflow-x-auto">
-  //               <div className="flex space-x-4">
-  //                 {faceDetectionRows?.map((row, index) => (
-  //                   <div key={index} className="flex-shrink-0">
-  //                     <img
-  //                       src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
-  //                       alt="Person"
-  //                       className="w-20 h-20 rounded-5 flex-wrap"
-  //                     />
-  //                   </div>
-  //                 ))}
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       <div className="w-[35%] h-full">
-  //         <p className="font-semibold text-sm pl-5 pt-10">Informasi Kamera</p>
-  //         <table className="w-full">
-  //           <tbody>
-  //             <tr className="flex justify-between">
-  //               <td>
-  //                 <span className="text-xs">IP Kamera</span>
-  //               </td>
-  //               <td>
-  //                 <span className="text-xs">
-  //                   {deviceDetail && deviceDetail.IpAddress}
-  //                 </span>
-  //               </td>
-  //             </tr>
-  //             <tr className="flex justify-between">
-  //               <td>
-  //                 <span className="text-xs">Nama Kamera</span>
-  //               </td>
-  //               <td>
-  //                 <span className="text-xs">
-  //                   {deviceDetail && deviceDetail.device_name} -{' '}
-  //                   {deviceDetail && deviceDetail.location}
-  //                 </span>
-  //               </td>
-  //             </tr>
-  //             <tr className="flex justify-between">
-  //               <td>
-  //                 <span className="text-xs">Total Deteksi Hari Ini</span>
-  //               </td>
-  //               <td>
-  //                 <span className="text-xs">20266</span>
-  //               </td>
-  //             </tr>
-  //             <tr className="flex justify-between">
-  //               <td>
-  //                 <span className="text-xs">Nomor Seri Analitik</span>
-  //               </td>
-  //               <td>
-  //                 <span className="text-xs">
-  //                   {deviceDetail && deviceDetail.dm_name}
-  //                 </span>
-  //               </td>
-  //             </tr>
-  //             <tr className="flex justify-between">
-  //               <td>
-  //                 <span className="text-xs">AI SNAP Record SIMILAR TO</span>
-  //               </td>
-  //               <td>
-  //                 <span className="text-xs">122</span>
-  //               </td>
-  //             </tr>
-  //           </tbody>
-  //         </table>
-  //       </div>
-  //     </div> */}
-  //   </>
-  // );
 };
 
 export default DataCamera;
