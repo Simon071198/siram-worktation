@@ -107,7 +107,7 @@ const RoomList = () => {
       filter: {
         nama_ruangan_otmil: filter,
         jenis_ruangan_otmil: filterJenisRuangan,
-        nama_lokasi_otmil: 'Cimahi',
+        // nama_lokasi_otmil: 'Cimahi',
       },
     };
     try {
@@ -165,7 +165,7 @@ const RoomList = () => {
   const fetchData = async () => {
     let params = {
       filter: {
-        nama_lokasi_otmil: 'Cimahi',
+        // nama_lokasi_otmil: 'Cimahi',
       },
       page: currentPage,
       pageSize: pageSize,
@@ -207,6 +207,7 @@ const RoomList = () => {
 
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
+    console.log(item, 'Handle edit');
     setEditData(item);
     setModalEditOpen(true);
   };

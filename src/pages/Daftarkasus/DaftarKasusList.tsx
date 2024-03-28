@@ -66,19 +66,29 @@ const DaftarKasus = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
+  const handleButtonFilter = (type: any) => {
+    if (type === 'tanggal_pelaporan') {
+      setSearchTanggalPelaporan((prevState) => !prevState);
+    } else if (type === 'tanggal_kejadian') {
+      setSearchTanggalKejadian((prevState) => !prevState);
+    }
+  };
   //Filter Table
 
   const [searchNomorKasus, setSearchNomorKasus] = useState(false);
   const [searchNamaKasus, setSearchNamaKasus] = useState(false);
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
+  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
+  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
 
-  //Filter Value Search Table
-
-  const [filterNomorKasus, setFilterNomorKasus] = useState('');
-  const [filterNamaKasus, setFilterNamaKasus] = useState('');
-  const [filterTanggalPelaporan, setFilterTanggalPelaporan] = useState('');
-  const [filterTanggalKejadian, setFilterTanggalKejadian] = useState('');
+  // const handleButtonFilter = (type: any) => {
+  //   if (type === 'tanggal_pelaporan') {
+  //     setSearchTanggalPelaporan((prevState) => !prevState);
+  //   } else if (type === 'tanggal_kejadian') {
+  //     setSearchTanggalKejadian((prevState) => !prevState);
+  //   }
+  // };
 
   // const navigate = useNavigate();
 
@@ -707,20 +717,11 @@ const DaftarKasus = () => {
             } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
         >
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nomor_kasus")}>
+            <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nomor Kasus
+                Nomer Kasus
               </h5>
             </div>
-            {searchNomorKasus && (
-              <div className="w-[80%] search">
-                <SearchInputButton
-                  value={filterNomorKasus}
-                  // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChangeNomorKasus}
-                />
-              </div>
-            )}
           </div>
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nama_kasus")}>
@@ -738,8 +739,12 @@ const DaftarKasus = () => {
               </div>
             )}
           </div>
+
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("tanggal_pelaporan")}>
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_pelaporan')}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Tanggal Pelaporan
               </h5>
@@ -747,15 +752,22 @@ const DaftarKasus = () => {
             {searchTanggalPelaporan && (
               <div className="w-[80%] search">
                 <SearchInputButton
-                  value={filterTanggalPelaporan}
+                  value={filter}
                   // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChangeTanggalPelaporan}
+                  onChange={handleFilterChange}
+                  // value={filterTanggalPelaporan}
+                  // placehorder="Cari Nama Kasus"
+                  // onChange={handleFilterChangeTanggalPelaporan}
                 />
               </div>
             )}
           </div>
+
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("tanggal_kejadian")}>
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_kejadian')}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Tanggal Kejadian
               </h5>
@@ -763,9 +775,13 @@ const DaftarKasus = () => {
             {searchTanggalKejadian && (
               <div className="w-[80%] search">
                 <SearchInputButton
-                  value={filterTanggalKejadian}
+                  value={filter}
                   // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChangeTanggalKejadian}
+                  onChange={handleFilterChange}
+
+                  // value={filterTanggalKejadian}
+                  // placehorder="Cari Nama Kasus"
+                  // onChange={handleFilterChangeTanggalKejadian}
                 />
               </div>
             )}
@@ -814,7 +830,7 @@ const DaftarKasus = () => {
 
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('detail-perkara')}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">

@@ -156,10 +156,7 @@ export const AddInmateModal = ({
       tanggal_penetapan_terdakwa: '',
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
-      jenis_olahraga: '',
-      vonis_tahun_perkara: '',
-      vonis_bulan_perkara: '',
-      vonis_hari_perkara: '',
+      jenis_olahraga: ''
       // penyakit: '',
       // berat_badan: '',
       // tinggi_badan: '',

@@ -3,7 +3,6 @@ import Loader from '../../../common/Loader';
 import { Alerts } from './AlertLantai';
 import {
   apiDeleteLantaiOtmil,
-  apiGedungOtmilRead,
   apiInsertLantaiOtmil,
   apiLantaiOtmilRead,
   apiUpdateLantaiOtmil,
@@ -63,14 +62,14 @@ const LantaiList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama ahli',
+            description: 'Mencari nama lantai',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Klik untuk mencari nama ahli',
+            description: 'Klik untuk mencari nama lantai',
           },
         },
         {
@@ -84,7 +83,7 @@ const LantaiList = () => {
           element: '.b-tambah',
           popover: {
             title: 'Tambah',
-            description: 'Menambahkan data ahli',
+            description: 'Menambahkan data lantai',
           },
         },
       ],
@@ -202,7 +201,9 @@ const LantaiList = () => {
       posisi_X: item.posisi_X,
       posisi_Y: item.posisi_Y,
       lokasi_otmil_id: item?.lokasi_otmil?.id_lokasi_otmil,
-      nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
+      nama_lokasi_otmil: item?.lokasi_otmil?.nama_lokasi_otmil,
+      nama_gedung_otmil: item?.gedung_otmil?.nama_gedung_otmil,
+      gedung_otmil_id: item?.gedung_otmil?.gedung_otmil_id,
     };
     setDetailData(newItem);
     setModalDetailOpen(true);
@@ -218,6 +219,8 @@ const LantaiList = () => {
       posisi_Y: item.posisi_Y,
       lokasi_otmil_id: item?.lokasi_otmil?.id_lokasi_otmil,
       nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
+      nama_gedung_otmil: item?.gedung_otmil?.nama_gedung_otmil,
+      gedung_otmil_id: item?.gedung_otmil?.gedung_otmil_id,
     };
 
     setEditData(newItem);
@@ -344,7 +347,15 @@ const LantaiList = () => {
 
   const exportToExcel = () => {
     const dataToExcel = [
-      ['Nama Lantai', 'Panjang', 'Lebar', 'posisi_x', 'posisi_y', 'lokasi'],
+      [
+        'Nama Lantai',
+        'Panjang',
+        'Lebar',
+        'posisi_x',
+        'posisi_y',
+        'lokasi',
+        'gedung',
+      ],
       ...data.map((item: any) => [
         item.nama_lantai,
         item.panjang,
@@ -352,6 +363,7 @@ const LantaiList = () => {
         item.posisi_X,
         item.posisi_Y,
         item?.lokasi_otmil?.nama_lokasi_otmil,
+        item?.gedung_otmil?.nama_gedung_otmil,
       ]),
     ];
 
