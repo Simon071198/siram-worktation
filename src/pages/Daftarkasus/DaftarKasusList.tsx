@@ -22,10 +22,13 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
+import DetailPerkara from './DetailPerkara';
 
 interface Item {
   nama_kasus: string;
   nomor_kasus: string;
+  nama_jenis_perkara: string;
+  nama_jenis_pidana: string;
 }
 
 const DaftarKasus = () => {
@@ -57,6 +60,19 @@ const DaftarKasus = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
+  const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
+  const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
+  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
+  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
+
+  // const handleButtonFilter = (type: any) => {
+  //   if (type === 'tanggal_pelaporan') {
+  //     setSearchTanggalPelaporan((prevState) => !prevState);
+  //   } else if (type === 'tanggal_kejadian') {
+  //     setSearchTanggalKejadian((prevState) => !prevState);
+  //   }
+  // };
+
   // const navigate = useNavigate();
 
   // const dataUserItem = localStorage.getItem('dataUser');
@@ -68,10 +84,43 @@ const DaftarKasus = () => {
   //   }
   // },[])
 
+  const handleButtonFilter = (type: any) => {
+    if (type === "nomor_kasus") {
+      setSearchNomorKasus((prevState) => !prevState);
+    } else if (type === "nama_kasus") {
+      setSearchNamaKasus((prevState) => !prevState);
+    } else if (type === "tanggal_pelaporan") {
+      setSearchTanggalPelaporan((prevState) => !prevState);
+    } else if (type === "tanggal_kejadian") {
+      setSearchTanggalKejadian((prevState) => !prevState);
+    }
+  }
+
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
   };
+
+  const handleFilterChangeNomorKasus = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterNomorKasus(newFilter);
+  };
+
+  const handleFilterChangeNamaKasus = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterNamaKasus(newFilter);
+  };
+
+  const handleFilterChangeTanggalPelaporan = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterTanggalPelaporan(newFilter);
+  };
+
+  const handleFilterChangeTanggalKejadian = async (e: any) => {
+    const newFilter = e.target.value;
+    setFilterTanggalKejadian(newFilter);
+  };
+
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -211,6 +260,13 @@ const DaftarKasus = () => {
   const handleDetailClick = (item: Item) => {
     setDetailData(item);
     setModalDetailOpen(true);
+  };
+
+  const [detailPerkaraOpen, setDetailPerkaraOpen] = useState(false);
+
+  const handleDetailPerkara = (item: Item) => {
+    setDetailData(item);
+    setDetailPerkaraOpen(true);
   };
 
   // function untuk menampilkan modal edit
@@ -548,6 +604,7 @@ const DaftarKasus = () => {
 
         <div className="flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
+            {/* Daftar Kasus */}
             Daftar Kasus
           </h4>
           <div className="flex flex-row space-x-4 space-x">
@@ -572,36 +629,76 @@ const DaftarKasus = () => {
           </div>
         </div>
       </div>
+
       <div className="">
         <div
           className={`${
             isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
           } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nomer Kasus
-            </h5>
+          <div className="flex flex-col items-center">
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nomer Kasus
+              </h5>
+            </div>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nama_kasus")}>
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nama Kasus
+              </h5>
+            </div>
+            {searchNamaKasus && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filterNamaKasus}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChangeNamaKasus}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nama Kasus
-            </h5>
+          <div className="flex flex-col items-center">
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_pelaporan')}
+            >
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Pelaporan
+              </h5>
+            </div>
+            {searchTanggalPelaporan && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filter}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Tanggal Pelaporan
-            </h5>
+          <div className="flex flex-col items-center">
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_kejadian')}
+            >
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Kejadian
+              </h5>
+            </div>
+            {searchTanggalKejadian && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filter}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            )}
           </div>
-
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Tanggal Kejadian
-            </h5>
-          </div>
-
           {isOperator ? null : (
             <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -625,7 +722,8 @@ const DaftarKasus = () => {
                     key={item.nama_kasus}
                   >
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -634,7 +732,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -643,7 +742,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -652,7 +752,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">
