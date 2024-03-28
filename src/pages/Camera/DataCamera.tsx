@@ -58,7 +58,6 @@ const DataCamera = (props) => {
   const playerRef = useRef(null);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
 
-
   useEffect(() => {
     // Initialize WebSocket connection
     client.current = new WebSocket('ws://192.168.1.111:5000');
@@ -210,9 +209,6 @@ const DataCamera = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  // const sendRequestFR = (method, params) => {
-  //   clientFR.current.send(JSON.stringify({ method: method, params: params }));
-  // };
 
   const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);

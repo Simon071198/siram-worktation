@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PenetapanPerkara from './PenetapanPerkara';
 import DataUmum from '../../components/DataUmum';
 
 const DetailPerkara = () => {

@@ -73,13 +73,16 @@ const DaftarKasus = () => {
   const [searchNamaKasus, setSearchNamaKasus] = useState(false);
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
+  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
+  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
 
-  //Filter Value Search Table
-
-  const [filterNomorKasus, setFilterNomorKasus] = useState('');
-  const [filterNamaKasus, setFilterNamaKasus] = useState('');
-  const [filterTanggalPelaporan, setFilterTanggalPelaporan] = useState('');
-  const [filterTanggalKejadian, setFilterTanggalKejadian] = useState('');
+  // const handleButtonFilter = (type: any) => {
+  //   if (type === 'tanggal_pelaporan') {
+  //     setSearchTanggalPelaporan((prevState) => !prevState);
+  //   } else if (type === 'tanggal_kejadian') {
+  //     setSearchTanggalKejadian((prevState) => !prevState);
+  //   }
+  // };
 
   // const navigate = useNavigate();
 
@@ -640,25 +643,15 @@ const DaftarKasus = () => {
 
       <div className="">
         <div
-          className={`${
-            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nomor_kasus")}>
+            <div className="p-2.5 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
-                Nomor Kasus
+                Nomer Kasus
               </h5>
             </div>
-            {searchNomorKasus && (
-              <div className="w-[80%] search">
-                <SearchInputButton
-                  value={filterNomorKasus}
-                  // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChangeNomorKasus}
-                />
-              </div>
-            )}
           </div>
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nama_kasus")}>
@@ -715,6 +708,7 @@ const DaftarKasus = () => {
                   value={filter}
                   // placehorder="Cari Nama Kasus"
                   onChange={handleFilterChange}
+
                   // value={filterTanggalKejadian}
                   // placehorder="Cari Nama Kasus"
                   // onChange={handleFilterChangeTanggalKejadian}
@@ -739,9 +733,8 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${
-                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
