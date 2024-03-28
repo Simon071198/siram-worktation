@@ -57,18 +57,17 @@ const DataCamera = (props) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
-  const clientFR = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
-
   useEffect(() => {
     // Initialize WebSocket connection
-    client.current = new WebSocket('ws://your-websocket-url');
+    client.current = new WebSocket('ws://192.168.1.111:5000');
 
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
     };
-
+    
     // Cleanup function
     return () => {
+      console.log('WebSocket Client DISConnected');
       client.current.close(); // Close WebSocket connection when component unmounts
     };
   }, []); // Run once when component mounts
@@ -80,15 +79,27 @@ const DataCamera = (props) => {
 
     // fetchDataInmateRealtime(); // If fetchDataInmateRealtime is supposed to run independently, you can uncomment this line
 
-    const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
+    // const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
 
     fetchDataAndSendRequest(); // Call the function to initiate the process
+
+    // return () => {
+    //   clearInterval(fetchInterval); // Cleanup interval when component unmounts
+    // };
+  }, [props.id]);
+
+  useEffect(() => {
+ 
+
+    fetchDataInmateRealtime(); // If fetchDataInmateRealtime is supposed to run independently, you can uncomment this line
+
+    const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
+
 
     return () => {
       clearInterval(fetchInterval); // Cleanup interval when component unmounts
     };
-  }, [props.id]);
-  // }, [props.id]);
+  }, []);
 
   const fetchDataInmateRealtime = async () => {
     const { id } = props;
@@ -143,28 +154,15 @@ const DataCamera = (props) => {
         ],
       }));
       sendRequest('startLiveView', {
-        listViewCameraData: JSON.stringify([
+        listViewCameraData: [
           {
             IpAddress: res.ip_address,
             urlRTSP: res.url_rtsp,
             deviceName: res.nama_kamera,
             deviceId: res.kamera_id,
           },
-        ]),
+        ]
       });
-      // sendRequestFR('startFR', {
-      //   listViewCameraData: JSON.stringify([
-      //     {
-      //       IpAddress: res.ip_address,
-      //       urlRTSP: res.url_rtsp,
-      //       deviceName: res.nama_kamera,
-      //       deviceId: res.kamera_id,
-      //     },
-      //   ]),
-      // });
-      // sendRequest('startLiveView', {
-      //   listViewCameraData: JSON.stringify(state.listViewCamera),
-      // });
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -210,9 +208,6 @@ const DataCamera = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  // const sendRequestFR = (method, params) => {
-  //   clientFR.current.send(JSON.stringify({ method: method, params: params }));
-  // };
 
   const renderStream1 = (obj, index) => {
     console.log('render stream 1', obj);

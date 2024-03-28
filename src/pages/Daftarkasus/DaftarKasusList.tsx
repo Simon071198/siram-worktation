@@ -60,6 +60,17 @@ const DaftarKasus = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
+  const handleButtonFilter = (type: any) => {
+    if (type === 'tanggal_pelaporan') {
+      setSearchTanggalPelaporan((prevState) => !prevState);
+    } else if (type === 'tanggal_kejadian') {
+      setSearchTanggalKejadian((prevState) => !prevState);
+    }
+  };
+  //Filter Table
+
+  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
+  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
   const [searchNomorKasus, setSearchNomorKasus] = useState(false);
@@ -632,9 +643,8 @@ const DaftarKasus = () => {
 
       <div className="">
         <div
-          className={`${
-            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex">
@@ -675,6 +685,9 @@ const DaftarKasus = () => {
                   value={filter}
                   // placehorder="Cari Nama Kasus"
                   onChange={handleFilterChange}
+                  // value={filterTanggalPelaporan}
+                  // placehorder="Cari Nama Kasus"
+                  // onChange={handleFilterChangeTanggalPelaporan}
                 />
               </div>
             )}
@@ -695,6 +708,10 @@ const DaftarKasus = () => {
                   value={filter}
                   // placehorder="Cari Nama Kasus"
                   onChange={handleFilterChange}
+
+                  // value={filterTanggalKejadian}
+                  // placehorder="Cari Nama Kasus"
+                  // onChange={handleFilterChangeTanggalKejadian}
                 />
               </div>
             )}
@@ -716,9 +733,8 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${
-                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
