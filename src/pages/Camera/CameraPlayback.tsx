@@ -267,11 +267,11 @@ const CameraPlayback = () => {
 
   const handleRecordingClick = (recording: any) => {
     console.log('Recording clicked:', recording);
-    setForurl(recording);
+    setForurl(recording.replace('100.81.142.71', '192.168.1.111'));
   };
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-4 pt-10">
       <div className="flex flex-col items-center justify-center">
         {selectedCamera ? (
           <h1 className="text-2xl font-bold mb-4">
@@ -327,7 +327,8 @@ const CameraPlayback = () => {
           <ReactPlayer
             className="react-player"
             // url={forUrl}
-            url="http://192.168.1.111:4007/record/Camera1/2024.03.15/150842.mp4"
+            url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
+            // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
             // playsinline={true}
