@@ -743,7 +743,7 @@ const DaftarKasus = () => {
 
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('detail-perkara')}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
