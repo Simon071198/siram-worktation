@@ -23,10 +23,13 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
+import DetailPerkara from './DetailPerkara';
 
 interface Item {
   nama_kasus: string;
   nomor_kasus: string;
+  nama_jenis_perkara: string;
+  nama_jenis_pidana: string;
 }
 
 const DaftarKasus = () => {
@@ -311,6 +314,13 @@ const DaftarKasus = () => {
     setModalDetailOpen(true);
   };
 
+  const [detailPerkaraOpen, setDetailPerkaraOpen] = useState(false);
+
+  const handleDetailPerkara = (item: Item) => {
+    setDetailData(item);
+    setDetailPerkaraOpen(true);
+  };
+
   // function untuk menampilkan modal edit
   const handleEditClick = (item: Item) => {
     setEditData(item);
@@ -538,7 +548,9 @@ const DaftarKasus = () => {
         item.waktu_kejadian,
         item.tanggal_pelimpahan_kasus,
         item.penyidikan.length,
-        item.oditur_penyidik.map((oditur: any) => oditur.nama_oditur).join(', '),
+        item.oditur_penyidik
+          .map((oditur: any) => oditur.nama_oditur)
+          .join(', '),
         item.saksi.map((saksi: any) => saksi.nama_saksi).join(', '),
         item.wbp_profile.map((item: any) => item.nama).join(', '),
       ]),
@@ -663,6 +675,7 @@ const DaftarKasus = () => {
 
         <div className="flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
+            {/* Daftar Kasus */}
             Daftar Kasus
           </h4>
           <div className="flex flex-row space-x-4 space-x">
@@ -687,6 +700,7 @@ const DaftarKasus = () => {
           </div>
         </div>
       </div>
+
       <div className="">
         <div
           className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
@@ -756,7 +770,6 @@ const DaftarKasus = () => {
               </div>
             )}
           </div>
-
           {isOperator ? null : (
             <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -774,12 +787,14 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${
+                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -788,7 +803,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -797,7 +813,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -806,7 +823,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">

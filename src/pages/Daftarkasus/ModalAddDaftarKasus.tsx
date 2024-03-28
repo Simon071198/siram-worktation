@@ -50,6 +50,8 @@ export const AddDaftarKasusModal = ({
     keterangans: [],
     role_ketua_oditur_ids: '',
     oditur_penyidik_id: [],
+    nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
+    nama_jenis_pidana: defaultValue?.nama_jenis_pidana,
     saksi_id: [],
     keteranganSaksis: [],
     zona_waktu: '',
@@ -590,7 +592,7 @@ export const AddDaftarKasusModal = ({
     setFormState({ ...formState, role_ketua_oditur_ids: e.value });
   };
 
-  const jenisPerkaraOpstions = dataJenisPerkara.map((item: any) => ({
+  const jenisPerkaraOpstions = dataJenisPerkara?.map((item: any) => ({
     value: item.jenis_perkara_id,
     label: item.nama_jenis_perkara,
   }));
@@ -646,13 +648,14 @@ export const AddDaftarKasusModal = ({
   
 
   const handleSelectPerkara = (e: any) => {
-    const kategoriPerkara = dataJenisPerkara?.filter(
-      (item: any) => item.jenis_perkara_id === e.value,
+    const kategoriPerkara: any = dataJenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === e?.value,
     );
-    const kategoriPerkaraId =
-      kategoriPerkara?.length > 0
-        ? kategoriPerkara[0]?.kategori_perkara_id
-        : '';
+    // const kategoriPerkaraId =
+    //   kategoriPerkara?.length > 0
+    //     ? kategoriPerkara[0]?.kategori_perkara_id
+    //     : '';
+    setDataJenisPerkaraSelect(kategoriPerkara);
     setFormState({
       ...formState,
       jenis_perkara_id: e.value,
@@ -823,6 +826,7 @@ export const AddDaftarKasusModal = ({
                       className="capitalize p-jenis"
                       options={jenisPerkaraOpstions}
                       isDisabled={isDetail}
+                      defaultValue={jenisPidanaOptionsValue}
                       onChange={handleSelectPerkara}
                       placeholder="Pilih Jenis Perkara"
                       styles={customStyles}
@@ -830,7 +834,35 @@ export const AddDaftarKasusModal = ({
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                          item === 'jenis_perkara_id'
+                            ? 'Masukan Jenis Perkara'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="form-group w-full">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Jenis Pidana
+                    </label>
+                    <input
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
+                      name="nama_jenis_pidana"
+                      placeholder="Nama Jenis Pidana"
+                      onChange={handleChange}
+                      // disabled={formState.nama_jenis_pidana}
+                      value={formState.nama_jenis_pidana}
+                      disabled
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_jenis_pidana'
+                            ? 'Masukan Nama Jenis Pidana'
+                            : '',
                         )}
                       </p>
                     </div>

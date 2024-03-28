@@ -378,6 +378,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   }`}
                 >
                   <HiOutlineDocumentSearch size={20} />
+                  {/* Daftar Kasus */}
                   Daftar Kasus
                 </NavLink>
               </li>
