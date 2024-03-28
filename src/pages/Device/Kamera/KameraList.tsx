@@ -140,6 +140,7 @@ const KameraList = () => {
   const handleFilterChangeStatus = (e: any) => {
     const newFilter = e.target.value;
     setFilterStatus(newFilter);
+    console.log('new filter', newFilter);
   };
 
   const handleSearchClick = async () => {
@@ -374,7 +375,7 @@ const KameraList = () => {
         item.deviceName,
         item.urlRTSP,
         item.IpAddress,
-        item.status_kamera,
+        item.status_kamera === 'tidak' ? 'tidak aktif' : item.status_kamera,
         item.merk,
         item.model,
         item.nama_lokasi_otmil,
@@ -426,8 +427,8 @@ const KameraList = () => {
                 onChange={handleFilterChangeStatus}
               >
                 <option value="">Semua Status</option>
-                <option value="online">Aktif</option>
-                <option value="offline">tidak aktif</option>
+                <option value="aktif">Aktif</option>
+                <option value="tidak">Tidak aktif</option>
                 <option value="rusak">Rusak</option>
               </select>
             </div>
@@ -556,7 +557,7 @@ const KameraList = () => {
                     onClick={() => handleDetailClick(item)}
                     className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                   >
-                    {item.status_kamera === 'online' ? (
+                    {item.status_kamera === 'aktif' ? (
                       <p className="text-green-500 dark:text-green-300">
                         Aktif
                       </p>

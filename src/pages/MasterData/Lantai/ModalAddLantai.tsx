@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Alerts } from './AlertGedung';
+import { Alerts } from './AlertLantai';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -9,7 +9,7 @@ import { apiReadAlllokasiOtmil } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-console.log(dataAdmin, "dataAdmin")
+console.log(dataAdmin, 'dataAdmin');
 export const ModalAddGedung = ({
   closeModal,
   onSubmit,
@@ -20,7 +20,7 @@ export const ModalAddGedung = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      nama_gedung_otmil: '',
+      nama_lantai: '',
       lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
       panjang: '',
       lebar: '',
@@ -41,7 +41,7 @@ export const ModalAddGedung = ({
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (key !== 'nama_lokasi_otmil') {
+      if (key !== 'nama_lokasi_lantai') {
         if (!value) {
           errorFields.push(key);
         }
@@ -150,43 +150,43 @@ export const ModalAddGedung = ({
         {
           element: '.i-nama',
           popover: {
-            title: 'Gedung Otmil',
-            description: 'Isi gedung otmil',
+            title: 'Nama Lantai',
+            description: 'Isi nama lantai',
           },
         },
         {
           element: '.i-panjang',
           popover: {
-            title: 'Panjang Gedung',
-            description: 'Isi panjang gedung otmil',
+            title: 'Panjang',
+            description: 'Isi panjang',
           },
         },
         {
           element: '.i-lebar',
           popover: {
-            title: 'Lebar Gedung',
-            description: 'Isi lebar gedung otmil',
+            title: 'Lebar',
+            description: 'Isi lebar',
           },
         },
         {
-          element: '.i-posisi-x',
+          element: '.i-posisi-X',
           popover: {
             title: 'Posisi X',
-            description: 'Isi posisi x(horizontal) gedung otmil',
+            description: 'Isi posisi x',
           },
         },
         {
-          element: '.i-posisi-y',
+          element: '.i-posisi-Y',
           popover: {
             title: 'Posisi Y',
-            description: 'Isi posisi y(vertikal) gedung otmil',
+            description: 'Isi posisi y',
           },
         },
         {
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} gedung otmil`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data ahli`,
           },
         },
       ],
@@ -202,7 +202,6 @@ export const ModalAddGedung = ({
   const handleSelectLokasiOtmil = (e: any) => {
     setFormState({ ...formState, lokasi_otmil_id: e?.value });
   };
-  console.log(formState, 'Test');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -292,10 +291,10 @@ export const ModalAddGedung = ({
                 <div className="flex items-center gap-4  w-full">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
-                      ? 'Detail Data Gedung'
+                      ? 'Detail Data Lantai'
                       : isEdit
-                        ? 'Edit Data Gedung'
-                        : 'Tambah Data Gedung'}
+                        ? 'Edit Data Lantai'
+                        : 'Tambah Data Lantai'}
                   </h3>
 
                   {isDetail ? null : isEdit ? (
@@ -329,22 +328,22 @@ export const ModalAddGedung = ({
                 <div className="grid grid-cols-1 gap-4 mt-4">
                   <div className="form-group w-full relative">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className=" block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Nama Gedung Otmil
+                      Nama Lantai
                     </label>
                     <input
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
-                      name="nama_gedung_otmil"
-                      placeholder="Nama gedung otmil"
+                      name="nama_lantai"
+                      placeholder="Nama lantai"
                       onChange={handleChange}
-                      value={formState.nama_gedung_otmil}
+                      value={formState.nama_lantai}
                       disabled={isDetail}
                     />
                     <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'nama_gedung_otmil' ? 'Masukan nama' : '',
+                        item === 'nama_lantai' ? 'Masukan nama' : '',
                       )}
                     </p>
                   </div>
@@ -363,7 +362,7 @@ export const ModalAddGedung = ({
                         isEdit || isDetail
                           ? {
                               value: formState.lokasi_otmil_id,
-                              label: formState.nama_lokasi_otmil,
+                              label: formState.nama_lokasi_lantai,
                             }
                           : formState.lokasi_otmil_id
                       }
@@ -374,13 +373,13 @@ export const ModalAddGedung = ({
                       name="lokasi_otmil_id"
                       options={isLokasiOtmil.map((item: any) => ({
                         value: item.lokasi_otmil_id,
-                        label: item.nama_lokasi_otmil,
+                        label: item.nama_lokasi_lantai,
                       }))}
                       onChange={handleSelectLokasiOtmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'lokasi_otmil_id' ? 'Pilih lokasi otmil' : '',
+                        item === 'lokasi_otmil_id' ? 'Pilih lokasi lantai' : '',
                       )}
                     </p>
                   </div> */}
@@ -388,7 +387,7 @@ export const ModalAddGedung = ({
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="form-group w-full relative">
                     <label
-                      className="  block text-sm font-medium text-black dark:text-white"
+                      className="i-panjang block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Panjang
@@ -438,7 +437,7 @@ export const ModalAddGedung = ({
                       Posisi X
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-x"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-X"
                       name="posisi_X"
                       placeholder="Posisi X"
                       onChange={handleChange}
@@ -460,9 +459,9 @@ export const ModalAddGedung = ({
                       Posisi Y
                     </label>
                     <input
-                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-y"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-posisi-Y"
                       name="posisi_Y"
-                      placeholder="Posisi X"
+                      placeholder="Posisi Y"
                       onChange={handleChange}
                       value={formState.posisi_Y}
                       disabled={isDetail}
@@ -509,7 +508,7 @@ export const ModalAddGedung = ({
                       ) : (
                         ''
                       )}
-                      Ubah Data Gedung
+                      Ubah Data Lantai
                     </button>
                   ) : (
                     <button
@@ -544,7 +543,7 @@ export const ModalAddGedung = ({
                       ) : (
                         ''
                       )}
-                      Tambah Data Gedung
+                      Tambah Data Lantai
                     </button>
                   )}
                   {errors.filter((item: string) =>

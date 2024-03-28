@@ -156,6 +156,11 @@ const DaftarAhli = lazy(() => import('../pages/MasterData/AhliData/AhliList'));
 const DaftarGedung = lazy(
   () => import('../pages/MasterData/GedungData/GedungList'),
 );
+
+const DaftarLantai = lazy(
+  () => import('../pages/MasterData/Lantai/LantaiList'),
+);
+
 const DaftarJenisPersidangan = lazy(
   () => import('../pages/MasterData/JenisPersidanganData/JenisPersidanganList'),
 );
@@ -183,7 +188,12 @@ const ListPenyidikan = lazy(
 // const KameraDetail = lazy(()=> import('../pages/KameraDevTest/KameraDetail'))
 
 const CameraPlayback = lazy(() => import('../pages/Camera/CameraPlayback'));
-
+const CameraPlaybackList = lazy(
+  () => import('../pages/Camera/CameraPlaybackList'),
+);
+const CameraPlaybackDetail = lazy(
+  () => import('../pages/Camera/CameraPlaybackDetail'),
+);
 const MenuTutorial = lazy(() => import('../pages/Tutorial/TutorialList'));
 
 const coreRoutes = [
@@ -254,6 +264,11 @@ const coreRoutes = [
     component: DaftarGedung,
   },
   {
+    path: '/data-lantai',
+    title: 'Data Lantai',
+    component: DaftarLantai,
+  },
+  {
     path: '/saksi-data',
     title: 'saksi data',
     component: DaftarSaksi,
@@ -314,9 +329,14 @@ const coreRoutes = [
     component: MasterDataKategoriPerkara,
   },
   {
-    path: '/camera-playback',
-    title: 'camera playback',
-    component: CameraPlayback,
+    path: '/kamera-playback',
+    title: 'kamera playback',
+    component: CameraPlaybackList,
+  },
+  {
+    path: '/kamera-playback-detail/:id',
+    title: 'kamera playback detail',
+    component: CameraPlaybackDetail,
   },
   {
     path: '/ShiftJaga',
