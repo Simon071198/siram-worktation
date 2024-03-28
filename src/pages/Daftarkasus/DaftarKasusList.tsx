@@ -62,14 +62,16 @@ const DaftarKasus = () => {
 
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
+  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
+  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
 
-  const handleButtonFilter = (type: any) => {
-    if (type === 'tanggal_pelaporan') {
-      setSearchTanggalPelaporan((prevState) => !prevState);
-    } else if (type === 'tanggal_kejadian') {
-      setSearchTanggalKejadian((prevState) => !prevState);
-    }
-  };
+  // const handleButtonFilter = (type: any) => {
+  //   if (type === 'tanggal_pelaporan') {
+  //     setSearchTanggalPelaporan((prevState) => !prevState);
+  //   } else if (type === 'tanggal_kejadian') {
+  //     setSearchTanggalKejadian((prevState) => !prevState);
+  //   }
+  // };
 
   // const navigate = useNavigate();
 
