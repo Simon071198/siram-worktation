@@ -7,7 +7,7 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
 
-const CameraList = () => {
+const CameraPlaybackList = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -124,24 +124,24 @@ const CameraList = () => {
       showProgress: true,
       steps: [
         {
-          element: '#s-lemas',
+          element: '#s-gedung',
           popover: {
-            title: 'LEMASMIL',
-            description: 'Pilih lemasmil yang diinginkan',
+            title: 'GEDUNG',
+            description: 'Pilih gedung yang diinginkan',
           },
         },
         {
-          element: '#s-otmil',
+          element: '#s-lantai',
           popover: {
-            title: 'OTMIL',
-            description: 'Pilih otmil yang diinginkan',
+            title: 'Lantai',
+            description: 'Pilih lantai yang diinginkan',
           },
         },
         {
-          element: '#s-babin',
+          element: '#s-ruangan',
           popover: {
-            title: 'BABINKUM TNI (Badan Pembinaan Hukun TNI)',
-            description: 'Pilih babinkum tni yang diinginkan',
+            title: 'Ruangan',
+            description: 'Pilih ruangan yang diinginkan',
           },
         },
       ],
@@ -157,7 +157,7 @@ const CameraList = () => {
         {/* <div className="flex flex-col items-center"> */}
         <div className="w-full flex justify-center pt-5 mb-10">
           <h2 className="font-bold text-xl tracking-tight mr-3">
-            Daftar Kamera
+            Daftar Kamera Playback
           </h2>
           {/* <div className="w-5"> */}
           <button>
@@ -178,7 +178,7 @@ const CameraList = () => {
           return (
             <>
               <div className="grid divide-y divide-neutral-200 max-w-xl border-b mx-auto">
-                <div className="py-5" id="s-lemas">
+                <div className="py-5" id="s-gedung">
                   <details className="group">
                     <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
                       <span key={i}>{gedung.nama_gedung_otmil}</span>
@@ -199,7 +199,7 @@ const CameraList = () => {
                       </span>
                     </summary>
 
-                    <div className="pt-2 ml-[20px]">
+                    <div className="pt-2 ml-[20px] s-lantai">
                       {gedung?.lantai.map((a) => {
                         return (
                           <>
@@ -226,7 +226,7 @@ const CameraList = () => {
                                   </svg>
                                 </span>
                               </summary>
-                              <div className="mb-2 ml-[20px]">
+                              <div className="mb-2 ml-[20px]" id="s-ruangan">
                                 {a?.ruangan.map((r) => {
                                   return (
                                     <>
@@ -251,7 +251,7 @@ const CameraList = () => {
                                         </summary>
                                         {r?.kamera.map((k) => (
                                           <NavLink
-                                            to={`/kamera/${k.kamera_id}`}
+                                            to={`/kamera-playback-detail/${k.kamera_id}`}
                                           >
                                             <p
                                               className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
@@ -317,7 +317,7 @@ const CameraList = () => {
   //       {/* <div className="pl-180"> */}
 
   //       <div className="grid divide-y divide-neutral-200 max-w-xl mx-auto mt-8">
-  //         <div className="py-5" id="s-lemas">
+  //         <div className="py-5" id="s-gedung">
   //           <details className="group">
   //             <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
   //               <span>LEMASMIL</span>
@@ -604,4 +604,4 @@ const CameraList = () => {
   // );
 };
 
-export default CameraList;
+export default CameraPlaybackList;
