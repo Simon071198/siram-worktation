@@ -66,17 +66,10 @@ const DaftarKasus = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
-  const handleButtonFilter = (type: any) => {
-    if (type === 'tanggal_pelaporan') {
-      setSearchTanggalPelaporan((prevState) => !prevState);
-    } else if (type === 'tanggal_kejadian') {
-      setSearchTanggalKejadian((prevState) => !prevState);
-    }
-  };
+
   //Filter Table
 
-  const [searchNomorKasus, setSearchNomorKasus] = useState(false);
-  const [searchNamaKasus, setSearchNamaKasus] = useState(false);
+
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
   const [searchNomorKasus, setSearchNomorKasus] = useState(false);
