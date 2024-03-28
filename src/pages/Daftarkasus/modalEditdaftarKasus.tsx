@@ -35,6 +35,7 @@ export const EditDaftarKasusModal = ({
     nomor_kasus: defaultValue?.nomor_kasus,
     lokasi_kasus: defaultValue?.lokasi_kasus,
     jenis_perkara_id: defaultValue?.jenis_perkara_id,
+    jenis_pidana_id: defaultValue?.jenis_pidana_id,
     kategori_perkara_id: defaultValue?.kategori_perkara_id,
     waktu_kejadian: defaultValue?.waktu_kejadian,
     waktu_pelaporan_kasus: defaultValue?.waktu_pelaporan_kasus,
@@ -51,6 +52,8 @@ export const EditDaftarKasusModal = ({
       defaultValue?.oditur_penyidik?.map(
         (item: any) => item.oditur_penyidik_id,
       ) || [],
+    nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
+    nama_jenis_pidana: defaultValue?.nama_jenis_pidana,
     saksi_id: defaultValue?.saksi?.map((item: any) => item.saksi_id) || [],
     keteranganSaksis:
       defaultValue?.saksi?.map((item: any) => item.keterangan) || [],
@@ -71,6 +74,7 @@ export const EditDaftarKasusModal = ({
 
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
 
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
   const pihakTerlibatDefault = defaultValue
@@ -600,6 +604,11 @@ export const EditDaftarKasusModal = ({
     label: defaultValue?.nama_jenis_perkara,
   };
 
+  const jenisPidanaOptionsValue = {
+    value: defaultValue?.jenis_pidanan_id,
+    label: defaultValue?.nama_jenis_pidana,
+  };
+
   const jenisPerkaraOpstions = dataJenisPerkara.map((item: any) => ({
     value: item.jenis_perkara_id,
     label: item.nama_jenis_perkara,
@@ -663,17 +672,27 @@ export const EditDaftarKasusModal = ({
   };
 
   const handleSelectPerkara = (e: any) => {
-    const kategoriPerkara = dataJenisPerkara?.filter(
+    const kategoriPerkara = dataJenisPerkara?.find(
       (item: any) => item.jenis_perkara_id === e.value,
     );
-    const kategoriPerkaraId =
-      kategoriPerkara?.length > 0
-        ? kategoriPerkara[0]?.kategori_perkara_id
-        : '';
+    // const kategoriPerkaraId =
+    //   kategoriPerkara?.length > 0
+    //     ? kategoriPerkara[0]?.kategori_perkara_id
+    //     : '';
+    setDataJenisPerkaraSelect(kategoriPerkara);
     setFormState({
       ...formState,
       jenis_perkara_id: e.value,
-      kategori_perkara_id: kategoriPerkaraId,
+      kategori_perkara_id: kategoriPerkara
+        ? kategoriPerkara.kategori_perkara_id
+        : '',
+      jenis_pidana_id: kategoriPerkara ? kategoriPerkara.jenis_pidana_id : '',
+      nama_jenis_perkara: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_perkara
+        : '',
+      nama_jenis_pidana: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_pidana
+        : '',
     });
   };
 
@@ -826,7 +845,35 @@ export const EditDaftarKasusModal = ({
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                          item === 'jenis_perkara_id'
+                            ? 'Masukan Jenis Perkara'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="form-group w-full">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Jenis Pidana
+                    </label>
+                    <input
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
+                      name="nama_jenis_pidana"
+                      placeholder="Nama Jenis Pidana"
+                      onChange={handleChange}
+                      // disabled={formState.nama_jenis_pidana}
+                      value={formState.nama_jenis_pidana}
+                      disabled
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_jenis_pidana'
+                            ? 'Masukan Nama Jenis Pidana'
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1201,92 +1248,102 @@ export const EditDaftarKasusModal = ({
                   })}
                 </div>
 
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
+                <div className={`${isDetail ? 'h-auto' : 'h-15'} mt-3`}>
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
                     </div>
-                  </>
-                )}
-                <br></br>
-                {isDetail ? null : isEdit ? (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                    id="b-ubah"
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Ubah Data Kasus
-                  </button>
-                ) : (
-                  <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                    id="b-tambah"
-                  >
-                    {buttonLoad ? (
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          stroke-width="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      ''
-                    )}
-                    Tambah Data Kasus
-                  </button>
-                )}
+                  )}
+                  <br></br>
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                      id="b-ubah"
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Kasus
+                    </button>
+                  ) : (
+                    <button
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
+                      id="b-tambah"
+                    >
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Tambah Data Kasus
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           )}

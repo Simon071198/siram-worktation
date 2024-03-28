@@ -26,6 +26,8 @@ import { Error403Message } from '../../utils/constants';
 interface Item {
   nama_kasus: string;
   nomor_kasus: string;
+  nama_jenis_perkara: string;
+  nama_jenis_pidana: string;
 }
 
 const DaftarKasus = () => {
@@ -56,6 +58,17 @@ const DaftarKasus = () => {
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
+
+  const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
+  const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
+
+  const handleButtonFilter = (type: any) => {
+    if (type === 'tanggal_pelaporan') {
+      setSearchTanggalPelaporan((prevState) => !prevState);
+    } else if (type === 'tanggal_kejadian') {
+      setSearchTanggalKejadian((prevState) => !prevState);
+    }
+  };
 
   // const navigate = useNavigate();
 
@@ -548,6 +561,7 @@ const DaftarKasus = () => {
 
         <div className="flex justify-between items-center mb-3">
           <h4 className="text-xl font-semibold text-black dark:text-white">
+            {/* Daftar Kasus */}
             Daftar Kasus
           </h4>
           <div className="flex flex-row space-x-4 space-x">
@@ -572,16 +586,19 @@ const DaftarKasus = () => {
           </div>
         </div>
       </div>
+
       <div className="">
         <div
           className={`${
             isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
           } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Nomer Kasus
-            </h5>
+          <div className="flex flex-col items-center">
+            <div className="p-2.5 xl:p-5 justify-center flex">
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Nomer Kasus
+              </h5>
+            </div>
           </div>
 
           <div className="p-2.5 xl:p-5 justify-center flex">
@@ -590,18 +607,45 @@ const DaftarKasus = () => {
             </h5>
           </div>
 
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Tanggal Pelaporan
-            </h5>
+          <div className="flex flex-col items-center">
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_pelaporan')}
+            >
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Pelaporan
+              </h5>
+            </div>
+            {searchTanggalPelaporan && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filter}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="p-2.5 xl:p-5 justify-center flex">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Tanggal Kejadian
-            </h5>
+          <div className="flex flex-col items-center">
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('tanggal_kejadian')}
+            >
+              <h5 className="text-sm font-medium uppercase xsm:text-base">
+                Tanggal Kejadian
+              </h5>
+            </div>
+            {searchTanggalKejadian && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filter}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            )}
           </div>
-
           {isOperator ? null : (
             <div className=" p-2.5 text-center col-span-1 xl:p-5 justify-center flex">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
