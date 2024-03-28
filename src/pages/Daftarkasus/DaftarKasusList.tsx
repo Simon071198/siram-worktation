@@ -632,9 +632,8 @@ const DaftarKasus = () => {
 
       <div className="">
         <div
-          className={`${
-            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-          } rounded-t-md bg-gray-2 dark:bg-slate-600`}
+          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+            } rounded-t-md bg-gray-2 dark:bg-slate-600`}
         >
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex">
@@ -716,9 +715,8 @@ const DaftarKasus = () => {
               return (
                 <div>
                   <div
-                    className={`${
-                      isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-                    } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
+                    className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+                      } rounded-sm bg-gray-2 dark:bg-meta-4 capitalize`}
                     key={item.nama_kasus}
                   >
                     <div
