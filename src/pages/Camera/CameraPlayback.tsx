@@ -22,7 +22,9 @@ const CameraPlayback = (props) => {
   const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [forUrl, setForurl] = useState('');
+  const [forUrl, setForurl] = useState(
+    'http://192.168.1.111:4007/record/Camera1/2024.03.28/video/181043.mp4',
+  );
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
@@ -43,7 +45,7 @@ const CameraPlayback = (props) => {
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   // useEffect(() => {
@@ -123,11 +125,21 @@ const CameraPlayback = (props) => {
         let formattedDeviceName = dataFromServer.deviceName.split(' ').join('');
         let playlist = dataFromServer.files.map((file) => {
           console.log(
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file,
+            baseUrl +
+              formattedDeviceName +
+              '/' +
+              formattedDate +
+              '/video/' +
+              file,
           );
 
           return (
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file
+            baseUrl +
+            formattedDeviceName +
+            '/' +
+            formattedDate +
+            '/video/' +
+            file
           );
         });
         setPlaylistPlayback(playlist);
@@ -331,8 +343,9 @@ const CameraPlayback = (props) => {
   }, [currentVideoIndex]);
 
   const handleRecordingClick = (recording: any) => {
-    console.log('Recording clicked:', recording);
-    setForurl(recording.replace('100.81.142.71', '192.168.1.111'));
+    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    console.log('Recording clicked:', newUrl);
+    setForurl(newUrl);
   };
 
   return (
@@ -398,6 +411,7 @@ const CameraPlayback = (props) => {
             playing={true}
             // playsinline={true}
             controls={true}
+            muted={true}
             ref={playerRef}
             // onEnded={handleVideoEnded}
             onError={handleVideoError}
