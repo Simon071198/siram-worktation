@@ -22,6 +22,7 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
+import DetailPerkara from './DetailPerkara';
 
 interface Item {
   nama_kasus: string;
@@ -224,6 +225,13 @@ const DaftarKasus = () => {
   const handleDetailClick = (item: Item) => {
     setDetailData(item);
     setModalDetailOpen(true);
+  };
+
+  const [detailPerkaraOpen, setDetailPerkaraOpen] = useState(false);
+
+  const handleDetailPerkara = (item: Item) => {
+    setDetailData(item);
+    setDetailPerkaraOpen(true);
   };
 
   // function untuk menampilkan modal edit
@@ -669,7 +677,8 @@ const DaftarKasus = () => {
                     key={item.nama_kasus}
                   >
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -678,7 +687,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -687,7 +697,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -696,7 +707,8 @@ const DaftarKasus = () => {
                     </div>
 
                     <div
-                      onClick={() => handleDetailClick(item)}
+                      // onClick={() => handleDetailClick(item)}
+                      onClick={() => navigate('/detail-perkara')}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">

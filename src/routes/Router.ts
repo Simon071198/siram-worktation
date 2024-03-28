@@ -163,6 +163,9 @@ const BarangBukti = lazy(
   () => import('../pages/MasterData/BarangBukti/BarangBuktiList'),
 );
 const DaftarKasus = lazy(() => import('../pages/Daftarkasus/DaftarKasusList'));
+
+const DetailPerkara = lazy(() => import('../pages/Daftarkasus/DetailPerkara'));
+
 const Oditor = lazy(() => import('../pages/MasterData/Oditur/OditurList'));
 const PengadilanMiliter = lazy(
   () => import('../pages/MasterData/PengadilanMiliter/PengadilanMiliterList'),
@@ -224,6 +227,11 @@ const coreRoutes = [
     path: '/daftar-kasus',
     title: 'daftar kasus',
     component: DaftarKasus,
+  },
+  {
+    path: '/detail-perkara',
+    title: 'detail perkara',
+    component: DetailPerkara,
   },
   {
     path: '/barang-bukti',
