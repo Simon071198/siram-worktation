@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  apiLantaiOtmilRead,
   apiReadAllRuanganSummary,
   apiReadAlllokasiOtmil,
   apiReadZona,
@@ -31,6 +32,11 @@ interface Zona {
   nama_zona: string;
 }
 
+interface LantaiOtmil {
+  lantai_otmil_id: string;
+  nama_lantai: string;
+}
+
 export const AddRoomModal: React.FC<AddRoomModalProps> = ({
   closeModal,
   onSubmit,
@@ -40,29 +46,113 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
 
-  //get Token
-  // const tokenItem = localStorage.getItem('token');
-  // let tokens = tokenItem ? JSON.parse(tokenItem) : null;
-  // let token = tokens.token
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
 
   const [formState, setFormState] = useState(
     defaultValue || {
-      // ruangan_otmil_id: '',
       nama_ruangan_otmil: '',
       jenis_ruangan_otmil: '',
-      // nama_zona: '',
       lokasi_otmil_id: '',
       zona_id: '',
-      // nama_lokasi_otmil:''
+      lantai_otmil_id: '',
     },
   );
-  //state
+
+  console.log(defaultValue, 'Default');
+
   const [errors, setErrors] = useState({
     nama: '',
     jenis: '',
     zona: '',
     lokasi: '',
+    panjang: '',
+    lebar: '',
+    posisi_X: '',
+    posisi_Y: '',
+    lantai: '',
   });
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [lokasi, setLokasi] = useState<LokasiRuangan[]>([]);
@@ -73,28 +163,14 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     total_kamera: '',
     total_wbp: '',
   });
+
+  const [isLantai, setIsLantai] = useState<LantaiOtmil[]>([]);
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
 
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
-  //useEffect untuk menambahkan event listener  ke elemen dokumen
-  // useEffect(() => {
-  //   const handleOutsideClick = (e: MouseEvent) => {
-  //     if (
-  //       modalContainerRef.current &&
-  //       !modalContainerRef.current.contains(e.target as Node)
-  //     ) {
-  //       closeModal();
-  //     }
-  //   };
-  //   document.addEventListener('mousedown', handleOutsideClick);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, [closeModal]);
 
   const fetchData = () => {
     let parameter = {
@@ -151,17 +227,31 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
           title: e.response.status === 403 ? Error403Message : e.message,
         });
       });
+
+    apiLantaiOtmilRead(params, token)
+      .then((res: any) => {
+        setIsLantai(res.data.records);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
   };
 
-  // useEffect untuk mengambil data dari api
   useEffect(() => {
+    // console.log(isLantai, 'lantai');
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
     fetchData();
   }, []);
-
-  // function
 
   const validateForm = () => {
     const newErrors = {
@@ -169,6 +259,11 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       jenis: '',
       zona: '',
       lokasi: '',
+      panjang: '',
+      lebar: '',
+      posisi_X: '',
+      posisi_Y: '',
+      lantai: '',
     };
 
     if (
@@ -178,7 +273,18 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       formState.lokasi_otmil_id
     ) {
       // Menghapus semua kesalahan jika kondisi ini terpenuhi
-      setErrors({ ...errors, nama: '', jenis: '', zona: '', lokasi: '' });
+      setErrors({
+        ...errors,
+        nama: '',
+        jenis: '',
+        zona: '',
+        lokasi: '',
+        panjang: '',
+        lebar: '',
+        posisi_X: '',
+        posisi_Y: '',
+        lantai: '',
+      });
       return true;
     } else {
       if (!formState.nama_ruangan_otmil) {
@@ -193,7 +299,23 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       if (!formState.lokasi_otmil_id) {
         newErrors.lokasi = 'Lokasi harus diisi';
       }
-      setErrors(newErrors); // Mengatur kesalahan sesuai dengan validasi
+      if (!formState.panjang) {
+        newErrors.panjang = 'Panjang harus diisi';
+      }
+      if (!formState.lebar) {
+        newErrors.lebar = 'Lebar harus diisi';
+      }
+      if (!formState.posisi_X) {
+        newErrors.posisi_X = 'Posisi X harus diisi';
+      }
+      if (!formState.posisi_Y) {
+        newErrors.posisi_Y = 'Posisi Y harus diisi';
+      }
+      if (!formState.lantai) {
+        newErrors.lantai = 'Lantai harus diisi';
+      }
+      // Mengatur kesalahan sesuai dengan validasi
+      setErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return false;
       }
@@ -214,6 +336,8 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     if (validateForm()) {
       onSubmit(formState);
     }
+
+    console.log(formState, 'formState submit');
   };
 
   const modalStyles: any = {
@@ -283,6 +407,18 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
     driverObj.drive();
   };
 
+  const handleSelectLantaiOtmil = (e: any) => {
+    setFormState({ ...formState, lantai_otmil_id: e?.value });
+  };
+
+  const handleSelectLokasiOtmil = (e: any) => {
+    setFormState({ ...formState, lokasi_otmil_id: e?.value });
+  };
+
+  const handleSelectZona = (e: any) => {
+    setFormState({ ...formState, zona_id: e?.value });
+  };
+
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -325,8 +461,8 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
             </div>
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-              <div className="w-full flex justify-between">
-                <div>
+              <div className="w-full flex justify-between mb-2  items-center  ">
+                <div className="flex items-center gap-4  w-full">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail Data Ruangan'
@@ -334,17 +470,26 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         ? 'Edit Data Ruangan'
                         : 'Tambah Data Ruangan'}
                   </h3>
+
+                  {isDetail ? null : isEdit ? (
+                    <button className="">
+                      <HiQuestionMarkCircle
+                        // values={filter}
+                        aria-placeholder="Show tutorial"
+                        onClick={handleClickTutorial}
+                      />
+                    </button>
+                  ) : (
+                    <button className="">
+                      <HiQuestionMarkCircle
+                        // values={filter}
+                        aria-placeholder="Show tutorial"
+                        onClick={handleClickTutorial}
+                      />
+                    </button>
+                  )}
                 </div>
-                {!isDetail && (
-                  <button className="pr-[440px]">
-                    <HiQuestionMarkCircle
-                      // values={filter}
-                      aria-placeholder="Show tutorial"
-                      // onChange={}
-                      onClick={handleClickTutorial}
-                    />
-                  </button>
-                )}
+
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -352,6 +497,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                   &times;
                 </strong>
               </div>
+
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-2 mt-4">
                   <div className="grid grid-cols-1 gap-3">
@@ -373,6 +519,102 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                       {errors.nama ? (
                         <h1 className="pl-2 text-xs text-red-400">
                           {errors.nama}
+                        </h1>
+                      ) : (
+                        <h1 className="h-4"></h1>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="f-nama form-group w-full ">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Panjang
+                      </label>
+                      <input
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        name="panjang"
+                        placeholder="Panjang"
+                        onChange={handleChange}
+                        value={formState.panjang}
+                        disabled={isDetail}
+                      />
+                      {errors.panjang ? (
+                        <h1 className="pl-2 text-xs text-red-400">
+                          {errors.panjang}
+                        </h1>
+                      ) : (
+                        <h1 className="h-4"></h1>
+                      )}
+                    </div>
+                    <div className="f-nama form-group w-full ">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Lebar
+                      </label>
+                      <input
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        name="lebar"
+                        placeholder="Lebar"
+                        onChange={handleChange}
+                        value={formState.lebar}
+                        disabled={isDetail}
+                      />
+                      {errors.lebar ? (
+                        <h1 className="pl-2 text-xs text-red-400">
+                          {errors.lebar}
+                        </h1>
+                      ) : (
+                        <h1 className="h-4"></h1>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="f-nama form-group w-full ">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Posisi X
+                      </label>
+                      <input
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        name="posisi_X"
+                        placeholder="Posisi X"
+                        onChange={handleChange}
+                        value={formState.posisi_X}
+                        disabled={isDetail}
+                      />
+                      {errors.posisi_X ? (
+                        <h1 className="pl-2 text-xs text-red-400">
+                          {errors.posisi_X}
+                        </h1>
+                      ) : (
+                        <h1 className="h-4"></h1>
+                      )}
+                    </div>
+                    <div className="f-nama form-group w-full ">
+                      <label
+                        className="block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Posisi Y
+                      </label>
+                      <input
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        name="posisi_Y"
+                        placeholder="Posisi Y"
+                        onChange={handleChange}
+                        value={formState.posisi_Y}
+                        disabled={isDetail}
+                      />
+                      {errors.posisi_Y ? (
+                        <h1 className="pl-2 text-xs text-red-400">
+                          {errors.posisi_Y}
                         </h1>
                       ) : (
                         <h1 className="h-4"></h1>
@@ -425,47 +667,39 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         />
                       )}
                     </div>
+
                     <div className="form-group w-full ">
-                      <label
-                        className="block text-sm font-medium text-black dark:text-white"
-                        htmlFor="id"
-                      >
-                        Zona Ruangan
-                      </label>
-                      {isDetail ? (
-                        <div className="w-full flex items-center">
-                          <h1
-                            className={`py-3 capitalize w-full border rounded-md flex justify-center items-center text-sm ${
-                              formState.nama_zona === 'Merah'
-                                ? 'bg-red-500 text-white' // jika zona adalah 'Mera', latar belakang merah dan teks putih
-                                : formState.nama_zona === 'Hijau'
-                                  ? 'bg-green-500 text-white' // jika zona adalah 'Hijau', latar belakang hijau dan teks putih
-                                  : formState.nama_zona === 'Kuning'
-                                    ? 'bg-yellow-500 text-black' // jika zona adalah 'Kuning', latar belakang kuning dan teks hitam
-                                    : 'bg-gray-2 text-black '
-                            }`}
-                          >
-                            {formState.nama_zona}
-                          </h1>
-                        </div>
-                      ) : (
-                        <>
-                          <select
-                            className="f-zona-ruangan w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
-                            name="zona_id"
-                            onChange={handleChange}
-                            value={formState.zona_id}
-                            disabled={isDetail}
-                          >
-                            <option disabled value="">
-                              Pilih Zona Ruangan
-                            </option>
-                            {zona.map((item) => (
-                              <option value={item.zona_id}>
-                                {item.nama_zona}
-                              </option>
-                            ))}
-                          </select>
+                      <div className="f-pangkat form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Zona
+                        </label>
+                        <Select
+                          className="basic-single "
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.zona_id,
+                                  label: formState.nama_zona,
+                                }
+                              : formState.zona_id
+                          }
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Zona"
+                          name="zona_id"
+                          options={zona.map((item: any) => ({
+                            value: item.zona_id,
+                            label: item.nama_zona,
+                          }))}
+                          onChange={handleSelectZona}
+                        />
+                        <p className="error-text">
                           {errors.zona ? (
                             <h1 className="pl-2 text-xs text-red-400">
                               {errors.zona}
@@ -473,19 +707,105 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           ) : (
                             <h1 className="h-4"></h1>
                           )}
-                        </>
-                      )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="form-group w-full ">
+                      <div className="f-pangkat form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Lokasi
+                        </label>
+                        <Select
+                          className="basic-single "
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.lokasi_otmil_id,
+                                  label: formState.nama_lokasi_otmil,
+                                }
+                              : formState.lokasi_otmil_id
+                          }
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih Lokasi"
+                          name="lokasi_otmil_id"
+                          options={lokasi.map((item: any) => ({
+                            value: item.lokasi_otmil_id,
+                            label: item.nama_lokasi_otmil,
+                          }))}
+                          onChange={handleSelectLokasiOtmil}
+                        />
+                        <p className="error-text">
+                          {errors.lokasi ? (
+                            <h1 className="pl-2 text-xs text-red-400">
+                              {errors.lokasi}
+                            </h1>
+                          ) : (
+                            <h1 className="h-4"></h1>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="form-group w-full ">
+                      <div className="f-pangkat form-group w-full flex flex-col">
+                        <label
+                          className="  block text-sm font-medium text-black dark:text-white"
+                          htmlFor="id"
+                        >
+                          Lantai
+                        </label>
+                        <Select
+                          className="basic-single "
+                          classNamePrefix="select"
+                          styles={customStyles}
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState.lantai_otmil_id,
+                                  label: formState.nama_lantai,
+                                }
+                              : formState.lantai_otmil_id
+                          }
+                          isDisabled={isDetail}
+                          isClearable={true}
+                          isSearchable={true}
+                          placeholder="Pilih lantai"
+                          name="lantai_otmil_id"
+                          options={isLantai.map((item: any) => ({
+                            value: item.lantai_otmil_id,
+                            label: item.nama_lantai,
+                          }))}
+                          onChange={handleSelectLantaiOtmil}
+                        />
+                        <p className="error-text">
+                          {errors.lantai ? (
+                            <h1 className="pl-2 text-xs text-red-400">
+                              {errors.lantai}
+                            </h1>
+                          ) : (
+                            <h1 className="h-4"></h1>
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  {!isDetail ? (
-                    <div className="grid grid-cols-1 gap-4">
+                  {/* {!isDetail ? (
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="form-group w-full ">
                         <label
                           className="block text-sm font-medium text-black dark:text-white"
                           htmlFor="id"
                         >
-                          Kode Lokasi
+                          Lokasi
                         </label>
                         <select
                           className="f-lokasi w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
@@ -549,8 +869,8 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         </div>
                       </div>
                     </>
-                  )}
-                  {!isDetail ? (
+                  )} */}
+                  {/* {!isDetail ? (
                     <></>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
@@ -587,7 +907,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         />
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <br></br>
                 {isDetail ? null : (

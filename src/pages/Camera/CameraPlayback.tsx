@@ -22,7 +22,9 @@ const CameraPlayback = (props) => {
   const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [forUrl, setForurl] = useState('');
+  const [forUrl, setForurl] = useState(
+    'http://192.168.1.111:4007/record/Camera1/2024.03.28/video/181043.mp4',
+  );
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
@@ -43,7 +45,7 @@ const CameraPlayback = (props) => {
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   // useEffect(() => {
@@ -123,11 +125,21 @@ const CameraPlayback = (props) => {
         let formattedDeviceName = dataFromServer.deviceName.split(' ').join('');
         let playlist = dataFromServer.files.map((file) => {
           console.log(
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file,
+            baseUrl +
+              formattedDeviceName +
+              '/' +
+              formattedDate +
+              '/video/' +
+              file,
           );
 
           return (
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file
+            baseUrl +
+            formattedDeviceName +
+            '/' +
+            formattedDate +
+            '/video/' +
+            file
           );
         });
         setPlaylistPlayback(playlist);
@@ -331,12 +343,13 @@ const CameraPlayback = (props) => {
   }, [currentVideoIndex]);
 
   const handleRecordingClick = (recording: any) => {
-    console.log('Recording clicked:', recording);
-    setForurl(recording);
+    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    console.log('Recording clicked:', newUrl);
+    setForurl(newUrl);
   };
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-4 pt-10">
       <div className="flex flex-col items-center justify-center">
         {selectedCamera ? (
           <h1 className="text-2xl font-bold mb-4">
@@ -391,12 +404,14 @@ const CameraPlayback = (props) => {
         <div className="player-wrapper r-player">
           <ReactPlayer
             className="react-player"
-            // url={forUrl}
-            url="http://192.168.1.111:4007/record/Camera1/2024.03.15/150842.mp4"
+            url={forUrl}
+            // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
+            // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
             // playsinline={true}
             controls={true}
+            muted={true}
             ref={playerRef}
             // onEnded={handleVideoEnded}
             onError={handleVideoError}
