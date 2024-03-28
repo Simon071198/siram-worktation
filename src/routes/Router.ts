@@ -188,7 +188,12 @@ const ListPenyidikan = lazy(
 // const KameraDetail = lazy(()=> import('../pages/KameraDevTest/KameraDetail'))
 
 const CameraPlayback = lazy(() => import('../pages/Camera/CameraPlayback'));
-
+const CameraPlaybackList = lazy(
+  () => import('../pages/Camera/CameraPlaybackList'),
+);
+const CameraPlaybackDetail = lazy(
+  () => import('../pages/Camera/CameraPlaybackDetail'),
+);
 const MenuTutorial = lazy(() => import('../pages/Tutorial/TutorialList'));
 
 const coreRoutes = [
@@ -326,7 +331,12 @@ const coreRoutes = [
   {
     path: '/kamera-playback',
     title: 'kamera playback',
-    component: CameraPlayback,
+    component: CameraPlaybackList,
+  },
+  {
+    path: '/kamera-playback-detail/:id',
+    title: 'kamera playback detail',
+    component: CameraPlaybackDetail,
   },
   {
     path: '/ShiftJaga',
