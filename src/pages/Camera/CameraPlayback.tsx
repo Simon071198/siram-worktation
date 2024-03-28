@@ -391,8 +391,8 @@ const CameraPlayback = (props) => {
         <div className="player-wrapper r-player">
           <ReactPlayer
             className="react-player"
-            // url={forUrl}
-            url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
+            url={forUrl}
+            // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
             // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
