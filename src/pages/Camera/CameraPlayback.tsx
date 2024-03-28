@@ -3,7 +3,7 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { set } from 'react-hook-form';
-import { allKameraOtmilByLocation } from '../../services/api';
+import { allKameraOtmilByLocation, apiDeviceDetail } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
@@ -15,14 +15,16 @@ const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
 
-const CameraPlayback = () => {
+const CameraPlayback = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [forUrl, setForurl] = useState('');
+  const [forUrl, setForurl] = useState(
+    'http://192.168.1.111:4007/record/Camera1/2024.03.28/video/181043.mp4',
+  );
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
@@ -46,26 +48,67 @@ const CameraPlayback = () => {
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
-  useEffect(() => {
-    // Fetch camera data when the component mounts.
-    allKameraOtmilByLocation(token)
-      .then((res) => {
-        setLocationDeviceListOtmil(res);
-        console.log(res, 'res otmil');
-      })
-      .catch((e: any) => {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
-      });
+  // useEffect(() => {
+  //   // Fetch camera data when the component mounts.
+  //   allKameraOtmilByLocation(token)
+  //     .then((res) => {
+  //       setLocationDeviceListOtmil(res);
+  //       console.log(res, 'res otmil');
+  //     })
+  //     .catch((e: any) => {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     });
 
-    // WebSocket logic
+  //   // WebSocket logic
+  //   client.current.onopen = () => {
+  //     console.log('WebSocket Client Connected');
+  //     // No need to send a request here; it will be sent when the camera is selected.
+  //   };
+
+  //   // Handle WebSocket messages (response from the server)
+  //   client.current.onmessage = async (message) => {
+  //     const dataFromServer = JSON.parse(message.data);
+  //     console.log('data server', message.data);
+  //     // await setDeviceName(dataFromServer.deviceName);
+
+  //     if (dataFromServer.message === 'GET FILE FROM DIRECTORY PATH') {
+  //       let formattedDate = date.split('-').join('.');
+  //       let formattedDeviceName = dataFromServer.deviceName.split(' ').join('');
+  //       let playlist = dataFromServer.files.map((file) => {
+  //         console.log(
+  //           baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file,
+  //         );
+
+  //         return (
+  //           baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file
+  //         );
+  //       });
+  //       setPlaylistPlayback(playlist);
+  //       console.log('ini playback', playlist);
+  //     } else if (dataFromServer.message === 'FILE FROM DIRECTORY EMPTY') {
+  //       console.log('Got reply from the server:', dataFromServer);
+  //       setPlaylistPlayback([]);
+  //     }
+  //   };
+
+  //   // WebSocket close and error handling
+  //   client.current.onclose = (event) => {
+  //     console.log('WebSocket Client Closed:', event);
+  //   };
+
+  //   client.current.onerror = (error) => {
+  //     console.error('WebSocket Error:', error);
+  //   };
+  // }, [date, selectedCamera]);
+  useEffect(() => {
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
       // No need to send a request here; it will be sent when the camera is selected.
@@ -82,11 +125,21 @@ const CameraPlayback = () => {
         let formattedDeviceName = dataFromServer.deviceName.split(' ').join('');
         let playlist = dataFromServer.files.map((file) => {
           console.log(
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file,
+            baseUrl +
+              formattedDeviceName +
+              '/' +
+              formattedDate +
+              '/video/' +
+              file,
           );
 
           return (
-            baseUrl + formattedDeviceName + '/' + formattedDate + '/' + file
+            baseUrl +
+            formattedDeviceName +
+            '/' +
+            formattedDate +
+            '/video/' +
+            file
           );
         });
         setPlaylistPlayback(playlist);
@@ -106,6 +159,30 @@ const CameraPlayback = () => {
       console.error('WebSocket Error:', error);
     };
   }, [date, selectedCamera]);
+  useEffect(() => {
+    fetchDeviceDetail();
+  }, []);
+  const fetchDeviceDetail = async () => {
+    const { id } = props;
+    console.log(props, 'props from data camera playback');
+
+    try {
+      const res = await apiDeviceDetail(id);
+      // const res = await apiDeviceDetail(id);
+      console.log(res, 'Perangkat detail playback');
+      // console.log(state.listViewCamera, 'listViewCamera');
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
 
   useEffect(() => {
     if (forUrl) {
@@ -266,12 +343,13 @@ const CameraPlayback = () => {
   }, [currentVideoIndex]);
 
   const handleRecordingClick = (recording: any) => {
-    console.log('Recording clicked:', recording);
-    setForurl(recording);
+    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    console.log('Recording clicked:', newUrl);
+    setForurl(newUrl);
   };
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-4 pt-10">
       <div className="flex flex-col items-center justify-center">
         {selectedCamera ? (
           <h1 className="text-2xl font-bold mb-4">
@@ -326,18 +404,23 @@ const CameraPlayback = () => {
         <div className="player-wrapper r-player">
           <ReactPlayer
             className="react-player"
-            // url={forUrl}
-            url="http://192.168.1.111:4007/record/Camera1/2024.03.15/150842.mp4"
+            url={forUrl}
+            // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
+            // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
             // url={playlistPlayback[currentVideoIndex]}
             playing={true}
             // playsinline={true}
             controls={true}
+            muted={true}
             ref={playerRef}
             // onEnded={handleVideoEnded}
             onError={handleVideoError}
             // key={currentVideoIndex}
           />
         </div>
+        {/* <Player>
+          <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" />
+        </Player> */}
       </div>
       {/* ) : ( */}
       {/* <h1>No video available for the selected camera and time range.</h1> */}
