@@ -4292,6 +4292,25 @@ export async function apiJenisSidangRead(params: any, token: any) {
   }
 }
 
+export async function apiJenisPidanaRead(params: any, token: any) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/jenis_pidana_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function apiJenisSidangInsert(params: any, token: any) {
   try {
     const response = await axios({
