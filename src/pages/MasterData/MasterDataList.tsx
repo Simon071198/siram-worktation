@@ -2,12 +2,13 @@ import { NavLink } from 'react-router-dom';
 import { BiCategory, BiHighlight } from 'react-icons/bi';
 import { ImHammer2 } from 'react-icons/im';
 import { FaBuildingColumns } from 'react-icons/fa6';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const routeMasterData = [
   {
     id: 1,
     name: 'Data Tersangka',
-    link: '/inmate-data',
+    link: '/master-data/tersangka',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +30,7 @@ const routeMasterData = [
   {
     id: 2,
     name: 'Data Petugas',
-    link: '/staff-data',
+    link: '/master-data/petugas',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +52,7 @@ const routeMasterData = [
   {
     id: 3,
     name: 'Data Pengunjung',
-    link: '/visitor-data',
+    link: '/master-data/pengunjung',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +74,7 @@ const routeMasterData = [
   {
     id: 5,
     name: 'Data Jenis Perkara',
-    link: '/case-type-data',
+    link: '/master-data/jenis-perkara',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -95,13 +96,13 @@ const routeMasterData = [
   {
     id: 7,
     name: 'Data Kategori Perkara',
-    link: '/kategoriperkara',
+    link: '/master-data/kategori-perkara',
     icon: <BiCategory size={25} />,
   },
   {
     id: 8,
     name: 'Data Ruangan',
-    link: '/room-data',
+    link: '/master-data/ruangan',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -123,7 +124,7 @@ const routeMasterData = [
   {
     id: 9,
     name: 'Data Tipe Aset',
-    link: '/tipeasset-data',
+    link: '/master-data/tipe-asset',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -167,19 +168,19 @@ const routeMasterData = [
   {
     id: 11,
     name: 'Data Oditur',
-    link: '/jaksa-list',
+    link: '/master-data/oditur',
     icon: <ImHammer2 size={25} />,
   },
   {
     id: 11,
     name: 'Data Saksi',
-    link: '/saksi-data',
+    link: '/master-data/saksi',
     icon: <BiHighlight size={25} />,
   },
   {
     id: 11,
     name: 'Data Ahli',
-    link: '/ahli-data',
+    link: '/master-data/ahli',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -201,7 +202,7 @@ const routeMasterData = [
   {
     id: 11,
     name: 'Data Jenis Sidang',
-    link: '/jenis-persidangan-data',
+    link: '/master-data/jenis-sidang',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +224,7 @@ const routeMasterData = [
   {
     id: 12,
     name: 'Data Barang Bukti',
-    link: '/barang-bukti',
+    link: '/master-data/barang-bukti',
     icon: <BiCategory size={25} />,
   },
   // {
@@ -251,19 +252,19 @@ const routeMasterData = [
   {
     id: 13,
     name: 'Pengadilan Militer',
-    link: '/pengadilan-militer',
+    link: '/master-data/pengadilan-militer',
     icon: <FaBuildingColumns size={25} />,
   },
   {
     id: 14,
     name: 'Data Gedung',
-    link: '/data-gedung',
+    link: '/master-data/gedung',
     icon: <FaBuildingColumns size={25} />,
   },
   {
     id: 15,
     name: 'Data Lantai',
-    link: '/data-lantai',
+    link: '/master-data/data-lantai',
     icon: <FaBuildingColumns size={25} />,
   },
 ];
@@ -271,6 +272,9 @@ const routeMasterData = [
 const MasterDataList = () => {
   return (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
         {routeMasterData.map((data) => (
           <NavLink to={data.link}>
@@ -290,223 +294,6 @@ const MasterDataList = () => {
             </div>{' '}
           </NavLink>
         ))}
-
-        {/* {routeMasterData.map((data) => (
-          <NavLink to={data.link}>
-            <div className="rounded-xl border border-stroke bg-slate-300  shadow-default dark:border-strokedark dark:bg-slate-300 ">
-              <div className="bg-gradient-to-r from-red-500 to-yellow-500 m-[1px] rounded-xl overflow-hidden hover:from-yellow-500 hover:to-red-500 transition duration-700 ease-linear">
-                <div className="bg-slate-300 m-[2px] rounded-xl hover:bg-slate-200 px-7 py-3">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-slate-400 text-slate-200">
-                      {data.icon}
-                    </div>
-
-                    <div>
-                      <h4 className="text-title-md font-bold text-black dark:text-meta-4">
-                        {data.name}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </NavLink>
-        ))} */}
-
-        {/* <NavLink to="/inmate-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Prajurit Binaan{' '}
-                </h4>
-                <span className="text-sm font-medium">
-                  {' '}
-                  Data Prajurit Binaan
-                </span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink>
-
-        <NavLink to="/staff-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Petugas{' '}
-                </h4>
-                <span className="text-sm font-medium"> Data Petugas</span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink>
-
-        <NavLink to="/visitor-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Pengunjung{' '}
-                </h4>
-                <span className="text-sm font-medium"> Data Pengunjung</span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink>
-
-        <NavLink to="/event-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Event{' '}
-                </h4>
-                <span className="text-sm font-medium"> Data Event</span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink>
-
-        <NavLink to="/case-type-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Perkara{' '}
-                </h4>
-                <span className="text-sm font-medium"> Data Jenis Kasus</span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink>
-
-        <NavLink to="/room-data">
-          <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-              <svg
-                fill="none"
-                width="18"
-                height="18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="mt-4 flex items-end justify-between">
-              <div>
-                <h4 className="text-title-md font-bold text-black dark:text-white">
-                  Data Ruangan{' '}
-                </h4>
-                <span className="text-sm font-medium"> Data Ruangan</span>
-              </div>
-            </div>
-          </div>{' '}
-        </NavLink> */}
       </div>
     </div>
   );

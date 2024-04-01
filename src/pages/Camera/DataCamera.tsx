@@ -19,6 +19,7 @@ import {
   FaRegArrowAltCircleRight,
   FaRegArrowAltCircleLeft,
 } from 'react-icons/fa';
+import { Breadcrumbs } from '../../components/Breadcrumbs.js';
 const stylesListComent = {
   inline: {
     display: 'inline',
@@ -64,7 +65,7 @@ const DataCamera = (props) => {
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
     };
-    
+
     // Cleanup function
     return () => {
       console.log('WebSocket Client DISConnected');
@@ -89,12 +90,9 @@ const DataCamera = (props) => {
   }, [props.id]);
 
   useEffect(() => {
- 
-
     fetchDataInmateRealtime(); // If fetchDataInmateRealtime is supposed to run independently, you can uncomment this line
 
     const fetchInterval = setInterval(fetchDataInmateRealtime, 5000);
-
 
     return () => {
       clearInterval(fetchInterval); // Cleanup interval when component unmounts
@@ -161,7 +159,7 @@ const DataCamera = (props) => {
             deviceName: res.nama_kamera,
             deviceId: res.kamera_id,
           },
-        ]
+        ],
       });
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -254,7 +252,10 @@ const DataCamera = (props) => {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="pl-6 py-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
+      <div className="flex justify-between items-center px-6">
         <div className="flex gap-4">
           <h1 className="font-semibold ml-1">
             {deviceDetail && deviceDetail.nama_kamera} -{' '}

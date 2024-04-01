@@ -3,38 +3,42 @@ import { HiOutlineUserGroup } from 'react-icons/hi';
 import { MdOutlinePermContactCalendar } from 'react-icons/md';
 import { FaUserClock } from 'react-icons/fa';
 import { BiTask } from 'react-icons/bi';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const routeMasterData = [
   {
     id: 1,
     name: 'Jadwal Shift Kerja',
-    link: '/CalendarShift',
+    link: '/shift-jaga/calendar-shift',
     icon: <MdOutlinePermContactCalendar size={26} />,
   },
   {
     id: 2,
     name: 'Grup Petugas Shift',
-    link: '/GroupShift',
+    link: '/shift-jaga/group-shift',
     icon: <HiOutlineUserGroup size={25} />,
   },
   {
     id: 3,
     name: 'Data Shift',
-    link: '/DataSceduleShift',
+    link: '/shift-jaga/data-schedule-shift',
     icon: <FaUserClock size={22} />,
   },
   {
     id: 4,
     name: 'Data Penugasan',
-    link: '/Penugasan',
+    link: '/shift-jaga/penugasan',
     icon: <BiTask size={25} />,
   },
 ];
 
 const MasterDataList = () => {
   return (
-    <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 m-6">
+    <div>
+      <div className="pl-6 py-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 mx-6">
         {routeMasterData.map((data) => (
           <NavLink to={data.link}>
             <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -54,7 +58,7 @@ const MasterDataList = () => {
           </NavLink>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

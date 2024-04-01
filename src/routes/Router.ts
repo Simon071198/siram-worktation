@@ -224,11 +224,6 @@ const coreRoutes = [
     component: ListPenyidikan,
   },
   {
-    path: '/pengadilan-militer',
-    title: 'pengadilan militer',
-    component: PengadilanMiliter,
-  },
-  {
     path: '/oditur',
     title: 'oditur',
     component: Oditor,
@@ -243,63 +238,15 @@ const coreRoutes = [
     title: 'detail perkara',
     component: DetailPerkara,
   },
-  {
-    path: '/barang-bukti',
-    title: 'barang bukti',
-    component: BarangBukti,
-  },
-  {
-    path: '/jenis-persidangan-data',
-    title: 'jenis persidangan data',
-    component: DaftarJenisPersidangan,
-  },
-  {
-    path: '/ahli-data',
-    title: 'ahli data',
-    component: DaftarAhli,
-  },
-  {
-    path: '/data-gedung',
-    title: 'Data Gedung',
-    component: DaftarGedung,
-  },
-  {
-    path: '/data-lantai',
-    title: 'Data Lantai',
-    component: DaftarLantai,
-  },
-  {
-    path: '/saksi-data',
-    title: 'saksi data',
-    component: DaftarSaksi,
-  },
-  {
-    path: '/jaksa-list',
-    title: 'jaksa list',
-    component: DaftarJaksa,
-  },
-  {
-    path: '/oditur-penyidik-data',
-    title: 'oditur penyidik data',
-    component: DaftarJaksaPenyidik,
-  },
-  {
-    path: '/oditur-penuntut-data',
-    title: 'oditur penuntut data',
-    component: DaftarJaksaPenuntut,
-  },
+
   {
     path: '/hakim-data',
     title: 'hakim data',
     component: DaftarHakim,
   },
+
   {
-    path: '/tipeasset-data',
-    title: 'tipeasset data',
-    component: DaftarTipeAsset,
-  },
-  {
-    path: '/setting-list',
+    path: '/pengaturan-list',
     title: 'setting',
     component: SettingList,
   },
@@ -323,46 +270,135 @@ const coreRoutes = [
     title: 'pencatatan bap',
     component: PencatatanBAP,
   },
-  {
-    path: '/kategoriperkara',
-    title: 'kategori perkara',
-    component: MasterDataKategoriPerkara,
-  },
+
   {
     path: '/kamera-playback',
     title: 'kamera playback',
     component: CameraPlaybackList,
   },
   {
-    path: '/kamera-playback-detail/:id',
+    path: '/kamera-playback/:id',
     title: 'kamera playback detail',
     component: CameraPlaybackDetail,
   },
   {
-    path: '/ShiftJaga',
+    path: '/shift-jaga',
     title: 'Shift Jaga',
     component: ShiftJaga,
   },
   {
-    path: '/CalendarShift',
+    path: '/shift-jaga/calendar-shift',
     title: 'Calendar Shift',
     component: CalendarShift,
   },
   {
-    path: '/GroupShift',
+    path: '/shift-jaga/group-shift',
     title: 'GroupShift',
     component: GroupShift,
   },
   {
-    path: '/Penugasan',
+    path: '/shift-jaga/penugasan',
     title: 'Penugasan',
     component: Penugasan,
   },
   {
-    path: '/DataSceduleShift',
+    path: '/shift-jaga/data-schedule-shift',
     title: 'DataSceduleShift',
     component: DataSceduleShift,
   },
+
+  // master data
+  {
+    path: '/master-data',
+    title: 'MasterDataList',
+    component: MasterDataList,
+  },
+  {
+    path: '/master-data/tersangka',
+    title: 'MasterDataInmate',
+    component: MasterDataInmate,
+  },
+  {
+    path: '/master-data/petugas',
+    title: 'MasterDataStaff',
+    component: MasterDataStaff,
+  },
+  {
+    path: '/master-data/pengunjung',
+    title: 'MasterDataVisitor',
+    component: MasterDataVisitor,
+  },
+  {
+    path: '/master-data/jenis-perkara',
+    title: 'MasterDataCaseType',
+    component: MasterDataCaseType,
+  },
+  {
+    path: '/master-data/kategori-perkara',
+    title: 'kategori perkara',
+    component: MasterDataKategoriPerkara,
+  },
+  {
+    path: '/master-data/ruangan',
+    title: 'MasterDataRoom',
+    component: MasterDataRoom,
+  },
+  {
+    path: '/master-data/tipe-asset',
+    title: 'tipe asset data',
+    component: DaftarTipeAsset,
+  },
+  {
+    path: '/master-data/oditur',
+    title: 'daftar jaksa',
+    component: DaftarJaksa,
+  },
+  {
+    path: '/master-data/oditur/penyidik',
+    title: 'oditur penyidik data',
+    component: DaftarJaksaPenyidik,
+  },
+  {
+    path: '/master-data/oditur/penuntut',
+    title: 'oditur penuntut data',
+    component: DaftarJaksaPenuntut,
+  },
+  {
+    path: '/master-data/saksi',
+    title: 'saksi data',
+    component: DaftarSaksi,
+  },
+  {
+    path: '/master-data/ahli',
+    title: 'ahli data',
+    component: DaftarAhli,
+  },
+  {
+    path: '/master-data/jenis-sidang',
+    title: 'jenis persidangan data',
+    component: DaftarJenisPersidangan,
+  },
+  {
+    path: '/master-data/barang-bukti',
+    title: 'barang bukti',
+    component: BarangBukti,
+  },
+  {
+    path: '/master-data/pengadilan-militer',
+    title: 'pengadilan militer',
+    component: PengadilanMiliter,
+  },
+  {
+    path: '/master-data/gedung',
+    title: 'Data Gedung',
+    component: DaftarGedung,
+  },
+  {
+    path: '/master-data/data-lantai',
+    title: 'Data Lantai',
+    component: DaftarLantai,
+  },
+
   {
     path: '/statistic',
     title: 'Statistic',
@@ -379,14 +415,20 @@ const coreRoutes = [
     component: LogList,
   },
   {
+    path: '/log-riwayat/realtime',
+    title: 'RealtimeLog',
+    component: RealtimeLog,
+  },
+  {
+    path: '/log-riwayat/gateway',
+    title: 'GatewayLog',
+    component: GatewayLog,
+  },
+
+  {
     path: '/log-face-recognition',
     title: 'LogFaceRecognitionList',
     component: LogFaceRecognitionList,
-  },
-  {
-    path: '/log-realtime',
-    title: 'RealtimeLog',
-    component: RealtimeLog,
   },
   {
     path: '/inmate-log',
@@ -404,11 +446,6 @@ const coreRoutes = [
     component: DoorLog,
   },
   {
-    path: '/gateway-log',
-    title: 'GatewayLog',
-    component: GatewayLog,
-  },
-  {
     path: '/pelacakan-wajah-petugas',
     // path: '/db-employee-search-by-name',
     title: 'EmployeeDatabaseSearchByName',
@@ -421,7 +458,7 @@ const coreRoutes = [
     component: InmateDatabaseSearchByName,
   },
   {
-    path: '/db-search-list',
+    path: '/pelacakan',
     title: 'DatabaseSearchList',
     component: DatabaseSearchList,
   },
@@ -431,32 +468,32 @@ const coreRoutes = [
     component: LocationList,
   },
   {
-    path: '/manajemen-pengguna',
+    path: '/pengaturan-list/manajemen-pengguna',
     title: 'UserList',
     component: UserList,
   },
   {
-    path: '/perangkat-gateway',
+    path: '/pengaturan-list/perangkat',
+    title: 'DeviceList',
+    component: DeviceList,
+  },
+  {
+    path: '/pengaturan-list/perangkat/gateway',
     // path: '/device-gateway-list',
     title: 'DeviceGatewayList',
     component: DeviceGatewayList,
   },
   {
-    path: '/perangkat-kamera',
+    path: '/pengaturan-list/perangkat/kamera',
     // path: '/device-camera-list',
     title: 'DeviceCameraList',
     component: DeviceKameraList,
   },
   {
-    path: '/perangkat-gelang',
+    path: '/pengaturan-list/perangkat/gelang',
     // path: '/device-bracelet-list',
     title: 'DeviceBraceletList',
     component: DeviceBraceletList,
-  },
-  {
-    path: '/device-list',
-    title: 'DeviceList',
-    component: DeviceList,
   },
   {
     path: '/pelacakan-dengan-gambar',
@@ -474,12 +511,12 @@ const coreRoutes = [
     component: MapSetting,
   },
   {
-    path: '/kamera/:id',
+    path: '/kamera-live/:id',
     title: 'CameraDetail',
     component: CameraDetail,
   },
   {
-    path: '/kamera-dev-test',
+    path: '/kamera-live',
     title: 'CameraList',
     component: CameraList,
   },
@@ -594,46 +631,19 @@ const coreRoutes = [
     title: 'AddStaffFace',
     component: AddStaffFace,
   },
-  {
-    path: '/master-data-list',
-    title: 'MasterDataList',
-    component: MasterDataList,
-  },
-  {
-    path: '/visitor-data',
-    title: 'MasterDataVisitor',
-    component: MasterDataVisitor,
-  },
+
   {
     path: '/live-chat-list',
     title: 'LiveChatList',
     component: LiveChatList,
   },
+
   {
-    path: '/inmate-data',
-    title: 'MasterDataInmate',
-    component: MasterDataInmate,
-  },
-  {
-    path: '/staff-data',
-    title: 'MasterDataStaff',
-    component: MasterDataStaff,
-  },
-  {
-    path: '/event-data',
+    path: '/kegiatan',
     title: 'MasterDataEvent',
     component: MasterDataEvent,
   },
-  {
-    path: '/room-data',
-    title: 'MasterDataRoom',
-    component: MasterDataRoom,
-  },
-  {
-    path: '/case-type-data',
-    title: 'MasterDataCaseType',
-    component: MasterDataCaseType,
-  },
+
   {
     path: '/tutorial-data',
     title: 'MenuTutorial',

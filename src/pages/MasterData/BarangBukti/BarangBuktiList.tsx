@@ -19,6 +19,7 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Params {
@@ -373,7 +374,7 @@ const AhliList = () => {
         'nomer barang bukti',
         'keterangan',
         'tanggal di ambil',
-        'nama jenis perkara'
+        'nama jenis perkara',
       ],
       ...data.map((item: any) => [
         item.nama_kasus,
@@ -381,7 +382,7 @@ const AhliList = () => {
         item.nomor_barang_bukti,
         item.keterangan,
         item.tanggal_diambil,
-        item.nama_jenis_perkara
+        item.nama_jenis_perkara,
       ]),
     ];
 
@@ -398,6 +399,9 @@ const AhliList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">

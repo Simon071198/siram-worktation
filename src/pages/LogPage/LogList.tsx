@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const routeLogList = [
   {
     id: 1,
     name: 'Log Realtime',
-    link: '/log-realtime',
+    link: '/log-riwayat/realtime',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +27,7 @@ const routeLogList = [
   {
     id: 2,
     name: 'Log Gateway',
-    link: '/gateway-log',
+    link: '/log-riwayat/gateway',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -50,6 +51,9 @@ const routeLogList = [
 const DeviceList = () => {
   return (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       {/* <div>
         <NavLink to='/'>
           <div className='flex capitalize mb-5 items-center'>
@@ -65,7 +69,7 @@ const DeviceList = () => {
         {routeLogList.map((data) => (
           <NavLink to={data.link}>
             <div className="rounded-md border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className='flex items-center gap-2'>
+              <div className="flex items-center gap-2">
                 <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
                   {data.icon}
                 </div>
@@ -102,7 +106,7 @@ const DeviceList = () => {
           </NavLink>
         ))} */}
 
-        {/* <NavLink to="/log-realtime">
+        {/* <NavLink to="/log-riwayat/realtime">
           <div className="rounded-md border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
               <svg
@@ -133,7 +137,7 @@ const DeviceList = () => {
           </div>{' '}
         </NavLink>
 
-        <NavLink to="/gateway-log">
+        <NavLink to="/log-riwayat/gateway">
           <div className="rounded-md border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
               <svg
