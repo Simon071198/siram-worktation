@@ -25,6 +25,7 @@ const CameraPlayback = (props) => {
   const [forUrl, setForurl] = useState(
     'http://192.168.1.111:4007/record/Camera1/2024.03.28/video/181043.mp4',
   );
+  const [currentRecordingIndex, setCurrentRecordingIndex] = useState(-1);
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
@@ -32,6 +33,7 @@ const CameraPlayback = (props) => {
   const [date, setDate] = useState('2024-03-15');
   const [timeStart, setTimeStart] = useState('15:04:00');
   const [timeFinish, setTimeFinish] = useState('15:06:00');
+  const [detailKamera, setDetailKamera] = useState();
   const [deviceName, setDeviceName] = useState('');
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([
     {
@@ -45,7 +47,41 @@ const CameraPlayback = (props) => {
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+
+  useEffect(() => {
+    const getCurrentDateTime = () => {
+      const now = new Date();
+      const currentDate = formatDate(now);
+      const currentTime = formatTime(now);
+      const futureTime = calculateFutureTime(now, 5); // 5 menit ke depan
+
+      setDate(currentDate);
+      setTimeStart(currentTime);
+      setTimeFinish(futureTime);
+    };
+
+    getCurrentDateTime();
+  }, []);
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date) => {
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const seconds = ('0' + date.getSeconds()).slice(-2);
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  const calculateFutureTime = (date, minutes) => {
+    const futureDate = new Date(date.getTime() + minutes * 60000); // Menambahkan menit ke waktu sekarang
+    return formatTime(futureDate);
+  };
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   // useEffect(() => {
@@ -168,9 +204,7 @@ const CameraPlayback = (props) => {
 
     try {
       const res = await apiDeviceDetail(id);
-      // const res = await apiDeviceDetail(id);
-      console.log(res, 'Perangkat detail playback');
-      // console.log(state.listViewCamera, 'listViewCamera');
+      setDetailKamera(res);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -196,7 +230,7 @@ const CameraPlayback = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method, params }));
   };
-
+  console.log(detailKamera, 'ini detail');
   // Handle camera change
   const handleCameraChange = async (e) => {
     const selectedIndex = e.target.value;
@@ -342,34 +376,34 @@ const CameraPlayback = (props) => {
     }
   }, [currentVideoIndex]);
 
-  const handleRecordingClick = (recording: any) => {
-    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
-    console.log('Recording clicked:', newUrl);
-    setForurl(newUrl);
+  const handleRecordingClick = (recording: any, index: any) => {
+    // let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    // console.log('Recording clicked:', newUrl);
+    console.log('clicked', recording);
+    setForurl(recording);
+    setCurrentRecordingIndex(index);
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 pt-10">
-      <div className="flex flex-col items-center justify-center">
-        {selectedCamera ? (
-          <h1 className="text-2xl font-bold mb-4">
-            {selectedCamera.nama_kamera} -{' '}
-            {selectedCamera.nama_lokasi_lemasmil
-              ? selectedCamera.nama_lokasi_lemasmil
-              : selectedCamera.nama_lokasi_otmil}
+    <div className="flex items-center justify-center gap-4 pt-4">
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mb-4">
+          <h1 className="text-2xl font-bold">Playback Camera</h1>
+          <h1 className="font-semibold text-lg mt-1">
+            (
+            {`${detailKamera?.nama_kamera} - ${detailKamera?.nama_ruangan_otmil} - ${detailKamera?.nama_lokasi_otmil}`}
+            )
           </h1>
-        ) : (
-          <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
-        )}
+        </div>
         <div className="flex justify-around gap-4 mb-4">
-          <select onChange={handleCameraChange} className="p-kamera">
+          {/* <select onChange={handleCameraChange} className="p-kamera">
             <option value="">Select a Camera</option>
             {dataAllCamera.map((data, index) => (
               <option key={data.kamera_id} value={index}>
                 {data.nama_kamera}
               </option>
             ))}
-          </select>
+          </select> */}
 
           <input
             type="date"
@@ -426,19 +460,44 @@ const CameraPlayback = (props) => {
       {/* <h1>No video available for the selected camera and time range.</h1> */}
       {/* )} */}
       {/* </div> */}
-      <div className="box flex flex-col h-80 w-1/4 overflow-auto">
-        <h2 className="text-xl font-bold mb-2">Recordings</h2>
-        <ul>
-          {playlistPlayback.map((recording, index) => (
-            <li
-              className="cursor-pointer"
-              key={index}
-              onClick={() => handleRecordingClick(recording)}
-            >
-              {recording}
-            </li>
-          ))}
-        </ul>
+      <div className="box flex flex-col h-96 w-40 items-center mt-24">
+        <h2 className="text-xl font-bold mb-1">Recordings</h2>
+        <div className="box flex flex-col h-full w-full overflow-auto items-center">
+          {/* <ul>
+            {playlistPlayback.map((recording, index) => {
+              // Mendapatkan nama file video dari URL
+              const urlParts = recording.split('/');
+              const fileName = urlParts[urlParts.length - 1];
+
+              return (
+                <li
+                  className="cursor-pointer hover:text-red-100"
+                  key={index}
+                  onClick={() => handleRecordingClick(recording)}
+                >
+                  {fileName}
+                </li>
+              );
+            })}
+          </ul> */}
+          <ul>
+            {playlistPlayback.map((recording, index) => {
+              const urlParts = recording.split('/');
+              const fileName = urlParts[urlParts.length - 1];
+              const isActive = index === currentRecordingIndex;
+
+              return (
+                <li
+                  className={`cursor-pointer ${isActive ? 'text-green-500' : ''} font-light`}
+                  key={index}
+                  onClick={() => handleRecordingClick(recording, index)}
+                >
+                  {fileName}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </div>
   );
