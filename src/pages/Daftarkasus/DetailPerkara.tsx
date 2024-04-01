@@ -28,7 +28,7 @@ const DetailPerkara = () => {
           <DataUmum />
         </div>
       )}
-      {tapIndex == 1 && <div>Penetapan</div>}
+      {tapIndex == 1 && <div><PenetapanPerkara /></div>}
       {tapIndex == 2 && <div>Jadwal Sidang</div>}
       {tapIndex == 3 && <div>Saksi</div>}
       {tapIndex == 4 && <div>Barang Bukti</div>}
