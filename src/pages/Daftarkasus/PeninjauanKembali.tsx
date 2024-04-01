@@ -11,7 +11,7 @@ import {
 
 
 
-const PenetapanPerkara = (
+const PeninjauanKembali = (
      { token } : any
 ) => {
 
@@ -22,74 +22,43 @@ const PenetapanPerkara = (
 
      const [data, setData] = useState([]);
 
-     // const fetchData = async () => {
-     //      let params = {
-     //           page: 1,
-     //           limit: 10,
-     //      };
-     //      await apiReadAllWBP(params, token).
-     //      then((res) => {
-     //           const tersangka = res.data.records?.map((item: any) => ({
-     //                value : item.wbp_profile_id,
-     //                label : item.tanggal_penetapan_tersangka
-     //           }));
-     //           setData(tersangka);
-     //      }
-     //      )
-     //      .catch((e) => {
-     //           if (e.response.status === 403) {
-     //             navigate('/auth/signin', {
-     //               state: { forceLogout: true, lastPage: location.pathname },
-     //             });
-     //           }
-     //           Alerts.fire({
-     //             icon: e.response.status === 403 ? 'warning' : 'error',
-     //             title: e.response.status === 403 ? Error403Message : e.message,
-     //           });
-     //         });
-     // };
-
-
-
      const dummyData = [
           {
-              tanggal_penetapan: "Sabtu, 01 Januari 2023",
-              nama_hakim: "Hakim 1",
-              posisi: "Hakim Ketua",
-              aktif: "Ya"
+              no: "1",
+              nama_status: "Termohon (Oditur)",
+              nama: "Eko",
           },
           {
-              tanggal_penetapan: "Sabtu, 01 Januari 2023",
-              nama_hakim: "Hakim 2",
-              posisi: "Hakim Anggota",
-              aktif: "Ya"
+              no: "2",
+              nama_status: "Termohon (Oditur)",
+              nama: "Angga",
           },
           
       ];
-     const dummyData1 = [
-          {
-              tanggal_penetapan: "Sabtu, 02 Januari 2023",
-              nama_panitera_pengganti: "Rahmat",
-              aktif: "Ya"
-          },
-          {
-               tanggal_penetapan: "Rabu, 04 Januari 2023",
-               nama_panitera_pengganti: "Karyono",
-               aktif: "Ya"
-          },
+     // const dummyData1 = [
+     //      {
+     //          tanggal_penetapan: "Sabtu, 02 Januari 2023",
+     //          nama_panitera_pengganti: "Rahmat",
+     //          aktif: "Ya"
+     //      },
+     //      {
+     //           tanggal_penetapan: "Rabu, 04 Januari 2023",
+     //           nama_panitera_pengganti: "Karyono",
+     //           aktif: "Ya"
+     //      },
           
-      ];
-     const dummyData2 = [
-          {
-              tanggal_penetapan: "Kamis, 05 Januari 2021",
-              nama_hakim: "Purwanto, SH, MH",
-          },
-          {
-               tanggal_penetapan: "Jumat, 06 Januari 2021",
-               nama_hakim: "Sri Wahyuni, SH, MH",
-          },
+     //  ];
+     // const dummyData2 = [
+     //      {
+     //          tanggal_penetapan: "Kamis, 05 Januari 2021",
+     //          nama_hakim: "Purwanto, SH, MH",
+     //      },
+     //      {
+     //           tanggal_penetapan: "Jumat, 06 Januari 2021",
+     //           nama_hakim: "Sri Wahyuni, SH, MH",
+     //      },
           
-      ];
+     //  ];
 
       useEffect(() => {
           const delay = setTimeout(() => {
@@ -105,22 +74,19 @@ const PenetapanPerkara = (
           <div className="m-3 px-5 pt-2">
                <div className="">
                <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
-                    Penetapan Hakim
+                    Data Para Pihak
                </div>
                <div className="">
                <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
-                    <div className="grid grid-cols-4 gap-4 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
-                              Tanggal Penetapan
+                    <div className="grid grid-cols-6  gap-4 p-1">
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                              No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
-                              Nama Hakim
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                              Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
-                              Posisi
-                         </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
-                              Aktif
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-2">
+                              Nama
                          </div>
                     </div>
                </div>
@@ -128,18 +94,15 @@ const PenetapanPerkara = (
                     {dummyData.map((data, index) => {
                          return (
                               <div key={index} className={`dark:bg-meta-4${index !== dummyData.length - 1 ? '' : ''} `}>
-                                   <div className="grid grid-cols-4 hover:bg-sky-950">
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
-                                             {data.tanggal_penetapan}
+                                   <div className="grid grid-cols-6  gap-4 p-1 hover:bg-sky-950">
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                             {data.no}
                                         </div>
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
-                                             {data.nama_hakim}
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                             {data.nama_status}
                                         </div>
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
-                                             {data.posisi}
-                                        </div>
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer p-1.5">
-                                             {data.aktif}
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2">
+                                             {data.nama}
                                         </div>
                                    </div>
                               </div>
@@ -147,7 +110,7 @@ const PenetapanPerkara = (
                          })}
                     </div>
                </div>
-               <div className="pt-3">
+               {/* <div className="pt-3">
                <div className="pb-1 text-sm font-medium md:text-base dark:text-white">
                     Penetapan Panitera Pengganti
                </div>
@@ -185,8 +148,8 @@ const PenetapanPerkara = (
                          })}
                     </div>
                </div>
-               </div>
-               <div className="pt-3 pb-3">
+               </div> */}
+               {/* <div className="pt-3 pb-3">
                <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
                     Penetapan Sidang Pertama
                </div>
@@ -220,7 +183,7 @@ const PenetapanPerkara = (
                          })}
                     </div>
                </div>
-          </div>
+          </div> */}
           </div>
           </div>
           </div>
@@ -228,4 +191,4 @@ const PenetapanPerkara = (
      );
 };
 
-export default PenetapanPerkara;
+export default PeninjauanKembali;
