@@ -15,6 +15,36 @@ const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
 
+function extractTimeFromURL(url) {
+  const regex = /\/(\d{2})(\d{2})(\d{2})\.mp4$/;
+  const match = url.match(regex);
+  if (match) {
+    const hours = match[1];
+    const minutes = match[2];
+    const seconds = match[3];
+    return `${hours} : ${minutes} : ${seconds}`;
+  } else {
+    return null; // Return null if no match found
+  }
+}
+
+function getTime(offset = 0) {
+  const now = new Date();
+  now.setHours(now.getHours() + offset);
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function getCurrentDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 const CameraPlayback = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,9 +59,9 @@ const CameraPlayback = (props) => {
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
   const [filter, setFilter] = useState('');
-  const [date, setDate] = useState('2024-03-15');
-  const [timeStart, setTimeStart] = useState('15:04:00');
-  const [timeFinish, setTimeFinish] = useState('15:06:00');
+  const [date, setDate] = useState(getCurrentDate());
+  const [timeStart, setTimeStart] = useState(getTime(-1));
+  const [timeFinish, setTimeFinish] = useState(getTime());
   const [deviceName, setDeviceName] = useState('');
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([
     {
@@ -41,11 +71,13 @@ const CameraPlayback = (props) => {
     },
   ]);
 
+  let cameraName = location.state;
+
   const [playlistPlayback, setPlaylistPlayback] = useState([]);
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   // useEffect(() => {
@@ -359,17 +391,17 @@ const CameraPlayback = (props) => {
               : selectedCamera.nama_lokasi_otmil}
           </h1>
         ) : (
-          <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
+          <h1 className="text-2xl font-bold mb-4">Playback {cameraName}</h1>
         )}
         <div className="flex justify-around gap-4 mb-4">
-          <select onChange={handleCameraChange} className="p-kamera">
+          {/* <select onChange={handleCameraChange} className="p-kamera">
             <option value="">Select a Camera</option>
             {dataAllCamera.map((data, index) => (
               <option key={data.kamera_id} value={index}>
                 {data.nama_kamera}
               </option>
             ))}
-          </select>
+          </select> */}
 
           <input
             type="date"
@@ -401,8 +433,9 @@ const CameraPlayback = (props) => {
           </div>
         </div>
         {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
-        <div className="player-wrapper r-player">
+        <div className="player-wrapper r-player flex justify-center space-x-8">
           <ReactPlayer
+            // loop={true}
             className="react-player"
             url={forUrl}
             // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
@@ -417,6 +450,20 @@ const CameraPlayback = (props) => {
             onError={handleVideoError}
             // key={currentVideoIndex}
           />
+          <div className="box w-1/6 ">
+            <h2 className="text-xl font-bold mb-2">Recordings</h2>
+            <ul className="flex flex-col overflow-auto h-80">
+              {playlistPlayback.map((recording, index) => (
+                <li
+                  className="cursor-pointer tracking-widest"
+                  key={index}
+                  onClick={() => handleRecordingClick(recording)}
+                >
+                  {extractTimeFromURL(recording)}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         {/* <Player>
           <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" />
@@ -426,20 +473,6 @@ const CameraPlayback = (props) => {
       {/* <h1>No video available for the selected camera and time range.</h1> */}
       {/* )} */}
       {/* </div> */}
-      <div className="box flex flex-col h-80 w-1/4 overflow-auto">
-        <h2 className="text-xl font-bold mb-2">Recordings</h2>
-        <ul>
-          {playlistPlayback.map((recording, index) => (
-            <li
-              className="cursor-pointer"
-              key={index}
-              onClick={() => handleRecordingClick(recording)}
-            >
-              {recording}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 };

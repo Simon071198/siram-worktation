@@ -917,10 +917,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Kamera --> */}
               <li>
                 <NavLink
-                  to="/kamera"
+                  to="/kamera-dev-test"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('kamera') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('kamera') &&
+                    !pathname.includes('playback') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -956,10 +958,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Playback Kamera --> */}
               <li>
                 <NavLink
-                  to="/camera-playback"
+                  to="/kamera-playback"
                   onClick={handleNavLinkClick}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('kamera') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('kamera-playback') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg

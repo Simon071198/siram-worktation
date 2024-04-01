@@ -252,6 +252,7 @@ const CameraPlaybackList = () => {
                                         {r?.kamera.map((k) => (
                                           <NavLink
                                             to={`/kamera-playback-detail/${k.kamera_id}`}
+                                            state={k.nama_kamera}
                                           >
                                             <p
                                               className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
