@@ -7,6 +7,7 @@ import Banding from './Banding';
 import PutusanSela from './PutusanSela';
 import DataUmum from './DataUmum';
 import RiwayatBukti from './RiwayatBukti';
+import Penuntutan from './Penuntutan';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -23,6 +24,7 @@ const DetailPerkara = () => {
     'Peninjauan Kembali',
     'Barang Bukti',
     'Riwayat Perkara',
+    'Peninjauan Kembali'
   ];
   return (
     <div>
@@ -49,7 +51,7 @@ const DetailPerkara = () => {
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
           {tapIndex == 3 && <div>Saksi</div>}
-          {tapIndex == 4 && <div>Penuntut</div>}
+          {tapIndex == 4 && <Penuntutan />}
           {tapIndex == 5 && (
             <div>
               <PutusanSela />
