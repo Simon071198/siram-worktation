@@ -8,6 +8,8 @@ import PutusanSela from './PutusanSela';
 import DataUmum from './DataUmum';
 import RiwayatBukti from './RiwayatBukti';
 import Penuntutan from './Penuntutan';
+import { RiwayatPerkara } from './RiwayatPerkara';
+import { Putusan } from './Putusan';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -57,12 +59,12 @@ const DetailPerkara = () => {
               <PutusanSela />
             </div>
           )}
-          {tapIndex == 6 && <div>Putusan</div>}
+          {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <div>Kasasi</div>}
           {tapIndex == 9 && <div>Peninjauan Kembali</div>}
           {tapIndex == 10 && <RiwayatBukti/>}
-          {tapIndex == 11 && <div>Riwayat Perkara</div>}
+          {tapIndex == 11 && <RiwayatPerkara />}
         </div>
       </div>
 

@@ -73,6 +73,13 @@ const DaftarKasus = () => {
   const [searchNomorKasus, setSearchNomorKasus] = useState(false);
   const [searchNamaKasus, setSearchNamaKasus] = useState(false);
 
+  //Filter Value Search Table
+
+  const [filterNomorKasus, setFilterNomorKasus] = useState('');
+  const [filterNamaKasus, setFilterNamaKasus] = useState('');
+  const [filterTanggalPelaporan, setFilterTanggalPelaporan] = useState('');
+  const [filterTanggalKejadian, setFilterTanggalKejadian] = useState('');
+
   // const handleButtonFilter = (type: any) => {
   //   if (type === 'tanggal_pelaporan') {
   //     setSearchTanggalPelaporan((prevState) => !prevState);
@@ -711,11 +718,20 @@ const DaftarKasus = () => {
           } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
         >
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex">
+            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nomor_kasus")}>
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nomer Kasus
               </h5>
             </div>
+            {searchNomorKasus && (
+              <div className="w-[80%] search">
+                <SearchInputButton
+                  value={filterNomorKasus}
+                  // placehorder="Cari Nama Kasus"
+                  onChange={handleFilterChangeNomorKasus}
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col items-center">
             <div
@@ -749,12 +765,12 @@ const DaftarKasus = () => {
             {searchTanggalPelaporan && (
               <div className="w-[80%] search">
                 <SearchInputButton
-                  value={filter}
+                  // value={filter}
                   // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChange}
-                  // value={filterTanggalPelaporan}
+                  // onChange={handleFilterChange}
+                  value={filterTanggalPelaporan}
                   // placehorder="Cari Nama Kasus"
-                  // onChange={handleFilterChangeTanggalPelaporan}
+                  onChange={handleFilterChangeTanggalPelaporan}
                 />
               </div>
             )}
@@ -772,13 +788,13 @@ const DaftarKasus = () => {
             {searchTanggalKejadian && (
               <div className="w-[80%] search">
                 <SearchInputButton
-                  value={filter}
+                  // value={filter}
                   // placehorder="Cari Nama Kasus"
-                  onChange={handleFilterChange}
+                  // onChange={handleFilterChange}
 
-                  // value={filterTanggalKejadian}
+                  value={filterTanggalKejadian}
                   // placehorder="Cari Nama Kasus"
-                  // onChange={handleFilterChangeTanggalKejadian}
+                  onChange={handleFilterChangeTanggalKejadian}
                 />
               </div>
             )}
