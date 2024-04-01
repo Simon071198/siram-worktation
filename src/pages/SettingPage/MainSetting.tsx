@@ -109,7 +109,7 @@ Longitude          </h5>
                 </button>
 
                 <NavLink
-                  to="/manajemen-pengguna"
+                  to="/pengaturan-list/manajemen-pengguna"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-sm bg-blue-500 hover:bg-blue-400 text-white text-sm font-medium"
                   // onClick={() => {
                   //   handleEdit(item);

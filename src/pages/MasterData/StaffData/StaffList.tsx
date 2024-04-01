@@ -20,6 +20,7 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 // Interface untuk objek 'params' dan 'item'
 
@@ -27,14 +28,14 @@ interface Item {
   nama: string;
   alamat: string;
   tanggal_lahir: any;
-  petugas_id?:any;
+  petugas_id?: any;
 }
 
 const StaffList = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const dataUser : any= localStorage.getItem("dataUser");
+  const dataUser: any = localStorage.getItem('dataUser');
   const convertDataUser = JSON.parse(dataUser);
 
   // useState untuk menampung data dari API
@@ -289,10 +290,10 @@ const StaffList = () => {
 
   // function untuk menampilkan modal delete
   const handleDeleteClick = (item: Item) => {
-    let params:any = {
-      petugas_id:convertDataUser.petugas_id,
-      target_petugas_id:item.petugas_id
-    }
+    let params: any = {
+      petugas_id: convertDataUser.petugas_id,
+      target_petugas_id: item.petugas_id,
+    };
     setDeleteData(params);
     setModalDeleteOpen(true);
   };
@@ -342,7 +343,7 @@ const StaffList = () => {
       });
     }
   };
-  
+
   // function untuk menambah data
   const handleSubmitAddDataPetugas = async (params: any) => {
     console.log('DATA DARI LIST', params);
@@ -379,14 +380,14 @@ const StaffList = () => {
   // function untuk mengubah data
   const handleSubmitEditDataPetugas = async (params: any) => {
     console.log(params, 'EDIT NI');
-    let newData = {}
-  
-    if(params.foto_wajah.startsWith('data:image/')){
-      newData={...params}
+    let newData = {};
+
+    if (params.foto_wajah.startsWith('data:image/')) {
+      newData = { ...params };
     } else {
-      newData = { ...params,foto_wajah:''}
+      newData = { ...params, foto_wajah: '' };
     }
-    console.log(newData,'Data')
+    console.log(newData, 'Data');
 
     try {
       const responseEdit = await apiUpdateAllStaff(newData, token);
@@ -494,6 +495,9 @@ const StaffList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">

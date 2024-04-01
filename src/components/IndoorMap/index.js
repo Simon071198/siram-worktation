@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from 'react';
 
 // porp-types is a library for typechecking of props
@@ -165,8 +163,8 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                     parseInt(row.batt) > 3000
                       ? '#8ed31e'
                       : parseInt(row.batt) > 1000
-                      ? '#eea620'
-                      : '#ef4646',
+                        ? '#eea620'
+                        : '#ef4646',
                 }}
                 fontSize="large"
               />
@@ -214,12 +212,12 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                   {tabIndex === 0
                     ? 'Detail Prajurit Binaan'
                     : tabIndex === 1
-                    ? 'Aktivitas'
-                    : tabIndex === 2
-                    ? 'Riwayat Kesehatan'
-                    : tabIndex === 3
-                    ? 'Riwayat Perkara'
-                    : null}
+                      ? 'Aktivitas'
+                      : tabIndex === 2
+                        ? 'Riwayat Kesehatan'
+                        : tabIndex === 3
+                          ? 'Riwayat Perkara'
+                          : null}
                 </Typography>
                 <IconButton
                   // color="primary"
@@ -412,7 +410,7 @@ function IndoorMap({ gateway1, gateway2, dimension, listWB }) {
                           }}
                           startIcon={<Search color="white" sx={{ mr: 1 }} />}
                         >
-                          <Link to={`/kamera/${row.device_id}`}>
+                          <Link to={`/kamera-live/${row.device_id}`}>
                             <Typography
                               style={{
                                 fontSize: 10,

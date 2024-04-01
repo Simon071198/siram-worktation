@@ -33,6 +33,7 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 interface DaysInMonthProps {
   year: number;
@@ -791,6 +792,9 @@ const shiftJaga = () => {
 
   return (
     <div className="w-full rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       {/* Grup */}
       {modalAddOpen && (
         <AddPetugasShiftGrup
@@ -907,16 +911,18 @@ const shiftJaga = () => {
               </button>
               <button
                 onClick={handleHapusPetugasShift}
-                className={`${hapusPetugasShift ? 'block' : 'hidden'
-                  } bg-blue-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
+                className={`${
+                  hapusPetugasShift ? 'block' : 'hidden'
+                } bg-blue-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
                 id="b-ubah"
               >
                 Ubah Jadwal
               </button>
               <button
                 onClick={handleHapusPetugasShift}
-                className={`${!hapusPetugasShift ? 'block' : 'hidden'
-                  } bg-red-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
+                className={`${
+                  !hapusPetugasShift ? 'block' : 'hidden'
+                } bg-red-500 text-white p-1 rounded-sm space-x-2 text-sm flex items-center`}
                 id="b-hapus"
               >
                 Hapus Jadwal
@@ -935,14 +941,16 @@ const shiftJaga = () => {
         <div className="flex w-full">
           <div className="w-1/6 bg-slate-600 flex justify-between mr-1">
             <h2
-              className={`${!openGrup ? '' : 'hidden'
-                } pl-3 flex items-center h-full`}
+              className={`${
+                !openGrup ? '' : 'hidden'
+              } pl-3 flex items-center h-full`}
             >
               Nama Grup
             </h2>
             <h2
-              className={`${openGrup ? '' : 'hidden'
-                } pl-3 flex items-center h-full`}
+              className={`${
+                openGrup ? '' : 'hidden'
+              } pl-3 flex items-center h-full`}
             >
               Nama Pegawai
             </h2>
@@ -1086,9 +1094,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             case shift[1].nama_shift:
                               shiftBackgroundColor = 'bg-orange-500';
@@ -1097,9 +1105,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             case shift[2].nama_shift:
                               shiftBackgroundColor = 'bg-blue-500';
@@ -1108,9 +1116,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             default:
                               shiftBackgroundColor = 'bg-red-600';
@@ -1167,8 +1175,9 @@ const shiftJaga = () => {
                                       onClick={() =>
                                         handleOpenDeleteSchedule(dataAdd)
                                       }
-                                      className={`${hapusPetugasShift ? 'block' : 'hidden'
-                                        } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      className={`${
+                                        hapusPetugasShift ? 'block' : 'hidden'
+                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
                                     >
                                       <BsTrash className="w-full h-full" />
                                     </button>
@@ -1176,8 +1185,9 @@ const shiftJaga = () => {
                                       onClick={() =>
                                         handleOpenAddModal(dataAdd)
                                       }
-                                      className={`${!hapusPetugasShift ? 'block' : 'hidden'
-                                        } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      className={`${
+                                        !hapusPetugasShift ? 'block' : 'hidden'
+                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
                                     >
                                       <BsPlusSquareDotted className="w-full h-full" />
                                     </button>
@@ -1297,9 +1307,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             case shift[1].nama_shift:
                               shiftBackgroundColor = 'bg-orange-500';
@@ -1308,9 +1318,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             case shift[2].nama_shift:
                               shiftBackgroundColor = 'bg-blue-500';
@@ -1319,9 +1329,9 @@ const shiftJaga = () => {
                                 .split(':')
                                 .slice(0, 2)
                                 .join(':')} - ${jadwalPegawai.waktu_selesai
-                                  .split(':')
-                                  .slice(0, 2)
-                                  .join(':')}`;
+                                .split(':')
+                                .slice(0, 2)
+                                .join(':')}`;
                               break;
                             default:
                               shiftBackgroundColor = 'bg-red-600';

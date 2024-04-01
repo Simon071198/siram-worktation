@@ -26,6 +26,7 @@ import DropdownAction from '../../components/DropdownAction';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -62,8 +63,7 @@ const InventarisList = () => {
   const [rows, setRows] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  console.log(editData,"ini data EDIT BOSS QQ");
-  
+  console.log(editData, 'ini data EDIT BOSS QQ');
 
   const handleChagePage = (pageNumber: any) => {
     setCurrentPage(pageNumber);
@@ -371,14 +371,7 @@ const InventarisList = () => {
 
   const exportToExcel = async () => {
     const dataToExcel = [
-      [
-        'Nama Barang',
-        'Kode SN',
-        'Tipe',
-        'Model',
-        'Merek',
-        'Tanggal Masuk',
-      ],
+      ['Nama Barang', 'Kode SN', 'Tipe', 'Model', 'Merek', 'Tanggal Masuk'],
       ...data.map((item: any) => [
         item.nama_aset,
         item.serial_number,
@@ -406,6 +399,9 @@ const InventarisList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">

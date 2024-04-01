@@ -15,10 +15,12 @@ import Pagination from '../../../components/Pagination';
 import DropdownAction from '../../../components/DropdownAction';
 import Loader from '../../../common/Loader';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { IoChevronForwardOutline } from 'react-icons/io5';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -460,6 +462,9 @@ const PenyidikanList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-15 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">

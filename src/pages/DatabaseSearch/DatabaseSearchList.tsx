@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const routeSearchList = [
   {
@@ -33,33 +34,35 @@ const routeSearchList = [
       </svg>
     ),
   },
-  
 ];
 
 const DatabaseSearchList = () => {
   return (
     <>
-    <div className='container py-[16px]'>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
-        {routeSearchList.map((data) => (
-          <NavLink to={data.link}>
-            <div className="rounded-md border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className="flex items-center gap-2">
-                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-                  {data.icon}
-                </div>
+      <div className="container py-[16px]">
+        <div className="pb-4">
+          <Breadcrumbs url={window.location.href} />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+          {routeSearchList.map((data) => (
+            <NavLink to={data.link}>
+              <div className="rounded-md border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+                    {data.icon}
+                  </div>
 
-                <div>
-                  <h4 className="text-title-md font-bold text-black dark:text-white">
-                    {data.name}
-                  </h4>
+                  <div>
+                    <h4 className="text-title-md font-bold text-black dark:text-white">
+                      {data.name}
+                    </h4>
+                  </div>
                 </div>
-              </div>
-            </div>{' '}
-          </NavLink>
-        ))}
+              </div>{' '}
+            </NavLink>
+          ))}
 
-        {/* <NavLink to={data.link}>
+          {/* <NavLink to={data.link}>
             <div className="rounded-xl border border-stroke bg-slate-300  shadow-default dark:border-strokedark dark:bg-slate-300 ">
               <div className="bg-gradient-to-r from-red-500 to-yellow-500 m-[1px] rounded-xl overflow-hidden hover:from-yellow-500 hover:to-red-500 transition duration-700 ease-linear">
                 <div className="bg-slate-300 m-[2px] rounded-xl hover:bg-slate-200 px-7 py-3">
@@ -79,7 +82,7 @@ const DatabaseSearchList = () => {
             </div>
           </NavLink> */}
 
-        {/* <NavLink to="/pelacakan-dengan-gambar">
+          {/* <NavLink to="/pelacakan-dengan-gambar">
           <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
               <svg
@@ -147,7 +150,7 @@ const DatabaseSearchList = () => {
           </div>{' '}
         </NavLink> */}
 
-        {/* <NavLink to="/pelacakan-wajah-petugas">
+          {/* <NavLink to="/pelacakan-wajah-petugas">
           <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
                 <svg fill="none" 
@@ -167,8 +170,8 @@ Cari Petugas Lemasmil                </h4>
             </div>
           </div>{' '}
         </NavLink> */}
+        </div>
       </div>
-    </div>
     </>
   );
 };

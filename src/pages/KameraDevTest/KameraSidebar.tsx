@@ -110,7 +110,7 @@ const KameraSidebar = (props: any) => {
                     <summary className="grid grid-cols-1 gap-2 items-center font-medium cursor-pointer list-none text-sm">
                       {locDevice.kamera?.map((device, index) => (
                         <NavLink
-                          to={`/kamera-dev-test/${device.kamera_id}`}
+                          to={`/kamera-live/${device.kamera_id}`}
                           key={index}
                         >
                           <div className="flex items-center gap-2">
