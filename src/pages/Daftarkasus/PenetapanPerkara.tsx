@@ -1,25 +1,92 @@
 import { useState, useEffect } from "react";
 import Loader from "../../common/Loader";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Error403Message } from '../../utils/constants';
+import { Alerts } from './AlertDaftarKasus';
+
+import {
+     apiReadAllWBP
+} from "../../services/api";
 
 
 
 
-const PenetapanPerkara = () => {
+const PenetapanPerkara = (
+     { token } : any
+) => {
 
      const [loading, setLoading] = useState(true);
+     const navigate = useNavigate();
+     const location = useLocation();
+
+
+     const [data, setData] = useState([]);
+
+     // const fetchData = async () => {
+     //      let params = {
+     //           page: 1,
+     //           limit: 10,
+     //      };
+     //      await apiReadAllWBP(params, token).
+     //      then((res) => {
+     //           const tersangka = res.data.records?.map((item: any) => ({
+     //                value : item.wbp_profile_id,
+     //                label : item.tanggal_penetapan_tersangka
+     //           }));
+     //           setData(tersangka);
+     //      }
+     //      )
+     //      .catch((e) => {
+     //           if (e.response.status === 403) {
+     //             navigate('/auth/signin', {
+     //               state: { forceLogout: true, lastPage: location.pathname },
+     //             });
+     //           }
+     //           Alerts.fire({
+     //             icon: e.response.status === 403 ? 'warning' : 'error',
+     //             title: e.response.status === 403 ? Error403Message : e.message,
+     //           });
+     //         });
+     // };
+
+
 
      const dummyData = [
           {
-              tanggal_penetapan: "Sabtu, 01 Januari 2021",
+              tanggal_penetapan: "Sabtu, 01 Januari 2023",
               nama_hakim: "Hakim 1",
               posisi: "Hakim Ketua",
               aktif: "Ya"
           },
           {
-              tanggal_penetapan: "Sabtu, 01 Januari 2021",
+              tanggal_penetapan: "Sabtu, 01 Januari 2023",
               nama_hakim: "Hakim 2",
               posisi: "Hakim Anggota",
               aktif: "Ya"
+          },
+          
+      ];
+     const dummyData1 = [
+          {
+              tanggal_penetapan: "Sabtu, 02 Januari 2023",
+              nama_panitera_pengganti: "Rahmat",
+              aktif: "Ya"
+          },
+          {
+               tanggal_penetapan: "Rabu, 04 Januari 2023",
+               nama_panitera_pengganti: "Karyono",
+               aktif: "Ya"
+          },
+          
+      ];
+     const dummyData2 = [
+          {
+              tanggal_penetapan: "Kamis, 05 Januari 2021",
+              nama_hakim: "Purwanto, SH, MH",
+          },
+          {
+               tanggal_penetapan: "Jumat, 06 Januari 2021",
+               nama_hakim: "Sri Wahyuni, SH, MH",
           },
           
       ];
@@ -99,7 +166,7 @@ const PenetapanPerkara = () => {
                </div>
                <div className="">
                     <div className="grid grid-cols-1">
-                    {dummyData.map((data, index) => {
+                    {dummyData1.map((data, index) => {
                          return (
                               <div key={index} className={`dark:bg-meta-4${index !== dummyData.length - 1 ? ' border-b bg-gray-1 ' : ''}`}>
                                   <div className="grid grid-cols-3 hover:bg-sky-950">
@@ -107,10 +174,10 @@ const PenetapanPerkara = () => {
                                       {data.tanggal_penetapan}
                                   </div>
                                   <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
-                                      {data.nama_hakim}
+                                      {data.nama_panitera_pengganti}
                                   </div>
                                   <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
-                                      {data.posisi}
+                                      {data.aktif}
                                   </div>
                                   </div>
                               </div>
@@ -136,7 +203,7 @@ const PenetapanPerkara = () => {
                </div>
                <div className="">
                     <div className="grid grid-cols-1">
-                    {dummyData.map((data, index) => {
+                    {dummyData2.map((data, index) => {
                              return (
                               <div key={index} className={`dark:bg-meta-4${index !== dummyData.length - 1 ? ' border-b bg-gray-1' : ''}`}>
                                   <div className="grid grid-cols-2 hover:bg-sky-950">
