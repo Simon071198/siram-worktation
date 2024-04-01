@@ -10,6 +10,7 @@ import * as xlsx from 'xlsx';
 import dayjs from 'dayjs';
 import { Alerts } from '../AlertLog';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 export default function GatewayLog() {
   const navigate = useNavigate();
@@ -237,6 +238,9 @@ export default function GatewayLog() {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div>
         <h3 className="text-2xl font-semibold"> Gateway Log</h3>
         <div className="mt-5 mb-5">

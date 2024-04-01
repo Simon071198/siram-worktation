@@ -22,6 +22,9 @@ import {
 import BackgroundSecurityImage from '../images/security-background.jpg';
 import { BsBriefcaseFill } from 'react-icons/bs';
 import Loader from '../common/Loader';
+import toast from 'react-hot-toast';
+import { version } from '../utils/constants';
+import { apiversion } from '../services/api';
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -87,6 +90,90 @@ const MainMenu = () => {
           {routes.map((menu: any) => {
             return <MenuItem menu={menu} key={menu.id} />;
           })}
+          <button
+            onClick={async (e) => {
+              e.preventDefault();
+              try {
+                // Call the apiversion function to get the response
+                const response = await apiversion({
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+
+                const versionName = response.data.data.version_name;
+
+                // Update toast content with fetched data
+                // toast(
+                //   `This app version is ${version}.`,
+                //   {
+                //     duration: 5000,
+                //   }
+                // );
+
+                if (versionName == version) {
+                  toast.success(
+                    `This app version is up-to-date ( Version ${version} )`,
+                    { duration: 5000 },
+                  );
+                } else {
+                  toast((t) => (
+                    <span
+                      style={{
+                        ...t.style,
+                        animation: t.visible
+                          ? 'custom-enter 1s ease'
+                          : 'custom-exit 1s ease',
+                      }}
+                    >
+                      There is an update from version {version} to version{' '}
+                      {versionName}{' '}
+                      <a
+                        href={response.data.data.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-500 bold"
+                      >
+                        Download
+                      </a>
+                      <button
+                        onClick={() => toast.dismiss(t.id)}
+                        style={{
+                          border: 'none',
+                          position: 'absolute',
+                          right: '0.5rem',
+                          top: '0.5rem',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <b>X</b>
+                      </button>
+                    </span>
+                  ));
+                }
+
+                console.log('Data:', response.data.data);
+              } catch (error) {
+                console.error('Error fetching data:', error);
+                toast('Error fetching data', { duration: 5000 });
+              }
+            }}
+            className="rounded-sm border border-stroke py-6 px-7.5 shadow-default backdrop-blur-sm dark:border-slate-400"
+            style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
+          >
+            <div className="flex h-32 w-full items-center justify-center rounded-lg  bg-meta-4 text-white">
+              {LogIcon}
+            </div>
+
+            <div className="mt-4 flex items-end justify-between">
+              <div className="w-full">
+                <h4 className="text-title-md text-center font-bold text-white">
+                  Version
+                </h4>
+              </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -127,19 +214,19 @@ const routes = [
   {
     id: 6,
     name: 'Shift',
-    link: '/ShiftJaga',
+    link: '/shift-jaga',
     icon: ShiftIcon,
   },
   {
     id: 7,
     name: 'Master Data',
-    link: '/master-data-list',
+    link: '/master-data',
     icon: DashboardIcon,
   },
   {
     id: 8,
     name: 'Kegiatan',
-    link: '/event-data',
+    link: '/kegiatan',
     icon: eventIcons,
   },
   {
@@ -151,7 +238,7 @@ const routes = [
   {
     id: 10,
     name: 'Kamera Live',
-    link: '/kamera-dev-test',
+    link: '/kamera-live',
     icon: CameraIcon,
   },
   {
@@ -163,7 +250,7 @@ const routes = [
   {
     id: 11,
     name: 'Pelacakan',
-    link: '/db-search-list',
+    link: '/pelacakan',
     icon: PelacakanIcon,
   },
   {
@@ -175,7 +262,7 @@ const routes = [
   {
     id: 13,
     name: 'Pengaturan',
-    link: '/setting-list',
+    link: '/pengaturan-list',
     icon: PengaturanIcon,
   },
   {
@@ -184,18 +271,18 @@ const routes = [
     link: '/log-riwayat',
     icon: LogIcon,
   },
-  {
-    id: 15,
-    name: 'Version',
-    link: '/version',
-    icon: LogIcon,
-  },
-  {
-    id: 16,
-    name: 'Tutorial',
-    link: '/tutorial-data',
-    icon: <IoDocumentText size={80} />,
-  },
+  // {
+  //   id: 15,
+  //   name: 'Version',
+  //   link: '/version',
+  //   icon: LogIcon,
+  // },
+  // {
+  //   id: 16,
+  //   name: 'Tutorial',
+  //   link: '/tutorial-data',
+  //   icon: <IoDocumentText size={80} />,
+  // },
 ];
 
 // const MainMenu = () => {

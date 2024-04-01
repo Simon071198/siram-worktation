@@ -25,6 +25,7 @@ import 'driver.js/dist/driver.css';
 import dayjs from 'dayjs';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 const InmateList = () => {
   const navigate = useNavigate();
@@ -305,7 +306,6 @@ const InmateList = () => {
     }
   };
 
-
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleSearchClick();
@@ -519,7 +519,10 @@ const InmateList = () => {
     const ws = xlsx.utils.aoa_to_sheet(dataToExcel);
     const wb = xlsx.utils.book_new();
     xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
-    xlsx.writeFile(wb, `Data-Tersangka ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,);
+    xlsx.writeFile(
+      wb,
+      `Data-Tersangka ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
+    );
   };
 
   // const modalRefs = data.map(() => useRef(null));
@@ -622,6 +625,9 @@ const InmateList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border  border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">

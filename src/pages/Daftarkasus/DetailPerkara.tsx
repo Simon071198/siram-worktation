@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PenetapanPerkara from './PenetapanPerkara';
 import DataUmum from '../../components/DataUmum';
+import JadwalSidang from '../../components/JadwalSidang';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -29,7 +30,11 @@ const DetailPerkara = () => {
         </div>
       )}
       {tapIndex == 1 && <div>Penetapan</div>}
-      {tapIndex == 2 && <div>Jadwal Sidang</div>}
+      {tapIndex == 2 && (
+        <div>
+          <JadwalSidang />
+        </div>
+      )}
       {tapIndex == 3 && <div>Saksi</div>}
       {tapIndex == 4 && <div>Barang Bukti</div>}
       {tapIndex == 5 && <div>Riwayat Perkara</div>}

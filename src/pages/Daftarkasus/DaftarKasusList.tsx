@@ -8,7 +8,7 @@ import {
   apiUpdateDaftarKasus,
   apiDeleteDaftarKasus,
   apiCreateBarangBukti,
-  apiJenisPidanaRead
+  apiJenisPidanaRead,
 } from '../../services/api';
 import { AddDaftarKasusModal } from './ModalAddDaftarKasus';
 import { DeleteDaftarKasusModal } from './ModalDeleteDaftarKasus';
@@ -24,6 +24,7 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
 import DetailPerkara from './DetailPerkara';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 interface Item {
   nama_kasus: string;
@@ -66,9 +67,7 @@ const DaftarKasus = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
-
   //Filter Table
-
 
   const [searchTanggalPelaporan, setSearchTanggalPelaporan] = useState(false);
   const [searchTanggalKejadian, setSearchTanggalKejadian] = useState(false);
@@ -95,16 +94,16 @@ const DaftarKasus = () => {
   // },[])
 
   const handleButtonFilter = (type: any) => {
-    if (type === "nomor_kasus") {
+    if (type === 'nomor_kasus') {
       setSearchNomorKasus((prevState) => !prevState);
-    } else if (type === "nama_kasus") {
+    } else if (type === 'nama_kasus') {
       setSearchNamaKasus((prevState) => !prevState);
-    } else if (type === "tanggal_pelaporan") {
+    } else if (type === 'tanggal_pelaporan') {
       setSearchTanggalPelaporan((prevState) => !prevState);
-    } else if (type === "tanggal_kejadian") {
+    } else if (type === 'tanggal_kejadian') {
       setSearchTanggalKejadian((prevState) => !prevState);
     }
-  }
+  };
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
@@ -130,7 +129,6 @@ const DaftarKasus = () => {
     const newFilter = e.target.value;
     setFilterTanggalKejadian(newFilter);
   };
-
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -182,7 +180,7 @@ const DaftarKasus = () => {
       const params = {
         filter: {
           nama_kasus: searchData.nama_kasus,
-          nama_jenis_pidana: searchData.nama_jenis_pidana
+          nama_jenis_pidana: searchData.nama_jenis_pidana,
         },
         page: currentPage,
         pageSize: pageSize,
@@ -309,7 +307,7 @@ const DaftarKasus = () => {
     }
   };
 
-  console.log(jenisPidana);  
+  console.log(jenisPidana);
 
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
@@ -606,6 +604,9 @@ const DaftarKasus = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -614,7 +615,7 @@ const DaftarKasus = () => {
                 value={searchData.nama_kasus}
                 placehorder="Cari Nama Kasus"
                 onChange={(e) =>
-                  setSearchData({...searchData, nama_kasus: e.target.value})
+                  setSearchData({ ...searchData, nama_kasus: e.target.value })
                 }
               />
             </div>
@@ -622,7 +623,10 @@ const DaftarKasus = () => {
             <select
               value={searchData.nama_jenis_pidana}
               onChange={(e) =>
-                setSearchData({ ...searchData, nama_jenis_pidana: e.target.value })
+                setSearchData({
+                  ...searchData,
+                  nama_jenis_pidana: e.target.value,
+                })
               }
               className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-pidana"
             >
@@ -706,8 +710,9 @@ const DaftarKasus = () => {
 
       <div className="">
         <div
-          className={`${isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
-            } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
+          className={`${
+            isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'
+          } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
         >
           <div className="flex flex-col items-center">
             <div className="p-2.5 xl:p-5 justify-center flex">
@@ -717,7 +722,10 @@ const DaftarKasus = () => {
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nama_kasus")}>
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('nama_kasus')}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nama Kasus
               </h5>

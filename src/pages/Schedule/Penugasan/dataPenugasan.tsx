@@ -15,6 +15,7 @@ import { Error403Message } from '../../../utils/constants';
 // import { Pagination } from '@windmill/react-ui';
 import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../../MasterData/Search';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 interface Item {
   nama_penugasan: string;
@@ -324,6 +325,9 @@ const Penugasan = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
