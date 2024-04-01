@@ -73,6 +73,7 @@ export const AddDaftarKasusModal = ({
   const [dataStatusWBP, setDataStatusWBP] = useState([]);
   const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
   const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
   const [dataSaksi, setDataSaksi] = useState([]);
   const [filter, setFilter] = useState('');
