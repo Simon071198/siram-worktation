@@ -11,7 +11,7 @@ const RiwayatBukti = () => {
     <div className="">
       {RiwayatBuktiData.map((data, index) => (
         <React.Fragment key={index}>
-          <div className="border mt-5 p-2">
+          <div className="p-2">
             <table className="w-full">
               <tbody>
                 <tr>

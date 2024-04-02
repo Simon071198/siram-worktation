@@ -55,9 +55,9 @@ export const RiwayatPerkara = () => {
   ];
 
   return (
-    <div className="container py-[16px] m-3">
-      <div className=" ml-15 flex flex-col justify-center">
-        <div className="flex flex-col">
+    <div className="container py-[16px]">
+      <div className="">
+        <div className="flex flex-col items-center">
           <div className="grid grid-cols-10 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 w-[110%]">
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base">
@@ -85,7 +85,7 @@ export const RiwayatPerkara = () => {
         </div>
         {dataDummy.map((item: any, index: any) => {
           return (
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center">
               <div className="grid grid-cols-10 rounded-sm bg-meta-4 hover:bg-sky-950 w-[110%]">
                 <div
                   //   onClick={() => handleDetailClick(item)}

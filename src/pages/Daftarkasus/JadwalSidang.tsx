@@ -31,7 +31,7 @@ const dataSidang: sidangType[] = [
 const JadwalSidang = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>();
   return (
-    <div className="border-1 border-black m-3 p-1.5">
+    <div className="border-1 border-black p-1.5">
       <table className="border-collapse mt-2 mb-2">
         <thead>
           <tr>
