@@ -4,7 +4,7 @@ const PutusanSela = () => {
   const [data, setData] = useState();
 
   return (
-    <div className="grid grid-rows-3 grid-flow-col gap-4 m-3">
+    <div className="grid grid-rows-3 grid-flow-col gap-4">
       <div className="row-span-3 bg-gray-3 dark:bg-slate-600 rounded m-3">
         <div className="p-2 lg:p-3">
           <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b">
