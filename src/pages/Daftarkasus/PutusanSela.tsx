@@ -35,7 +35,7 @@ const PutusanSela = () => {
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-black capitalize p-2 text-wrap">
+          <p className="text-black dark:text-black capitalize p-2 text-wrap">
             MEMUTUSKAN 1. Menetapkan menyatakan menerima keberatan yang diajukan
             oleh Penasihat Hukum Terdakwa Riki Ariansyah, S.H. dkk, Mayor CHK
             NRP. 11070085160186. 2. Menyatakan pemeriksaan perkara tersebut
@@ -50,11 +50,11 @@ const PutusanSela = () => {
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-black capitalize p-2 mt-6">
+          <p className="text-black truncate dark:text-black capitalize p-2 mt-11">
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-black capitalize p-2 mt-6"></p>
+          <p className="text-black truncate dark:text-black capitalize p-2 mt-15"></p>
         </div>
       </div>
     </div>
