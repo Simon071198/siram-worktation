@@ -31,37 +31,37 @@ const dataSidang: sidangType[] = [
 const JadwalSidang = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>();
   return (
-    <div className="border-1 border-black p-1.5">
+    <div className="border-1 border-black p-1.5 bg-slate-200">
       <table className="border-collapse mt-2 mb-2">
         <thead>
           <tr>
             <th
-              className={`p-4  w-[3%] font-bold uppercase bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
+              className={`p-4  w-[3%] font-bold uppercase bg-gray-2 dark:bg-slate-400 text-black border border-gray-300`}
             >
               No
             </th>
             <th
-              className={`p-4 font-bold w-[15%] uppercase bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
+              className={`p-4 font-bold w-[15%] uppercase bg-gray-2 dark:bg-slate-400 text-black border border-gray-300`}
             >
               Tanggal Sidang
             </th>
             <th
-              className={`p-4 w-[15%] font-bold uppercase bg-gray-2 dark:bg-slate-600 border border-gray-300`}
+              className={`p-4 w-[15%] font-bold uppercase bg-gray-2 dark:bg-slate-400 border border-gray-300 text-black`}
             >
               Jam
             </th>
             <th
-              className={`p-4 w-[25%] font-bold uppercase bg-gray-2 dark:bg-slate-600 border border-gray-300`}
+              className={`p-4 w-[25%] font-bold uppercase bg-gray-2 dark:bg-slate-400 border border-gray-300 text-black`}
             >
               Agenda
             </th>
             <th
-              className={`p-4 w-[15%] font-bold uppercase bg-gray-2 dark:bg-slate-600 border border-gray-300`}
+              className={`p-4 w-[15%] font-bold uppercase bg-gray-2 dark:bg-slate-400 border border-gray-300 text-black`}
             >
               Ruangan
             </th>
             <th
-              className={`p-4 w-[20%] font-bold uppercase bg-gray-2 dark:bg-slate-600 border border-gray-300`}
+              className={`p-4 w-[20%] font-bold uppercase bg-gray-2 dark:bg-slate-400 border border-gray-300 text-black`}
             >
               Alasan Ditunda
             </th>
@@ -76,32 +76,32 @@ const JadwalSidang = () => {
               onMouseOut={() => setCurrentIndex(null)}
             >
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {index + 1}
               </td>
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {data.tanggalSidang}
               </td>
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {data.jam}
               </td>
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {data.agenda}
               </td>
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {data.ruangan}
               </td>
               <td
-                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 ${currentIndex == index ? 'dark:bg-meta-4-dark' : 'dark:bg-meta-4'} text-center border border-b lg:table-cell relative lg:static`}
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'dark:bg-slate-500' : 'dark:bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
                 {data.alasanDitunda}
               </td>

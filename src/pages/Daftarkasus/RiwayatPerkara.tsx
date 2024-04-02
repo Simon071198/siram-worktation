@@ -55,29 +55,29 @@ export const RiwayatPerkara = () => {
   ];
 
   return (
-    <div className="container py-[16px]">
-      <div className="">
+    <div className="px-15 dark:bg-slate-200 p-2">
+      <div className="mr-3 ml-3">
         <div className="flex flex-col items-center">
-          <div className="grid grid-cols-10 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 w-[110%]">
+          <div className="grid grid-cols-10 text-center bg-gray-2 dark:bg-slate-400 w-[110%]">
             <div className="p-2.5 xl:p-5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium uppercase xsm:text-base text-black">
                 No
               </h5>
             </div>
 
             <div className="p-2.5 xl:p-5 col-span-3">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium uppercase xsm:text-base text-black">
                 Tanggal
               </h5>
             </div>
             <div className="p-2.5 xl:p-5 col-span-3">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium uppercase xsm:text-base text-black">
                 Tahapan
               </h5>
             </div>
 
             <div className="p-2.5 xl:p-5 col-span-3">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium uppercase xsm:text-base text-black">
                 Proses
               </h5>
             </div>
@@ -89,33 +89,33 @@ export const RiwayatPerkara = () => {
               <div className="grid grid-cols-10 rounded-sm bg-meta-4 hover:bg-sky-950 w-[110%]">
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer border-b border-slate-600 dark:border-gray-600"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer border-b border-slate-600 text-black dark:bg-slate-300"
                 >
-                  <p className="hidden text-black dark:text-white sm:block">
+                  <p className="hidden sm:block text-black">
                     {index + 1}
                   </p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 dark:border-gray-600"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
                 >
-                  <p className="hidden text-black dark:text-white sm:block">
+                  <p className="hidden sm:block text-black">
                     {item.tanggal}
                   </p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 dark:border-gray-600"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
                 >
-                  <p className="hidden text-black dark:text-white sm:block">
+                  <p className="hidden sm:block text-black">
                     {item.tahapan}
                   </p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 dark:border-gray-600"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
                 >
-                  <p className="hidden text-black dark:text-white sm:block">
+                  <p className="hidden sm:block text-black">
                     {item.proses}
                   </p>
                 </div>

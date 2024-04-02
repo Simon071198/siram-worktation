@@ -11,34 +11,34 @@ const RiwayatBukti = () => {
     <div className="">
       {RiwayatBuktiData.map((data, index) => (
         <React.Fragment key={index}>
-          <div className="p-2">
-            <table className="w-full">
+          <div className="p-2 dark:bg-slate-200">
+            <table className="w-full text-black">
               <tbody>
                 <tr>
-                  <td className="border py-2">Tanggal Penerimaan</td>
-                  <td className="pl-2">{formatDate(data.tanggal_penerima)}</td>
+                  <td className="border py-2 dark:bg-slate-400">Tanggal Penerimaan</td>
+                  <td className="pl-2 dark:bg-slate-300">{formatDate(data.tanggal_penerima)}</td>
                 </tr>
                 <tr>
-                  <td className="border py-2">
+                  <td className="border py-2 dark:bg-slate-400">
                     Jenis dan Uraian lengkap Barang Bukti
                   </td>
-                  <td className="pl-2">{data.jenis_uraian}</td>
+                  <td className="pl-2 dark:bg-slate-300">{data.jenis_uraian}</td>
                 </tr>
                 <tr>
-                  <td className="border py-2">Tempat Penyimpanan</td>
-                  <td className="pl-2">{data.tempat_penyimpanan}</td>
+                  <td className="border py-2 dark:bg-slate-400">Tempat Penyimpanan</td>
+                  <td className="pl-2 dark:bg-slate-300">{data.tempat_penyimpanan}</td>
                 </tr>
                 <tr>
-                  <td className="border py-2">Nama Penerima</td>
-                  <td className="pl-2">{data.nama_penerima}</td>
+                  <td className="border py-2 dark:bg-slate-400">Nama Penerima</td>
+                  <td className="pl-2 dark:bg-slate-300">{data.nama_penerima}</td>
                 </tr>
                 <tr>
-                  <td className="border py-2">Tgl Penyerahan Barang Bukti</td>
-                  <td className="pl-2">{formatDate(data.tgl_penyerahan)}</td>
+                  <td className="border py-2 dark:bg-slate-400">Tgl Penyerahan Barang Bukti</td>
+                  <td className="pl-2 dark:bg-slate-300">{formatDate(data.tgl_penyerahan)}</td>
                 </tr>
                 <tr>
-                  <td className="border py-2">Catatan</td>
-                  <td className="pl-2">{data.catatan}</td>
+                  <td className="border py-2 dark:bg-slate-400">Catatan</td>
+                  <td className="pl-2 dark:bg-slate-300">{data.catatan}</td>
                 </tr>
               </tbody>
             </table>
