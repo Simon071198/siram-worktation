@@ -17,12 +17,12 @@ const Penuntutan = () => {
   }, []);
 
   return (
-    <div>
+    <div className=" bg-slate-200">
       {loading ? (
         <Loader />
       ) : (
         <div className="pt-3 flex flex-row mr-2 ml-2 pb-3">
-          <div className="flex flex-col shadow-default divide-y rounded-sm border border-stroke bg-white px-2 pt-2 pb-2.5 dark:border-strokedark dark:bg-slate-600">
+          <div className="flex flex-col shadow-default divide-y rounded-sm border-stroke bg-white px-2 pt-2 pb-2.5 dark:border-strokedark dark:bg-slate-400 text-black">
             <div className="uppercase text-sx font-medium flex-none w-44 text-sm flex items-center p-2.5 xl:p-3 cursor-pointer">
               Tanggal Tuntutan
             </div>
@@ -31,7 +31,7 @@ const Penuntutan = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 divide-y object-cover rounded-full">
-            <div className="flex flex-col shadow-default divide-y rounded-sm border border-stroke bg-white px-2 pt-2 pb-2.5 dark:border-strokedark dark:bg-meta-4">
+            <div className="flex flex-col shadow-default divide-y rounded-sm border-stroke bg-white px-2 pt-2 pb-2.5 dark:border-strokedark dark:bg-slate-300 text-black">
               <div className="text-sm flex items-center p-2.5 xl:p-3 cursor-pointer">
                 Senin, 09 Okt. 2023
               </div>

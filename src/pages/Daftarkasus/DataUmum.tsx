@@ -11,7 +11,7 @@ const DataUmum = () => {
   const [data, setData] = useState<Item[]>([]);
 
   return (
-    <div className="grid grid-rows-3 grid-flow-col gap-4">
+    <div className="grid grid-rows-3 grid-flow-col bg-slate-200">
       <div className="row-span-3 bg-gray-3 dark:bg-slate-400 rounded m-3">
         <div className="p-2 lg:p-3">
           <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">

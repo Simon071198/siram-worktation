@@ -88,14 +88,14 @@ const PenetapanPerkara = ({ token }: any) => {
   return (
     <div className="">
       {loading && <Loader />}
-      <div className="px-5 pt-2">
+      <div className="px-5 pt-2 bg-slate-200">
         <div className="">
-          <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+          <div className="pb-2 text-sm font-medium md:text-base dark:text-black">
             Penetapan Hakim
           </div>
           <div className="">
-            <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
-              <div className="grid grid-cols-4 gap-4 p-1">
+            <div className="rounded-sm border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
+              <div className="grid grid-cols-4 gap-4 p-1 text-black">
                 <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
                   Tanggal Penetapan
                 </div>
@@ -110,14 +110,14 @@ const PenetapanPerkara = ({ token }: any) => {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 divide-y object-cover rounded-full">
+            <div className="grid grid-cols-1 divide-y object-cover rounded-full text-black">
               {dummyData.map((data, index) => {
                 return (
                   <div
                     key={index}
-                    className={`dark:bg-meta-4${index !== dummyData.length - 1 ? '' : ''} `}
+                    className={`dark:bg-slate-300 ${index !== dummyData.length - 1 ? '' : ''} `}
                   >
-                    <div className="grid grid-cols-4 hover:bg-sky-950">
+                    <div className="grid grid-cols-4 hover:bg-slate-500">
                       <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
                         {data.tanggal_penetapan}
                       </div>
@@ -137,10 +137,10 @@ const PenetapanPerkara = ({ token }: any) => {
             </div>
           </div>
           <div className="pt-3">
-            <div className="pb-1 text-sm font-medium md:text-base dark:text-white">
+            <div className="pb-1 text-sm font-medium md:text-base dark:text-black">
               Penetapan Panitera Pengganti
             </div>
-            <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+            <div className="rounded-sm border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400 text-black">
               <div className="grid grid-cols-3 gap-3 p-1">
                 <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
                   Tanggal Penetapan
@@ -154,14 +154,14 @@ const PenetapanPerkara = ({ token }: any) => {
               </div>
             </div>
             <div className="">
-              <div className="grid grid-cols-1">
+              <div className="grid grid-cols-1 text-black">
                 {dummyData1.map((data, index) => {
                   return (
                     <div
                       key={index}
-                      className={`dark:bg-meta-4${index !== dummyData.length - 1 ? ' border-b bg-gray-1 ' : ''}`}
+                      className={`dark:bg-slate-300 ${index !== dummyData.length - 1 ? ' border-b bg-gray-1 ' : ''}`}
                     >
-                      <div className="grid grid-cols-3 hover:bg-sky-950">
+                      <div className="grid grid-cols-3 hover:bg-slate-500">
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
                           {data.tanggal_penetapan}
                         </div>
@@ -179,10 +179,10 @@ const PenetapanPerkara = ({ token }: any) => {
             </div>
           </div>
           <div className="pt-3 pb-3">
-            <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+            <div className="pb-2 text-sm font-medium md:text-base dark:text-black">
               Penetapan Sidang Pertama
             </div>
-            <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+            <div className="rounded-sm border-stroke px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400 text-black">
               <div className="grid grid-cols-2 gap-2 p-1">
                 <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
                   Tanggal Penetapan
@@ -193,14 +193,14 @@ const PenetapanPerkara = ({ token }: any) => {
               </div>
             </div>
             <div className="">
-              <div className="grid grid-cols-1">
+              <div className="grid grid-cols-1 text-black">
                 {dummyData2.map((data, index) => {
                   return (
                     <div
                       key={index}
-                      className={`dark:bg-meta-4${index !== dummyData.length - 1 ? ' border-b bg-gray-1' : ''}`}
+                      className={`dark:bg-slate-300 ${index !== dummyData.length - 1 ? ' border-b bg-gray-1' : ''}`}
                     >
-                      <div className="grid grid-cols-2 hover:bg-sky-950">
+                      <div className="grid grid-cols-2 hover:bg-slate-500">
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
                           {data.tanggal_penetapan}
                         </div>
