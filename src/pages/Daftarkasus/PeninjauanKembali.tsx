@@ -397,7 +397,7 @@ const PeninjauanKembali = (
                     Tanggal Pengiriman Berkas PK
                </div>
                <div className="grid grid-cols-2 shadow-default rounded-sm border border-slate-600">
-               <div className="dark:bg-slate-600 px-1 pt-2 pb-2.5 justify-center text-sx font-medium md:text-base divide-y">
+               <div className="dark:bg-slate-600 px-1 justify-center text-sx font-medium md:text-base divide-y">
                     <div className="items-center p-2.5 xl:p-3 cursor-pointer">
                          Tanggal Pengiriman Berkas PK
                     </div>
@@ -405,7 +405,7 @@ const PeninjauanKembali = (
                          Nomor Surat Pengiriman Berkas PK
                     </div>
                </div>
-               <div className="px-1 pt-2 pb-2.5 justify-center text-sx font-medium md:text-base divide-y">
+               <div className="px-1 justify-center text-sx font-medium md:text-base divide-y">
                     <div className="items-center p-2.5 xl:p-3 cursor-pointer">
                          06 Januari 2023
                     </div>
@@ -420,7 +420,7 @@ const PeninjauanKembali = (
                     Putusan PK
                </div>
                <div className="grid grid-cols-2 shadow-default rounded-sm border border-slate-600">
-               <div className="dark:bg-slate-600 px-1 pt-2 pb-2.5 justify-center text-sx font-medium md:text-base divide-y">
+               <div className="dark:bg-slate-600 px-1 justify-center text-sx font-medium md:text-base divide-y">
                     <div className="items-center p-2.5 xl:p-3 cursor-pointer">
                          Tanggal Putusan PK
                     </div>
@@ -440,7 +440,7 @@ const PeninjauanKembali = (
                         Tanggal Pengarsipan PK
                     </div>
                </div>
-               <div className="px-1 pt-2 pb-2.5 justify-center text-sx font-medium md:text-base divide-y">
+               <div className="px-1 justify-center text-sx font-medium md:text-base divide-y">
                     <div className="items-center p-2.5 xl:p-3 cursor-pointer">
                          06 Januari 2023
                     </div>
