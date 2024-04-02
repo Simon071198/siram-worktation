@@ -55,17 +55,11 @@ const DetailPerkara = () => {
           {tapIndex == 2 && <JadwalSidang />}
           {tapIndex == 3 && <div>Saksi</div>}
           {tapIndex == 4 && <Penuntutan />}
-          {tapIndex == 5 && (
-            <div>
-              <PutusanSela />
-            </div>
-          )}
+          {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <div>Kasasi</div>}
-          {tapIndex == 9 && (
-              <PeninjauanKembali />
-          )}
+          {tapIndex == 9 && <PeninjauanKembali />}
           {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>
