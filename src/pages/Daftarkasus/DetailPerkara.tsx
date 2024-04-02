@@ -27,7 +27,7 @@ const DetailPerkara = () => {
     'Peninjauan Kembali',
     'Barang Bukti',
     'Riwayat Perkara',
-    'Peninjauan Kembali'
+    'Peninjauan Kembali',
   ];
   return (
     <div>
@@ -47,7 +47,7 @@ const DetailPerkara = () => {
 
         <div className="bg-slate-700">
           {tapIndex == 0 && (
-            <div className="">
+            <div className="bg-slate-200">
               <DataUmum />
             </div>
           )}
@@ -64,7 +64,7 @@ const DetailPerkara = () => {
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <div>Kasasi</div>}
           {tapIndex == 9 && <div>Peninjauan Kembali</div>}
-          {tapIndex == 10 && <RiwayatBukti/>}
+          {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>
       </div>
