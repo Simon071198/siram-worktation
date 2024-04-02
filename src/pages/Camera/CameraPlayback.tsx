@@ -194,7 +194,7 @@ const CameraPlayback = (props) => {
           console.log(
             baseUrl +
               formattedDeviceName +
-              's/' +
+              '/' +
               formattedDate +
               '/video/' +
               file,
@@ -203,7 +203,7 @@ const CameraPlayback = (props) => {
           return (
             baseUrl +
             formattedDeviceName +
-            's/' +
+            '/' +
             formattedDate +
             '/video/' +
             file

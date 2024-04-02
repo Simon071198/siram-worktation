@@ -7,14 +7,9 @@ import {
   apiVisitorRealtimeLogList,
 } from '../../services/api.js';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { Alerts } from './AlertCamera.js';
 import { Error403Message } from '../../utils/constants.js';
-import { MdExpandLess, MdExpandMore } from 'react-icons/md';
-import { IoLockClosedOutline, IoLockOpenOutline } from 'react-icons/io5';
-import { PiLockKeyOpenDuotone, PiLockKeyLight } from 'react-icons/pi';
 import {
   FaRegArrowAltCircleRight,
   FaRegArrowAltCircleLeft,
@@ -31,6 +26,7 @@ const DataCamera = (props) => {
   const location = useLocation();
   const [isIconOpen, setIsIconOpen] = useState(true);
   const [cameraSize, setCameraSize] = useState(isIconOpen ? '80%' : '100%');
+  const [loading, setLoading] = useState(false);
   const [state, setState] = useState({
     groupId: '',
     groupShow: [],
@@ -224,16 +220,17 @@ const DataCamera = (props) => {
         )} */}
 
         <div className="bg-blackp-1">
-          <div className="relative">
+          <div>
             <div className="player-wrapper">
               <ReactPlayer
-                className="react-player"
                 url={urlStream}
                 width="100%"
                 height="100%"
                 playing={true}
                 playsinline={true}
                 controls={true}
+                onBuffer={() => setLoading(true)}
+                onBufferEnd={() => setLoading(false)}
               />
             </div>
           </div>
@@ -266,19 +263,27 @@ const DataCamera = (props) => {
             {deviceDetail.nama_lokasi_lemasmil &&
               deviceDetail.nama_lokasi_lemasmil}
           </h1>
-          {client.current.readyState !== 1 ? (
+          {/* {client.current.readyState !== 1 ? (
             <h1 className="font-semibold text-xl text-red-500  animate-pulse">
               Error connection
             </h1>
           ) : (
             ''
+          )} */}
+          {client.current.readyState !== WebSocket.OPEN && (
+            <h1 className="font-semibold text-xl text-red-500 animate-pulse">
+              Error connection
+            </h1>
           )}
+          {/* {errorCam == 'hlsError' && (
+            <p className="animate-pulse">Sedang memuat ....</p>
+          )} */}
+          {loading && <p className="animate-pulse">Sedang memuat ....</p>}
         </div>
         <div
           onClick={toggleIcon}
           className="cursor-pointer flex justify-end p-2"
         >
-          {/* Icon to toggle */}
           {isIconOpen ? (
             <FaRegArrowAltCircleLeft
               className=" hover:text-orange-200"
@@ -292,14 +297,12 @@ const DataCamera = (props) => {
           )}
         </div>
       </div>
-      <div className="flex gap-4 h-[52vh] justify-between">
-        {/* kamera */}
+      <div className="flex h-[52vh] justify-between">
         <div className={`w-[${cameraSize}] h-full`}>
           {state.listViewCamera.map((obj, index) => (
             <div key={index}>{renderStream1(obj, index)}</div>
           ))}
         </div>
-        {/* log kamera */}
         <div
           className={`w-[20%] h-[87vh] ml-auto ${cameraSize === '100%' ? 'hidden' : 'block'}`}
         >
@@ -338,9 +341,9 @@ const DataCamera = (props) => {
           </div>
         </div>
       </div>
-      <button onClick={handleStop} className="w-30 h-10 bg-red-400">
+      {/* <button onClick={handleStop} className="w-30 h-10 bg-red-400">
         Stop
-      </button>
+      </button> */}
     </div>
   );
 };
