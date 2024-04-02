@@ -11,7 +11,9 @@ import RiwayatBukti from './RiwayatBukti';
 import Penuntutan from './Penuntutan';
 import { RiwayatPerkara } from './RiwayatPerkara';
 import { Putusan } from './Putusan';
+import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
+import Saksi from './Saksi';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -48,25 +50,17 @@ const DetailPerkara = () => {
         </div>
 
         <div className="bg-slate-700">
-          {tapIndex == 0 && (
-            <div className="bg-slate-200">
-              <DataUmum />
-            </div>
-          )}
+          {tapIndex == 0 && <DataUmum />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
-          {tapIndex == 3 && <div>Saksi</div>}
+          {tapIndex == 3 && <Saksi />}
           {tapIndex == 4 && <Penuntutan />}
-          {tapIndex == 5 && (
-            <div>
-              <PutusanSela />
-            </div>
-          )}
+          {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
-          {tapIndex == 8 && <div>Kasasi</div>}
-          {tapIndex == 9 && <div><PeninjauanKembali /></div>}
-          {tapIndex == 10 && <RiwayatBukti/>}
+          {tapIndex == 8 && <Kasasi />}
+          {tapIndex == 9 && <PeninjauanKembali />}
+          {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>
       </div>

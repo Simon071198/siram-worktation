@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const Banding = () => {
   return (
@@ -230,7 +230,7 @@ const Banding = () => {
             </table>
             </div>
     </div>
-  )
-}
+  );
+};
 
-export default Banding
+export default Banding;
