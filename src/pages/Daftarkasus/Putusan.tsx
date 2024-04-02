@@ -37,11 +37,11 @@ export const Putusan = () => {
     ]
 
     return (
-        <div className="container py-[16px]">
-            <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="container py-[16px] m-3">
+            {/* <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1"> */}
                 <div className="flex flex-col">
                     <div className="grid grid-cols-10 rounded-t-md bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Tanggal Putusan
                             </h5>
@@ -54,7 +54,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600 flex items-center justify-center">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600 flex items-center justify-center">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Status Putusan
                             </h5>
@@ -129,7 +129,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600 flex items-center justify-center">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600 flex items-center justify-center">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Amar Putusan
                             </h5>
@@ -158,7 +158,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600 flex items-center justify-center">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600 flex items-center justify-center">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Pemberitahuan Putusan
                             </h5>
@@ -275,7 +275,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600 flex items-center justify-center">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600 flex items-center justify-center">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Menerima Putusan
                             </h5>
@@ -392,7 +392,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600 flex items-center justify-center">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600 flex items-center justify-center">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Kirim Salinan Putusan
                             </h5>
@@ -509,7 +509,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Kirim Salinan Putusan Kepada Penyidik
                             </h5>
@@ -522,7 +522,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Tanggal Minutasi
                             </h5>
@@ -535,7 +535,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                     <div className="grid grid-cols-10 bg-gray-2 dark:bg-slate-600 ">
-                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-meta-4 dark:border-gray-600">
+                        <div className="p-2.5 xl:p-5 col-span-2 text-center border-b border-stroke dark:border-gray-600">
                             <h5 className="text-sm font-medium uppercase xsm:text-base">
                                 Keterangan
                             </h5>
@@ -545,7 +545,7 @@ export const Putusan = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            {/* </div> */}
         </div>
     )
 
