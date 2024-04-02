@@ -79,21 +79,21 @@ const PeninjauanKembali = (
      return (
           <div className="">
                {loading && <Loader />}
-          <div className="m-3 px-5 pt-2">
+          <div className=" px-5 pt-2 dark:bg-slate-200">
                <div className="">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Data Para Pihak
                </div>
                <div className="">
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-3 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-25">
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 text-black mr-25">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-2">
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-2 text-black">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-4">
+                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-4 text-black">
                               Nama
                          </div>
                     </div>
@@ -101,15 +101,15 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1 divide-y object-cover rounded-full">
                     {dummyData.map((data, index) => {
                          return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData.length - 1 ? '' : ''} `}>
-                                   <div className="grid grid-cols-7 gap-3 hover:bg-sky-950">
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1 mr-25">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData.length - 1 ? '' : ''} `}>
+                                   <div className="grid grid-cols-7 gap-3 hover:bg-slate-500">
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1 text-black mr-25">
                                              {data.no}
                                         </div>
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2">
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 text-black">
                                              {data.nama_status}
                                         </div>
-                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-4">
+                                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-4 text-black">
                                              {data.nama}
                                         </div>
                                    </div>
@@ -119,18 +119,18 @@ const PeninjauanKembali = (
                     </div>
                </div>
                <div className="pt-3">
-               <div className="pb-1 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-1 text-sm font-medium md:text-base text-black">
                     Data Permohonan PK  
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-3 gap-3 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
+                         <div className="uppercase flex items-center justify-center text-sx text-black font-medium md:text-base">
                               Tanggal Permohonan
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
+                         <div className="uppercase flex items-center justify-center text-sx text-black font-medium md:text-base">
                               Pemohon PK
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base">
+                         <div className="uppercase flex items-center justify-center text-sx text-black font-medium md:text-base">
                               Keterangan
                          </div>
                     </div>
@@ -139,15 +139,15 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData1.map((data, index) => {
                          return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData1.length - 1 ? ' border-b bg-gray-1 ' : ''}`}>
-                                  <div className="grid grid-cols-3 hover:bg-sky-950">
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData1.length - 1 ? ' border-b bg-gray-1 ' : ''}`}>
+                                  <div className="grid grid-cols-3 hover:bg-slate-500">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer">
                                       {data.tanggal_permohonan}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer">
                                       {data.pemohon_pk}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer">
                                       {data.keterangan}
                                   </div>
                                   </div>
@@ -158,21 +158,21 @@ const PeninjauanKembali = (
                </div>
                </div>
                <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Pemberitahuan Permohonan PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -182,19 +182,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData2.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer col-span-1 mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-1">
                                       {data.status2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-3">
                                       {data.nama2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       {data.tanggal2}
                                   </div>
                                   </div>
@@ -205,21 +205,21 @@ const PeninjauanKembali = (
                </div>
           </div>
                <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Penerimaan Memori PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -229,19 +229,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData3.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData3.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData3.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-45">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-45">
                                       {data.status3}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-45">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-45">
                                       {data.nama3}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       {data.tanggal3}
                                   </div>
                                   </div>
@@ -252,21 +252,21 @@ const PeninjauanKembali = (
                </div>
           </div>
                <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Penyerahan Memori PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -276,19 +276,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData2.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer col-span-1 mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-1">
                                       {data.status2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-3">
                                       {data.nama2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       {data.tanggal2}
                                   </div>
                                   </div>
@@ -299,21 +299,21 @@ const PeninjauanKembali = (
                </div>
           </div>
                <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Penerimaan Kontra Memori PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -323,19 +323,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData2.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer col-span-1 mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-1">
                                       {data.status2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-3">
                                       {data.nama2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       -
                                   </div>
                                   </div>
@@ -346,21 +346,21 @@ const PeninjauanKembali = (
                </div>
           </div>
           <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                Tanggal Penyerahan Kontra Memori PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -370,19 +370,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData2.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer col-span-1 mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-1">
                                       {data.status2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-3">
                                       {data.nama2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       -
                                   </div>
                                   </div>
@@ -393,79 +393,79 @@ const PeninjauanKembali = (
                </div>
           </div>
           <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Pengiriman Berkas PK
                </div>
                <div className="grid grid-cols-2 shadow-default rounded-sm border border-slate-600">
-               <div className="dark:bg-slate-600 px-1 justify-center text-sx font-medium md:text-base divide-y">
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+               <div className="dark:bg-slate-400 px-1 justify-center text-sx font-medium md:text-base divide-y">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Tanggal Pengiriman Berkas PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Nomor Surat Pengiriman Berkas PK
                     </div>
                </div>
                <div className="px-1 justify-center text-sx font-medium md:text-base divide-y">
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          06 Januari 2023
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          001/SPB-PK/01/2023
                     </div>
                </div>
                </div>
           </div>
           <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Putusan PK
                </div>
                <div className="grid grid-cols-2 shadow-default rounded-sm border border-slate-600">
-               <div className="dark:bg-slate-600 px-1 justify-center text-sx font-medium md:text-base divide-y">
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+               <div className="dark:bg-slate-400 px-1 justify-center text-sx font-medium md:text-base divide-y">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Tanggal Putusan PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Nomor Putusan PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Amar Putusan PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          Majelis Hakim PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                         Panitera Pengganti PK
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                         Tanggal Pengarsipan PK
                     </div>
                </div>
                <div className="px-1 justify-center text-sx font-medium md:text-base divide-y">
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          06 Januari 2023
                     </div>
-                    <div className="items-center p-2.5 xl:p-3 cursor-pointer">
+                    <div className="items-center p-2.5 xl:p-3 cursor-pointer text-black">
                          001/SPB-PK/01/2023
                     </div>
                </div>
                </div>
           </div>
           <div className="pt-3 pb-3">
-               <div className="pb-2 text-sm font-medium md:text-base dark:text-white">
+               <div className="pb-2 text-sm font-medium md:text-base text-black">
                     Tanggal Pemberitahuan Putusan PK
                </div>
-               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-600">
+               <div className="rounded-sm border border-stroke bg-white px-1 pt-2 pb-2.5 shadow-default dark:border-strokedark dark:bg-slate-400">
                     <div className="grid grid-cols-7 gap-10 p-1">
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 mr-20">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 mr-20">
                               No
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1">
                               Status
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-3">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-3">
                               Nama
                          </div>
-                         <div className="uppercase flex items-center justify-center text-sx font-medium md:text-base col-span-1 ml-5">
+                         <div className="uppercase flex items-center justify-center text-black text-sx font-medium md:text-base col-span-1 ml-5">
                               Tanggal
                          </div>
                          
@@ -475,19 +475,19 @@ const PeninjauanKembali = (
                     <div className="grid grid-cols-1">
                     {dummyData2.map((data, index) => {
                              return (
-                              <div key={index} className={`dark:bg-meta-4${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
-                                  <div className="grid grid-cols-7 gap-9 hover:bg-sky-950">
+                              <div key={index} className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}>
+                                  <div className="grid grid-cols-7 gap-9 hover:bg-slate-500">
 
-                                  <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                                  <div className="text-sm flex items-center justify-center text-black xl:p-3 cursor-pointer col-span-1 mr-20">
                                       {data.no}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-1">
                                       {data.status2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-3">
                                       {data.nama2}
                                   </div>
-                                  <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
+                                  <div className="text-sm flex items-center justify-center text-black p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
                                       -
                                   </div>
                                   </div>
