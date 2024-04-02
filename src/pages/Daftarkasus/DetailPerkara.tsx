@@ -12,6 +12,7 @@ import Penuntutan from './Penuntutan';
 import { RiwayatPerkara } from './RiwayatPerkara';
 import { Putusan } from './Putusan';
 import PeninjauanKembali from './PeninjauanKembali';
+import Saksi from './Saksi';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -53,7 +54,7 @@ const DetailPerkara = () => {
           )}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
-          {tapIndex == 3 && <div>Saksi</div>}
+          {tapIndex == 3 && <Saksi />}
           {tapIndex == 4 && <Penuntutan />}
           {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
