@@ -11,6 +11,7 @@ import RiwayatBukti from './RiwayatBukti';
 import Penuntutan from './Penuntutan';
 import { RiwayatPerkara } from './RiwayatPerkara';
 import { Putusan } from './Putusan';
+import PeninjauanKembali from './PeninjauanKembali';
 
 const DetailPerkara = () => {
   const [tapIndex, setTapIndex] = useState(0);
@@ -30,7 +31,7 @@ const DetailPerkara = () => {
     'Peninjauan Kembali',
   ];
   console.log(tapIndex);
-  
+
   return (
     <div>
       <div className=" p-2 bg-slate-500 m-3">
@@ -38,7 +39,7 @@ const DetailPerkara = () => {
           {tabMenu.map((data, index) => {
             return (
               <button
-                className={`${tapIndex===index?'bg-slate-600':'bg-slate-400'} bg-slate-400  text-white hover:bg-slate-300 text-black-700 font-semibold hover:text-white hover:border-transparent rounded-t p-2 ml-1`}
+                className={`${tapIndex === index ? 'bg-slate-700' : 'bg-slate-400'} bg-slate-400  text-white hover:bg-slate-300 text-black-700 font-semibold hover:text-white hover:border-transparent rounded-t p-2 ml-1`}
                 onClick={() => setTapIndex(index)}
               >
                 {data}
@@ -65,7 +66,11 @@ const DetailPerkara = () => {
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <div>Kasasi</div>}
-          {tapIndex == 9 && <div>Peninjauan Kembali</div>}
+          {tapIndex == 9 && (
+            <div>
+              <PeninjauanKembali />
+            </div>
+          )}
           {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>
