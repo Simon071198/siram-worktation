@@ -40,7 +40,7 @@ const DetailPerkara = () => {
           {tabMenu.map((data, index) => {
             return (
               <button
-                className={`${tapIndex === index ? 'bg-slate-700' : 'bg-slate-400'} bg-slate-400  text-white hover:bg-slate-300 text-black-700 font-semibold hover:text-white hover:border-transparent rounded-t p-2 ml-1`}
+                className={`${tapIndex === index ? 'bg-slate-200 text-slate-800' : 'bg-slate-400 text-white hover:text-slate-500 hover:bg-slate-300 '}  text-black-700 font-semibold hover:border-transparent rounded-t p-2 ml-1 duration-200`}
                 onClick={() => setTapIndex(index)}
               >
                 {data}
