@@ -29,14 +29,16 @@ const DetailPerkara = () => {
     'Barang Bukti',
     'Riwayat Perkara',
   ];
+  console.log(tapIndex);
+
   return (
     <div>
       <div className=" p-2 bg-slate-500 m-3">
-        <div className="flex flex-row mt-3 ml-10 ">
+        <div className="flex flex-row mt-3 ml-10 overflow-auto">
           {tabMenu.map((data, index) => {
             return (
               <button
-                className="bg-slate-400 text-white hover:bg-green-500 text-black-700 font-semibold hover:text-white hover:border-transparent rounded p-2 ml-1"
+                className={`${tapIndex === index ? 'bg-slate-700' : 'bg-slate-400'} bg-slate-400  text-white hover:bg-slate-300 text-black-700 font-semibold hover:text-white hover:border-transparent rounded-t p-2 ml-1`}
                 onClick={() => setTapIndex(index)}
               >
                 {data}
@@ -47,7 +49,7 @@ const DetailPerkara = () => {
 
         <div className="bg-slate-700">
           {tapIndex == 0 && (
-            <div className="">
+            <div className="bg-slate-200">
               <DataUmum />
             </div>
           )}
