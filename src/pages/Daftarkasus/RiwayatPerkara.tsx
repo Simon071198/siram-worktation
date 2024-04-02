@@ -55,10 +55,10 @@ export const RiwayatPerkara = () => {
   ];
 
   return (
-    <div className="px-5 dark:bg-slate-200">
-      <div className="">
+    <div className="px-15 dark:bg-slate-200 p-2">
+      <div className="mr-3 ml-3">
         <div className="flex flex-col items-center">
-          <div className="grid grid-cols-10 text-center  rounded-t-md bg-gray-2 dark:bg-slate-400 w-[110%]">
+          <div className="grid grid-cols-10 text-center bg-gray-2 dark:bg-slate-400 w-[110%]">
             <div className="p-2.5 xl:p-5">
               <h5 className="text-sm font-medium uppercase xsm:text-base text-black">
                 No
