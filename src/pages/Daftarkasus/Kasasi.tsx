@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Banding = () => {
+const Kasasi = () => {
   return (
     <div className="p-4">
       <div className="flex flex-col gap-1">
@@ -25,7 +25,12 @@ const Banding = () => {
             <th
               className={`p-4   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
             >
-              Tanggal Pemberitahuan Putusan
+              Diwakili
+            </th>
+            <th
+              className={`p-4   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
+            >
+              Diwakili Oleh
             </th>
           </thead>
           <tbody>
@@ -38,18 +43,21 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Pembanding (Terdakwa)
+                Pemohon (Terdakwa)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
                 Tidak
               </td>
+              <td
+                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
+              ></td>
             </tr>
             <tr>
               <td
@@ -60,7 +68,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -72,18 +80,22 @@ const Banding = () => {
               >
                 Tidak
               </td>
+              <td
+                className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
+              ></td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
-        <h2 className="font-bold pl-2">DATA PEMOHON BANDING</h2>
+        <h2 className="font-bold pl-2">DATA PEMOHON KASASI</h2>
         <table className="w-full mb-8">
           <thead>
             <th
               className={`p-4 w-[15%]   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
             >
-              Tanggal Pemohon
+              Tanggal Permohonan
             </th>
             <th
               className={`p-4 w-[40%]   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
@@ -101,12 +113,12 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Senin, 22 Jan. 2024
+                Jumat, 05 Jan. 2024
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -115,9 +127,10 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
         <h2 className="font-bold pl-2">
-          TANGGAL PEMBERITAHUAN PERMOHONAN BANDING
+          TANGGAL PEMBERITAHUAN PERMOHONAN KASASI
         </h2>
         <table className="w-full mb-8">
           <thead>
@@ -142,7 +155,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -156,8 +169,9 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
-        <h2 className="font-bold pl-2">TANGGAL PENERIMAAN MEMORI BANDING</h2>
+        <h2 className="font-bold pl-2">TANGGAL PENERIMAAN MEMORI KASASI</h2>
         <table className="w-full mb-8">
           <thead>
             <th
@@ -181,12 +195,12 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Pembanding (Terdakwa)
+                Pemohon (Terdakwa)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -195,8 +209,9 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
-        <h2 className="font-bold pl-2">TANGGAL PENYERAHAN MEMORI BANDING</h2>
+        <h2 className="font-bold pl-2">TANGGAL PENYERAHAN MEMORI KASASI</h2>
         <table className="w-full mb-8">
           <thead>
             <th
@@ -220,7 +235,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -234,9 +249,10 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
         <h2 className="font-bold pl-2">
-          TANGGAL PENERIMAAN KONTRA MEMORI BANDING
+          TANGGAL PENERIMAAN KONTRA MEMORI KASASI
         </h2>
         <table className="w-full mb-8">
           <thead>
@@ -261,7 +277,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -270,16 +286,15 @@ const Banding = () => {
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
-              >
-                Pidana Denda Rp.150.000,00
-              </td>
+              ></td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
         <h2 className="font-bold pl-2">
-          TANGGAL PENYERAHAN KONTRA MEMORI BANDING
+          TANGGAL PENYERAHAN KONTRA MEMORI KASASI
         </h2>
         <table className="w-full mb-8">
           <thead>
@@ -304,12 +319,12 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Pembanding (Terdakwa)
+                Pemohon (Terdakwa)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -318,6 +333,7 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
         <h2 className="font-bold pl-2">TANGGAL PEMBERITAHUAN INZAGE</h2>
         <table className="w-full mb-8">
@@ -343,12 +359,12 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Pembanding (Terdakwa)
+                Pemohon (Terdakwa)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -358,7 +374,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -372,16 +388,16 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
-      {/* TANGGAL PENGIRIMAN BERKAS BANDING */}
+
       <div className="flex flex-col gap-1 mb-4">
-        <h2 className="font-bold pl-2">TANGGAL PENGIRIMAN BERKAS BANDING</h2>
+        <h2 className="font-bold pl-2">TANGGAL PENGIRIMAN BERKAS KASASI</h2>
         <table className="border-collapse w-full mt-6">
           <tbody>
             <tr>
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Tanggal Pengiriman Berkas Banding{' '}
+                Tanggal Pengiriman Berkas Kasasi{' '}
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -391,7 +407,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Nomor Surat Pengiriman Berkas Banding
+                Nomor Surat Pengiriman Berkas Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -400,16 +416,16 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
-      {/* PUTUSAN BANDING */}
+
       <div className="flex flex-col gap-1 mb-4">
-        <h2 className="font-bold pl-2">PUTUSAN BANDING</h2>
+        <h2 className="font-bold pl-2">PUTUSAN KASASI</h2>
         <table className="border-collapse w-full mt-6">
           <tbody>
             <tr>
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Tanggal Putusan Banding
+                Tanggal Putusan Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -419,7 +435,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Nomor Putusan Banding
+                Nomor Putusan Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -429,7 +445,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Amar Putusan Banding
+                Amar Putusan Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -439,7 +455,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Majelis Hakim Banding
+                Majelis Hakim Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -449,7 +465,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Panitera Pengganti Banding
+                Panitera Pengganti Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -459,7 +475,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Tanggal Penerimaan Kembali Berkas Banding
+                Tanggal Penerimaan Kembali Berkas Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -469,7 +485,7 @@ const Banding = () => {
               <th
                 className={`p-4 w-[20%] text-left   bg-gray-2 dark:bg-slate-600 text-gray-600 border border-gray-300`}
               >
-                Tanggal Pengarsipan Banding
+                Tanggal Pengarsipan Kasasi
               </th>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -478,10 +494,9 @@ const Banding = () => {
           </tbody>
         </table>
       </div>
+
       <div className="flex flex-col gap-1">
-        <h2 className="font-bold pl-2">
-          TANGGAL PEMBERITAHUAN PUTUSAN BANDING
-        </h2>
+        <h2 className="font-bold pl-2">TANGGAL PEMBERITAHUAN PUTUSAN KASASI</h2>
         <table className="w-full mb-8">
           <thead>
             <th
@@ -515,17 +530,17 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Pembanding (Terdakwa)
+                Pemohon (Terdakwa)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Hadi Syafruddin, S.E., S.T., M.T.
+                Norman Alamsyah, S.H.
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                ~
+                -
               </td>
             </tr>
             <tr>
@@ -537,7 +552,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                Terbanding (Oditur)
+                Termohon (Oditur)
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
@@ -547,7 +562,7 @@ const Banding = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-gray-800 bg-gray-2 dark:bg-meta-4 text-left border border-b lg:table-cell relative lg:static`}
               >
-                ~
+                -
               </td>
             </tr>
           </tbody>
@@ -557,4 +572,4 @@ const Banding = () => {
   );
 };
 
-export default Banding;
+export default Kasasi;

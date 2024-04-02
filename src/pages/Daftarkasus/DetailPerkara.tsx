@@ -11,6 +11,7 @@ import RiwayatBukti from './RiwayatBukti';
 import Penuntutan from './Penuntutan';
 import { RiwayatPerkara } from './RiwayatPerkara';
 import { Putusan } from './Putusan';
+import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
 import Saksi from './Saksi';
 
@@ -49,9 +50,7 @@ const DetailPerkara = () => {
         </div>
 
         <div className="bg-slate-700">
-          {tapIndex == 0 && (
-              <DataUmum />
-          )}
+          {tapIndex == 0 && <DataUmum />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
           {tapIndex == 3 && <Saksi />}
@@ -59,7 +58,7 @@ const DetailPerkara = () => {
           {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
-          {tapIndex == 8 && <div>Kasasi</div>}
+          {tapIndex == 8 && <Kasasi />}
           {tapIndex == 9 && <PeninjauanKembali />}
           {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
