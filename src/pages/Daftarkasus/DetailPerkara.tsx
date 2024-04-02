@@ -27,7 +27,6 @@ const DetailPerkara = () => {
     'Peninjauan Kembali',
     'Barang Bukti',
     'Riwayat Perkara',
-    'Peninjauan Kembali'
   ];
   return (
     <div>
