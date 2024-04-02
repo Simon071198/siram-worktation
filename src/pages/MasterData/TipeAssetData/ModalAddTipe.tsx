@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Alerts } from './AlertTipe';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -19,8 +19,8 @@ export const AddTipeModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-     nama_tipe:''
-    }
+      nama_tipe: '',
+    },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -32,15 +32,13 @@ export const AddTipeModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
 
-
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -96,7 +94,6 @@ export const AddTipeModal = ({
           title: 'Nama tipe aset',
           description: 'Isi nama tipe aset',
         },
-
       },
       {
         element: `${isEdit ? '.b-ubah-modal' : '.b-tambah-modal'}`,
@@ -152,7 +149,7 @@ export const AddTipeModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -170,18 +167,20 @@ export const AddTipeModal = ({
                     {isDetail
                       ? 'Detail Data Tipe Aset'
                       : isEdit
-                      ? 'Edit Data Tipe Aset'
-                      : 'Tambah Data Tipe Aset'}
+                        ? 'Edit Data Tipe Aset'
+                        : 'Tambah Data Tipe Aset'}
                   </h3>
                 </div>
-                {!isDetail && (<button className='pr-[440px]'>
-                  <HiQuestionMarkCircle
-                    // values={filter}
-                    aria-placeholder="Show tutorial"
-                    // onChange={}
-                    onClick={handleClickTutorial}
-                  />
-                </button>)}
+                {!isDetail && (
+                  <button className="pr-[440px]">
+                    <HiQuestionMarkCircle
+                      // values={filter}
+                      aria-placeholder="Show tutorial"
+                      // onChange={}
+                      onClick={handleClickTutorial}
+                    />
+                  </button>
+                )}
                 <strong
                   className="text-xl align-center cursor-pointer "
                   onClick={closeModal}
@@ -208,49 +207,49 @@ export const AddTipeModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_tipe' ? 'Masukan nama tipe' : ''
+                      item === 'nama_tipe' ? 'Masukan nama tipe' : '',
                     )}
                   </p>
                 </div>
 
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
-                {/* <br></br> */}
-                {isDetail ? null : isEdit ? (
-                  <button
-                  className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                    buttonLoad ? 'bg-slate-400' : ''
-                  }`}
-                  type="submit"
-                  disabled={buttonLoad}
-                >
-                  {buttonLoad ? (
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                  {/* <br></br> */}
+                  {isDetail ? null : isEdit ? (
+                    <button
+                      className={`b-ubah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
+                      type="submit"
+                      disabled={buttonLoad}
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                      {buttonLoad ? (
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        ''
+                      )}
+                      Ubah Data Tipe Aset
+                    </button>
                   ) : (
-                    ''
-                  )}
-                  Ubah Data Tipe Aset
-                </button>
-                ) : (
-                  <button
+                    <button
                       className={`b-tambah-modal items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                         buttonLoad ? 'bg-slate-400' : ''
                       }`}
@@ -270,7 +269,7 @@ export const AddTipeModal = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -283,28 +282,29 @@ export const AddTipeModal = ({
                       )}
                       Tambah Data Tipe Aset
                     </button>
-                    )}
-                {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
+                  )}
+                  {errors.filter((item: string) =>
+                    item.startsWith('INVALID_ID'),
+                  ).length > 0 && (
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
+                  {errors.length > 0 && (
+                    <div className="error text-center">
+                      <p className="text-red-400">
+                        Ada data yang masih belum terisi !
+                      </p>
                     </div>
-                  </>
-                )}
-                {errors.length > 0 && (
-                  <div className="error text-center">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
+                  )}
                 </div>
               </form>
             </div>

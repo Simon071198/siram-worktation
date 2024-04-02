@@ -287,7 +287,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                 cy="12"
                 r="10"
                 stroke="currentColor"
-                stroke-width="4"
+                strokeWidth="4"
               ></circle>
               <path
                 className="opacity-75"
@@ -484,8 +484,9 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                   <div className="flex space-x-4">
                     <button
                       onClick={handleSubmit}
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -500,7 +501,6 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     </button>
                   </div>
                 )}
-
               </div>
             </div>
           </>

@@ -65,7 +65,7 @@ const SignIn = () => {
       if (res.data.status === 'success') {
         const Toast = Swal.mixin({
           toast: true,
-          position: "top-end",
+          position: 'top-end',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
@@ -73,22 +73,19 @@ const SignIn = () => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
           },
-          didClose: () => {
-          }
+          didClose: () => {},
         });
-        
-        
+
         localStorage.setItem('dataUser', JSON.stringify(record));
         localStorage.setItem('token', JSON.stringify(token));
         setError(false);
-        
+
         navigate(lastPage);
         Toast.fire({
-          icon: "success",
-          title: "Berhasil Masuk"
+          icon: 'success',
+          title: 'Berhasil Masuk',
         });
         window.location.reload();
-        
 
         // Toast.fire({
         //   icon: "success",
@@ -159,10 +156,11 @@ const SignIn = () => {
               </h2>
 
               <p
-                className={` ${error
+                className={` ${
+                  error
                     ? 'block bg-red-500 text-white text-center mb-6 rounded-md py-2'
                     : 'hidden'
-                  }`}
+                }`}
               >
                 {errorName}
               </p>
@@ -223,8 +221,9 @@ const SignIn = () => {
 
                 <div className="mb-5">
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -241,7 +240,7 @@ const SignIn = () => {
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

@@ -16,23 +16,23 @@ export const AddHistoriPenyidikanModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      wbp_profile_id:'',
-      nama_wbp:'',
-      kasus_id:'',
-      alasan_penyidikan:'',
-      lokasi_penyidikan:'',
-      waktu_penyidikan:'',
-      agenda_penyidikan:'',
-      hasil_penyidikan:'',
-      nomor_penyidikan:'',
-      jenis_perkara_id:'',
-      nama_jenis_perkara:'',
-      kategori_perkara_id:'',
-      nama_kategori_perkara:'',
-      jaksa_penyidik:[],
-      saksi:[],
-      histori_penyidikan:[],
-    }
+      wbp_profile_id: '',
+      nama_wbp: '',
+      kasus_id: '',
+      alasan_penyidikan: '',
+      lokasi_penyidikan: '',
+      waktu_penyidikan: '',
+      agenda_penyidikan: '',
+      hasil_penyidikan: '',
+      nomor_penyidikan: '',
+      jenis_perkara_id: '',
+      nama_jenis_perkara: '',
+      kategori_perkara_id: '',
+      nama_kategori_perkara: '',
+      jaksa_penyidik: [],
+      saksi: [],
+      histori_penyidikan: [],
+    },
   );
 
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -41,15 +41,13 @@ export const AddHistoriPenyidikanModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
 
-
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -134,7 +132,7 @@ export const AddHistoriPenyidikanModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -152,8 +150,8 @@ export const AddHistoriPenyidikanModal = ({
                     {isDetail
                       ? 'Detail Data Penyidikan'
                       : isEdit
-                      ? 'Edit Data Penyidikan'
-                      : 'Tambah Data Penyidikan'}
+                        ? 'Edit Data Penyidikan'
+                        : 'Tambah Data Penyidikan'}
                   </h3>
                 </div>
                 <strong
@@ -182,7 +180,9 @@ export const AddHistoriPenyidikanModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nomor_penyidikan' ? 'Masukan Nomor Penyidikan' : ''
+                      item === 'nomor_penyidikan'
+                        ? 'Masukan Nomor Penyidikan'
+                        : '',
                     )}
                   </p>
                 </div>
@@ -194,7 +194,7 @@ export const AddHistoriPenyidikanModal = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond
@@ -224,7 +224,7 @@ export const AddHistoriPenyidikanModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -258,7 +258,7 @@ export const AddHistoriPenyidikanModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

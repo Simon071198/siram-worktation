@@ -16,8 +16,8 @@ export const AddOditorModal = ({
 }: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-     nama_oditur:''
-    }
+      nama_oditur: '',
+    },
   );
 
   const [buttonLoad, setButtonLoad] = useState(false);
@@ -26,15 +26,13 @@ export const AddOditorModal = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
 
-
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-     
-        if (!value) {
-          errorFields.push(key);
-        }
+      if (!value) {
+        errorFields.push(key);
+      }
     }
 
     if (errorFields.length > 0) {
@@ -119,7 +117,7 @@ export const AddOditorModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -137,8 +135,8 @@ export const AddOditorModal = ({
                     {isDetail
                       ? 'Detail Data Oditur'
                       : isEdit
-                      ? 'Edit Data Oditur'
-                      : 'Tambah Data Oditur'}
+                        ? 'Edit Data Oditur'
+                        : 'Tambah Data Oditur'}
                   </h3>
                 </div>
                 <strong
@@ -167,7 +165,7 @@ export const AddOditorModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : ''
+                      item === 'nama_oditur' ? 'Masukan Nama Oditur' : '',
                     )}
                   </p>
                 </div>
@@ -179,7 +177,7 @@ export const AddOditorModal = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond
@@ -229,7 +227,7 @@ export const AddOditorModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -263,7 +261,7 @@ export const AddOditorModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

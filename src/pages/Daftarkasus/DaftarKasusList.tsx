@@ -638,8 +638,8 @@ const DaftarKasus = () => {
               className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-pidana"
             >
               <option value="">Semua jenis pidana</option>
-              {jenisPidana.map((item: any) => (
-                <option value={item.nama_jenis_pidana}>
+              {jenisPidana.map((item: any, index) => (
+                <option key={index} value={item.nama_jenis_pidana}>
                   {item.nama_jenis_pidana}
                 </option>
               ))}
@@ -660,9 +660,9 @@ const DaftarKasus = () => {
                 className="h-5 w-5 text-black"
               >
                 <path
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 />
               </svg>
             </button>
@@ -722,7 +722,10 @@ const DaftarKasus = () => {
           } rounded-t-md bg-gray-2 dark:bg-slate-600 h-[100px]`}
         >
           <div className="flex flex-col items-center">
-            <div className="p-2.5 xl:p-5 justify-center flex" onClick={() => handleButtonFilter("nomor_kasus")}>
+            <div
+              className="p-2.5 xl:p-5 justify-center flex"
+              onClick={() => handleButtonFilter('nomor_kasus')}
+            >
               <h5 className="text-sm font-medium uppercase xsm:text-base">
                 Nomer Kasus
               </h5>
@@ -816,9 +819,9 @@ const DaftarKasus = () => {
           <div className="flex justify-center p-4 w-ful">No Data</div>
         ) : (
           <>
-            {data.map((item: any) => {
+            {data.map((item: any, index) => {
               return (
-                <div>
+                <div key={index}>
                   <div
                     className={`${
                       isOperator ? 'grid grid-cols-4' : 'grid grid-cols-5'

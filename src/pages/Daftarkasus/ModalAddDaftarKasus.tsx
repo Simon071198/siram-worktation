@@ -7,7 +7,7 @@ import {
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
-  apiJenisPidanaRead
+  apiJenisPidanaRead,
 } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
@@ -646,8 +646,6 @@ export const AddDaftarKasusModal = ({
     });
   };
 
-  
-
   const handleSelectPerkara = (e: any) => {
     const kategoriPerkara: any = dataJenisPerkara.find(
       (item: any) => item.jenis_perkara_id === e?.value,
@@ -694,7 +692,6 @@ export const AddDaftarKasusModal = ({
   // };
 
   console.log(formState);
-  
 
   return (
     // <div
@@ -733,7 +730,7 @@ export const AddDaftarKasusModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -868,39 +865,39 @@ export const AddDaftarKasusModal = ({
                     />
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map((item) =>
-                          item === 'nama_jenis_pidana'
-                            ? 'Masukan Nama Jenis Pidana'
-                            : '',
-                    //    )}
-                      // </p>
-                    // </div>
-                  // </div>
-                  // <div className="form-group w-full">
-                    // <label
-                      // className="  block text-sm font-medium text-black dark:text-white"
-                      // htmlFor="id"
-                    // >
-                      // Jenis Pidana
-                    // </label>
-                    // <Select
-                      // className="capitalize p-jenis"
-                      // name='jenis_pidana_id'
-                      // options={jenisPidanaOptions}
-                      // isDisabled={isDetail}
-                      // isDisabled={true}
-                      // onChange={handleSelectPidana}
-                      // onChange={handleChange}
-                      // placeholder="Pilih Jenis Pidana"
-                      // styles={customStyles}
-                      // value={formState.jenis_pidana_id}
-                      // value={jenisPidanaOptions.find(option => option.value === formState.jenis_pidana_id)}
-                    // />
-                    // <div className="h-2">
-                   // <p className="error-text">
-                        // {errors.map((item) =>
-//                           item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
-
+                        {errors.map(
+                          (item) =>
+                            item === 'nama_jenis_pidana'
+                              ? 'Masukan Nama Jenis Pidana'
+                              : '',
+                          //    )}
+                          // </p>
+                          // </div>
+                          // </div>
+                          // <div className="form-group w-full">
+                          // <label
+                          // className="  block text-sm font-medium text-black dark:text-white"
+                          // htmlFor="id"
+                          // >
+                          // Jenis Pidana
+                          // </label>
+                          // <Select
+                          // className="capitalize p-jenis"
+                          // name='jenis_pidana_id'
+                          // options={jenisPidanaOptions}
+                          // isDisabled={isDetail}
+                          // isDisabled={true}
+                          // onChange={handleSelectPidana}
+                          // onChange={handleChange}
+                          // placeholder="Pilih Jenis Pidana"
+                          // styles={customStyles}
+                          // value={formState.jenis_pidana_id}
+                          // value={jenisPidanaOptions.find(option => option.value === formState.jenis_pidana_id)}
+                          // />
+                          // <div className="h-2">
+                          // <p className="error-text">
+                          // {errors.map((item) =>
+                          //                           item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
                         )}
                       </p>
                     </div>
@@ -1116,30 +1113,30 @@ export const AddDaftarKasusModal = ({
                   </div>
                 </div>
                 <div className="form-group w-full mt-3">
-                    <label
-                      className="  block text-sm font-medium text-black dark:text-white"
-                      htmlFor="id"
-                    >
-                      Ketua Oditur Penyidik
-                    </label>
-                    <Select
-                      className="capitalize p-ketua"
-                      options={ketuaOditurPenyidik}
-                      isDisabled={isDetail}
-                      onChange={handleSelectKetuaOditur}
-                      placeholder="Pilih Ketua Oditur"
-                      styles={customStyles}
-                    />
-                    <div className="h-2">
-                      <p className="error-text">
-                        {errors.map((item) =>
-                          item === 'role_ketua_oditur_ids'
-                            ? 'Pilih Ketua Oditur Penyidik'
-                            : '',
-                        )}
-                      </p>
-                    </div>
+                  <label
+                    className="  block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Ketua Oditur Penyidik
+                  </label>
+                  <Select
+                    className="capitalize p-ketua"
+                    options={ketuaOditurPenyidik}
+                    isDisabled={isDetail}
+                    onChange={handleSelectKetuaOditur}
+                    placeholder="Pilih Ketua Oditur"
+                    styles={customStyles}
+                  />
+                  <div className="h-2">
+                    <p className="error-text">
+                      {errors.map((item) =>
+                        item === 'role_ketua_oditur_ids'
+                          ? 'Pilih Ketua Oditur Penyidik'
+                          : '',
+                      )}
+                    </p>
                   </div>
+                </div>
                 <div className="form-group w-full mt-3">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
@@ -1159,16 +1156,19 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                        errors.includes('wbp_profile_ids')
-                        ? `${errors.includes('wbp_profile_ids')
-                          ? 'Tersangka'
-                          : ''
-                        } ${errors.includes('saksi_id') &&
-                          errors.includes('wbp_profile_ids')
-                          ? 'Dan'
-                          : ''
-                        } ${errors.includes('saksi_id') ? 'Saksi' : ''
-                        } Belum di Pilih`
+                      errors.includes('wbp_profile_ids')
+                        ? `${
+                            errors.includes('wbp_profile_ids')
+                              ? 'Tersangka'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') &&
+                            errors.includes('wbp_profile_ids')
+                              ? 'Dan'
+                              : ''
+                          } ${
+                            errors.includes('saksi_id') ? 'Saksi' : ''
+                          } Belum di Pilih`
                         : ''}
                     </p>
                   </div>
@@ -1221,10 +1221,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangans-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keterangans')
+                                placeholder={`${
+                                  errors.includes('keterangans')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeteranganTersangka(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -1285,10 +1286,11 @@ export const AddDaftarKasusModal = ({
                               <input
                                 id={`keterangan-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder={`${errors.includes('keteranganSaksis')
+                                placeholder={`${
+                                  errors.includes('keteranganSaksis')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan Saksi'
-                                  }`}
+                                }`}
                                 onChange={(e) =>
                                   handleChangeKeterangan(e, index)
                                 } // Menggunakan parameter tambahan index
@@ -1347,7 +1349,7 @@ export const AddDaftarKasusModal = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -1382,7 +1384,7 @@ export const AddDaftarKasusModal = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"

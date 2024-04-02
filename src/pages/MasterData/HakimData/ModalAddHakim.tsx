@@ -20,7 +20,7 @@ export const AddHakimModal = ({
       nama_hakim: '',
       alamat: '',
       departemen: '',
-    }
+    },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -123,7 +123,7 @@ export const AddHakimModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -141,8 +141,8 @@ export const AddHakimModal = ({
                     {isDetail
                       ? 'Detail Data Hakim'
                       : isEdit
-                      ? 'Edit Data Hakim'
-                      : 'Tambah Data Hakim'}
+                        ? 'Edit Data Hakim'
+                        : 'Tambah Data Hakim'}
                   </h3>
                 </div>
                 <strong
@@ -172,7 +172,7 @@ export const AddHakimModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nama_hakim' ? 'Masukan Nama Hakim' : ''
+                      item === 'nama_hakim' ? 'Masukan Nama Hakim' : '',
                     )}
                   </p>
                 </div>
@@ -195,7 +195,7 @@ export const AddHakimModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nip' ? 'Masukan NIP' : ''
+                      item === 'nip' ? 'Masukan NIP' : '',
                     )}
                   </p>
                 </div>
@@ -218,7 +218,7 @@ export const AddHakimModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'alamat' ? 'Masukan alamat' : ''
+                      item === 'alamat' ? 'Masukan alamat' : '',
                     )}
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export const AddHakimModal = ({
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'departemen' ? 'Masukan departemen' : ''
+                      item === 'departemen' ? 'Masukan departemen' : '',
                     )}
                   </p>
                 </div>
@@ -253,7 +253,7 @@ export const AddHakimModal = ({
                     <div className="error">
                       {errors
                         .filter((item: string) =>
-                          item.startsWith('INVALID_ID')
+                          item.startsWith('INVALID_ID'),
                         )[0]
                         .replace('INVALID_ID_', '')}{' '}
                       is not a valid bond
@@ -303,7 +303,7 @@ export const AddHakimModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -337,7 +337,7 @@ export const AddHakimModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
