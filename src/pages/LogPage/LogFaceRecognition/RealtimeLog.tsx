@@ -12,7 +12,7 @@ import { Alerts } from '../AlertLog';
 import { Error403Message } from '../../../utils/constants';
 import * as xlsx from 'xlsx';
 import dayjs from 'dayjs';
-
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 const DataNotFoundModal = ({ open, onClose, message }) => {
   return (
@@ -161,7 +161,6 @@ export default function Realtime() {
   };
 
   const handleExportClick = () => {
-
     const dataToExcel = [
       [
         'Nama',
@@ -295,6 +294,9 @@ export default function Realtime() {
 
   return (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       {/* <NavLink to='/log-face-recognition'>
         <div className='flex capitalize mb-5 items-center'>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" className="w-10 h-10 mr-2">

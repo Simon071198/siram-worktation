@@ -20,6 +20,7 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 // interface Item {
 //   nama_dokumen_bap: string;
@@ -53,7 +54,7 @@ const BAPList = () => {
   const [searchData, setSearchData] = useState({
     nomor_kasus: '',
     nama_kasus: '',
-    nomor_penyidikan: ''
+    nomor_penyidikan: '',
   });
 
   const tokenItem = localStorage.getItem('token');
@@ -89,7 +90,7 @@ const BAPList = () => {
           nama_dokumen_bap: filter,
           nomor_kasus: searchData.nomor_kasus,
           nama_kasus: searchData.nama_kasus,
-          nomor_penyidikan: searchData.nomor_penyidikan
+          nomor_penyidikan: searchData.nomor_penyidikan,
           // lokasi_otmil: 'Cimahi',
         },
         page: currentPage,
@@ -474,12 +475,14 @@ const BAPList = () => {
       `Data-BAP ${dayjs(new Date()).format('DD-MM-YYYY HH.mm')}.xlsx`,
     );
   };
-  
 
   return isLoading ? (
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -494,14 +497,21 @@ const BAPList = () => {
               <SearchInputButton
                 value={searchData.nomor_penyidikan}
                 placehorder="Cari Nomor Penyidikan"
-                onChange={(e) => setSearchData({...searchData, nomor_penyidikan: e.target.value})}
+                onChange={(e) =>
+                  setSearchData({
+                    ...searchData,
+                    nomor_penyidikan: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="w-full search-kasus">
               <SearchInputButton
                 value={searchData.nama_kasus}
                 placehorder="Cari Nama Kasus"
-                onChange={(e) => setSearchData({...searchData, nama_kasus: e.target.value})}
+                onChange={(e) =>
+                  setSearchData({ ...searchData, nama_kasus: e.target.value })
+                }
               />
             </div>
 

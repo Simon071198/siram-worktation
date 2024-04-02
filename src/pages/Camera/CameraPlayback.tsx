@@ -10,10 +10,41 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 const token = dataToken.token;
+
+function extractTimeFromURL(url) {
+  const regex = /\/(\d{2})(\d{2})(\d{2})\.mp4$/;
+  const match = url.match(regex);
+  if (match) {
+    const hours = match[1];
+    const minutes = match[2];
+    const seconds = match[3];
+    return `${hours} : ${minutes} : ${seconds}`;
+  } else {
+    return null; // Return null if no match found
+  }
+}
+
+function getTime(offset = 0) {
+  const now = new Date();
+  now.setHours(now.getHours() + offset);
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function getCurrentDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 const CameraPlayback = (props) => {
   const navigate = useNavigate();
@@ -22,16 +53,16 @@ const CameraPlayback = (props) => {
   const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [extension] = useState('.mp4');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [forUrl, setForurl] = useState(
-    'http://192.168.1.111:4007/record/Camera1/2024.03.28/video/181043.mp4',
-  );
+  const [forUrl, setForurl] = useState('');
+  const [currentRecordingIndex, setCurrentRecordingIndex] = useState(-1);
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
 
   const [filter, setFilter] = useState('');
-  const [date, setDate] = useState('2024-03-15');
-  const [timeStart, setTimeStart] = useState('15:04:00');
-  const [timeFinish, setTimeFinish] = useState('15:06:00');
+  const [date, setDate] = useState(getCurrentDate());
+  const [timeStart, setTimeStart] = useState(getTime(-1));
+  const [timeFinish, setTimeFinish] = useState(getTime());
+  const [detailKamera, setDetailKamera] = useState();
   const [deviceName, setDeviceName] = useState('');
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([
     {
@@ -41,11 +72,47 @@ const CameraPlayback = (props) => {
     },
   ]);
 
+  let cameraName = location.state;
+
   const [playlistPlayback, setPlaylistPlayback] = useState([]);
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4001'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+
+  // useEffect(() => {
+  //   const getCurrentDateTime = () => {
+  //     const now = new Date();
+  //     const currentDate = formatDate(now);
+  //     const currentTime = formatTime(now);
+  //     const futureTime = calculateFutureTime(now, 5); // 5 menit ke depan
+
+  //     setDate(currentDate);
+  //     setTimeStart(currentTime);
+  //     setTimeFinish(futureTime);
+  //   };
+
+  //   getCurrentDateTime();
+  // }, []);
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date) => {
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const seconds = ('0' + date.getSeconds()).slice(-2);
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  const calculateFutureTime = (date, minutes) => {
+    const futureDate = new Date(date.getTime() + minutes * 60000); // Menambahkan menit ke waktu sekarang
+    return formatTime(futureDate);
+  };
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
   // useEffect(() => {
@@ -127,7 +194,7 @@ const CameraPlayback = (props) => {
           console.log(
             baseUrl +
               formattedDeviceName +
-              '/' +
+              's/' +
               formattedDate +
               '/video/' +
               file,
@@ -136,7 +203,7 @@ const CameraPlayback = (props) => {
           return (
             baseUrl +
             formattedDeviceName +
-            '/' +
+            's/' +
             formattedDate +
             '/video/' +
             file
@@ -168,9 +235,7 @@ const CameraPlayback = (props) => {
 
     try {
       const res = await apiDeviceDetail(id);
-      // const res = await apiDeviceDetail(id);
-      console.log(res, 'Perangkat detail playback');
-      // console.log(state.listViewCamera, 'listViewCamera');
+      setDetailKamera(res);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -196,7 +261,7 @@ const CameraPlayback = (props) => {
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method, params }));
   };
-
+  console.log(detailKamera, 'ini detail');
   // Handle camera change
   const handleCameraChange = async (e) => {
     const selectedIndex = e.target.value;
@@ -240,7 +305,7 @@ const CameraPlayback = (props) => {
   };
 
   const handleTimeStartChange = async (e) => {
-    let formattedTime = e.target.value + ':00';
+    let formattedTime = e.target.value;
     console.log(formattedTime);
     await setTimeStart(formattedTime);
     await sendRequest('getPlayback', {
@@ -259,7 +324,7 @@ const CameraPlayback = (props) => {
   };
 
   const handleTimeFinishChange = async (e) => {
-    let formattedTime = e.target.value + ':00';
+    let formattedTime = e.target.value;
     console.log(formattedTime);
     await setTimeFinish(formattedTime);
     await sendRequest('getPlayback', {
@@ -286,13 +351,13 @@ const CameraPlayback = (props) => {
     const driverObj = driver({
       showProgress: true,
       steps: [
-        {
-          element: '.p-kamera',
-          popover: {
-            title: 'Select Camera',
-            description: 'Pilih camera yang diinginkan',
-          },
-        },
+        // {
+        //   element: '.p-kamera',
+        //   popover: {
+        //     title: 'Select Camera',
+        //     description: 'Pilih camera yang diinginkan',
+        //   },
+        // },
         {
           element: '.i-date',
           popover: {
@@ -342,103 +407,126 @@ const CameraPlayback = (props) => {
     }
   }, [currentVideoIndex]);
 
-  const handleRecordingClick = (recording: any) => {
+  const handleRecordingClick = (recording: any, index: any) => {
     let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
-    console.log('Recording clicked:', newUrl);
+    // console.log('Recording clicked:', newUrl);
+    console.log('clicked', recording);
     setForurl(newUrl);
+    // setForurl(recording);
+    setCurrentRecordingIndex(index);
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 pt-10">
-      <div className="flex flex-col items-center justify-center">
-        {selectedCamera ? (
-          <h1 className="text-2xl font-bold mb-4">
-            {selectedCamera.nama_kamera} -{' '}
-            {selectedCamera.nama_lokasi_lemasmil
-              ? selectedCamera.nama_lokasi_lemasmil
-              : selectedCamera.nama_lokasi_otmil}
-          </h1>
-        ) : (
-          <h1 className="text-2xl font-bold mb-4">Playback Camera</h1>
-        )}
-        <div className="flex justify-around gap-4 mb-4">
-          <select onChange={handleCameraChange} className="p-kamera">
+    <div className="px-10">
+      <div className="flex items-center gap-x-2 pt-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
+      <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex flex-col items-center w-full md:w-11/12 lg:w-2/3">
+          <div className="flex flex-col items-center mb-4">
+            <h1 className="text-2xl font-bold tracking-wider">
+              Playback Camera
+            </h1>
+            <h1 className="font-semibold text-lg mt-1 tracking-wider">
+              (
+              {`${detailKamera?.nama_kamera} - ${detailKamera?.nama_ruangan_otmil} - ${detailKamera?.nama_lokasi_otmil}`}
+              )
+            </h1>
+          </div>
+          <div className="flex justify-around gap-4 mb-4">
+            {/* <select onChange={handleCameraChange} className="p-kamera">
             <option value="">Select a Camera</option>
             {dataAllCamera.map((data, index) => (
               <option key={data.kamera_id} value={index}>
                 {data.nama_kamera}
               </option>
             ))}
-          </select>
+          </select> */}
 
-          <input
-            type="date"
-            value={date}
-            onChange={handleDateChange}
-            className="i-date"
-          />
-          <input
-            type="time"
-            value={timeStart}
-            onChange={handleTimeStartChange}
-            className="i-time"
-          />
-          <input
-            type="time"
-            value={timeFinish}
-            onChange={handleTimeFinishChange}
-            className="i-times"
-          />
-          <div className="w-5">
-            <button>
-              <HiQuestionMarkCircle
-                values={filter}
-                aria-placeholder="Show tutorial"
-                // onChange={}
-                onClick={handleClickTutorial}
-              />
-            </button>
+            <input
+              type="date"
+              value={date}
+              onChange={handleDateChange}
+              className="i-date"
+            />
+            <input
+              type="time"
+              value={timeStart}
+              onChange={handleTimeStartChange}
+              className="i-time"
+            />
+            <input
+              type="time"
+              value={timeFinish}
+              onChange={handleTimeFinishChange}
+              className="i-times"
+            />
+            <div className="w-5">
+              <button>
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+            </div>
           </div>
-        </div>
-        {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
-        <div className="player-wrapper r-player">
-          <ReactPlayer
-            className="react-player"
-            url={forUrl}
-            // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
-            // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
-            // url={playlistPlayback[currentVideoIndex]}
-            playing={true}
-            // playsinline={true}
-            controls={true}
-            muted={true}
-            ref={playerRef}
-            // onEnded={handleVideoEnded}
-            onError={handleVideoError}
-            // key={currentVideoIndex}
-          />
-        </div>
-        {/* <Player>
+          {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
+          <div className="player-wrapper r-player flex justify-center space-x-8 w-full">
+            <div className="w-full bg-graydark p-4 flex justify-center">
+              {playlistPlayback.length > 0 ? (
+                <ReactPlayer
+                  // loop={true}
+                  className="react-player"
+                  url={forUrl}
+                  // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
+                  // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
+                  // url={playlistPlayback[currentVideoIndex]}
+                  playing={true}
+                  // playsinline={true}
+                  controls={true}
+                  muted={true}
+                  ref={playerRef}
+                  // onEnded={handleVideoEnded}
+                  onError={handleVideoError}
+                  // key={currentVideoIndex}
+                />
+              ) : (
+                <p className="tracking-wider">Silahkan pilih rekaman</p>
+              )}
+            </div>
+            <div className="box w-2/6 ">
+              <h2 className="text-xl font-bold mb-2 text-center tracking-wider">
+                Recordings
+              </h2>
+              <ul className="flex flex-col overflow-auto h-96 divide-y divide-dashed divide-zinc-500">
+                {playlistPlayback.map((recording, index) => {
+                  const urlParts = recording.split('/');
+                  const fileName = urlParts[urlParts.length - 1];
+                  const isActive = index === currentRecordingIndex;
+
+                  return (
+                    <li
+                      className={`cursor-pointer text-white text-center ${isActive ? 'bg-green-700' : 'bg-transparent'} font-light tracking-widest py-2`}
+                      key={index}
+                      onClick={() => handleRecordingClick(recording, index)}
+                    >
+                      {extractTimeFromURL(recording)}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+          {/* <Player>
           <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" />
         </Player> */}
-      </div>
-      {/* ) : ( */}
-      {/* <h1>No video available for the selected camera and time range.</h1> */}
-      {/* )} */}
-      {/* </div> */}
-      <div className="box flex flex-col h-80 w-1/4 overflow-auto">
-        <h2 className="text-xl font-bold mb-2">Recordings</h2>
-        <ul>
-          {playlistPlayback.map((recording, index) => (
-            <li
-              className="cursor-pointer"
-              key={index}
-              onClick={() => handleRecordingClick(recording)}
-            >
-              {recording}
-            </li>
-          ))}
-        </ul>
+        </div>
+        {/* ) : ( */}
+        {/* <h1>No video available for the selected camera and time range.</h1> */}
+        {/* )} */}
+        {/* </div> */}
       </div>
     </div>
   );

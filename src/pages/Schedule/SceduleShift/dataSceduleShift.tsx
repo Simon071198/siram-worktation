@@ -11,6 +11,7 @@ import Loader from '../../../common/Loader';
 import { DeleteShiftModal } from './deleteDataShift';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 interface Item {
   nama_shift: any;
@@ -216,6 +217,9 @@ const DataSceduleShift = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-md border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         {modalAddOpen && (
           <AddDataShiftKerja
@@ -312,14 +316,15 @@ const DataSceduleShift = () => {
                                   Edit
                                 </button>
                                 <button
-                                  onClick={() => handleDeleteClick(item.shift_id)}
+                                  onClick={() =>
+                                    handleDeleteClick(item.shift_id)
+                                  }
                                   className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
                                 >
                                   Delete
                                 </button>
                               </>
                             )}
-
                           </div>
                         </li>
                       </>

@@ -19,6 +19,7 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 // Interface untuk objek 'params' dan 'item'
 interface Item {
@@ -62,7 +63,7 @@ const GelangList = () => {
   const [isOperator, setIsOperator] = useState<boolean>();
   const [searchData, setSearchData] = useState({
     dmac: '',
-    nama_gelang:''
+    nama_gelang: '',
   });
 
   const tokenItem = localStorage.getItem('token');
@@ -403,6 +404,9 @@ const GelangList = () => {
     <Loader />
   ) : (
     <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
@@ -412,9 +416,11 @@ const GelangList = () => {
                 placehorder="Cari nama Gelang"
                 // onChange={handleFilterChange}
                 value={searchData.nama_gelang}
-                onChange={(e) => setSearchData({ ...searchData, nama_gelang: e.target.value })}
+                onChange={(e) =>
+                  setSearchData({ ...searchData, nama_gelang: e.target.value })
+                }
 
-              // onClick={handleSearchClick}
+                // onClick={handleSearchClick}
               />
               {/* <select
             className="w-3/6 text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
@@ -429,12 +435,14 @@ const GelangList = () => {
           </select> */}
             </div>
             <div className="flex w-full search">
-                <SearchInputButton
-                  value={searchData.dmac}
-                  placehorder="Cari Nomor DMAC"
-                  onChange={(e) => setSearchData({ ...searchData, dmac: e.target.value })}
-                />
-              </div>
+              <SearchInputButton
+                value={searchData.dmac}
+                placehorder="Cari Nomor DMAC"
+                onChange={(e) =>
+                  setSearchData({ ...searchData, dmac: e.target.value })
+                }
+              />
+            </div>
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search"
               type="button"

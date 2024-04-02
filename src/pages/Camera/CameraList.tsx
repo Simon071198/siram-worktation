@@ -6,6 +6,7 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const CameraList = () => {
   const navigate = useNavigate();
@@ -154,6 +155,9 @@ const CameraList = () => {
   return (
     <>
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen">
+        <div className="py-4 pl-6">
+          <Breadcrumbs url={window.location.href} />
+        </div>
         {/* <div className="flex flex-col items-center"> */}
         <div className="w-full flex justify-center pt-5 mb-10">
           <h2 className="font-bold text-xl tracking-tight mr-3">
@@ -251,7 +255,7 @@ const CameraList = () => {
                                         </summary>
                                         {r?.kamera.map((k) => (
                                           <NavLink
-                                            to={`/kamera/${k.kamera_id}`}
+                                            to={`/kamera-live/${k.kamera_id}`}
                                           >
                                             <p
                                               className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
@@ -360,7 +364,7 @@ const CameraList = () => {
   //                     </span>
   //                   </summary>
   //                   {/* {locationDevice.ruangan.map((device,index) => (
-  //                     <NavLink to={`/kamera/${device.kamera_id}`} key={index}>
+  //                     <NavLink to={`/kamera-live/${device.kamera_id}`} key={index}>
   //                       <p className="text-slate-300 mt-3 group-open:animate-fadeIn ml-[20px]">
   //                         {device.nama_kamera}
   //                       </p>
@@ -389,7 +393,7 @@ const CameraList = () => {
   //                         </summary>
   //                         {ruanganDevice.kamera.map((device, index) => (
   //                           <NavLink
-  //                             to={`/kamera/${device.kamera_id}`}
+  //                             to={`/kamera-live/${device.kamera_id}`}
   //                             key={index}
   //                           >
   //                             <p className="text-slate-300 mt-3 group-open:animate-fadeIn ml-[20px]">
@@ -476,7 +480,7 @@ const CameraList = () => {
   //                     </span>
   //                   </summary>
   //                   {/* {locationDevice.ruangan.map((device,index) => (
-  //                     <NavLink to={`/kamera/${device.kamera_id}`} key={index}>
+  //                     <NavLink to={`/kamera-live/${device.kamera_id}`} key={index}>
   //                       <p className="text-slate-300 mt-3 group-open:animate-fadeIn ml-[20px]">
   //                         {device.nama_kamera}
   //                       </p>
@@ -505,7 +509,7 @@ const CameraList = () => {
   //                         </summary>
   //                         {ruanganDevice.kamera.map((device, index) => (
   //                           <NavLink
-  //                             to={`/kamera/${device.kamera_id}`}
+  //                             to={`/kamera-live/${device.kamera_id}`}
   //                             key={index}
   //                           >
   //                             <p className="text-slate-300 mt-3 group-open:animate-fadeIn ml-[20px]">

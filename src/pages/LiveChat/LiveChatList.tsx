@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import SidebarLiveChat from './SidebarLiveChat/SidebarLiveChat';
 import BeforeActiveChat from './Chat/BeforeActiveChat';
 import LiveChatDisplay from './Chat/LiveChatDisplay';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const socket = io('http://192.168.1.135:4010');
 
@@ -69,7 +70,10 @@ const LiveChatList: React.FC = () => {
   };
 
   return (
-    <div className="container py-[16px] ">
+    <div className="container py-[16px]">
+      <div className="pb-4">
+        <Breadcrumbs url={window.location.href} />
+      </div>
       <div className="w-full bg-slate-600 px-4 py-4 rounded-md">
         <label className="font-bold text-white">Live Chat</label>
       </div>
