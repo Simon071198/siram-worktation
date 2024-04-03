@@ -57,7 +57,7 @@ const DetailPerkara = () => {
           {tapIndex == 0 && <DataUmum />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
-          {tapIndex == 3 && <Saksi />}
+          {tapIndex == 3 && <Saksi dataPerkara={dataPerkara}/>}
           {tapIndex == 4 && <Penuntutan />}
           {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
