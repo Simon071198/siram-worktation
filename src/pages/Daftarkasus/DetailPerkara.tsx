@@ -14,8 +14,11 @@ import { Putusan } from './Putusan';
 import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
 import Saksi from './Saksi';
+import { useLocation } from 'react-router-dom';
 
 const DetailPerkara = () => {
+  const location = useLocation();
+  console.log(location, "location")
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
     'Data Umum',

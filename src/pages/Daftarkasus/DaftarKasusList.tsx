@@ -604,7 +604,9 @@ const DaftarKasus = () => {
       });
     }
   };
-
+  const getDetailData = (datanya: any) => {
+    return navigate('/detail-perkara', { state: {data: datanya} })
+  }
   console.log(searchData);
 
   return isLoading ? (
@@ -827,7 +829,7 @@ const DaftarKasus = () => {
                   >
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('/detail-perkara')}
+                      onClick={() => getDetailData(item)}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -837,7 +839,7 @@ const DaftarKasus = () => {
 
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('/detail-perkara')}
+                      onClick={() => getDetailData(item)}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -847,7 +849,7 @@ const DaftarKasus = () => {
 
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('/detail-perkara')}
+                      onClick={() => getDetailData(item)}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
@@ -857,7 +859,7 @@ const DaftarKasus = () => {
 
                     <div
                       // onClick={() => handleDetailClick(item)}
-                      onClick={() => navigate('/detail-perkara')}
+                      onClick={() => getDetailData(item)}
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">
