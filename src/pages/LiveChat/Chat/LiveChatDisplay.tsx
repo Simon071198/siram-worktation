@@ -19,7 +19,7 @@ interface LiveChatDisplayProps {
   setUsername: React.Dispatch<React.SetStateAction<string>>;
   setNama: React.Dispatch<React.SetStateAction<string>>;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
-  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>; 
 }
 
 const LiveChatDisplay: React.FC<LiveChatDisplayProps> = ({
@@ -37,11 +37,11 @@ const LiveChatDisplay: React.FC<LiveChatDisplayProps> = ({
   setMessage,
   setFile,
 }) => {
+  const [base64Image, setBase64Image] = useState<string | null>(null);
   useEffect(() => {
     console.log('room', selectedRoom);
     console.log('Nama Lokasi:', namaLokasi);
   }, [selectedRoom, namaLokasi]);
-
   const namalokasi = namaLokasi;
   console.log('nama lokasi ', namalokasi);
   useEffect(() => {
@@ -83,12 +83,14 @@ const LiveChatDisplay: React.FC<LiveChatDisplayProps> = ({
         roomMessages={roomMessages}
         selectedRoom={selectedRoom}
         messagesRef={messagesRef}
+        base64Image={base64Image}
       />
       <Input
         onSendMessage={onSendMessage}
         message={message}
         setFile={setFile}
         setMessage={setMessage}
+        setBase64Image={setBase64Image}
       />
     </div>
   );

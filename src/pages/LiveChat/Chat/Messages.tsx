@@ -6,11 +6,13 @@ interface ChatMessagesProps {
   roomMessages: any[];
   selectedRoom: string | null;
   messagesRef: React.RefObject<HTMLDivElement>;
+  base64Image: string | null;
 }
 
 const Messages: React.FC<ChatMessagesProps> = ({
   roomMessages,
   selectedRoom,
+  base64Image,
   messagesRef,
 }) => {
   useEffect(() => {
@@ -39,6 +41,7 @@ const Messages: React.FC<ChatMessagesProps> = ({
   }
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [adaImage, setAdaImage] = useState(false);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -61,7 +64,8 @@ const Messages: React.FC<ChatMessagesProps> = ({
 
   roomMessages.forEach((message: any) => {
     const content = message.message;
-    const from = message.nama;
+    const from = message.username;
+    const foto_wajah = message.foto_wajah;
     // const picture = message.picture;
 
     const startDate = new Date(message.timestamp);
@@ -85,6 +89,7 @@ const Messages: React.FC<ChatMessagesProps> = ({
     const newArray = {
       content: content,
       from: from,
+      foto_wajah: foto_wajah,
       timeAgoString: timeAgoString,
       // picture : picture,
       // waktuChat: waktuChat,
@@ -132,6 +137,7 @@ const Messages: React.FC<ChatMessagesProps> = ({
             key={index}
             content={data.content}
             from={data.from}
+            foto_wajah={data.foto_wajah}
             // picture = {data.picture}
             // waktuChat={data.waktuChat}
           />
@@ -144,70 +150,33 @@ const Messages: React.FC<ChatMessagesProps> = ({
     scrollToBottom();
   }, [messageGroups]);
 
+  // useEffect(() => {
+  //   if (base64Image !== null) {
+  //     setAdaImage(true);
+  //     console.log('ada gambar', base64Image);
+  //   }
+  // }, [base64Image]);
+
   return (
-    <div
-      ref={messagesContainerRef}
-      className="bg-slate-200 p-[10px] h-[490px] overflow-scroll"
-    >
-      {messageGroups}
-    </div>
+    <>
+      {adaImage ? (
+        <>
+          <div className='bg-slate-200 p-[10px] h-[490px] overflow-hidden'>
+            <div className='bg-slate-200 h-[490px] flex justify-center items-center overflow-hidden'>
+              <img src={base64Image} alt='gambar' className='h-[350px]' />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div
+          ref={messagesContainerRef}
+          className='bg-slate-200 p-[10px] h-[490px] overflow-scroll'
+        >
+          {messageGroups}
+        </div>
+      )}
+    </>
   );
 };
 
 export default Messages;
-
-//
-// import React, { useEffect } from "react";
-
-// interface ChatMessagesProps {
-//   roomMessages: any[];
-//   selectedRoom: string | null;
-//   messagesRef: React.RefObject<HTMLDivElement>;
-// }
-
-// const ChatMessages: React.FC<ChatMessagesProps> = ({ roomMessages, selectedRoom, messagesRef }) => {
-//   useEffect(() => {
-//     if (selectedRoom) {
-//       // Fetch or listen for messages for the selected room
-//     }
-//   }, [selectedRoom]);
-
-//   return (
-//     <div
-//       className="h-[70vh] w-full border-4 border-gray-300 p-4 rounded overflow-y-auto"
-//       ref={messagesRef as React.RefObject<HTMLDivElement>}
-//     >
-//       {roomMessages.map((roomMessage: any, index: any) => (
-//         <div
-//           key={index}
-//           className={`my-2 ${
-//             roomMessage.username === "username" ? "justify-end text-right" : "justify-start"
-//           }`}
-//         >
-//           <div
-//             className={`rounded p-2 ${
-//               roomMessage.username === "username" ? "bg-green-100 text-right" : "bg-blue-100"
-//             }`}
-//           >
-//             <p
-//               className={`font-bold ${
-//                 roomMessage.username === "username" ? "text-green-900" : "text-blue-900"
-//               }`}
-//             >
-//               {roomMessage.username}
-//             </p>
-//             <p
-//               className={`${
-//                 roomMessage.username === "username" ? "text-green-900" : "text-blue-900"
-//               }`}
-//             >
-//               {roomMessage.message}
-//             </p>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default ChatMessages;

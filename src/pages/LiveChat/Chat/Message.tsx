@@ -6,12 +6,14 @@ import { time } from 'console';
 const userColors: { [key: string]: string } = {};
 
 const Message = (props: any) => {
-  const { content, from } = props;
+  const { content, from, foto_wajah, gambar_upload } = props;
 
   const dataUser = JSON.parse(localStorage.getItem('dataUser') || '{}') as any;
   console.log(dataUser, 'dataUser');
 
-  const image = `https://dev.transforme.co.id/siram_admin_api${dataUser.image}`;
+  const image = `https://dev.transforme.co.id/siram_admin_api${foto_wajah}`;
+  const images= `https://dev.transforme.co.id/siram_admin_api${dataUser.image}`;
+  console.log("image", image);
 
   function getRandomColor(from: string) {
     // Jika warna sudah ada untuk pengguna ini, gunakan warna tersebut
@@ -70,7 +72,7 @@ const Message = (props: any) => {
       >
         <div className="flex flex-col">
           <img
-            src={image}
+            src={`${dataUser.nama_petugas === from ? images : image}`}
             alt="profile"
             className="w-8 h-8 rounded-full "
           ></img>
@@ -90,7 +92,7 @@ const Message = (props: any) => {
               }`}
             >
               <div
-                className={`${getRandomColor(from)}  ${from === dataUser.nama_petugas ? 'hidden' : 'text-left'}`}
+                className={` font-bold ${getRandomColor(from)}  ${from === dataUser.nama_petugas ? 'hidden' : 'text-left'}`}
               >
                 {from}
               </div>
