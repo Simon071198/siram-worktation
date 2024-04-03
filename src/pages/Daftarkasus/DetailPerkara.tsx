@@ -17,8 +17,9 @@ import Saksi from './Saksi';
 import { useLocation } from 'react-router-dom';
 
 const DetailPerkara = () => {
-  const location = useLocation();
-  console.log(location, "location")
+  const {state} = useLocation();
+  const dataPerkara = state.data
+  // console.log(dataPerkara, "location")
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
     'Data Umum',
