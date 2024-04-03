@@ -86,38 +86,30 @@ export const RiwayatPerkara = () => {
         {dataDummy.map((item: any, index: any) => {
           return (
             <div className="flex flex-col items-center">
-              <div className="grid grid-cols-10 rounded-sm bg-meta-4 hover:bg-sky-950 w-[110%]">
+              <div className="group grid grid-cols-10 rounded-sm bg-meta-4 w-[110%]">
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer border-b border-slate-600 text-black dark:bg-slate-300"
+                  className=" flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer border-b border-slate-600 text-black dark:bg-slate-300 dark:group-hover:bg-slate-500"
                 >
-                  <p className="hidden sm:block text-black">
-                    {index + 1}
-                  </p>
+                  <p className="hidden sm:block text-black">{index + 1}</p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300 dark:group-hover:bg-slate-500"
                 >
-                  <p className="hidden sm:block text-black">
-                    {item.tanggal}
-                  </p>
+                  <p className="hidden sm:block text-black">{item.tanggal}</p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300 dark:group-hover:bg-slate-500"
                 >
-                  <p className="hidden sm:block text-black">
-                    {item.tahapan}
-                  </p>
+                  <p className="hidden sm:block text-black">{item.tahapan}</p>
                 </div>
                 <div
                   //   onClick={() => handleDetailClick(item)}
-                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300"
+                  className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer col-span-3 border-b border-slate-600 text-black dark:bg-slate-300 dark:group-hover:bg-slate-500"
                 >
-                  <p className="hidden sm:block text-black">
-                    {item.proses}
-                  </p>
+                  <p className="hidden sm:block text-black">{item.proses}</p>
                 </div>
               </div>
             </div>
