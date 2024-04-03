@@ -1,4 +1,5 @@
 import React, { Component, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface Item {
   nama_kasus: string;
@@ -7,110 +8,98 @@ interface Item {
   nama_jenis_pidana: string;
 }
 
-const DataUmum = () => {
-  const [data, setData] = useState<Item[]>([]);
+const DataUmum = ({ dataperkara }) => {
+  const [states, setState] = useState<Item[]>([]);
+
+  console.log(dataperkara, 'location');
 
   return (
     <div className="grid grid-rows-3 grid-flow-col bg-slate-200">
-      <div className="row-span-3 bg-gray-3 dark:bg-slate-400 rounded m-3">
-        <div className="p-2 lg:p-3">
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+      <div className="row-span-3 rounded m-3">
+        <div className="p-2 lg:p-3 grid grid-cols-4 gap-x-8 gap-y-[0.125rem]">
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400 rounded-t">
             Nomor Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.nomor_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Nama Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.nama_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Jenis Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.jenis_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Nama Jenis Pidana
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.nama_jenis_pidana ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Lokasi Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.lokasi_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Tanggal Kejadian Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.waktu_kejadian ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Tanggal Pelaporan Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p className="text-black truncate dark:text-black capitalize p-2 col-span-3">
+            {dataperkara.waktu_pelaporan_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Tanggal Pelimpahan Kasus
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b text-black">
+          <p
+            className={`text-black truncate dark:text-black capitalize p-2 col-span-3`}
+          >
+            {dataperkara.tanggal_pelimpahan_kasus ?? '-'}
+          </p>
+
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
             Jumlah Penyidikan
           </h5>
 
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-40 text-black">
-            Oditur Penyidik
-          </h5>
-
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-t text-black">
-            Ketua Oditur Penyidik
-          </h5>
-
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-48 border-t text-black">
-            Pihak Terlibat
-          </h5>
-
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-36 border-t text-black">
-            Tersangka
-          </h5>
-
-          <h5 className="text-sm font-medium uppercase md:text-base p-2 border-t text-black">
-            Saksi
-          </h5>
-        </div>
-      </div>
-
-      <div className="col-span-12 h-100 mt-2">
-        <div className="p-2 lg:p-3">
-          <p className="text-black truncate dark:text--blackcapitalize p-2">
-            3/Pid.K/28-III/2024/Otmil
+          <p
+            className={`text-black truncate dark:text-black capitalize p-2 col-span-3`}
+          >
+            {dataperkara.penyidikan.length}
           </p>
 
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            Pelecehan Terhadap Karyawan 1
-          </p>
+          <div className="bg-slate-400 min-h-10">
+            <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-40 text-black bg-slate-400 min-h-10">
+              Oditur Penyidik
+            </h5>
+          </div>
 
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            Bohong
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            Pidana Kejahatan
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            Lokasi Kejadian Perkara
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            04/11/2023 16:02
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2">
-            07/11/2023 16:02
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2 mt-1">
-            07/11/2023 16:02
-          </p>
-
-          <p className="text-black truncate dark:text-black capitalize p-2 mt-1">
-            17
-          </p>
-
-          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 mb-2 mt-3">
+          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 mb-2 mt-3 col-span-3">
             <table className="border-collapse border border-slate-500 ">
               <thead>
                 <tr>
@@ -120,28 +109,41 @@ const DataUmum = () => {
                 </tr>
               </thead>
               <tbody className="text-center items-center">
-                <tr>
-                  <td className="border-b bg-gray-3 dark:bg-slate-300 p-2">
-                    Pajar Bayu
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border-b bg-gray-3 dark:bg-slate-300 p-2">
-                    Dany
-                  </td>
-                </tr>
-                <tr>
-                  <td className=" bg-gray-3 dark:bg-slate-300 p-2">Nano</td>
-                </tr>
+                {dataperkara.oditur_penyidik.map((item: any, index: any) => (
+                  <tr key={index}>
+                    <td className="border-b bg-gray-3 dark:bg-slate-300 p-2">
+                      {item.nama_oditur}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
 
-          <p className="text-black truncate dark:text-black capitalize p-2 mb-5">
-            Pajar Bayu
-          </p>
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black bg-slate-400">
+            Ketua Oditur Penyidik
+          </h5>
 
-          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500">
+          <div className="col-span-3">
+            {dataperkara.oditur_penyidik
+              .filter((item: any) => item.role_ketua == 1)
+              .map((item: any, index: any) => (
+                <p
+                  className="text-black truncate dark:text-black capitalize p-2 mb-5"
+                  key={index}
+                >
+                  {item.nama_oditur}
+                </p>
+              ))}
+          </div>
+
+          <div className="bg-slate-400 min-h-10">
+            <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-48 text-black bg-slate-400">
+              Pihak Terlibat
+            </h5>
+          </div>
+
+          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 col-span-3 mb-2 mt-3">
             <table className="border-collapse border border-slate-500 ">
               <thead>
                 <tr>
@@ -170,7 +172,13 @@ const DataUmum = () => {
             </table>
           </div>
 
-          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 mt-8">
+          <div className="bg-slate-400 min-h-10">
+            <h5 className="text-sm font-medium uppercase md:text-base p-2 mb-36 text-black bg-slate-400">
+              Tersangka
+            </h5>
+          </div>
+
+          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 col-span-3 mb-2 mt-3">
             <table className="border-collapse border border-slate-500 ">
               <thead>
                 <tr>
@@ -186,21 +194,25 @@ const DataUmum = () => {
                 </tr>
               </thead>
               <tbody className="text-center items-center">
-                <tr className="group bg-slate-300 hover:bg-slate-500 hover:border-t">
-                  <td className="p-2 group-hover:border-r">1</td>
-                  <td className="p-2 group-hover:border-r">Dono</td>
-                  <td className="p-2">Tersangka Utama</td>
-                </tr>
-                <tr className="group bg-slate-300 hover:bg-slate-500 hover:border-t">
-                  <td className="p-2 group-hover:border-r">2</td>
-                  <td className="p-2 group-hover:border-r">Hengko Binastomo</td>
-                  <td className="p-2">Tersangka Kedua</td>
-                </tr>
+                {dataperkara.wbp_profile.map((item: any, index: any) => (
+                  <tr
+                    className="group bg-slate-300 hover:bg-slate-500 hover:border-t"
+                    key={index}
+                  >
+                    <td className="p-2 group-hover:border-r">{index + 1}</td>
+                    <td className="p-2 group-hover:border-r">{item.nama}</td>
+                    <td className="p-2">{item.keterangan}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
 
-          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 mt-10">
+          <h5 className="text-sm font-medium uppercase md:text-base p-2 text-black min-h-10 bg-slate-400 rounded-b">
+            Saksi
+          </h5>
+
+          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 col-span-3 mb-2 mt-3">
             <table className="border-collapse border border-slate-500 ">
               <thead>
                 <tr>
@@ -216,22 +228,25 @@ const DataUmum = () => {
                 </tr>
               </thead>
               <tbody className="text-center items-center">
-                <tr className="group bg-slate-300 hover:bg-slate-500 hover:border-t">
-                  <td className="p-2 group-hover:border-r">1</td>
-                  <td className="p-2 group-hover:border-r">Dono</td>
-                  <td className="p-2">Melihat</td>
-                </tr>
-                <tr className="group bg-slate-300 hover:bg-slate-500 hover:border-t">
-                  <td className="p-2 group-hover:border-r">2</td>
-                  <td className="p-2 group-hover:border-r">Hengko Binastomo</td>
-                  <td className="p-2">Melihat</td>
-                </tr>
+                {dataperkara.saksi.map((item: any, index: any) => (
+                  <tr
+                    className="group bg-slate-300 hover:bg-slate-500 hover:border-t"
+                    key={index}
+                  >
+                    <td className="p-2 group-hover:border-r">{index + 1}</td>
+                    <td className="p-2 group-hover:border-r">
+                      {item.nama_saksi}
+                    </td>
+                    <td className="p-2">{item.keterangan}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      {/* <div className="row-span-2 col-span-2">03</div> */}
+
+      {/* <div className="row-span-2 col-span-3">03</div> */}
     </div>
   );
 };
