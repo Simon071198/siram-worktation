@@ -170,7 +170,7 @@ const DataUmum = () => {
             </table>
           </div>
 
-          <div className="text-black truncate dark:text-balck capitalize p-3 border border-slate-500 mt-8">
+          <div className="text-black truncate dark:text-black capitalize p-3 border border-slate-500 mt-8">
             <table className="border-collapse border border-slate-500 ">
               <thead>
                 <tr>
