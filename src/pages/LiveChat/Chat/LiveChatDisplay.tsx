@@ -4,7 +4,7 @@ import ChatMessages from './Messages';
 import Input from './InputChat';
 import iconPicture from '../../../images/icon.png';
 
-const socket = io('http://192.168.1.135:4010');
+// const socket = io('http://192.168.1.111:4010');
 
 interface LiveChatDisplayProps {
   username: string;
