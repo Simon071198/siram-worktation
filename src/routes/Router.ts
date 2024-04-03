@@ -196,6 +196,7 @@ const CameraPlaybackDetail = lazy(
 );
 const MenuTutorial = lazy(() => import('../pages/Tutorial/TutorialList'));
 
+const EntryData = lazy(() => import('../pages/EntryData/Index'))
 const coreRoutes = [
   // {
   //   path: '/kemera-dev-test/:id',
@@ -208,6 +209,11 @@ const coreRoutes = [
   //   title: 'kamera dev test',
   //   component: KameraTest,
   // },
+  {
+    path: '/entry-data',
+    title: 'Entry Data',
+    component: EntryData,
+  },
   {
     path: '/penyidikan',
     title: 'penyidikan',

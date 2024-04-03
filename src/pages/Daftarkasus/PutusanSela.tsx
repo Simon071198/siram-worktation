@@ -4,8 +4,8 @@ const PutusanSela = () => {
   const [data, setData] = useState();
 
   return (
-    <div className="grid grid-rows-3 grid-flow-col gap-4 m-3">
-      <div className="row-span-3 bg-gray-3 dark:bg-slate-600 rounded m-3">
+    <div className="grid grid-rows-3 grid-flow-col bg-slate-200">
+      <div className="row-span-3 bg-gray-3 dark:bg-slate-400 rounded m-3 text-black">
         <div className="p-2 lg:p-3">
           <h5 className="text-sm font-medium uppercase md:text-base p-2 border-b">
             Tanggal Putusan Sela
@@ -31,11 +31,11 @@ const PutusanSela = () => {
 
       <div className="col-span-12 h-30 mt-2">
         <div className="p-2 lg:p-3">
-          <p className="text-black truncate dark:text-white capitalize p-2">
+          <p className="text-black truncate dark:text-black capitalize p-2">
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-white capitalize p-2 text-wrap">
+          <p className="text-black dark:text-black capitalize p-2 text-wrap">
             MEMUTUSKAN 1. Menetapkan menyatakan menerima keberatan yang diajukan
             oleh Penasihat Hukum Terdakwa Riki Ariansyah, S.H. dkk, Mayor CHK
             NRP. 11070085160186. 2. Menyatakan pemeriksaan perkara tersebut
@@ -46,15 +46,15 @@ const PutusanSela = () => {
             perkara kepada negara.
           </p>
 
-          <p className="text-black truncate dark:text-white capitalize p-2">
+          <p className="text-black truncate dark:text-black capitalize p-2">
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-white capitalize p-2 mt-6">
+          <p className="text-black truncate dark:text-black capitalize p-2 mt-11">
             Selasa, 10 Okt. 2023
           </p>
 
-          <p className="text-black truncate dark:text-white capitalize p-2 mt-6"></p>
+          <p className="text-black truncate dark:text-black capitalize p-2 mt-15"></p>
         </div>
       </div>
     </div>
