@@ -18,7 +18,8 @@ const dataSidang: sidangType[] = [
       tanggalPemeriksaan: 'Kamis, 04 Apr. 2024',
   },
 ];
-const Saksi = () => {
+const Saksi = ({dataPerkara}: any) => {
+  // console.log(dataPerkara, "dape")
   const [currentIndex, setCurrentIndex] = useState<number | null>();
   return (
     <div className="border-1 border-black p-1.5 bg-slate-200">
@@ -38,12 +39,22 @@ const Saksi = () => {
             <th
               className={`p-4 font-bold w-[15%] uppercase text-black bg-slate-400 border border-gray-300`}
             >
-              Tanggal Pemeriksaan
+              Alamat
+            </th>
+            <th
+              className={`p-4 font-bold w-[15%] uppercase text-black bg-slate-400 border border-gray-300`}
+            >
+              No Kontak
+            </th>
+            <th
+              className={`p-4 font-bold w-[15%] uppercase text-black bg-slate-400 border border-gray-300`}
+            >
+              Keterangan
             </th>
           </tr>
         </thead>
         <tbody>
-          {dataSidang.map((data, index) => (
+          {dataPerkara?.saksi?.map((data, index) => (
             <tr
               key={index}
               className="bg-white hover:bg-meta-4 mb-10"
@@ -58,12 +69,22 @@ const Saksi = () => {
               <td
                 className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'bg-slate-500' : 'bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
-                {data.nama}
+                {data.nama_saksi}
               </td>
               <td
                 className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'bg-slate-500' : 'bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
               >
-                {data.tanggalPemeriksaan}
+                {data.alamat}
+              </td>
+              <td
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'bg-slate-500' : 'bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
+              >
+                {data.no_kontak}
+              </td>
+              <td
+                className={`w-full lg:w-auto p-3 text-black bg-gray-2 ${currentIndex == index ? 'bg-slate-500' : 'bg-slate-300'} text-center border border-b lg:table-cell relative lg:static`}
+              >
+                {data.keterangan}
               </td>
             </tr>
           ))}

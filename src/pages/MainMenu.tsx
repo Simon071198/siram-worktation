@@ -182,6 +182,12 @@ const MainMenu = () => {
 
 const routes = [
   {
+    id: 0,
+    name: 'Entry Data',
+    link: '/entry-data',
+    icon: <PiIdentificationCardThin size={90} />,
+  },
+  {
     id: 1,
     name: 'Penyidikan',
     link: '/penyidikan',
