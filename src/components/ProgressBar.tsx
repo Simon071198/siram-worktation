@@ -4,6 +4,7 @@ const ProgressBar = ({ list, currentForm }: any) => {
   return (
     <div className="mb-2 flex  justify-center items-center p-8 w-full">
       {list.map((data, index) => {
+        const isAnimate = index   < currentForm; // Check if the current index is less than or equal to currentForm
         const isVisible = index <= currentForm; // Check if the current index is less than or equal to currentForm
         return (
           <div className="flex items-center justify-start">
@@ -17,12 +18,14 @@ const ProgressBar = ({ list, currentForm }: any) => {
               }`}
             >
               {index + 1}
+              <span className='absolute top-39 text-xs
+              '>{data.nama}</span>
             </span>
             {index + 1 !== list.length && (
               <div
                 key={index}
-                className={`h-1 flex-1 rounded-none w-36 ${currentForm === index && 'animate-pulse'} ${
-                  isVisible ? `bg-blue-500` : `bg-slate-600`
+                className={`h-1 flex-1 rounded-none w-36 ${currentForm - 1 === index && 'animate-pulse'} ${
+                  isAnimate ? `bg-blue-500` : `bg-slate-600`
                 }`}
               ></div>
             )}
