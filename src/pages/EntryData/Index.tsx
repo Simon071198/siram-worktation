@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
-import WbpInsert from './Wbp';
+import { WbpInsert } from './WbpInsert';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
