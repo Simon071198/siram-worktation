@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
+import BarangBukti from './BarangBukti';
 
 const EntryData = () => {
   const navigate = useNavigate();
@@ -29,11 +30,7 @@ const EntryData = () => {
     },
     {
       nama: 'Barang Bukti',
-      component: (
-        <div>
-          <input type="text" placeholder="form 3" className="p-2 rounded-md" />
-        </div>
-      ),
+      component: <BarangBukti />,
     },
     {
       nama: 'Detail Penyidikan',
@@ -44,7 +41,7 @@ const EntryData = () => {
       ),
     },
     {
-      nama: 'Detail Berita Acara Pemeriksaan (BAP)',
+      nama: 'BAP',
       component: (
         <div>
           <input type="text" placeholder="form 5" className="p-2 rounded-md" />
