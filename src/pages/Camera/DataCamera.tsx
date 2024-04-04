@@ -27,6 +27,7 @@ const DataCamera = (props) => {
   const [isIconOpen, setIsIconOpen] = useState(true);
   const [cameraSize, setCameraSize] = useState(isIconOpen ? '80%' : '100%');
   const [loading, setLoading] = useState(false);
+  const [errorCam, setErrorCam] = useState(false);
   const [state, setState] = useState({
     groupId: '',
     groupShow: [],
@@ -53,6 +54,8 @@ const DataCamera = (props) => {
   };
   const videoRef = useRef(null);
   const playerRef = useRef(null);
+  const errorTimeoutRef: any = useRef(null);
+
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
   useEffect(() => {
     // Initialize WebSocket connection
@@ -61,7 +64,32 @@ const DataCamera = (props) => {
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
     };
+    client.current.onmessage = (message) => {
+      const data = JSON.parse(message.data);
+      if (data.type === 'error') {
+        // Tangkap pesan error dan tampilkan kepada pengguna
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
+        errorTimeoutRef.current = setTimeout(() => {
+          setErrorCam(true);
+          console.log(data, 'ini data error');
+          console.log('Error from server camera:', data.message);
+        }, 1500); // Setelah 2 detik, tampilkan pesan error
+      }
+      if (data.type === 'info') {
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
+        setErrorCam(false);
+        console.log(data, 'ini data berhasil');
+      }
+    };
+    // client.current.onmessage = (message) => {
+    //   const data = JSON.parse(message.data);
+    //   if (data.type === 'info') {
+    //     // Tangkap pesan error dan tampilkan kepada pengguna
+    //     console.log(data, 'ini data info');
 
+    //     console.log('Error from server camera:', data.message);
+    //   }
+    // };
     // Cleanup function
     return () => {
       console.log('WebSocket Client DISConnected');
@@ -127,7 +155,7 @@ const DataCamera = (props) => {
       console.log(res, 'Perangkat detail');
       // console.log(state.listViewCamera, 'listViewCamera');
 
-      setState((prevState) => ({
+      setState((prevState: any) => ({
         ...prevState,
         deviceDetail: res,
         viewListData: [
@@ -177,8 +205,8 @@ const DataCamera = (props) => {
     }
   };
   const handleStop = () => {
-    // sendRequest('stopLiveCamera', {});
-    client.current.close();
+    sendRequest('stopLiveCamera', {});
+    // client.current.close();
   };
   const getTodayDate = () => {
     const today = new Date();
@@ -209,16 +237,6 @@ const DataCamera = (props) => {
     console.log(urlStream, 'render stream 1');
     return (
       <div className="w-full  p-1" key={index}>
-        {/* {client.current.readyState !== 1 && client.current.readyState !== 3 ? (
-          <h1 className="font-semibold text-xl text-red-500 mb-2 animate-pulse">
-            Error connection
-          </h1>
-        ) : client.current.readyState === 3 ? (
-          <h1 className="font-semibold text-xl  mb-2">Loading...</h1>
-        ) : (
-          ''
-        )} */}
-
         <div className="bg-blackp-1">
           <div>
             <div className="player-wrapper">
@@ -253,7 +271,9 @@ const DataCamera = (props) => {
         <Breadcrumbs url={window.location.href} />
       </div>
       <div className="flex justify-between items-center px-6">
-        <div className="flex gap-4">
+        <div
+          className={`flex gap-4 items-center justify-between ${isIconOpen ? 'w-4/5' : 'w-full mr-1'}`}
+        >
           <h1 className="font-semibold ml-1">
             {deviceDetail && deviceDetail.nama_kamera} -{' '}
             {deviceDetail.nama_ruangan_otmil && deviceDetail.nama_ruangan_otmil}
@@ -263,34 +283,33 @@ const DataCamera = (props) => {
             {deviceDetail.nama_lokasi_lemasmil &&
               deviceDetail.nama_lokasi_lemasmil}
           </h1>
-          {/* {client.current.readyState !== 1 ? (
-            <h1 className="font-semibold text-xl text-red-500  animate-pulse">
-              Error connection
-            </h1>
-          ) : (
-            ''
-          )} */}
           {client.current.readyState !== WebSocket.OPEN && (
             <h1 className="font-semibold text-xl text-red-500 animate-pulse">
               Error connection
             </h1>
           )}
-          {/* {errorCam == 'hlsError' && (
-            <p className="animate-pulse">Sedang memuat ....</p>
-          )} */}
-          {loading && <p className="animate-pulse">Sedang memuat ....</p>}
+          {loading &&
+            client.current.readyState == WebSocket.OPEN &&
+            !errorCam && (
+              <p className="animate-pulse text-lg">Sedang memuat ....</p>
+            )}
+          {errorCam && client.current.readyState == WebSocket.OPEN && (
+            <p className="animate-pulse text-yellow-400 text-lg">
+              Kamera sedang rusak
+            </p>
+          )}
         </div>
         <div
           onClick={toggleIcon}
           className="cursor-pointer flex justify-end p-2"
         >
           {isIconOpen ? (
-            <FaRegArrowAltCircleLeft
+            <FaRegArrowAltCircleRight
               className=" hover:text-orange-200"
               size={28}
             />
           ) : (
-            <FaRegArrowAltCircleRight
+            <FaRegArrowAltCircleLeft
               className="hover:text-orange-200"
               size={28}
             />
@@ -298,7 +317,9 @@ const DataCamera = (props) => {
         </div>
       </div>
       <div className="flex h-[52vh] justify-between">
-        <div className={`w-[${cameraSize}] h-full`}>
+        <div
+          className={`w-[${cameraSize}] h-full transition-width duration-1000 ease-in-out`}
+        >
           {state.listViewCamera.map((obj, index) => (
             <div key={index}>{renderStream1(obj, index)}</div>
           ))}
@@ -341,7 +362,7 @@ const DataCamera = (props) => {
           </div>
         </div>
       </div>
-      {/* <button onClick={handleStop} className="w-30 h-10 bg-red-400">
+      {/* <button onClick={handleStop} className="w-30 h-10 bg-red-400 mt-50">
         Stop
       </button> */}
     </div>

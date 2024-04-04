@@ -2,27 +2,27 @@ import ChartThree from '../../components/ChartThree';
 let IconBracelet = () => {
   return (
     <div className="flex h-11.5 w-11.5 items-center justify-center text-black rounded-full bg-slate-100 dark:bg-slate-200">
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M7 3V4C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20L7 21C7 22.6569 8.34315 24 10 24H14C15.6569 24 17 22.6569 17 21V20C18.6569 20 20 18.6569 20 17V13C20.5523 13 21 12.5523 21 12C21 11.4477 20.5523 11 20 11V7C20 5.34315 18.6569 4 17 4V3C17 1.34315 15.6569 0 14 0H10C8.34315 0 7 1.34315 7 3ZM10 2C9.44772 2 9 2.44772 9 3V4H15V3C15 2.44772 14.5523 2 14 2H10ZM7 18C6.44772 18 6 17.5523 6 17V7C6 6.44771 6.44772 6 7 6H17C17.5523 6 18 6.44772 18 7V17C18 17.5523 17.5523 18 17 18H7ZM9 20H15V21C15 21.5523 14.5523 22 14 22H10C9.44772 22 9 21.5523 9 21V20Z"
-        fill="#0F0F0F"
-      />
-    </svg>
-  </div>
-  )
-}
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M7 3V4C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20L7 21C7 22.6569 8.34315 24 10 24H14C15.6569 24 17 22.6569 17 21V20C18.6569 20 20 18.6569 20 17V13C20.5523 13 21 12.5523 21 12C21 11.4477 20.5523 11 20 11V7C20 5.34315 18.6569 4 17 4V3C17 1.34315 15.6569 0 14 0H10C8.34315 0 7 1.34315 7 3ZM10 2C9.44772 2 9 2.44772 9 3V4H15V3C15 2.44772 14.5523 2 14 2H10ZM7 18C6.44772 18 6 17.5523 6 17V7C6 6.44771 6.44772 6 7 6H17C17.5523 6 18 6.44772 18 7V17C18 17.5523 17.5523 18 17 18H7ZM9 20H15V21C15 21.5523 14.5523 22 14 22H10C9.44772 22 9 21.5523 9 21V20Z"
+          fill="#0F0F0F"
+        />
+      </svg>
+    </div>
+  );
+};
 const Statistic = () => {
   return (
     <>
-       <div className='mt-1 font-semibold text-2xl tracking-wider'>
+      <div className="mt-1 font-semibold text-2xl tracking-wider">
         Statistik Lemasmil
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 mt-1">
@@ -120,7 +120,7 @@ const Statistic = () => {
           </div>
         </div>{' '}
       </div>
-      <div className='mt-8 font-semibold text-2xl tracking-wider'>
+      <div className="mt-8 font-semibold text-2xl tracking-wider">
         Statistik Kamera
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 mt-1">
@@ -211,7 +211,7 @@ const Statistic = () => {
           </div>
         </div>{' '}
       </div>
-      <div className='mt-8 font-semibold text-2xl tracking-wider'>
+      <div className="mt-8 font-semibold text-2xl tracking-wider">
         Statistik Gateway
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5 mt-1">
@@ -225,14 +225,14 @@ const Statistic = () => {
                     width="18"
                     height="18"
                     stroke="currentColor"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
                     ></path>
                   </svg>
@@ -254,14 +254,14 @@ const Statistic = () => {
                     width="18"
                     height="18"
                     stroke="currentColor"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     ></path>
                   </svg>
@@ -285,14 +285,14 @@ const Statistic = () => {
                     width="18"
                     height="18"
                     stroke="currentColor"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     ></path>
                   </svg>
@@ -314,14 +314,14 @@ const Statistic = () => {
                     width="18"
                     height="18"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     ></path>
                   </svg>
@@ -347,14 +347,14 @@ const Statistic = () => {
                 width="18"
                 height="18"
                 stroke="currentColor"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M3 3l8.735 8.735m0 0a.374.374 0 11.53.53m-.53-.53l.53.53m0 0L21 21M14.652 9.348a3.75 3.75 0 010 5.304m2.121-7.425a6.75 6.75 0 010 9.546m2.121-11.667c3.808 3.807 3.808 9.98 0 13.788m-9.546-4.242a3.733 3.733 0 01-1.06-2.122m-1.061 4.243a6.75 6.75 0 01-1.625-6.929m-.496 9.05c-3.068-3.067-3.664-7.67-1.79-11.334M12 12h.008v.008H12V12z"
                 ></path>
               </svg>
@@ -376,14 +376,14 @@ const Statistic = () => {
                 width="18"
                 height="18"
                 stroke="currentColor"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M3 3l8.735 8.735m0 0a.374.374 0 11.53.53m-.53-.53l.53.53m0 0L21 21M14.652 9.348a3.75 3.75 0 010 5.304m2.121-7.425a6.75 6.75 0 010 9.546m2.121-11.667c3.808 3.807 3.808 9.98 0 13.788m-9.546-4.242a3.733 3.733 0 01-1.06-2.122m-1.061 4.243a6.75 6.75 0 01-1.625-6.929m-.496 9.05c-3.068-3.067-3.664-7.67-1.79-11.334M12 12h.008v.008H12V12z"
                 ></path>
               </svg>
@@ -400,7 +400,7 @@ const Statistic = () => {
           </div>{' '}
         </div>
       </div>
-      <div className='mt-8 font-semibold text-2xl tracking-wider'>
+      <div className="mt-8 font-semibold text-2xl tracking-wider">
         Statistik Gelang
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5 mt-1">
@@ -408,7 +408,7 @@ const Statistic = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="grid gap-2">
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-               <IconBracelet/>
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -422,8 +422,7 @@ const Statistic = () => {
                 </div>
               </div>{' '}
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -439,8 +438,7 @@ const Statistic = () => {
             </div>
             <div className="grid gap-2">
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -454,8 +452,7 @@ const Statistic = () => {
                 </div>
               </div>{' '}
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -475,8 +472,7 @@ const Statistic = () => {
           <div className="grid grid-cols-2 gap-2">
             <div className="grid gap-2">
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -490,8 +486,7 @@ const Statistic = () => {
                 </div>
               </div>{' '}
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -507,7 +502,7 @@ const Statistic = () => {
             </div>
             <div className="grid gap-2">
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>
@@ -521,8 +516,7 @@ const Statistic = () => {
                 </div>
               </div>{' '}
               <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-                             <IconBracelet/>
-
+                <IconBracelet />
 
                 <div className="mt-4 flex items-end justify-between">
                   <div>

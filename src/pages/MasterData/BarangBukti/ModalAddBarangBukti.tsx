@@ -18,12 +18,11 @@ export const AddBarangBuktiModal = ({
   isEdit,
   token,
 }: any) => {
-
-  console.log(defaultValue,"ini default value");
+  console.log(defaultValue, 'ini default value');
 
   const [dataDefaultValue, setDataDefaultValue] = useState(defaultValue);
 
-  let editValue
+  let editValue;
 
   if (defaultValue) {
     editValue = {
@@ -41,7 +40,7 @@ export const AddBarangBuktiModal = ({
       nomor_kasus: defaultValue.nomor_kasus,
       nama_kasus: defaultValue.nama_kasus,
       barang_bukti_kasus_id: defaultValue.barang_bukti_kasus_id,
-    }
+    };
   }
 
   const [formState, setFormState] = useState(
@@ -75,7 +74,7 @@ export const AddBarangBuktiModal = ({
 
   const validateForm = () => {
     let errorFields = [];
-    if(isEdit){
+    if (isEdit) {
       for (const [key, value] of Object.entries(formState)) {
         if (
           key !== 'dokumen_barang_bukti' &&
@@ -105,7 +104,7 @@ export const AddBarangBuktiModal = ({
         }
       }
     }
-    
+
     if (errorFields.length > 0) {
       console.log(errorFields);
       setErrors(errorFields);
@@ -189,14 +188,15 @@ export const AddBarangBuktiModal = ({
     });
     setDataDefaultValue({
       ...dataDefaultValue,
-      dokumen_barang_bukti: ''
+      dokumen_barang_bukti: '',
     });
-    const inputElement = document.getElementById('fileUpload') as HTMLInputElement;
+    const inputElement = document.getElementById(
+      'fileUpload',
+    ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = '';
     }
   };
-  
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -234,7 +234,7 @@ export const AddBarangBuktiModal = ({
     setFormState({ ...formState, gambar_barang_bukti: '' });
     setDataDefaultValue({
       ...dataDefaultValue,
-      gambar_barang_bukti: ''
+      gambar_barang_bukti: '',
     });
     const inputElement = document.getElementById(
       'image-upload',
@@ -250,10 +250,7 @@ export const AddBarangBuktiModal = ({
   };
 
   useEffect(() => {
-    Promise.all([
-      kasus(),
-      apiJenisPerkara(),
-    ]).then(() => {
+    Promise.all([kasus(), apiJenisPerkara()]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -288,7 +285,7 @@ export const AddBarangBuktiModal = ({
           title: err.massage,
         }),
       );
-  }
+  };
 
   const customStyles = {
     container: (provided: any) => ({
@@ -432,7 +429,7 @@ export const AddBarangBuktiModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -531,13 +528,13 @@ export const AddBarangBuktiModal = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-5 h-5"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                 />
                               </svg>
@@ -592,13 +589,13 @@ export const AddBarangBuktiModal = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-5 h-5"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                 />
                               </svg>
@@ -630,9 +627,9 @@ export const AddBarangBuktiModal = ({
                           defaultValue={
                             isEdit || isDetail || isKasus
                               ? {
-                                value: formState.kasus_id,
-                                label: formState.nama_kasus,
-                              }
+                                  value: formState.kasus_id,
+                                  label: formState.nama_kasus,
+                                }
                               : formState.kasus_id
                           }
                           placeholder={'Pilih Kasus'}
@@ -769,9 +766,9 @@ export const AddBarangBuktiModal = ({
                       defaultValue={
                         isEdit || isDetail
                           ? {
-                            value: formState.jenis_perkara_id,
-                            label: formState.nama_jenis_perkara,
-                          }
+                              value: formState.jenis_perkara_id,
+                              label: formState.nama_jenis_perkara,
+                            }
                           : formState.jenis_perkara_id
                       }
                       placeholder={'Pilih Jenis Perkara'}
@@ -837,9 +834,9 @@ export const AddBarangBuktiModal = ({
                                   width="20"
                                 >
                                   <path
-                                    fill-rule="evenodd"
+                                    fillRule="evenodd"
                                     d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                                    clip-rule="evenodd"
+                                    clipRule="evenodd"
                                   />
                                 </svg>
                               </p>
@@ -916,12 +913,13 @@ export const AddBarangBuktiModal = ({
                             <p className="mt-1.5">PDF</p>
                           </div>
                         )
-                      ) : (
-                        formState.pdf_file_base64 || dataDefaultValue.dokumen_barang_bukti ? (
+                      ) : formState.pdf_file_base64 ||
+                        dataDefaultValue.dokumen_barang_bukti ? (
                         <div className="grid grid-cols-1">
                           <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${isDetail ? 'hidden' : 'block'
-                              }`}
+                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                              isDetail ? 'hidden' : 'block'
+                            }`}
                           >
                             <p className="p-[2px]" onClick={handleRemoveDoc}>
                               <svg
@@ -931,9 +929,9 @@ export const AddBarangBuktiModal = ({
                                 width="20"
                               >
                                 <path
-                                  fill-rule="evenodd"
+                                  fillRule="evenodd"
                                   d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                                  clip-rule="evenodd"
+                                  clipRule="evenodd"
                                 />
                               </svg>
                             </p>
@@ -954,8 +952,9 @@ export const AddBarangBuktiModal = ({
                             Dokumen terupload !
                           </p>
                           <div
-                            className={`flex justify-center mt-3 ${isDetail ? 'block' : 'hidden'
-                              }`}
+                            className={`flex justify-center mt-3 ${
+                              isDetail ? 'block' : 'hidden'
+                            }`}
                           >
                             <button
                               type="button"
@@ -1008,9 +1007,7 @@ export const AddBarangBuktiModal = ({
                           </label>
                           <p className="mt-1.5">PDF</p>
                         </div>
-                      )
                       )}
-                      
                     </div>
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1026,8 +1023,9 @@ export const AddBarangBuktiModal = ({
                   {/* <br></br> */}
                   {isDetail ? null : isEdit ? (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -1044,7 +1042,7 @@ export const AddBarangBuktiModal = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -1059,8 +1057,9 @@ export const AddBarangBuktiModal = ({
                     </button>
                   ) : (
                     <button
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                        }`}
+                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                        buttonLoad ? 'bg-slate-400' : ''
+                      }`}
                       type="submit"
                       disabled={buttonLoad}
                     >
@@ -1077,7 +1076,7 @@ export const AddBarangBuktiModal = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -1094,18 +1093,18 @@ export const AddBarangBuktiModal = ({
                   {errors.filter((item: string) =>
                     item.startsWith('INVALID_ID'),
                   ).length > 0 && (
-                      <>
-                        <br />
-                        <div className="error">
-                          {errors
-                            .filter((item: string) =>
-                              item.startsWith('INVALID_ID'),
-                            )[0]
-                            .replace('INVALID_ID_', '')}{' '}
-                          is not a valid bond
-                        </div>
-                      </>
-                    )}
+                    <>
+                      <br />
+                      <div className="error">
+                        {errors
+                          .filter((item: string) =>
+                            item.startsWith('INVALID_ID'),
+                          )[0]
+                          .replace('INVALID_ID_', '')}{' '}
+                        is not a valid bond
+                      </div>
+                    </>
+                  )}
                   {errors.length > 0 && (
                     <div className="error text-center">
                       <p className="text-red-400">

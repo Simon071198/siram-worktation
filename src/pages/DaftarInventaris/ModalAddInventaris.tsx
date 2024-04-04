@@ -422,7 +422,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -540,13 +540,13 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-5 h-5"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                 />
                               </svg>
@@ -600,13 +600,13 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-5 h-5"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                 />
                               </svg>
@@ -693,9 +693,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.tipe_aset_id,
-                                label: formState.nama_tipe,
-                              }
+                                  value: formState.tipe_aset_id,
+                                  label: formState.nama_tipe,
+                                }
                               : formState.tipe_aset_id
                           }
                           options={tipeAset.map((item: any) => ({
@@ -780,9 +780,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.ruangan_otmil_id,
-                                label: formState.nama_ruangan_otmil,
-                              }
+                                  value: formState.ruangan_otmil_id,
+                                  label: formState.nama_ruangan_otmil,
+                                }
                               : formState.ruangan_otmil_id
                           }
                           options={ruangan.map((item: any) => ({
@@ -930,18 +930,18 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
                   <div className="error mt-4 text-center">
                     <p className="text-red-400">
@@ -963,8 +963,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                 {/* <br></br> */}
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     id="t-data-ubah"
                     type="submit"
                     disabled={buttonLoad}
@@ -982,7 +983,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -997,8 +998,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     id="t-data"
                     disabled={buttonLoad}
@@ -1016,7 +1018,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

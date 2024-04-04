@@ -8,7 +8,6 @@ interface AddRoomModalProps {
   isEdit?: boolean;
 }
 
-
 const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
   closeModal,
   onSubmit,
@@ -24,7 +23,7 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
       nama_shift: '',
       waktu_mulai: '',
       waktu_selesai: '',
-    }
+    },
   );
 
   const [errors, setErrors] = useState({
@@ -56,11 +55,11 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
   }, [closeModal]);
 
   const validateForm = () => {
-    const newErrors = ({
+    const newErrors = {
       nama_shift: '',
       waktu_mulai: '',
       waktu_selesai: '',
-    });
+    };
     if (
       dataShift.nama_shift &&
       dataShift.waktu_mulai &&
@@ -75,30 +74,29 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
       return true;
     } else {
       if (!dataShift.nama_shift) {
-        newErrors.nama_shift='Isi Nama Shift';
+        newErrors.nama_shift = 'Isi Nama Shift';
       }
       if (!dataShift.waktu_mulai) {
-        newErrors.waktu_mulai= 'Isi Waktu Mulai' ;
+        newErrors.waktu_mulai = 'Isi Waktu Mulai';
       }
       if (!dataShift.waktu_selesai) {
-        newErrors.waktu_selesai= 'Isi Waktu selesai' ;
-      } 
-      setErrors(newErrors)
+        newErrors.waktu_selesai = 'Isi Waktu selesai';
+      }
+      setErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return false;
       }
-      return true
+      return true;
     }
   };
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setDataShift({ ...dataShift, [e.target.name]: e.target.value });
   };
 
-  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -127,7 +125,7 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
                 cy="12"
                 r="10"
                 stroke="currentColor"
-                stroke-width="4"
+                strokeWidth="4"
               ></circle>
               <path
                 className="opacity-75"
@@ -140,9 +138,9 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-              {isDetail
-                    ? 'Detail Data Ruangan'
-                    : isEdit
+                {isDetail
+                  ? 'Detail Data Ruangan'
+                  : isEdit
                     ? 'Edit Data Ruangan'
                     : 'Tambah Data Ruangan'}
               </h1>
@@ -171,8 +169,8 @@ const EditDataShiftKerja: React.FC<AddRoomModalProps> = ({
                       onChange={handleChange}
                     />
                     <h1 className="pl-2 text-xs text-red-500">
-                        {errors.nama_shift}
-                      </h1>
+                      {errors.nama_shift}
+                    </h1>
                   </div>
                   <div className="flex justify-between space-x-2">
                     <div className="form-group w-1/2 ">

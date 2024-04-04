@@ -299,8 +299,8 @@ export default function Realtime() {
       </div>
       {/* <NavLink to='/log-face-recognition'>
         <div className='flex capitalize mb-5 items-center'>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" className="w-10 h-10 mr-2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-10 h-10 mr-2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
           </svg>
           <h1 className='text-lg font-semibold uppercase'>log pengenal wajah</h1>
         </div>

@@ -163,9 +163,8 @@ export const DetailPelacakanWajahPrajurit = ({
     },
   );
 
-  console.log(formState, 'EDIT BOYS')
-  console.log(formState.nama_tersangka, 'Nama Tersangka')
-
+  console.log(formState, 'EDIT BOYS');
+  console.log(formState.nama_tersangka, 'Nama Tersangka');
 
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
@@ -1398,7 +1397,7 @@ export const DetailPelacakanWajahPrajurit = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -1411,7 +1410,7 @@ export const DetailPelacakanWajahPrajurit = ({
           ) : (
             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
               <div className="w-full flex justify-between mb-2  items-center  ">
-                <div className='flex items-center gap-4'>
+                <div className="flex items-center gap-4">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
                       ? 'Detail data Tersangka'
@@ -1449,9 +1448,10 @@ export const DetailPelacakanWajahPrajurit = ({
                       <div className=" grid grid-cols-2 gap-4 items-start ">
                         {/* Gambar */}
 
-                        {isDetail && (
-                          formState.foto_wajah === "" || formState.foto_wajah === null ?
-                            (<div className="form-group w-full h-fit">
+                        {isDetail &&
+                          (formState.foto_wajah === '' ||
+                          formState.foto_wajah === null ? (
+                            <div className="form-group w-full h-fit">
                               <div className=" mt-1 flex flex-col items-center">
                                 <div className="mt-4 flex flex-col justify-center items-center h-[200px]">
                                   <p className="text-center bg-slate-500 font-bold text-white rounded-md p-3">
@@ -1460,18 +1460,20 @@ export const DetailPelacakanWajahPrajurit = ({
                                 </div>
                               </div>
                             </div>
-                            ) : (
+                          ) : (
                             <div className="form-group w-full h-fit">
                               <div className=" mt-1 flex flex-col items-center">
                                 <img
                                   className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                  src={'https://dev.transforme.co.id/siram_admin_api' +
-                                    formState.foto_wajah}
+                                  src={
+                                    'https://dev.transforme.co.id/siram_admin_api' +
+                                    formState.foto_wajah
+                                  }
                                   alt="Image Preview"
                                 />
                               </div>
-                            </div>)
-                        )}
+                            </div>
+                          ))}
 
                         {isEdit && (
                           <div className="form-group w-full h-fit ">
@@ -1524,13 +1526,13 @@ export const DetailPelacakanWajahPrajurit = ({
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke-width="1.5"
+                                    strokeWidth="1.5"
                                     stroke="currentColor"
                                     className="w-5 h-5"
                                   >
                                     <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
                                       d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                     />
                                   </svg>
@@ -1583,13 +1585,13 @@ export const DetailPelacakanWajahPrajurit = ({
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke-width="1.5"
+                                    strokeWidth="1.5"
                                     stroke="currentColor"
                                     className="w-5 h-5"
                                   >
                                     <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
                                       d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                     />
                                   </svg>
@@ -1643,9 +1645,9 @@ export const DetailPelacakanWajahPrajurit = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.pangkat.pangkat_id,
-                                    label: formState.pangkat.nama_pangkat,
-                                  }
+                                      value: formState.pangkat.pangkat_id,
+                                      label: formState.pangkat.nama_pangkat,
+                                    }
                                   : formState.pangkat.pangkat_id
                               }
                               isDisabled={isDetail}
@@ -1686,9 +1688,9 @@ export const DetailPelacakanWajahPrajurit = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.matra.matra_id,
-                                    label: formState.matra.nama_matra,
-                                  }
+                                      value: formState.matra.matra_id,
+                                      label: formState.matra.nama_matra,
+                                    }
                                   : formState.matra.matra_id
                               }
                               options={matra.map((item: any) => ({
@@ -1730,9 +1732,6 @@ export const DetailPelacakanWajahPrajurit = ({
                           </div>
                         </div>
                       </div>
-
-
-
                     </div>
                   </div>
 
@@ -1748,30 +1747,44 @@ export const DetailPelacakanWajahPrajurit = ({
                         </p>
                       </div>
                     </div>
-                  ) : (
-                    formState.kamera_log.length === 1 ? (<div className="mt-4">
+                  ) : formState.kamera_log.length === 1 ? (
+                    <div className="mt-4">
                       <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                         Foto Kamera
                       </p>
                       <div className="h-[350px] overflow-x-auto">
-                        <div className="flex flex-row justify-center items-center"> {/* Kontainer horizontal */}
+                        <div className="flex flex-row justify-center items-center">
+                          {' '}
+                          {/* Kontainer horizontal */}
                           {formState.kamera_log.map((item: any) => (
                             <div
                               key={item.id} // Pastikan setiap elemen memiliki key yang unik
                               className="bg-boxdark px-4 py-4 flex-shrink-0 border border-slate-400 h-full w-1/2"
-                            // onClick={() => handleDetailClick(item)}
+                              // onClick={() => handleDetailClick(item)}
                             >
                               <div className="bg-boxdark w-full h-[150px] overflow-hidden flex justify-center items-center">
                                 <img
-                                  src={'https://dev.transforme.co.id/siram_admin_api' + item.image_kamera_log}
+                                  src={
+                                    'https://dev.transforme.co.id/siram_admin_api' +
+                                    item.image_kamera_log
+                                  }
                                   alt="picture"
                                   className="object-cover w-[150px] h-[150px] border border-slate-400"
                                 ></img>
                               </div>
                               <div className="ml-10 grid grid-cols-1 items-center">
                                 <div className="flex flex-col w-full">
-                                  <p className="text-3xl font-bold text-white">Ruangan : {item.ruangan_otmil.nama_ruangan_otmil}</p>
-                                  <p className="text-2xl font-base text-slate-500">Lokasi : {item.ruangan_otmil.lokasi_otmil.nama_lokasi_otmil}</p>
+                                  <p className="text-3xl font-bold text-white">
+                                    Ruangan :{' '}
+                                    {item.ruangan_otmil.nama_ruangan_otmil}
+                                  </p>
+                                  <p className="text-2xl font-base text-slate-500">
+                                    Lokasi :{' '}
+                                    {
+                                      item.ruangan_otmil.lokasi_otmil
+                                        .nama_lokasi_otmil
+                                    }
+                                  </p>
                                 </div>
                                 <div className="flex flex-col mt-6 item-center  w-full">
                                   <p className="text-lg">Keterangan</p>
@@ -1791,7 +1804,9 @@ export const DetailPelacakanWajahPrajurit = ({
                                         d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
                                       />
                                     </svg>
-                                    <p className="text-md">{item.timestamp_kamera_log}</p>
+                                    <p className="text-md">
+                                      {item.timestamp_kamera_log}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
@@ -1799,64 +1814,76 @@ export const DetailPelacakanWajahPrajurit = ({
                           ))}
                         </div>
                       </div>
-
                     </div>
-                    ) : (
-                      <div className="mt-4">
-                        <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
-                          Foto Kamera
-                        </p>
-                        <div className="h-[350px] overflow-x-auto">
-                          <div className="flex flex-row"> {/* Kontainer horizontal */}
-                            {formState.kamera_log.map((item: any) => (
-                              <div
-                                key={item.id} // Pastikan setiap elemen memiliki key yang unik
-                                className="bg-boxdark px-4 py-4 flex-shrink-0 border border-slate-400 h-full w-1/2"
+                  ) : (
+                    <div className="mt-4">
+                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                        Foto Kamera
+                      </p>
+                      <div className="h-[350px] overflow-x-auto">
+                        <div className="flex flex-row">
+                          {' '}
+                          {/* Kontainer horizontal */}
+                          {formState.kamera_log.map((item: any) => (
+                            <div
+                              key={item.id} // Pastikan setiap elemen memiliki key yang unik
+                              className="bg-boxdark px-4 py-4 flex-shrink-0 border border-slate-400 h-full w-1/2"
                               // onClick={() => handleDetailClick(item)}
-                              >
-                                <div className="bg-boxdark w-full h-[150px] overflow-hidden flex justify-center items-center">
-                                  <img
-                                    src={'https://dev.transforme.co.id/siram_admin_api' + item.image_kamera_log}
-                                    alt="picture"
-                                    className="object-cover w-[150px] h-[150px] border border-slate-400"
-                                  ></img>
+                            >
+                              <div className="bg-boxdark w-full h-[150px] overflow-hidden flex justify-center items-center">
+                                <img
+                                  src={
+                                    'https://dev.transforme.co.id/siram_admin_api' +
+                                    item.image_kamera_log
+                                  }
+                                  alt="picture"
+                                  className="object-cover w-[150px] h-[150px] border border-slate-400"
+                                ></img>
+                              </div>
+                              <div className="ml-10 grid grid-cols-1 items-center">
+                                <div className="flex flex-col w-full">
+                                  <p className="text-3xl font-bold text-white">
+                                    Ruangan :{' '}
+                                    {item.ruangan_otmil.nama_ruangan_otmil}
+                                  </p>
+                                  <p className="text-2xl font-base text-slate-500">
+                                    Lokasi :{' '}
+                                    {
+                                      item.ruangan_otmil.lokasi_otmil
+                                        .nama_lokasi_otmil
+                                    }
+                                  </p>
                                 </div>
-                                <div className="ml-10 grid grid-cols-1 items-center">
-                                  <div className="flex flex-col w-full">
-                                    <p className="text-3xl font-bold text-white">Ruangan : {item.ruangan_otmil.nama_ruangan_otmil}</p>
-                                    <p className="text-2xl font-base text-slate-500">Lokasi : {item.ruangan_otmil.lokasi_otmil.nama_lokasi_otmil}</p>
-                                  </div>
-                                  <div className="flex flex-col mt-6 item-center  w-full">
-                                    <p className="text-lg">Keterangan</p>
-                                    <div className="flex items-center gap-2">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        width="15"
-                                        height="15"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                      </svg>
-                                      <p className="text-md">{item.timestamp_kamera_log}</p>
-                                    </div>
+                                <div className="flex flex-col mt-6 item-center  w-full">
+                                  <p className="text-lg">Keterangan</p>
+                                  <div className="flex items-center gap-2">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth="1.5"
+                                      stroke="currentColor"
+                                      width="15"
+                                      height="15"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                      />
+                                    </svg>
+                                    <p className="text-md">
+                                      {item.timestamp_kamera_log}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                          </div>
+                            </div>
+                          ))}
                         </div>
-
-                      </div>)
-
+                      </div>
+                    </div>
                   )}
-
 
                   {/* ----- DATA DETAIL TERSANGKA ----- */}
                   <div className="mt-4">
@@ -1884,9 +1911,9 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.pendidikan.pendidikan_id,
-                                label: formState.pendidikan.nama_pendidikan,
-                              }
+                                  value: formState.pendidikan.pendidikan_id,
+                                  label: formState.pendidikan.nama_pendidikan,
+                                }
                               : formState.pendidikan.pendidikan_id
                           }
                           options={pendidikan.map((item) => ({
@@ -1897,9 +1924,7 @@ export const DetailPelacakanWajahPrajurit = ({
                         />
                         <p className="error-text">
                           {errors.map((item) =>
-                            item === 'pendidikan_id'
-                              ? 'Pilih pendidikan'
-                              : '',
+                            item === 'pendidikan_id' ? 'Pilih pendidikan' : '',
                           )}
                         </p>
                       </div>
@@ -1940,9 +1965,9 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.kesatuan.kesatuan_id,
-                                label: formState.kesatuan.nama_kesatuan,
-                              }
+                                  value: formState.kesatuan.kesatuan_id,
+                                  label: formState.kesatuan.nama_kesatuan,
+                                }
                               : formState.kesatuan.kesatuan_id
                           }
                           options={kesatuan.map((item: any) => ({
@@ -2025,9 +2050,9 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.agama.agama_id,
-                                label: formState.agama.nama_agama,
-                              }
+                                  value: formState.agama.agama_id,
+                                  label: formState.agama.nama_agama,
+                                }
                               : formState.agama.agama_id
                           }
                           options={agama.map((item: any) => ({
@@ -2124,9 +2149,9 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.provinsi.provinsi_id,
-                                label: formState.provinsi.nama_provinsi,
-                              }
+                                  value: formState.provinsi.provinsi_id,
+                                  label: formState.provinsi.nama_provinsi,
+                                }
                               : formState.provinsi.provinsi_id
                           }
                           placeholder={'Pilih provinsi'}
@@ -2184,9 +2209,9 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.kota.kota_id,
-                                label: formState.kota.nama_kota,
-                              }
+                                  value: formState.kota.kota_id,
+                                  label: formState.kota.nama_kota,
+                                }
                               : formState.kota.kota_id
                           }
                           placeholder={'Pilih kota'}
@@ -2197,9 +2222,7 @@ export const DetailPelacakanWajahPrajurit = ({
                           styles={customStyles}
                           options={kota
                             .filter((item: any) => {
-                              return (
-                                item.provinsi_id === formState.provinsi_id
-                              );
+                              return item.provinsi_id === formState.provinsi_id;
                             })
                             .map((item) => ({
                               value: item.kota_id,
@@ -2275,9 +2298,10 @@ export const DetailPelacakanWajahPrajurit = ({
                           defaultValue={
                             isEdit || isDetail
                               ? {
-                                value: formState.status_kawin.status_kawin_id,
-                                label: formState.status_kawin.nama_status_kawin,
-                              }
+                                  value: formState.status_kawin.status_kawin_id,
+                                  label:
+                                    formState.status_kawin.nama_status_kawin,
+                                }
                               : formState.status_kawin.status_kawin_id
                           }
                           options={statusKawin.map((item) => ({
@@ -2487,13 +2511,13 @@ export const DetailPelacakanWajahPrajurit = ({
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="1.5"
+                            strokeWidth="1.5"
                             stroke="currentColor"
                             className="w-6 h-6 text-white"
                           >
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               d="M12 4.5v15m7.5-7.5h-15"
                             />
                           </svg>
@@ -2524,13 +2548,13 @@ export const DetailPelacakanWajahPrajurit = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-6 h-6"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M6 18L18 6M6 6l12 12"
                                 />
                               </svg>
@@ -2683,10 +2707,15 @@ export const DetailPelacakanWajahPrajurit = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.bidang_keahliann.bidang_keahlian_id,
-                                    label: formState.bidang_keahliann.nama_bidang_keahlian,
-                                  }
-                                  : formState.bidang_keahliann.bidang_keahlian_id
+                                      value:
+                                        formState.bidang_keahliann
+                                          .bidang_keahlian_id,
+                                      label:
+                                        formState.bidang_keahliann
+                                          .nama_bidang_keahlian,
+                                    }
+                                  : formState.bidang_keahliann
+                                      .bidang_keahlian_id
                               }
                               options={keahlian.map((item: any) => ({
                                 value: item.bidang_keahlian_id,
@@ -2724,43 +2753,43 @@ export const DetailPelacakanWajahPrajurit = ({
 
                               {isDetail
                                 ? gelang.map((item: any) => (
-                                  <option value={item.gelang_id}>
-                                    {item.nama_gelang}
-                                  </option>
-                                ))
+                                    <option value={item.gelang_id}>
+                                      {item.nama_gelang}
+                                    </option>
+                                  ))
                                 : isEdit
                                   ? gelang.map((item: any) => {
-                                    const isUsed = dataWbp.some(
-                                      (wbp: any) =>
-                                        wbp.gelang_id === item.gelang_id,
-                                    );
-                                    return (
-                                      <option
-                                        value={item.gelang_id}
-                                        key={item.gelang_id}
-                                      >
-                                        {item.nama_gelang}{' '}
-                                        {isUsed
-                                          ? '(Sedang Digunakan)'
-                                          : '(Tidak Digunakan)'}
-                                      </option>
-                                    );
-                                  })
+                                      const isUsed = dataWbp.some(
+                                        (wbp: any) =>
+                                          wbp.gelang_id === item.gelang_id,
+                                      );
+                                      return (
+                                        <option
+                                          value={item.gelang_id}
+                                          key={item.gelang_id}
+                                        >
+                                          {item.nama_gelang}{' '}
+                                          {isUsed
+                                            ? '(Sedang Digunakan)'
+                                            : '(Tidak Digunakan)'}
+                                        </option>
+                                      );
+                                    })
                                   : gelang
-                                    .filter(
-                                      (item: any) =>
-                                        !dataWbp
-                                          .map(
-                                            (wbp: any) =>
-                                              wbp.gelang_id || wbp.gelang_id,
-                                          )
-                                          .includes(item.gelang_id),
-                                    )
-                                    .map((item: any) => (
-                                      <option value={item.gelang_id}>
-                                        {item.nama_gelang}
-                                      </option>
-                                    ))}
+                                      .filter(
+                                        (item: any) =>
+                                          !dataWbp
+                                            .map(
+                                              (wbp: any) =>
+                                                wbp.gelang_id || wbp.gelang_id,
+                                            )
+                                            .includes(item.gelang_id),
+                                      )
+                                      .map((item: any) => (
+                                        <option value={item.gelang_id}>
+                                          {item.nama_gelang}
+                                        </option>
+                                      ))}
                             </select>
                             {/* <Select
                               name="gelang_id"
@@ -2852,10 +2881,15 @@ export const DetailPelacakanWajahPrajurit = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.hunian_wbp_otmil.hunian_wbp_otmil_id,
-                                    label: formState.hunian_wbp_otmil.nama_hunian_wbp_otmil,
-                                  }
-                                  : formState.hunian_wbp_otmil.hunian_wbp_otmil_id
+                                      value:
+                                        formState.hunian_wbp_otmil
+                                          .hunian_wbp_otmil_id,
+                                      label:
+                                        formState.hunian_wbp_otmil
+                                          .nama_hunian_wbp_otmil,
+                                    }
+                                  : formState.hunian_wbp_otmil
+                                      .hunian_wbp_otmil_id
                               }
                               options={hunian.map((item: any) => ({
                                 value: item.hunian_wbp_otmil_id,
@@ -2943,9 +2977,9 @@ export const DetailPelacakanWajahPrajurit = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                    value: formState.status_wbp_kasus_id,
-                                    label: formState.nama_status_wbp_kasus,
-                                  }
+                                      value: formState.status_wbp_kasus_id,
+                                      label: formState.nama_status_wbp_kasus,
+                                    }
                                   : formState.status_wbp_kasus_id
                               }
                               disabled={isDetail}
@@ -3059,7 +3093,7 @@ export const DetailPelacakanWajahPrajurit = ({
                           </div> */}
 
                           {formState.status_wbp_kasus_id === '' ||
-                            formState.status_wbp_kasus_id === null ? null : (
+                          formState.status_wbp_kasus_id === null ? null : (
                             <>
                               {/* Tanggal Penetapan Terpidana*/}
                               <div
@@ -3211,7 +3245,7 @@ export const DetailPelacakanWajahPrajurit = ({
                             </div>
 
                             {formState.is_sick === '0' ||
-                              formState.is_sick === '' ? null : (
+                            formState.is_sick === '' ? null : (
                               <>
                                 <div className="f-nama-penyakit form-group w-full flex flex-col">
                                   <label
@@ -3407,18 +3441,18 @@ export const DetailPelacakanWajahPrajurit = ({
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
-                    <>
-                      <br />
-                      <div className="error">
-                        {errors
-                          .filter((item: string) =>
-                            item.startsWith('INVALID_ID'),
-                          )[0]
-                          .replace('INVALID_ID_', '')}{' '}
-                        is not a valid bond
-                      </div>
-                    </>
-                  )}
+                  <>
+                    <br />
+                    <div className="error">
+                      {errors
+                        .filter((item: string) =>
+                          item.startsWith('INVALID_ID'),
+                        )[0]
+                        .replace('INVALID_ID_', '')}{' '}
+                      is not a valid bond
+                    </div>
+                  </>
+                )}
                 {errors.length > 0 && (
                   <div className="error mt-4">
                     <p className="text-red-400">
@@ -3443,8 +3477,9 @@ export const DetailPelacakanWajahPrajurit = ({
 
                 {isDetail ? null : isEdit ? (
                   <button
-                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -3461,7 +3496,7 @@ export const DetailPelacakanWajahPrajurit = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -3476,8 +3511,9 @@ export const DetailPelacakanWajahPrajurit = ({
                   </button>
                 ) : (
                   <button
-                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${buttonLoad ? 'bg-slate-400' : ''
-                      }`}
+                    className={`tombol-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      buttonLoad ? 'bg-slate-400' : ''
+                    }`}
                     type="submit"
                     disabled={buttonLoad}
                   >
@@ -3494,7 +3530,7 @@ export const DetailPelacakanWajahPrajurit = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

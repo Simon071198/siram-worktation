@@ -57,7 +57,7 @@ const CameraPlayback = (props) => {
   const [currentRecordingIndex, setCurrentRecordingIndex] = useState(-1);
   const [dataAllCamera, setDataAllCamera] = useState([]);
   const [selectedCamera, setSelectedCamera] = useState(null); // Initially, no camera is selected.
-
+  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('');
   const [date, setDate] = useState(getCurrentDate());
   const [timeStart, setTimeStart] = useState(getTime(-1));
@@ -472,25 +472,30 @@ const CameraPlayback = (props) => {
               </button>
             </div>
           </div>
+          <div className="mr-[40rem] mb-2">
+            {client.current.readyState !== WebSocket.OPEN && (
+              <h1 className="font-semibold text-xl text-red-500 animate-pulse">
+                Error connection
+              </h1>
+            )}
+            {loading && client.current.readyState == WebSocket.OPEN && (
+              <p className="animate-pulse">Sedang memuat ....</p>
+            )}
+          </div>
           {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
           <div className="player-wrapper r-player flex justify-center space-x-8 w-full">
             <div className="w-full bg-graydark p-4 flex justify-center">
               {playlistPlayback.length > 0 ? (
                 <ReactPlayer
-                  // loop={true}
                   className="react-player"
                   url={forUrl}
-                  // url="http://192.168.1.111:4007/record/Camera1/2024.03.28/video/134620.mp4"
-                  // http://192.168.1.111/var/www/siram_admin_api/siram_websocket/record/videos/record/Camera1/2024.03.28/cam1/Mar-28-2024/video/3-28-12-29-57.mp4
-                  // url={playlistPlayback[currentVideoIndex]}
                   playing={true}
-                  // playsinline={true}
                   controls={true}
                   muted={true}
                   ref={playerRef}
-                  // onEnded={handleVideoEnded}
+                  onBuffer={() => setLoading(true)}
+                  onBufferEnd={() => setLoading(false)}
                   onError={handleVideoError}
-                  // key={currentVideoIndex}
                 />
               ) : (
                 <p className="tracking-wider">Silahkan pilih rekaman</p>

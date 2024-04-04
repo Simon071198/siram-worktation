@@ -14,8 +14,12 @@ import { Putusan } from './Putusan';
 import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
 import Saksi from './Saksi';
+import { useLocation } from 'react-router-dom';
 
 const DetailPerkara = () => {
+  const {state} = useLocation();
+  const dataPerkara = state.data
+  // console.log(dataPerkara, "location")
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
     'Data Umum',
@@ -50,16 +54,16 @@ const DetailPerkara = () => {
         </div>
 
         <div className="bg-slate-700">
-          {tapIndex == 0 && <DataUmum />}
+          {tapIndex == 0 && <DataUmum dataperkara={dataPerkara} />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
-          {tapIndex == 3 && <Saksi />}
+          {tapIndex == 3 && <Saksi dataPerkara={dataPerkara}/>}
           {tapIndex == 4 && <Penuntutan />}
           {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <Kasasi />}
-          {tapIndex == 9 && <PeninjauanKembali />}
+          {tapIndex == 9 && <PeninjauanKembali dataPerkara = {dataPerkara} />}
           {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>

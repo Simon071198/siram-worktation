@@ -9,7 +9,7 @@ import { apiReadAlllokasiOtmil } from '../../../services/api';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-console.log(dataAdmin, "dataAdmin")
+console.log(dataAdmin, 'dataAdmin');
 export const ModalAddGedung = ({
   closeModal,
   onSubmit,
@@ -276,7 +276,7 @@ export const ModalAddGedung = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -498,7 +498,7 @@ export const ModalAddGedung = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -533,7 +533,7 @@ export const ModalAddGedung = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"

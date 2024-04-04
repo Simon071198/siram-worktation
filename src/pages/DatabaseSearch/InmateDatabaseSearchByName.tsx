@@ -15,7 +15,6 @@ import { apiPelacakanTersangka } from '../../services/api';
 import { DetailPelacakanWajahPrajurit } from './ModalDetailDatabaseSearchByName';
 
 export default function InmateDatabaseSearchByName() {
-
   // interface Item {
   //   kamera_log: string;
   // }
@@ -95,12 +94,12 @@ export default function InmateDatabaseSearchByName() {
       return;
     }
 
-    console.log("Hai Sayang");
-    setErrors([])
+    console.log('Hai Sayang');
+    setErrors([]);
     let params = {
       filter: {
         nama_tersangka: filter,
-        lokasi_otmil_id: dataLokasiOtmilId
+        lokasi_otmil_id: dataLokasiOtmilId,
       },
       // page:1,
       // pageSize:1
@@ -126,9 +125,9 @@ export default function InmateDatabaseSearchByName() {
         title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
-  }
+  };
 
-  console.log(data, "ini data Boss QQ");
+  console.log(data, 'ini data Boss QQ');
   console.log(pages);
   console.log(rows);
 
@@ -277,15 +276,15 @@ export default function InmateDatabaseSearchByName() {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     className="text-black"
                     width="25"
                     height="25"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                     />
                   </svg>
@@ -303,17 +302,17 @@ export default function InmateDatabaseSearchByName() {
         </div>
       </div>
 
-      {data?.length === 0 ? (<div className="mt-5 mb-5">
-        <div className="flex items-center justify-center">
-          <div className="w-full border-b border-white opacity-30 "></div>
-          <p className="w-full text-center text-white">CARI NAMA PRAJURIT</p>
-          <div className="w-full border-b border-white opacity-30 "></div>
+      {data?.length === 0 ? (
+        <div className="mt-5 mb-5">
+          <div className="flex items-center justify-center">
+            <div className="w-full border-b border-white opacity-30 "></div>
+            <p className="w-full text-center text-white">CARI NAMA PRAJURIT</p>
+            <div className="w-full border-b border-white opacity-30 "></div>
+          </div>
+          <div className="flex justify-center p-4 w-ful">
+            <p className="w-full text-center text-white">No Data</p>
+          </div>
         </div>
-        <div className="flex justify-center p-4 w-ful">
-          <p className="w-full text-center text-white">No Data</p>
-        </div>
-      </div>
-
       ) : (
         <>
           <div className="mt-5 mb-5">
@@ -327,11 +326,16 @@ export default function InmateDatabaseSearchByName() {
             <div className="xl:mx-[300px] lg:mx-[200px] md:mx-[100px]">
               <div className="grid grid-cols-1 gap-6 d-hasil">
                 {data.map((item: any) => (
-                  <div className="bg-boxdark px-4 py-4 flex" onClick={() => handleDetailClick(item)}>
+                  <div
+                    className="bg-boxdark px-4 py-4 flex"
+                    onClick={() => handleDetailClick(item)}
+                  >
                     <div className="bg-blue-500 w-[150px] h-[150px] overflow-hidden border border-slate-400">
                       <img
-                        src={'https://dev.transforme.co.id/siram_admin_api' +
-                        item.foto_wajah}
+                        src={
+                          'https://dev.transforme.co.id/siram_admin_api' +
+                          item.foto_wajah
+                        }
                         alt="picture"
                         className="object-cover w-[150px] h-[150px]"
                       ></img>
@@ -352,14 +356,14 @@ export default function InmateDatabaseSearchByName() {
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="1.5"
+                            strokeWidth="1.5"
                             stroke="currentColor"
                             width="15"
                             height="15"
                           >
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
@@ -369,13 +373,11 @@ export default function InmateDatabaseSearchByName() {
                       </div>
                     </div>
                   </div>
-                )
-                )}
+                ))}
               </div>
             </div>
           </div>
         </>
-
       )}
 
       {modalDetailOpen && (
