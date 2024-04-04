@@ -25,6 +25,7 @@ import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 import { version } from '../utils/constants';
 import { apiversion } from '../services/api';
+import { FaCirclePlus } from "react-icons/fa6";
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -185,7 +186,7 @@ const routes = [
     id: 0,
     name: 'Entry Data',
     link: '/entry-data',
-    icon: <PiIdentificationCardThin size={90} />,
+    icon: <FaCirclePlus size={90} />,
   },
   {
     id: 1,
@@ -248,43 +249,43 @@ const routes = [
     icon: CameraIcon,
   },
   {
-    id: 10,
+    id: 11,
     name: 'Kamera Playback',
     link: '/kamera-playback',
     icon: CameraIcon,
   },
   {
-    id: 11,
+    id: 12,
     name: 'Pelacakan',
     link: '/pelacakan',
     icon: PelacakanIcon,
   },
   {
-    id: 12,
+    id: 13,
     name: 'Live Chat',
     link: '/live-chat-list',
     icon: ChatIcon,
   },
   {
-    id: 13,
+    id: 14,
     name: 'Pengaturan',
     link: '/pengaturan-list',
     icon: PengaturanIcon,
   },
   {
-    id: 14,
+    id: 15,
     name: 'Log',
     link: '/log-riwayat',
     icon: LogIcon,
   },
   // {
-  //   id: 15,
+  //   id: 16,
   //   name: 'Version',
   //   link: '/version',
   //   icon: LogIcon,
   // },
   // {
-  //   id: 16,
+  //   id: 17,
   //   name: 'Tutorial',
   //   link: '/tutorial-data',
   //   icon: <IoDocumentText size={80} />,

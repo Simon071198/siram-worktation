@@ -156,7 +156,7 @@ export const AddInmateModal = ({
       tanggal_penetapan_terdakwa: '',
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
-      jenis_olahraga: ''
+      jenis_olahraga: '',
       // penyakit: '',
       // berat_badan: '',
       // tinggi_badan: '',
@@ -368,7 +368,7 @@ export const AddInmateModal = ({
       vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
       vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
     });
-  }
+  };
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -1371,7 +1371,7 @@ export const AddInmateModal = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -1488,13 +1488,13 @@ export const AddInmateModal = ({
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke-width="1.5"
+                                    strokeWidth="1.5"
                                     stroke="currentColor"
                                     className="w-5 h-5"
                                   >
                                     <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
                                       d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                     />
                                   </svg>
@@ -1547,13 +1547,13 @@ export const AddInmateModal = ({
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke-width="1.5"
+                                    strokeWidth="1.5"
                                     stroke="currentColor"
                                     className="w-5 h-5"
                                   >
                                     <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
                                       d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                                     />
                                   </svg>
@@ -2283,13 +2283,13 @@ export const AddInmateModal = ({
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="1.5"
+                            strokeWidth="1.5"
                             stroke="currentColor"
                             className="w-6 h-6 text-white"
                           >
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               d="M12 4.5v15m7.5-7.5h-15"
                             />
                           </svg>
@@ -2320,13 +2320,13 @@ export const AddInmateModal = ({
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                                 className="w-6 h-6"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M6 18L18 6M6 6l12 12"
                                 />
                               </svg>
@@ -2421,42 +2421,44 @@ export const AddInmateModal = ({
                         <div className="f-alamat form-group w-full flex flex-col">
                           <label
                             htmlFor="id"
-                            className="block text-sm font-medium text-black dark:text-white">
+                            className="block text-sm font-medium text-black dark:text-white"
+                          >
                             Jenis Perkara
                           </label>
                           <Select
-                            className='basic-single'
-                            classNamePrefix='select'
+                            className="basic-single"
+                            classNamePrefix="select"
                             styles={customStyles}
-                            name='jenis_perkara_id'
-                            isDisabled={true}
+                            name="jenis_perkara_id"
+                            isDisabled={isDetail}
                             isClearable={true}
                             isSearchable={true}
-                            placeholder='Pilih Jenis Perkara'
+                            placeholder="Pilih Jenis Perkara"
                             defaultValue={
-                              (isEdit || isDetail) && !formState.jenis_perkara_id // Check if in edit or detail mode and jenis_perkara_id is null
+                              (isEdit || isDetail) &&
+                              !formState.jenis_perkara_id // Check if in edit or detail mode and jenis_perkara_id is null
                                 ? { value: null, label: 'No Data' }
                                 : formState.jenis_perkara_id !== null // Check if jenis_perkara_id is not null
                                   ? {
-                                    value: formState.jenis_perkara_id,
-                                    label: formState.nama_jenis_perkara,
-                                  }
+                                      value: formState.jenis_perkara_id,
+                                      label: formState.nama_jenis_perkara,
+                                    }
                                   : { value: null, label: 'No Data' }
                             }
-                            options={
-                              jenisPerkara.map((item: any) => ({
-                                value: item.jenis_perkara_id,
-                                label: item.nama_jenis_perkara,
-                              }))
-                            }
+                            options={jenisPerkara.map((item: any) => ({
+                              value: item.jenis_perkara_id,
+                              label: item.nama_jenis_perkara,
+                            }))}
                             onChange={handleSelectJenisPerkara}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'jenis_perkara_id' ? 'Pilih jenis perkara' : ''
+                              item === 'jenis_perkara_id'
+                                ? 'Pilih jenis perkara'
+                                : '',
                             )}
                           </p>
-                      </div>
+                        </div>
 
                         <div className="grid grid-cols-3 gap-4">
                           <div className="">
@@ -2774,7 +2776,8 @@ export const AddInmateModal = ({
                               isSearchable={true}
                               placeholder="Pilih Status"
                               defaultValue={
-                                (isEdit || isDetail) && formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
+                                (isEdit || isDetail) &&
+                                formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
                                   ? {
                                       value: formState.status_wbp_kasus_id,
                                       label: formState.nama_status_wbp_kasus,
@@ -2785,9 +2788,7 @@ export const AddInmateModal = ({
                                 value: item.status_wbp_kasus_id,
                                 label: item.nama_status_wbp_kasus,
                               }))}
-                              onChange={
-                                handleSelectWbpStatus
-                              }
+                              onChange={handleSelectWbpStatus}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -3435,13 +3436,13 @@ export const AddInmateModal = ({
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
                                         viewBox="0 0 24 24"
-                                        stroke-width="1.5"
+                                        strokeWidth="1.5"
                                         stroke="currentColor"
                                         className="h-3 w-3"
                                       >
                                         <path
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
                                           d="M6 18L18 6M6 6l12 12"
                                         />
                                       </svg>
@@ -3497,13 +3498,13 @@ export const AddInmateModal = ({
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"
-                              stroke-width="1.5"
+                              strokeWidth="1.5"
                               stroke="currentColor"
                               className="h-3 w-3"
                             >
                               <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                                 d="M6 18L18 6M6 6l12 12"
                               />
                             </svg>
@@ -3547,13 +3548,13 @@ export const AddInmateModal = ({
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
                                   viewBox="0 0 24 24"
-                                  stroke-width="1.5"
+                                  strokeWidth="1.5"
                                   stroke="currentColor"
                                   className="h-3 w-3"
                                 >
                                   <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                     d="M6 18L18 6M6 6l12 12"
                                   />
                                 </svg>
@@ -3615,13 +3616,13 @@ export const AddInmateModal = ({
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
                                       viewBox="0 0 24 24"
-                                      stroke-width="1.5"
+                                      strokeWidth="1.5"
                                       stroke="currentColor"
                                       className="h-3 w-3"
                                     >
                                       <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                         d="M6 18L18 6M6 6l12 12"
                                       />
                                     </svg>
@@ -3707,7 +3708,7 @@ export const AddInmateModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -3741,7 +3742,7 @@ export const AddInmateModal = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

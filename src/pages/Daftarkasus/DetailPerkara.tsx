@@ -54,7 +54,7 @@ const DetailPerkara = () => {
         </div>
 
         <div className="bg-slate-700">
-          {tapIndex == 0 && <DataUmum />}
+          {tapIndex == 0 && <DataUmum dataperkara={dataPerkara} />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
           {tapIndex == 3 && <Saksi dataPerkara={dataPerkara}/>}

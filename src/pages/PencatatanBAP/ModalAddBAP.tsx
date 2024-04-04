@@ -50,7 +50,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
-  const [filter, setFilter] = useState('');  
+  const [filter, setFilter] = useState('');
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -459,7 +459,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     cy="12"
                     r="10"
                     stroke="currentColor"
-                    stroke-width="4"
+                    strokeWidth="4"
                   ></circle>
                   <path
                     className="opacity-75"
@@ -736,42 +736,42 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                               width="20"
                             >
                               <path
-                                fill-rule="evenodd"
+                                fillRule="evenodd"
                                 d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                                clip-rule="evenodd"
+                                clipRule="evenodd"
                               />
                             </svg>
                           </button>
                         </div>
                         <div className="">
                           <div style={{ height: '10%' }}>
-                              {/* pdf */}
-                              {file && (
-                                  <div className="">
-                                      {file === 'pdf' ? (
-                                          <iframe
-                                              src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                              title="pdf"
-                                              width="100%"
-                                              height="600px" // Adjust the height as per your requirement
-                                              className="border-0 text-center justify-center"
-                                              // scrolling="no"
-                                          />
-                                      ) : (file === 'docx' || file === 'doc' ) ? (
-                                          // {/* docx */}
-                                          <iframe
-                                              src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
-                                              title="docx"
-                                              width="100%"
-                                              height="600px" // Adjust the height as per your requirement
-                                              // className="border-0 text-center justify-center padding-left-10"
-                                          ></iframe>
-                                      ) : (
-                                          <p>Ekstensi file tidak didukung</p>
-                                      )}
-                                  </div>
-                              )}
-                              {/* {formState.pdf_file_base64 && (
+                            {/* pdf */}
+                            {file && (
+                              <div className="">
+                                {file === 'pdf' ? (
+                                  <iframe
+                                    src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    title="pdf"
+                                    width="100%"
+                                    height="600px" // Adjust the height as per your requirement
+                                    className="border-0 text-center justify-center"
+                                    // scrolling="no"
+                                  />
+                                ) : file === 'docx' || file === 'doc' ? (
+                                  // {/* docx */}
+                                  <iframe
+                                    src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    title="docx"
+                                    width="100%"
+                                    height="600px" // Adjust the height as per your requirement
+                                    // className="border-0 text-center justify-center padding-left-10"
+                                  ></iframe>
+                                ) : (
+                                  <p>Ekstensi file tidak didukung</p>
+                                )}
+                              </div>
+                            )}
+                            {/* {formState.pdf_file_base64 && (
                                   <div className="">
                                           <embed
                                               src={`${formState.pdf_file_base64}`}
@@ -785,7 +785,6 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                    
                                   </div>
                               )} */}
-
                           </div>
                         </div>
                         <p className="text-center text-sm text-blue-500">
@@ -902,7 +901,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -937,7 +936,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"

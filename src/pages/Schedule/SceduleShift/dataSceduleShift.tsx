@@ -287,10 +287,13 @@ const DataSceduleShift = () => {
               </li>
               <li className="py-2.5 flex rounded-b-md bg-gray-2 dark:bg-meta-4 ">
                 <ul className="w-full py-2.5 space-y-4">
-                  {dataShift.map((item: any) => {
+                  {dataShift.map((item: any, index) => {
                     return (
                       <>
-                        <li className="flex items-center justify-center grid grid-cols-4">
+                        <li
+                          key={index}
+                          className="flex items-center justify-center grid grid-cols-4"
+                        >
                           <div className="capitalize flex items-center justify-center text-sm font-medium xsm:text-base">
                             {item.nama_shift}
                           </div>
