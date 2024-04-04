@@ -2,6 +2,8 @@ import { useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
 import BarangBukti from './BarangBukti';
+import AddSidang from './AddSidang'
+import AddBAP from './AddBAP'
 
 import { WbpInsert } from './WbpInsert';
 const EntryData = () => {
@@ -38,20 +40,12 @@ const EntryData = () => {
       ),
     },
     {
-      nama: 'BAP',
-      component: (
-        <div>
-          <input type="text" placeholder="form 5" className="p-2 rounded-md" />
-        </div>
-      ),
+      nama: 'Detail Sidang',
+      component: <AddSidang />
     },
     {
-      nama: 'Detail Sidang',
-      component: (
-        <div>
-          <input type="text" placeholder="form 6" className="p-2 rounded-md" />
-        </div>
-      ),
+      nama: 'Tambah BAP',
+      component: <AddBAP />
     },
   ];
   function handlePrev() {

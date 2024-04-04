@@ -45,7 +45,7 @@ const BAPList = () => {
   const [alertIsAdded, setAlertIsAdded] = useState(false);
   const [alertIsEdited, setAlertIsEdited] = useState(false);
   const [alertIsDeleted, setAlertIsDeleted] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage,  ] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [filter, setFilter] = useState('');
@@ -175,7 +175,7 @@ const BAPList = () => {
   };
 
   const handleChagePage = (pageNumber: any) => {
-    setCurrentPage(pageNumber);
+     (pageNumber);
   };
 
   const handleChangePageSize = async (e: any) => {
