@@ -3,6 +3,7 @@ import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
 import BarangBukti from './BarangBukti';
 
+import { WbpInsert } from './WbpInsert';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
@@ -12,11 +13,7 @@ const EntryData = () => {
       nama: 'Detail Tersangka',
       component: (
         <div>
-          <input
-            type="text"
-            placeholder="Nama Tersangka"
-            className="p-2 rounded-md"
-          />
+          <WbpInsert />
         </div>
       ),
     },
