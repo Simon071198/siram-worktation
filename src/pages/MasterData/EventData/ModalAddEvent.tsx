@@ -654,7 +654,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  stroke-width="4"
+                  strokeWidth="4"
                 ></circle>
                 <path
                   className="opacity-75"
@@ -749,11 +749,12 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         // onChange={handleWaktuMulai}
                         onChange={(date) => {
                           handleWaktuMulai(date); // Panggil handleWaktuMulai
-                          handleChange({ // Panggil handleChange
+                          handleChange({
+                            // Panggil handleChange
                             target: {
                               name: 'waktu_mulai_kegiatan',
                               value: date,
-                            }
+                            },
                           });
                         }}
                         showTimeInput
@@ -804,16 +805,16 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                           formState.waktu_selesai_kegiatan
                             ? dayjs(formState.waktu_selesai_kegiatan).toDate()
                             : dayjs().toDate()
-
-                        }                        
+                        }
                         // onChange={handleWaktuSelesai}
                         onChange={(date) => {
                           handleWaktuSelesai(date); // Panggil handleWaktuMulai
-                          handleChange({ // Panggil handleChange
+                          handleChange({
+                            // Panggil handleChange
                             target: {
                               name: 'waktu_selesai_kegiatan',
                               value: date,
-                            }
+                            },
                           });
                         }}
                         showTimeInput
@@ -1240,7 +1241,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"
@@ -1275,7 +1276,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                           cy="12"
                           r="10"
                           stroke="currentColor"
-                          stroke-width="4"
+                          strokeWidth="4"
                         ></circle>
                         <path
                           className="opacity-75"

@@ -1,21 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export const DeleteDaftarKasusModal = ({ closeModal, onSubmit, defaultValue }:any) => {
+export const DeleteDaftarKasusModal = ({
+  closeModal,
+  onSubmit,
+  defaultValue,
+}: any) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      kasus_id : ''
-    }
+      kasus_id: '',
+    },
   );
   const [errors, setErrors] = useState<string[]>([]);
-  const modalContainerRef:any = useRef(null);
+  const modalContainerRef: any = useRef(null);
   const [buttonLoad, setButtonLoad] = useState(false);
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    setButtonLoad(true)
+    setButtonLoad(true);
     console.log(formState, 'formState');
 
-    onSubmit(formState).then(()=> setButtonLoad(false))
+    onSubmit(formState).then(() => setButtonLoad(false));
   };
 
   const modalStyles: any = {
@@ -38,52 +42,55 @@ export const DeleteDaftarKasusModal = ({ closeModal, onSubmit, defaultValue }:an
     },
   };
 
-
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
-    <div
-      ref={modalContainerRef}
-      style={modalStyles.modalContainer}
-      className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    >
-      <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-600 overflow-auto">
-        <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-          <div className="w-full flex justify-between">
-            <div>
-              <h3 className="text-xl font-semibold text-black dark:text-white">
-                Konfirmasi Hapus Data
-              </h3>
+      <div
+        ref={modalContainerRef}
+        style={modalStyles.modalContainer}
+        className="modal-container fixed z-[999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      >
+        <div className="modal rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-slate-600 overflow-auto">
+          <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
+            <div className="w-full flex justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-black dark:text-white">
+                  Konfirmasi Hapus Data
+                </h3>
+              </div>
+              <strong
+                className="text-xl align-center cursor-pointer "
+                onClick={closeModal}
+              >
+                &times;
+              </strong>
             </div>
-            <strong
-              className="text-xl align-center cursor-pointer "
-              onClick={closeModal}
-            >
-              &times;
-            </strong>
-          </div>
-          <div className="pt-6">
-            <p className="text-sm te  xt-black dark:text-white max-w-md">
-              Apakah Anda yakin ingin menghapus data ini? 
-            </p>
-            <p className="text-sm text-center text-black dark:text-white">
-            Nama Daftar Kasus <span className='text-red-400'>{formState.nama_kasus}</span> akan dihapus
-            </p>
-          </div>
+            <div className="pt-6">
+              <p className="text-sm te  xt-black dark:text-white max-w-md">
+                Apakah Anda yakin ingin menghapus data ini?
+              </p>
+              <p className="text-sm text-center text-black dark:text-white">
+                Nama Daftar Kasus{' '}
+                <span className="text-red-400">{formState.nama_kasus}</span>{' '}
+                akan dihapus
+              </p>
+            </div>
 
-          <br></br>
+            <br></br>
 
-          <div className="flex justify-between">
-            <button
-              className="btn flex justify-center rounded bg-blue-500 py-2 px-6 font-medium text-white hover:bg-blue-400"
-              type="submit"
-              onClick={closeModal}
-            >
-              Batal
-            </button>
-            <button
+            <div className="flex justify-between">
+              <button
+                className="btn flex justify-center rounded bg-blue-500 py-2 px-6 font-medium text-white hover:bg-blue-400"
+                type="submit"
+                onClick={closeModal}
+              >
+                Batal
+              </button>
+              <button
                 className={`btn flex justify-center rounded py-2 px-6 font-medium text-white  ${
-                  buttonLoad ? 'bg-slate-400 hover:bg-none' : 'hover:bg-red-400 bg-red-500 '
+                  buttonLoad
+                    ? 'bg-slate-400 hover:bg-none'
+                    : 'hover:bg-red-400 bg-red-500 '
                 }`}
                 type="submit"
                 disabled={buttonLoad}
@@ -102,7 +109,7 @@ export const DeleteDaftarKasusModal = ({ closeModal, onSubmit, defaultValue }:an
                       cy="12"
                       r="10"
                       stroke="currentColor"
-                      stroke-width="4"
+                      strokeWidth="4"
                     ></circle>
                     <path
                       className="opacity-75"
@@ -115,10 +122,10 @@ export const DeleteDaftarKasusModal = ({ closeModal, onSubmit, defaultValue }:an
                 )}
                 Hapus
               </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

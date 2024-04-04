@@ -24,7 +24,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   onSubmit,
   defaultValue,
   isDetail,
-  isEdit
+  isEdit,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -198,9 +198,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   };
 
   useEffect(() => {
-    Promise.all([
-      KategotiPerkara(),
-    ]).then(() => {
+    Promise.all([KategotiPerkara()]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -212,19 +210,19 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     await apiReadKategoriPerkara(params, token)
       .then((res) => {
         setkategoriperkara(res.data.records);
-    })
-    .catch((e: any) => {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
       });
-    });
-  }
+  };
 
   // useEffect(() => {
   //   const fetchDataKategori = async () => {
@@ -338,7 +336,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  stroke-width="4"
+                  strokeWidth="4"
                 ></circle>
                 <path
                   className="opacity-75"
@@ -459,8 +457,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                           kategori_perkara_id: e.value,
                           nama_kategori_perkara: e.label,
                         });
-                      }
-                      }
+                      }}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -566,7 +563,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"
@@ -600,7 +597,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                             cy="12"
                             r="10"
                             stroke="currentColor"
-                            stroke-width="4"
+                            strokeWidth="4"
                           ></circle>
                           <path
                             className="opacity-75"

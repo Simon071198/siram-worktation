@@ -465,7 +465,7 @@ const AddPetugasShiftGrup = ({
                 cy="12"
                 r="10"
                 stroke="currentColor"
-                stroke-width="4"
+                strokeWidth="4"
               ></circle>
               <path
                 className="opacity-75"
@@ -686,28 +686,28 @@ const AddPetugasShiftGrup = ({
                     })}
                   </div>
                 </div>
-                {isDetail ? null : (
-                  !isOperator && (
-                    <button
-                    onClick={handleSubmit}
-                    className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
-                      buttonLoad ? 'bg-slate-400' : ''
-                    }`}
-                    type="submit"
-                    disabled={buttonLoad}
-                    id="b-submit"
-                  >
-                    {buttonLoad ? (
-                      <>
-                        <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                      </>
-                    ) : (
-                      <></>
+                {isDetail
+                  ? null
+                  : !isOperator && (
+                      <button
+                        onClick={handleSubmit}
+                        className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                          buttonLoad ? 'bg-slate-400' : ''
+                        }`}
+                        type="submit"
+                        disabled={buttonLoad}
+                        id="b-submit"
+                      >
+                        {buttonLoad ? (
+                          <>
+                            <BiLoaderAlt className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                        Submit
+                      </button>
                     )}
-                    Submit
-                  </button>
-                    )                  
-                )}
               </div>
             </div>
           </>

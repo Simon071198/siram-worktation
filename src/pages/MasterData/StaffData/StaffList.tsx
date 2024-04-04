@@ -521,8 +521,10 @@ const StaffList = () => {
               className=" rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary p-pangkat"
             >
               <option value="">Semua pangkat</option>
-              {pangkatData.map((item: any) => (
-                <option value={item.nama_pangkat}>{item.nama_pangkat}</option>
+              {pangkatData.map((item: any, index) => (
+                <option key={index} value={item.nama_pangkat}>
+                  {item.nama_pangkat}
+                </option>
               ))}
             </select>
 
@@ -541,9 +543,9 @@ const StaffList = () => {
                 className="h-5 w-5 text-black"
               >
                 <path
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 />
               </svg>
             </button>
@@ -629,15 +631,12 @@ const StaffList = () => {
             <div className="flex justify-center p-4 w-ful">No Data</div>
           ) : (
             <>
-              {data.map((item: any) => {
+              {data.map((item: any, index) => {
                 return (
-                  <div>
+                  <div key={index}>
                     {isOperator || isAdmin ? (
                       <>
-                        <div
-                          className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize"
-                          key={item.nama}
-                        >
+                        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-3 capitalize">
                           <div
                             onClick={() => handleDetailClick(item)}
                             className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
@@ -667,10 +666,7 @@ const StaffList = () => {
                       </>
                     ) : (
                       <>
-                        <div
-                          className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4 capitalize"
-                          key={item.nama}
-                        >
+                        <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-4 capitalize">
                           <div
                             onClick={() => handleDetailClick(item)}
                             className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
