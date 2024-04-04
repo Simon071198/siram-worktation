@@ -96,9 +96,6 @@ const AddSidang = () => {
      
      return (
       <div className="px-10">
-          <div className="text-white text-xl font-bold mb-3">
-            <h1>Tambah Data Sidang</h1>
-          </div>
         <div className="bg-slate-500 p-5 shadow-xl rounded-md">
             <form action="">
               <div className="grid grid-cols-1 gap-4 mt-5">

@@ -482,9 +482,9 @@ useEffect(() => {
 
     return (
       <div className="px-10">
-        <div className="text-white text-xl font-bold mb-3">
+        {/* <div className="text-white text-xl font-bold mb-3">
             <h2>Tambah Data BAP</h2>
-        </div>
+        </div> */}
         <div className="bg-slate-500 p-5 rounded-md">
           <form onSubmit={handleSubmit} >
             <div className="grid grid-cols gap-4 mt-5">
