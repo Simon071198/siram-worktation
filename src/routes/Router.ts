@@ -197,6 +197,10 @@ const CameraPlaybackDetail = lazy(
 const MenuTutorial = lazy(() => import('../pages/Tutorial/TutorialList'));
 
 const EntryData = lazy(() => import('../pages/EntryData/Index'))
+
+const AddSidang = lazy(() => import('../pages/EntryData/AddSidang'));
+const AddBAP = lazy(() => import('../pages/EntryData/AddBAP'));
+
 const coreRoutes = [
   // {
   //   path: '/kemera-dev-test/:id',
@@ -213,6 +217,16 @@ const coreRoutes = [
     path: '/entry-data',
     title: 'Entry Data',
     component: EntryData,
+  },
+  {
+    path: '/add-sidang',
+    title: 'Add Sidang',
+    component: AddSidang,
+  },
+  {
+    path: '/add-bap',
+    title: 'Add BAP',
+    component: AddBAP,
   },
   {
     path: '/penyidikan',

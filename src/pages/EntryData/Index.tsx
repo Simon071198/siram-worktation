@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import ProgressBar from '../../components/ProgressBar'
 import { useNavigate } from 'react-router-dom'
+import AddSidang from './AddSidang'
+import AddBAP from './AddBAP'
 
 const EntryData = () => {
   const navigate = useNavigate()
@@ -32,16 +34,20 @@ const EntryData = () => {
       </div>)
     },
     {
-      "nama": "form 5",
-      "component": (<div>
-        <input type="text" placeholder='form 5' />
-      </div>)
+      component: (
+        <div>
+          {/* <input type="text" placeholder="form 5" /> */}
+          {currentForm === 4 && <AddSidang />}
+        </div>
+      ),
     },
     {
-      "nama": "form 6",
-      "component": (<div>
-        <input type="text" placeholder='form 6' />
-      </div>)
+      component: (
+        <div>
+          {/* <input type="text" placeholder="form 5" /> */}
+          {currentForm === 5 && <AddBAP />}
+        </div>
+      ),
     },
   ]
   function handleNext(){
