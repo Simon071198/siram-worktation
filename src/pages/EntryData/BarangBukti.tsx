@@ -111,6 +111,7 @@ const BarangBukti = () => {
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
+  console.log(token, 'token')
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
