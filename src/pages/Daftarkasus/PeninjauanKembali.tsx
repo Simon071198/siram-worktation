@@ -5,7 +5,8 @@ import { Alerts } from './AlertDaftarKasus';
 
 import { apiReadAllWBP } from '../../services/api';
 
-const PeninjauanKembali = ({ token }: any) => {
+const PeninjauanKembali = ({ dataPerkara }: any) => {
+  console.log(dataPerkara);
   const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState([]);
@@ -85,21 +86,22 @@ const PeninjauanKembali = ({ token }: any) => {
               </div>
             </div>
             <div className="grid grid-cols-1 divide-y object-cover rounded-full">
-              {dummyData.map((data, index) => {
+              {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                console.log(`data ke ${index} :`, data)
                 return (
                   <div
                     key={index}
-                    className={`dark:bg-slate-300${index !== dummyData.length - 1 ? '' : ''} `}
+                    className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
                   >
                     <div className="grid grid-cols-7 gap-3 hover:bg-slate-500 text-black">
                       <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1 mr-25">
-                        {data.no}
+                        {index + 1}
                       </div>
                       <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2">
-                        {data.nama_status}
+                        Termohon (Oditur)
                       </div>
                       <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-4">
-                        {data.nama}
+                        {data.nama_oditur}
                       </div>
                     </div>
                   </div>
@@ -171,24 +173,25 @@ const PeninjauanKembali = ({ token }: any) => {
             </div>
             <div className="">
               <div className="grid grid-cols-1">
-                {dummyData2.map((data, index) => {
+                {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                  console.log(`data ke ${index} :`, data)
                   return (
                     <div
                       key={index}
-                      className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}
+                      className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
                     >
-                      <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 hover:bg-slate-500 text-black">
+                      <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
                         <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
-                          {data.no}
+                          {index + 1}
                         </div>
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
-                          {data.status2}
+                          Termohon (Oditur)
                         </div>
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
-                          {data.nama2}
+                          {data.nama_oditur}
                         </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
-                          {data.tanggal2}
+                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-44">
+                          26 Januari 2023
                         </div>
                       </div>
                     </div>
@@ -267,29 +270,30 @@ const PeninjauanKembali = ({ token }: any) => {
             </div>
             <div className="">
               <div className="grid grid-cols-1">
-                {dummyData2.map((data, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}
-                    >
-                      <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
-                        <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
-                          {data.no}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
-                          {data.status2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
-                          {data.nama2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
-                          {data.tanggal2}
-                        </div>
+              {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                console.log(`data ke ${index} :`, data)
+                return (
+                  <div
+                    key={index}
+                    className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
+                  >
+                    <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
+                      <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                        {index + 1}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                        Termohon (Oditur)
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                        {data.nama_oditur}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-44">
+                        29 Januari 2023
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
               </div>
             </div>
           </div>
@@ -315,29 +319,30 @@ const PeninjauanKembali = ({ token }: any) => {
             </div>
             <div className="">
               <div className="grid grid-cols-1">
-                {dummyData2.map((data, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}
-                    >
-                      <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
-                        <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
-                          {data.no}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
-                          {data.status2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
-                          {data.nama2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
-                          -
-                        </div>
+              {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                console.log(`data ke ${index} :`, data)
+                return (
+                  <div
+                    key={index}
+                    className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
+                  >
+                    <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
+                      <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                        {index + 1}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                        Termohon (Oditur)
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                        {data.nama_oditur}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-44">
+                        03 Januari 2023
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
               </div>
             </div>
           </div>
@@ -363,29 +368,30 @@ const PeninjauanKembali = ({ token }: any) => {
             </div>
             <div className="">
               <div className="grid grid-cols-1">
-                {dummyData2.map((data, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}
-                    >
-                      <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
-                        <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
-                          {data.no}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
-                          {data.status2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
-                          {data.nama2}
-                        </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
-                          -
-                        </div>
+              {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                console.log(`data ke ${index} :`, data)
+                return (
+                  <div
+                    key={index}
+                    className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
+                  >
+                    <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
+                      <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
+                        {index + 1}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
+                        Termohon (Oditur)
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
+                        {data.nama_oditur}
+                      </div>
+                      <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-44">
+                        06 Januari 2023
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
               </div>
             </div>
           </div>
@@ -469,24 +475,25 @@ const PeninjauanKembali = ({ token }: any) => {
             </div>
             <div className="">
               <div className="grid grid-cols-1">
-                {dummyData2.map((data, index) => {
+                {dataPerkara?.oditur_penyidik?.map((data: any, index: number) => {
+                  console.log(`data ke ${index} :`, data)
                   return (
                     <div
                       key={index}
-                      className={`dark:bg-slate-300${index !== dummyData2.length - 1 ? ' border-b bg-gray-1' : ''}`}
+                      className={`dark:bg-slate-300${index !== data?.oditur_penyidik?.length - 1 ? '' : ''} `}
                     >
                       <div className="grid grid-cols-7 gap-9 hover:bg-slate-500 text-black">
                         <div className="text-sm flex items-center justify-center xl:p-3 cursor-pointer col-span-1 mr-20">
-                          {data.no}
+                          {index + 1}
                         </div>
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-1">
-                          {data.status2}
+                          Termohon (Oditur)
                         </div>
                         <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-3">
-                          {data.nama2}
+                          {data.nama_oditur}
                         </div>
-                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-40">
-                          -
+                        <div className="text-sm flex items-center justify-center p-2.5 xl:p-3 cursor-pointer col-span-2 mr-44">
+                          10 Januari 2023
                         </div>
                       </div>
                     </div>

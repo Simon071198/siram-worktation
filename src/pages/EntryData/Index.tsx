@@ -2,7 +2,11 @@ import { useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
 import DetailKasus from './DetailKasus';
+import BarangBukti from './BarangBukti';
+import AddSidang from './AddSidang'
+import AddBAP from './AddBAP'
 
+import { WbpInsert } from './WbpInsert';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
@@ -12,11 +16,7 @@ const EntryData = () => {
       nama: 'Detail Tersangka',
       component: (
         <div>
-          <input
-            type="text"
-            placeholder="Nama Tersangka"
-            className="p-2 rounded-md"
-          />
+          <WbpInsert />
         </div>
       ),
     },
@@ -26,11 +26,7 @@ const EntryData = () => {
     },
     {
       nama: 'Barang Bukti',
-      component: (
-        <div>
-          <input type="text" placeholder="form 3" className="p-2 rounded-md" />
-        </div>
-      ),
+      component: <BarangBukti />,
     },
     {
       nama: 'Detail Penyidikan',
@@ -41,20 +37,12 @@ const EntryData = () => {
       ),
     },
     {
-      nama: 'Detail Berita Acara Pemeriksaan (BAP)',
-      component: (
-        <div>
-          <input type="text" placeholder="form 5" className="p-2 rounded-md" />
-        </div>
-      ),
+      nama: 'Detail Sidang',
+      component: <AddSidang />
     },
     {
-      nama: 'Detail Sidang',
-      component: (
-        <div>
-          <input type="text" placeholder="form 6" className="p-2 rounded-md" />
-        </div>
-      ),
+      nama: 'Tambah BAP',
+      component: <AddBAP />
     },
   ];
   function handlePrev() {

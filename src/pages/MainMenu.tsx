@@ -25,6 +25,7 @@ import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 import { version } from '../utils/constants';
 import { apiversion } from '../services/api';
+import { FaCirclePlus } from "react-icons/fa6";
 
 const MainMenu = () => {
   const navigate = useNavigate();
@@ -185,7 +186,7 @@ const routes = [
     id: 0,
     name: 'Entry Data',
     link: '/entry-data',
-    icon: <PiIdentificationCardThin size={90} />,
+    icon: <FaCirclePlus size={90} />,
   },
   {
     id: 1,
