@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
+import DetailKasus from './DetailKasus';
 import BarangBukti from './BarangBukti';
 import AddSidang from './AddSidang';
 import AddBAP from './AddBAP';
@@ -22,11 +23,7 @@ const EntryData = () => {
     },
     {
       nama: 'Detail Kasus',
-      component: (
-        <div>
-          <input type="text" placeholder="form 2" className="p-2 rounded-md" />
-        </div>
-      ),
+      component: <DetailKasus />,
     },
     {
       nama: 'Barang Bukti',
