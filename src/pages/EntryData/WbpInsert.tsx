@@ -222,46 +222,6 @@ export const WbpInsert = () => {
   };
 
   //start api select
-  const wbpData = async () => {
-    setIsLoading(true);
-    try {
-      let params = {
-        pagination: {
-          currentPage: 1,
-          pageSize: 1000,
-        },
-      };
-      const responseRead = await apiReadAllWBP(params, token);
-      if (responseRead.data.status === 'OK') {
-        let temp = responseRead.data.records;
-        temp.forEach((obj: any) => {
-          obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
-            (item: any) => item.ruangan_otmil_id,
-          );
-        });
-        setDataWbp(temp);
-        setIsLoading(false);
-      } else if (responseRead.data.status === 'NO') {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Data tidak bisa dimuat',
-        });
-      } else {
-        throw new Error(responseRead.data.message);
-      }
-    } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
-    }
-  };
-
   const getAllRuangan = async () => {
     await apiReadAllRuanganOtmil(
       {
@@ -577,6 +537,7 @@ export const WbpInsert = () => {
       });
   };
   //end api select
+
   // handle select start
   const handleSelectPangkat = (e: any) => {
     setFormState({ ...formState, pangkat_id: e?.value });
@@ -641,9 +602,11 @@ export const WbpInsert = () => {
   //end handle select
 
   //start handle zona
-  const [zona, setZona]: any = useState([]);
+  const [zona, setZona] = useState<any>([]);
   const modalContainerRef = useRef(null);
-  const [autocompleteDataZona, setAutocompleteDataZona]: any = useState(zona);
+  const [autocompleteDataZona, setAutocompleteDataZona]: any[] = useState([
+    zona,
+  ]);
 
   const handleAddZona = (zonaId: any, inputField: any) => {
     if (formState[inputField].includes(zonaId)) {
@@ -666,10 +629,15 @@ export const WbpInsert = () => {
   };
 
   const handleRemoveZona = (zonaId: any, inputField: any) => {
-    setFormState({
-      ...formState,
-      [inputField]: formState[inputField].filter((id: any) => id !== zonaId),
-    });
+    if (
+      inputField === 'akses_ruangan_otmil_id' ||
+      inputField === 'zona_merah'
+    ) {
+      setFormState({
+        ...formState,
+        [inputField]: formState[inputField].filter((id: any) => id !== zonaId),
+      });
+    }
 
     setAutocompleteDataZona((prevData: any) => [
       ...prevData,
@@ -680,7 +648,6 @@ export const WbpInsert = () => {
 
   useEffect(() => {
     Promise.all([
-      wbpData(),
       matraData(),
       pangkatData(),
       kotaData(),
@@ -1924,7 +1891,7 @@ export const WbpInsert = () => {
                           <span
                             data-te-chip-close
                             onClick={() =>
-                              handleRemoveZona(zonaId, 'akses_ruangan_otmil_id')
+                              handleRemoveZona(zonaId, 'zona_merah')
                             }
                             className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                           >
