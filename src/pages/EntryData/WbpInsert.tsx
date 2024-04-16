@@ -141,6 +141,94 @@ export const WbpInsert = () => {
   const [dataWbp, setDataWbp] = useState([]);
   //end handle state
 
+  console.log(formState, 'formstate wbp')
+
+  const validateForm = () => {
+    let errorFields: any = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (key !== 'lokasi_otmil_id')
+        if (formState.is_sick === '0') {
+          if (key === 'wbp_sickness') {
+            if (!value) {
+              continue;
+            }
+          }
+        }
+
+      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
+        console.log('STATUS ADA');
+        continue;
+      }
+
+      if (
+        formState.status_wbp_kasus_id === '' ||
+        formState.status_wbp_kasus_id === null
+      ) {
+        console.log('STATUS KOSONG');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+      ) {
+        //terpidana
+        console.log('STATUS terpidana');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+      ) {
+        //terdakwa
+        console.log('STATUS terdakwa');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          // if (!value) {
+          //   errorFields.push(key);
+          // }
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
+      ) {
+        //tersangka
+        console.log('STATUS tersangka');
+        if (
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      }
+      // else {
+      //   console.log('STATUS ANEH');
+      // }
+
+      if (!value) {
+        errorFields.push(key);
+      }
+    }
+
+    if (errorFields.length > 0) {
+      console.log(errorFields);
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
+
   const handleChange = (e: any) => {
     if (e.target.name === 'gelang_id') {
       const selectedGelang = gelang.find(
@@ -215,10 +303,19 @@ export const WbpInsert = () => {
     }
   };
 
-  const handleSubmit = (e: any) => {
+  // const handleSubmit = (e: any) => {
+  //   e.preventDefault();
+  //   onSubmit(formState);
+  //   console.log(formState, 'received values');
+  // };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formState);
-    console.log(formState, 'received values');
+    console.log(formState, 'formstate');
+    if (!validateForm()) return;
+    setButtonLoad(true);
+
+    onSubmit(formState).then(() => setButtonLoad(false));
   };
 
   //start api select
