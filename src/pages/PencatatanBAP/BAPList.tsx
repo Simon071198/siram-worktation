@@ -162,6 +162,13 @@ const BAPList = () => {
             description: 'Menambahkan data pencatatan BAP',
           },
         },
+        {
+          element: '.b-sidang',
+          popover: {
+            title: 'Sidang',
+            description: 'Masuk ke halaman Sidang',
+          },
+        },
       ],
     });
 
@@ -562,7 +569,7 @@ const BAPList = () => {
           </h4>
           <div className="flex gap-3">
             <button
-              className="text-black rounded-md font-semibold w-20 h-10 bg-green-500"
+              className="text-black rounded-md font-semibold w-20 h-10 bg-green-500 b-sidang"
               onClick={() => navigate('/daftar-sidang')}
             >
               Sidang
@@ -570,7 +577,7 @@ const BAPList = () => {
             {!isOperator && (
               <button
                 onClick={handleModalAddOpen}
-                className="text-black rounded-md bg-blue-300 w-20 h-10"
+                className="text-black rounded-md bg-blue-300 w-20 h-10 b-tambah"
               >
                 Tambah
               </button>
