@@ -4,6 +4,13 @@ import Select from "react-select";
 import DatePicker from 'react-datepicker';
 import dayjs from "dayjs";
 
+
+interface AddSidangProps {
+    defaultValue?: any;
+    token : string;
+    // onSubmit : (params)
+  }
+
 const AddSidang = () => {
      const navigate = useNavigate();
 

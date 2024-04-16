@@ -68,40 +68,54 @@ export const WbpInsert = () => {
     nama_jenis_perkara: string;
   }
 
+  let dataAdmin = JSON.parse(localStorage.getItem('formState') || '{}');
+
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formState, setFormState] = useState<type>({
     foto_wajah: '',
     nama: '',
+    pangkat: dataAdmin.pangkat ?? {value: '', label: 'Pilih Pangkat'},
     pangkat_id: '',
+    matra : dataAdmin.matra ?? {value: '', label: 'Pilih Matra'},
     matra_id: '',
     nrp: '',
     alamat: '',
+    kesatuan: dataAdmin.kesatuan ?? {value: '', label: 'Pilih Kesatuan'},
     kesatuan_id: '',
     nama_kontak_keluarga: '',
     nomor_kontak_keluarga: '',
     hubungan_kontak_keluarga: '',
+    provinsi : dataAdmin.provinsi ?? {value: '', label: 'Pilih Provinsi'},
     provinsi_id: '',
+    kota : dataAdmin.kota ?? {value: '', label: 'Pilih Kota'},
     kota_id: '',
     jenis_kelamin: '',
+    agama : dataAdmin.agama ?? {value: '', label: 'Pilih Agama'},
     agama_id: '',
     tanggal_lahir: '',
     tempat_lahir: '',
+    status_kawin : dataAdmin.status_kawin ?? {value: '', label: 'Pilih Status Kawin'},
     status_kawin_id: '',
+    pendidikan : dataAdmin.pendidikan ?? {value: '', label: 'Pilih Pendidikan'},
     pendidikan_id: '',
     is_sick: '',
     wbp_sickness: '',
     nama_status_wbp_kasus: '',
+    jenisPerkara: dataAdmin.jenisPerkara ?? {value: '', label: 'Pilih Jenis Perkara'},
     jenis_perkara_id: '',
     vonis_tahun_perkara: '',
     vonis_bulan_perkara: '',
     vonis_hari_perkara: '',
     tanggal_ditahan_otmil: '',
     tanggal_masa_penahanan_otmil: '',
+    bidang_keahlian : dataAdmin.bidang_keahlian ?? {value: '', label: 'Pilih Bidang Keahlian'},
     bidang_keahlian_id: '',
+    gelang : dataAdmin.gelang ?? {value: '', label: 'Pilih Gelang'},
     gelang_id: '',
     DMAC: '',
     residivis: '',
+    hunian_wbp_otmil : dataAdmin.hunian_wbp_otmil ?? {value: '', label: 'Pilih Hunian WBP OTMIL'},
     hunian_wbp_otmil_id: '',
     nomor_tahanan: '',
     is_isolated: '',
@@ -109,6 +123,7 @@ export const WbpInsert = () => {
     zona_merah: [],
     // lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
     is_deleted: '0',
+    status_wbp_kasus : dataAdmin.status_wbp_kasus ?? {value: '', label: 'Pilih Status WBP Kasus'},
     status_wbp_kasus_id: '',
     tanggal_penetapan_tersangka: '',
     tanggal_penetapan_terdakwa: '',
@@ -142,27 +157,72 @@ export const WbpInsert = () => {
   //end handle state
 
   const handleChange = (e: any) => {
-    if (e.target.name === 'gelang_id') {
-      const selectedGelang = gelang.find(
-        (item: any) => item.gelang_id === e.target.value,
-      );
-      setFormState({
+    const { name, value } = e.target;
+    let updatedFormState;
+
+    if (name === 'gelang_id') {
+      const selectedGelang = gelang.find( (item: any) => item.gelang_id === value);
+      updatedFormState = {
         ...formState,
-        gelang_id: e.target.value,
+        gelang_id: value,
         DMAC: selectedGelang ? selectedGelang.dmac : '',
-      });
-    } else if (e.target.name === 'is_sick') {
-      const newWbpSickness =
-        e.target.value === '0' ? '' : formState.wbp_sickness;
-      setFormState({
+      };
+    } else if (name === 'is_sick') {
+      const newWbpSickness = value === '0' ? '' : formState.wbp_sickness;
+      updatedFormState = {
         ...formState,
-        is_sick: e.target.value,
+        is_sick: value,
         wbp_sickness: newWbpSickness,
-      });
+      };
     } else {
-      setFormState({ ...formState, [e.target.name]: e.target.value });
+      updatedFormState = { ...formState, [name]: value };
     }
+
+    // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
+
+    // Memperbarui state formState
+    setFormState(updatedFormState);
   };
+
+  useEffect(() => {
+    // Memeriksa apakah ada nilai formState yang disimpan di localStorage saat komponen dimuat
+    const savedFormState = JSON.parse(localStorage.getItem('formState'));
+    if (savedFormState) {
+      console.log('test untuk set form state')
+      console.log('savedFormState useeffect', savedFormState)
+      setFormState(savedFormState);
+    }
+  }, []);
+
+  // const handleChange = (e: any) => {
+  //   if (e.target.name === 'gelang_id') {
+  //     const selectedGelang = gelang.find(
+  //       (item: any) => item.gelang_id === e.target.value,
+  //     );
+  //     setFormState({
+  //       ...formState,
+  //       gelang_id: e.target.value,
+  //       DMAC: selectedGelang ? selectedGelang.dmac : '',
+  //     });
+  //   } else if (e.target.name === 'is_sick') {
+  //     const newWbpSickness =
+  //       e.target.value === '0' ? '' : formState.wbp_sickness;
+  //     setFormState({
+  //       ...formState,
+  //       is_sick: e.target.value,
+  //       wbp_sickness: newWbpSickness,
+  //     });
+  //   } else {
+  //     setFormState({ ...formState, [e.target.name]: e.target.value });
+  //   }
+
+  //   // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
+  //   localStorage.setItem('formState', JSON.stringify(updatedFormState));
+
+  //   // Memperbarui state formState
+  //   setFormState(updatedFormState);
+  // };
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
@@ -577,66 +637,128 @@ export const WbpInsert = () => {
   };
   //end api select
   // handle select start
-  const handleSelectPangkat = (e: any) => {
-    setFormState({ ...formState, pangkat_id: e?.value });
+  const handleSelectPangkat = (selectedOption: any) => {
+    let newFormState = { ...formState, pangkat_id: selectedOption?.value, pangkat: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+    // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
+    // console.log(selectedOption, 'selectedOption pangkat');
+    console.log('newFormState pangkat', newFormState);
+    
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectAgama = (e: any) => {
-    setFormState({ ...formState, agama_id: e?.value });
+  const handleSelectAgama = (selectedOption: any) => {
+    // setFormState({ ...formState, agama_id: e?.value });
+    let newFormState = { ...formState, agama_id: selectedOption?.value, agama: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectKesatuan = (e: any) => {
-    setFormState({ ...formState, kesatuan_id: e?.value });
+  const handleSelectKesatuan = (selectedOption: any) => {
+    // setFormState({ ...formState, kesatuan_id: e?.value });
+    let newFormState = { ...formState, kesatuan_id: selectedOption?.value, kesatuan: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectStatusKawin = (e: any) => {
-    setFormState({ ...formState, status_kawin_id: e?.value });
+  const handleSelectStatusKawin = (selectedOption: any) => {
+    // setFormState({ ...formState, status_kawin_id: e?.value });
+    let newFormState = { ...formState, status_kawin_id: selectedOption?.value, status_kawin: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectBidangKeahlian = (e: any) => {
-    setFormState({ ...formState, bidang_keahlian_id: e?.value });
+  const handleSelectBidangKeahlian = (selectedOption: any) => {
+    // setFormState({ ...formState, bidang_keahlian_id: e?.value });
+    let newFormState = { ...formState, bidang_keahlian_id: selectedOption?.value, bidang_keahlian: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectHunianTahanan = (e: any) => {
-    setFormState({ ...formState, hunian_wbp_otmil_id: e?.value });
+  const handleSelectHunianTahanan = (selectedOption: any) => {
+    // setFormState({ ...formState, hunian_wbp_otmil_id: e?.value });
+    let newFormState = { ...formState, hunian_wbp_otmil_id: selectedOption?.value, hunian_wbp_otmil: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectPendidikan = (e: any) => {
-    setFormState({ ...formState, pendidikan_id: e?.value });
+  const handleSelectPendidikan = (selectedOption: any) => {
+    // setFormState({ ...formState, pendidikan_id: e?.value });
+    let newFormState = { ...formState, pendidikan_id: selectedOption?.value, pendidikan: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectWbpStatus = (e: any) => {
-    setFormState({ ...formState, status_wbp_kasus_id: e?.value });
+  const handleSelectWbpStatus = (selectedOption: any) => {
+    // setFormState({ ...formState, status_wbp_kasus_id: e?.value });
+    let newFormState = { ...formState, status_wbp_kasus_id: selectedOption?.value, status_wbp_kasus: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectMatra = (e: any) => {
-    setFormState({ ...formState, matra_id: e?.value });
+  const handleSelectMatra = (selectedOption: any) => {
+    let newFormState = { ...formState, matra_id: selectedOption?. value, matra: {label: selectedOption?.label, value: selectedOption?.value}};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectProvinsi = (e: any) => {
-    setFormState({ ...formState, provinsi_id: e?.value, kota_id: '' });
+  const handleSelectProvinsi = (selectedOption: any) => {
+    // setFormState({ ...formState, provinsi_id: e?.value, kota_id: '' });
+    let newFormState = { ...formState, provinsi_id: selectedOption?.value, provinsi: {label: selectedOption?.label, value: selectedOption?.value}, kota_id: ''};
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectKota = (e: any) => {
-    setFormState({ ...formState, kota_id: e?.value });
+  const handleSelectKota = (selectedOption: any) => {
+    // setFormState({ ...formState, kota_id: e?.value });
+    let newFormState = { ...formState, kota_id: selectedOption?.value, kota: {label: selectedOption?.label, value: selectedOption?.value}}; 
+
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectGelang = (e: any) => {
-    setFormState({ ...formState, gelang_id: e?.value });
+  const handleSelectGelang = (selectedOption: any) => {
+    // setFormState({ ...formState, gelang_id: e?.value });
+
+    let newFormState = { ...formState, gelang_id: selectedOption?.value, gelang: {label: selectedOption?.label, value: selectedOption?.value}};
+    setFormState(newFormState);
+
+    localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
   const handleSelectJenisPerkara = (e: any) => {
-    const vonisFilter: any = jenisPerkara.find(
+    const vonisFilter: any = dataWbp.find(
       (item: any) => item.jenis_perkara_id === e?.value,
     );
     setFormState({
       ...formState,
       jenis_perkara_id: e?.value,
-      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
-      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
-      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
+      vonis_tahun_perkara: vonisFilter?.vonis_tahun_perkara,
+      vonis_bulan_perkara: vonisFilter?.vonis_bulan_perkara,
+      vonis_hari_perkara: vonisFilter?.vonis_hari_perkara,
     });
   };
+  
   //end handle select
 
   useEffect(() => {
@@ -744,6 +866,7 @@ export const WbpInsert = () => {
                     name="nama"
                     placeholder="Nama"
                     onChange={handleChange}
+                    value={formState.nama}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -773,6 +896,7 @@ export const WbpInsert = () => {
                       label: item.nama_pangkat,
                     }))}
                     onChange={handleSelectPangkat}
+                    defaultValue={formState.pangkat}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -802,6 +926,7 @@ export const WbpInsert = () => {
                       label: item.nama_matra,
                     }))}
                     onChange={handleSelectMatra}
+                    defaultValue={formState.matra}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -823,6 +948,7 @@ export const WbpInsert = () => {
                     name="nrp"
                     placeholder="Nomor registrasi"
                     onChange={handleChange}
+                    value={formState.nrp}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -856,6 +982,7 @@ export const WbpInsert = () => {
                   label: item.nama_pendidikan,
                 }))}
                 onChange={handleSelectPendidikan}
+                defaultValue={formState.pendidikan}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -886,6 +1013,7 @@ export const WbpInsert = () => {
                   label: item.nama_kesatuan,
                 }))}
                 onChange={handleSelectKesatuan}
+                defaultValue={formState.kesatuan}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -941,6 +1069,7 @@ export const WbpInsert = () => {
                   label: item.nama_agama,
                 }))}
                 onChange={handleSelectAgama}
+                defaultValue={formState.agama}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -962,6 +1091,7 @@ export const WbpInsert = () => {
                 name="tempat_lahir"
                 placeholder="Tempat Lahir"
                 onChange={handleChange}
+                value={formState.tempat_lahir}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -983,6 +1113,7 @@ export const WbpInsert = () => {
                 className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                 name="tanggal_lahir"
                 onChange={handleChange}
+                value={formState.tanggal_lahir}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1012,6 +1143,7 @@ export const WbpInsert = () => {
                   label: item.nama_provinsi,
                 }))}
                 onChange={handleSelectProvinsi}
+                defaultValue={formState.provinsi}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1045,6 +1177,7 @@ export const WbpInsert = () => {
                     label: item.nama_kota,
                   }))}
                 onChange={handleSelectKota}
+                defaultValue={formState.kota}
               />
               <p className="error-text">
                 {errors.map((item) => (item === 'kota_id' ? 'Pilih Kota' : ''))}
@@ -1065,6 +1198,7 @@ export const WbpInsert = () => {
               name="alamat"
               placeholder="Alamat"
               onChange={handleChange}
+              value={formState.alamat}
             />
             <p className="error-text">
               {errors.map((item) =>
@@ -1096,6 +1230,7 @@ export const WbpInsert = () => {
                   label: item.nama_status_kawin,
                 }))}
                 onChange={handleSelectStatusKawin}
+                defaultValue={formState.status_kawin}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1117,6 +1252,7 @@ export const WbpInsert = () => {
                 name="nama_kontak_keluarga"
                 placeholder="Nama keluarga"
                 onChange={handleChange}
+                value={formState.nama_kontak_keluarga}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1140,6 +1276,7 @@ export const WbpInsert = () => {
                 name="hubungan_kontak_keluarga"
                 placeholder="Status hubungan"
                 onChange={handleChange}
+                value={formState.hubungan_kontak_keluarga}
               />
 
               <p className="error-text">
@@ -1163,6 +1300,8 @@ export const WbpInsert = () => {
                 className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                 name="nomor_kontak_keluarga"
                 placeholder="Kontak keluarga"
+                onChange={handleChange}
+                value={formState.nomor_kontak_keluarga} 
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1194,6 +1333,7 @@ export const WbpInsert = () => {
                   label: item.nama_bidang_keahlian,
                 }))}
                 onChange={handleSelectBidangKeahlian}
+                defaultValue={formState.bidang_keahlian}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1234,6 +1374,7 @@ export const WbpInsert = () => {
                       label: item.nama_jenis_perkara,
                     }))}
                     onChange={handleSelectJenisPerkara}
+                    // defaultValue={formState.jenis_perkara_id}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -1313,6 +1454,7 @@ export const WbpInsert = () => {
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="tanggal_ditahan_otmil"
                       onChange={handleChange}
+                      value={formState.tanggal_ditahan_otmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1345,6 +1487,7 @@ export const WbpInsert = () => {
                         label: item.nama_gelang,
                       }))}
                       onChange={handleSelectGelang}
+                      defaultValue={formState.gelang_id}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1422,6 +1565,7 @@ export const WbpInsert = () => {
                         label: item.nama_hunian_wbp_otmil,
                       }))}
                       onChange={handleSelectHunianTahanan}
+                      defaultValue={formState.hunian_wbp_otmil_id}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1444,6 +1588,7 @@ export const WbpInsert = () => {
                       name="nomor_tahanan"
                       placeholder="Nomor Tahanan"
                       onChange={handleChange}
+                      value={formState.nomor_tahanan}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1502,6 +1647,7 @@ export const WbpInsert = () => {
                         label: item.nama_status_wbp_kasus,
                       }))}
                       onChange={handleSelectWbpStatus}
+                      defaultValue={formState.status_wbp_kasus}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1528,6 +1674,7 @@ export const WbpInsert = () => {
                           className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           name="tanggal_penetapan_terpidana"
                           onChange={handleChange}
+                          value={formState.tanggal_penetapan_terpidana}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1553,6 +1700,7 @@ export const WbpInsert = () => {
                           className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           name="tanggal_penetapan_terdakwa"
                           onChange={handleChange}
+                          value={formState.tanggal_penetapan_terdakwa}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1578,6 +1726,7 @@ export const WbpInsert = () => {
                           className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           name="tanggal_penetapan_tersangka"
                           onChange={handleChange}
+                          value={formState.tanggal_penetapan_tersangka}
                         />
                         <p className="error-text">
                           {errors.map((item) =>
@@ -1603,6 +1752,7 @@ export const WbpInsert = () => {
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="tanggal_masa_penahanan_otmil"
                       onChange={handleChange}
+                      value={formState.tanggal_masa_penahanan_otmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
