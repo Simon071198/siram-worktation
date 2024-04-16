@@ -58,6 +58,7 @@ const CaseTypeList = () => {
   const [kategoriPerkara, setKategoriPerkara] = useState([]);
   const [dataExcel, setDataExcel] = useState([]);
   const [isOperator, setIsOperator] = useState<boolean>();
+  const [buttonLoad, setButtonLoad] = useState(false);
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -269,18 +270,19 @@ const CaseTypeList = () => {
     console.log('DATA DARI LIST', params);
     try {
       const responseCreate = await apiCreateJenisJahat(params, token);
-      if (responseCreate.data.status === 'OK') {
+      if (responseCreate.data.status === 201) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
         fetchData();
-      } else if (responseCreate.data.status === 'NO') {
+      } else if (responseCreate.data.status === 400) {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal membuat data',
+          title: responseCreate.data.message,
         });
+        // setIsLoading(false);
       } else {
         throw new Error(responseCreate.data.message);
       }
@@ -629,6 +631,8 @@ const CaseTypeList = () => {
               onSubmit={handleSubmitAddJenisJahat}
               defaultValue={detailData}
               isDetail={true}
+              buttonLoad={buttonLoad}
+              setButtonLoad={setButtonLoad}
             />
           )}
           {modalEditOpen && (
