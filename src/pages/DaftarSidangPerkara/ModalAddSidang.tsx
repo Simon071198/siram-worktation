@@ -117,7 +117,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'nama_lokasi_lemasmil' &&
         key !== 'image' &&
         key !== 'pengacara' &&
+        key !== 'jadwal_sidang' &&
         key !== 'perubahan_jadwal_sidang' &&
+        key !== 'waktu_mulai_sidang' &&
+        key !== 'waktu_selesai_sidang' &&
         key !== 'hasil_keputusan_sidang' &&
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
