@@ -170,6 +170,8 @@ export const AddStaffModal = ({
     ]).then(() => setIsLoading(false));
   }, []);
 
+  console.log(formState, 'formstate staff')
+
   const validateForm = () => {
     let errorFields = [];
 
@@ -196,6 +198,8 @@ export const AddStaffModal = ({
     setErrors([]);
     return true;
   };
+
+  console.log(validateForm, 'validate form')
 
   const handleClickTutorial = () => {
     const driverObj = driver({

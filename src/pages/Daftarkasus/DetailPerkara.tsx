@@ -14,12 +14,13 @@ import { Putusan } from './Putusan';
 import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
 import Saksi from './Saksi';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const DetailPerkara = () => {
-  const {state} = useLocation();
-  const dataPerkara = state.data
-  // console.log(dataPerkara, "location")
+  const { state } = useLocation();
+  const navigate = useNavigate();
+
+  const dataPerkara = state.data;
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
     'Data Umum',
@@ -39,6 +40,12 @@ const DetailPerkara = () => {
 
   return (
     <div>
+      <button
+        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ms-3 mt-3"
+        onClick={() => navigate('/daftar-kasus')}
+      >
+        Kembali
+      </button>
       <div className=" p-2 bg-slate-500 m-3">
         <div className="flex flex-row mt-3 ml-10 overflow-auto">
           {tabMenu.map((data, index) => {
@@ -57,13 +64,13 @@ const DetailPerkara = () => {
           {tapIndex == 0 && <DataUmum dataperkara={dataPerkara} />}
           {tapIndex == 1 && <PenetapanPerkara />}
           {tapIndex == 2 && <JadwalSidang />}
-          {tapIndex == 3 && <Saksi dataPerkara={dataPerkara}/>}
+          {tapIndex == 3 && <Saksi dataPerkara={dataPerkara} />}
           {tapIndex == 4 && <Penuntutan />}
           {tapIndex == 5 && <PutusanSela />}
           {tapIndex == 6 && <Putusan />}
           {tapIndex == 7 && <Banding />}
           {tapIndex == 8 && <Kasasi />}
-          {tapIndex == 9 && <PeninjauanKembali dataPerkara = {dataPerkara} />}
+          {tapIndex == 9 && <PeninjauanKembali dataPerkara={dataPerkara} />}
           {tapIndex == 10 && <RiwayatBukti />}
           {tapIndex == 11 && <RiwayatPerkara />}
         </div>
