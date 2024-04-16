@@ -17,6 +17,8 @@ interface AddCaseTypeModalProps {
   defaultValue?: any;
   isDetail?: boolean;
   isEdit?: boolean;
+  buttonLoad?: boolean;
+  setButtonLoad?: any;
 }
 
 export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
@@ -25,6 +27,8 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   defaultValue,
   isDetail,
   isEdit,
+  buttonLoad,
+  setButtonLoad,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +49,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [kategoriPerkara, setkategoriperkara] = useState([]);
-  const [buttonLoad, setButtonLoad] = useState(false);
+  // const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const tokenItem = localStorage.getItem('token');
@@ -191,7 +195,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
     console.log(formState, 'formState');
 
     if (!validateForm()) return;
-    setButtonLoad(true);
+    // setButtonLoad(true);
 
     onSubmit(formState);
     // closeModal();

@@ -25,15 +25,14 @@ import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 import { version } from '../utils/constants';
 import { apiversion } from '../services/api';
-import { FaCirclePlus } from "react-icons/fa6";
+import { FaCirclePlus } from 'react-icons/fa6';
 
 const MainMenu = () => {
   const navigate = useNavigate();
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataUser = dataUserItem ? JSON.parse(dataUserItem) : null;
 
   useEffect(() => {
-    const dataUserItem = localStorage.getItem('dataUser');
-    const dataUser = dataUserItem ? JSON.parse(dataUserItem) : null;
-
     if (!dataUser) {
       navigate('/auth/signin');
     }
@@ -83,8 +82,11 @@ const MainMenu = () => {
         {/* <div className="absolute inset-0" style={overlayStyle}></div> */}
         <div className="flex justify-center items-center gap-x-2 bg-transparent-dark1 backdrop-blur w-full py-5 fixed z-10">
           <img src={Logo} alt="Logo" className="w-12" />
-          <span className="text-4xl text-white font-bold tracking-wider">
-            SIRAM Workstation OTMIL
+          <span className="text-4xl text-white font-bold tracking-wider uppercase">
+            SIRAM Workstation OTMIL{' '}
+            {dataUser.nama_lokasi_otmil
+              ? dataUser.nama_lokasi_otmil
+              : dataUser.nama_lokasi_lemasmil}
           </span>
         </div>
         <div className="pb-20 pt-30 px-20 overflow-y-auto grid grid-cols-1 gap-20 md:grid-cols-2 md:gap-20 xl:grid-cols-3 2xl:gap-20 relative">

@@ -27,13 +27,20 @@ interface WBP {
   nrp: string;
 }
 
+// interface Item{
+//   nama_kasus: string;
+//   nomor_kasus: string;
+//   nama_jenis_perkara: string;
+//   nama_jenis_pidana: string;
+// }
+
 const DetailKasus = ({
   onSubmit,
   defaultValue,
   isDetail,
   
 }: any) => {
-  const [formState, setFormState] = useState<any>({
+  const [formState, setFormState] = useState({
     nama_kasus: '',
     nomor_kasus: '',
     lokasi_kasus: '',
@@ -53,8 +60,6 @@ const DetailKasus = ({
     zona_waktu: '',
   });
 
-
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -62,6 +67,7 @@ const DetailKasus = ({
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
 
+  const [data, setData] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,6 +83,7 @@ const DetailKasus = ({
   const [dataSaksi, setDataSaksi] = useState([]);
   const [filter, setFilter] = useState('');
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
+  const [modalAddOpen, setModalAddOpen] = useState(false);
 
   const [ketuaOditurPenyidik, setKetuaOditurPenyidik] = useState([
     {
@@ -278,7 +285,6 @@ const DetailKasus = ({
       });
   };
 
-
   const jenisPidana = async () => {
     let params = {
       pageSize: 1000,
@@ -397,7 +403,15 @@ const DetailKasus = ({
   };
 
   useEffect(() => {
-    Promise.all([getTimeZone(), tersangka(), Saksi(), status(), jenisPerkara(), jenisPidana(), Oditur(),]).then(() => {
+    Promise.all([
+      getTimeZone(),
+      tersangka(),
+      Saksi(),
+      status(),
+      jenisPerkara(),
+      jenisPidana(),
+      Oditur(),
+    ]).then(() => {
       setIsLoading(false);
     });
   }, []);
@@ -441,39 +455,38 @@ const DetailKasus = ({
     setErrors([]);
     return true;
   };
-const handleSubmitAdd = async (params: any) => {
-  try {
-    const responseCreate = await apiCreateDaftarKasus(params, token);
+  const handleSubmitAdd = async (params: any) => {
+    try {
+      const responseCreate = await apiCreateDaftarKasus(params, token);
 
-    if (responseCreate.data.status === 'OK') {
+      if (responseCreate.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+      } else if (responseCreate.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseCreate.data.message);
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
-        icon: 'success',
-        title: 'Berhasil menambah data',
-      });
-      
-    } else if (responseCreate.data.status === 'NO') {
-      Alerts.fire({
-        icon: 'error',
-        title: 'Gagal membuat data',
-      });
-    } else {
-      throw new Error(responseCreate.data.message);
-    }
-  } catch (e: any) {
-    if (e.response.status === 403) {
-      navigate('/auth/signin', {
-        state: { forceLogout: true, lastPage: location.pathname },
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
-    Alerts.fire({
-      icon: e.response.status === 403 ? 'warning' : 'error',
-      title: e.response.status === 403 ? Error403Message : e.message,
-    });
-  }
-};
+  };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formState, "formstate")
+    console.log(formState, 'formstate');
     if (!validateForm()) return;
     setButtonLoad(true);
 
@@ -571,6 +584,83 @@ const handleSubmitAdd = async (params: any) => {
     });
   };
 
+  // const [nomorKasus, setNomorKasus] = useState({
+  //   nomor_kasus: '',
+  // });
+
+  const handleModalAddOpen = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const location = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let largestNumber = 0;
+
+    data.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+        const number = parseInt(caseNumber, 10);
+
+        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
+          largestNumber = Math.max(largestNumber, number);
+        }
+      }
+    });
+
+    // Increment the largest number by 1 if the date is the same
+    largestNumber += 1;
+
+    // Set the case number with the desired format
+    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
+    console.log(caseNumberFormatted, 'caseNumberFormatted');
+
+    setFormState({
+      ...formState,
+      nomor_kasus: caseNumberFormatted,
+    });
+
+    // setModalAddOpen(true);
+  };
+
+  useEffect(() => {
+    console.log(formState, 'formState coy');
+    handleModalAddOpen();
+  }, []);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -587,8 +677,7 @@ const handleSubmitAdd = async (params: any) => {
               placeholder="Nomor Kasus"
               name="nomor_kasus"
               onChange={handleChange}
-              defaultValue={formState.nama_kasus}
-              disabled={isDetail}
+              value={formState.nomor_kasus}
             />
             <div className="h-2">
               <p className="error-text">
@@ -1012,6 +1101,7 @@ const handleSubmitAdd = async (params: any) => {
             </>
           )}
 
+          <div className="relative col-span-2">
             <button
               className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1`}
               type="submit"
@@ -1042,6 +1132,7 @@ const handleSubmitAdd = async (params: any) => {
               )}
               Tambah Data Kasus
             </button>
+          </div>
         </div>
       </form>
     </div>

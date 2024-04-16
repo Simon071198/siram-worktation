@@ -25,6 +25,7 @@ import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
 import DetailPerkara from './DetailPerkara';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
+import DetailKasus from '../EntryData/DetailKasus';
 
 interface Item {
   nama_kasus: string;
@@ -926,6 +927,14 @@ const DaftarKasus = () => {
         )}
         {modalAddOpen && (
           <AddDaftarKasusModal
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAdd}
+            defaultValue={nomorKasus}
+            token={token}
+          />
+        )}
+        {modalAddOpen && (
+          <DetailKasus
             closeModal={handleCloseModal}
             onSubmit={handleSubmitAdd}
             defaultValue={nomorKasus}
