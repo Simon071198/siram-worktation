@@ -98,14 +98,14 @@ const AktifitasPengunjungList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama aktifitas',
+            description: 'Mencari nama aktivitas',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Click button untuk mencari nama aktifitas',
+            description: 'Click button untuk mencari nama aktivitas',
           },
         },
         {
@@ -119,7 +119,7 @@ const AktifitasPengunjungList = () => {
           element: '.b-tambah',
           popover: {
             title: 'Tambah',
-            description: 'Menambahkan data aktifitas pengunjung',
+            description: 'Menambahkan data aktivitas pengunjung',
           },
         },
       ],
@@ -414,7 +414,7 @@ const AktifitasPengunjungList = () => {
             <div className="flex items-center w-full search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama Aktifitas"
+                placehorder="Cari nama Aktivitas"
                 onChange={handleFilterChange}
 
                 // onClick={handleSearchClick}
@@ -468,7 +468,7 @@ const AktifitasPengunjungList = () => {
         </div>
         <div className="flex justify-between items-center mb-3">
           <h4 className="ext-xl font-semibold text-black dark:text-white">
-            Data Aktifitas Pengunjung
+            Data Aktivitas Pengunjung
           </h4>
           {!isOperator && (
             <button
@@ -485,7 +485,7 @@ const AktifitasPengunjungList = () => {
             <div className="grid items-center grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6 ">
               <div className="p-2.5 text-center col-span-1 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Aktifitas
+                  Nama Aktivitas
                 </h5>
               </div>
               <div className="p-2.5 text-center col-span-1 xl:p-5">
@@ -518,7 +518,7 @@ const AktifitasPengunjungList = () => {
             <div className="grid items-center grid-cols-7 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-7 ">
               <div className="p-2.5 text-center col-span-1 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Aktifitas
+                  Nama Aktivitas
                 </h5>
               </div>
               <div className="p-2.5 text-center col-span-1 xl:p-5">

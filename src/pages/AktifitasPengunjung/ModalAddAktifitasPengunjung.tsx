@@ -158,8 +158,8 @@ export const AddAktifitasPengunjung: React.FC<
         {
           element: '.i-nama',
           popover: {
-            title: 'Nama Aktifitas',
-            description: 'Isi nama aktifitas',
+            title: 'Nama Aktivitas',
+            description: 'Isi nama aktivitas',
           },
         },
         {
@@ -236,7 +236,7 @@ export const AddAktifitasPengunjung: React.FC<
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data aktifitas`,
+            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data aktivitas`,
           },
         },
       ],
@@ -617,10 +617,10 @@ export const AddAktifitasPengunjung: React.FC<
                 <div>
                   <h3 className="text-xl font-semibold text-black dark:text-white">
                     {isDetail
-                      ? 'Detail Data Aktifitas Pengunjung'
+                      ? 'Detail Data Aktivitas Pengunjung'
                       : isEdit
-                        ? 'Edit Data Aktifitas '
-                        : 'Tambah Data Aktifitas '}
+                        ? 'Edit Data Aktivitas '
+                        : 'Tambah Data Aktivitas '}
                   </h3>
                 </div>
 
@@ -660,12 +660,12 @@ export const AddAktifitasPengunjung: React.FC<
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
-                      Nama Aktifitas
+                      Nama Aktivitas
                     </label>
                     <input
                       className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-nama"
                       name="nama_aktivitas_pengunjung"
-                      placeholder="Nama Aktifitas"
+                      placeholder="Nama Aktivitas"
                       onChange={handleChange}
                       value={formState.nama_aktivitas_pengunjung}
                       disabled={isDetail}
@@ -673,7 +673,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'nama_aktivitas_pengunjung'
-                          ? 'Pilih Aktifitas'
+                          ? 'Pilih Aktivitas'
                           : '',
                       )}
                     </p>
@@ -916,12 +916,12 @@ export const AddAktifitasPengunjung: React.FC<
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
-                          ? {
-                              value: formState.petugas_id,
-                              label: formState.nama_petugas,
-                            }
-                          : formState.petugas_id
-                      }
+                        ? {
+                            value: formState.petugas_id,
+                            label: `${formState.nama_petugas} (${formState.nrp})`,
+                          }
+                        : formState.petugas_id
+                    }
                       placeholder={'Pilih Petugas'}
                       isClearable={true}
                       isSearchable={true}
@@ -930,8 +930,8 @@ export const AddAktifitasPengunjung: React.FC<
                       styles={customStyles}
                       options={dataPetugas.map((item: any) => ({
                         value: item.petugas_id,
-                        label: item.nama,
-                      }))}
+                        label: `${item.nama} (${item.nrp})`, // Menggabungkan nama dan nrp
+                    }))}
                       onChange={handleSelectStaff}
                     />
                     <p className="error-text">
@@ -1052,7 +1052,7 @@ export const AddAktifitasPengunjung: React.FC<
                     ) : (
                       ''
                     )}
-                    Ubah Data Aktifitas
+                    Ubah Data Aktivitas
                   </button>
                 ) : (
                   <button
@@ -1087,7 +1087,7 @@ export const AddAktifitasPengunjung: React.FC<
                     ) : (
                       ''
                     )}
-                    Tambah Data Aktifitas
+                    Tambah Data Aktivitas
                   </button>
                 )}
               </form>
