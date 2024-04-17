@@ -269,6 +269,12 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
       let params = {
         pageSize: 1000,
       };
+
+      let paramsWbp = {
+        pagination: {
+          pageSize: 1000,
+        },
+      };
       try {
         const kotanama = await apiReadKota(params, token);
         setkota(kotanama.records);
@@ -276,7 +282,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
         const dataProvici = await apiReadProvinsi(params, token);
         setprovinsi(dataProvici.records);
 
-        const wbp = await apiReadAllWBP(params, token);
+        const wbp = await apiReadAllWBP(paramsWbp, token);
         setnameWBP(wbp.data.records);
 
         setIsLoading(false);

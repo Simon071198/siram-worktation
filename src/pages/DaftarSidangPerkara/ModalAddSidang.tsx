@@ -841,7 +841,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     };
     try {
       const response = await apiKasusRead(params, token);
-      setKasus(response.data.records);
+      const filteredKasus = response.data.records.filter(
+        (kasus: any) => kasus.nama_kasus != null && kasus.nama_kasus != '',
+      );
+
+      setKasus(filteredKasus);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {

@@ -671,8 +671,8 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     {isDetail
                       ? 'Detail Data Event'
                       : isEdit
-                        ? 'Edit Data Event'
-                        : 'Tambah Data Event'}
+                        ? 'Edit Data Kegiatan'
+                        : 'Tambah Data Kegiatan'}
                   </h3>
                 </div>
 
@@ -1252,7 +1252,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     ) : (
                       ''
                     )}
-                    Ubah Data Event
+                    Ubah Data Kegiatan
                   </button>
                 ) : (
                   <button
