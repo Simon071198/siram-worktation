@@ -215,7 +215,7 @@ const routes = [
   },
   {
     id: 5,
-    name: 'Aktifitas Pengunjung',
+    name: 'Aktivitas Pengunjung',
     link: '/pengunjung',
     icon: Pengunjung,
   },
