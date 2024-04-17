@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import { CustomStyles } from './CustomStyle';
 import {
@@ -15,6 +15,7 @@ import {
   apiReadAllJenisPerkara,
   apiReadAllKategoriJahat,
   apiReadAllPangkat,
+  apiReadAllRuanganOtmil,
   apiReadAllWBP,
   apiStatusKawin,
   apiStatusWbp,
@@ -155,7 +156,6 @@ export const WbpInsert = () => {
   const [buttonLoad, setButtonLoad] = useState(false);
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
-  const [dataWbp, setDataWbp] = useState([]);
   //end handle state
 
     const handleChange = (e: any) => {
@@ -280,81 +280,51 @@ export const WbpInsert = () => {
     }
   };
 
-  const handleSubmit = (e: any) => {
+  // const handleSubmit = (e: any) => {
+  //   e.preventDefault();
+  //   onSubmit(formState);
+  //   console.log(formState, 'received values');
+  // };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formState);
-    console.log(formState, 'received values');
+    console.log(formState, 'formstate');
+    if (!validateForm()) return;
+    setButtonLoad(true);
+
+    onSubmit(formState).then(() => setButtonLoad(false));
   };
 
   //start api select
-  const wbpData = async () => {
-    setIsLoading(true);
-    try {
-      let params = {
-        pagination: {
-          currentPage: 1,
-          pageSize: 1000,
+  const getAllRuangan = async () => {
+    await apiReadAllRuanganOtmil(
+      {
+        pageSize: 1000,
+        page: 1,
+        filter: {
+          nama_lokasi_otmil: 'Cimahi',
         },
-      };
-      const responseRead = await apiReadAllWBP(params, token);
-      if (responseRead.data.status === 'OK') {
-        let temp = responseRead.data.records;
-        temp.forEach((obj: any) => {
-          obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
-            (item: any) => item.ruangan_otmil_id,
-          );
-        });
-        setDataWbp(temp);
-        setIsLoading(false);
-      } else if (responseRead.data.status === 'NO') {
+      },
+      token,
+    )
+      .then((res) => {
+        console.log(res.data.records, 'res');
+        setZona(res.data.records);
+        setAutocompleteDataZona(res.data.records);
+      })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'error',
-          title: 'Data tidak bisa dimuat',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-      } else {
-        throw new Error(responseRead.data.message);
-      }
-    } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
       });
-    }
   };
 
-  // const getAllRuangan = async () => {
-  //   await apiReadAllRuanganOtmil(
-  //     {
-  //       pageSize: 1000,
-  //       page: 1,
-  //       filter: {
-  //         nama_lokasi_otmil: 'Cimahi',
-  //       },
-  //     },
-  //     token,
-  //   )
-  //     .then((res) => {
-  //       console.log(res.data.records, 'res');
-  //       setZona(res.data.records);
-  //       setAutocompleteDataZona(res.data.records);
-  //     })
-  //     .catch((e: any) => {
-  //       if (e.response.status === 403) {
-  //         navigate('/auth/signin', {
-  //           state: { forceLogout: true, lastPage: location.pathname },
-  //         });
-  //       }
-  //       Alerts.fire({
-  //         icon: e.response.status === 403 ? 'warning' : 'error',
-  //         title: e.response.status === 403 ? Error403Message : e.message,
-  //       });
-  //     });
-  // };
   const getAllKategoriPerkara = async () => {
     let params = {};
     await apiReadAllKategoriJahat(params, token)
@@ -641,6 +611,7 @@ export const WbpInsert = () => {
       });
   };
   //end api select
+
   // handle select start
   const handleSelectPangkat = (selectedOption: any) => {
     let newFormState = { ...formState, pangkat_id: selectedOption?.value, pangkat: {label: selectedOption?.label, value: selectedOption?.value}};
@@ -780,9 +751,53 @@ export const WbpInsert = () => {
   
   //end handle select
 
+  //start handle zona
+  const [zona, setZona] = useState<any>([]);
+  const modalContainerRef = useRef(null);
+  const [autocompleteDataZona, setAutocompleteDataZona]: any[] = useState([
+    zona,
+  ]);
+
+  const handleAddZona = (zonaId: any, inputField: any) => {
+    if (formState[inputField].includes(zonaId)) {
+      setErrors([
+        ...errors,
+        `Zona ${zonaId} is already assigned to ${inputField}.`,
+      ]);
+    } else {
+      setFormState({
+        ...formState,
+        [inputField]: [...formState[inputField], zonaId],
+      });
+
+      setAutocompleteDataZona((prevData: any) =>
+        prevData.filter(
+          (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
+        ),
+      );
+    }
+  };
+
+  const handleRemoveZona = (zonaId: any, inputField: any) => {
+    if (
+      inputField === 'akses_ruangan_otmil_id' ||
+      inputField === 'zona_merah'
+    ) {
+      setFormState({
+        ...formState,
+        [inputField]: formState[inputField].filter((id: any) => id !== zonaId),
+      });
+    }
+
+    setAutocompleteDataZona((prevData: any) => [
+      ...prevData,
+      zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
+    ]);
+  };
+  //end handle zona
+
   useEffect(() => {
     Promise.all([
-      wbpData(),
       matraData(),
       pangkatData(),
       kotaData(),
@@ -796,7 +811,7 @@ export const WbpInsert = () => {
       gelangData(),
       getAllJenisPerkara(),
       getAllKategoriPerkara(),
-      // getAllRuangan(),
+      getAllRuangan(),
       statusWbpData(),
     ]).then(() => {
       setIsLoading(false);
@@ -1939,6 +1954,158 @@ export const WbpInsert = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-4">
+              <>
+                {/*  Akses Zona  */}
+                <div className="grid grid-cols-3 gap-5 justify-normal pt-4">
+                  <div className="w-full col-span-3">
+                    <h3 className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                      Akses Zona
+                    </h3>
+
+                    <div className="border-slate-500 grid grid-cols-3 gap-5 p-2 border rounded-lg akses-zona">
+                      {autocompleteDataZona?.map((zonaItem: any) => (
+                        <div
+                          key={zonaItem.ruangan_otmil_id}
+                          className={`gap-2 py-2 word-wrap: break-word flex flex-col h-fit cursor-default items-center justify-between rounded-[16px] border-4 ${
+                            zonaItem.nama_zona === 'Hijau'
+                              ? 'border-green-500'
+                              : zonaItem.nama_zona === 'Kuning'
+                                ? 'border-yellow-400'
+                                : zonaItem.nama_zona === 'Merah'
+                                  ? 'border-red-500'
+                                  : 'border-slate-500'
+                          } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:!shadow-none dark:text-neutral-200`}
+                          data-te-ripple-color="dark"
+                        >
+                          <p className="text-xs text-white capitalize font-semibold">
+                            {' '}
+                            {zonaItem.nama_ruangan_otmil}
+                          </p>
+                          <button
+                            className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleAddZona(
+                                zonaItem.ruangan_otmil_id,
+                                'akses_ruangan_otmil_id',
+                              );
+                            }}
+                          >
+                            Ijinkan
+                          </button>
+                          <button
+                            className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleAddZona(
+                                zonaItem.ruangan_otmil_id,
+                                'zona_merah',
+                              );
+                            }}
+                          >
+                            Larang
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/*  Zona  */}
+                <div className=" grid grid-cols-2 gap-5 justify-normal pt-4">
+                  <div className="zona-hijau w-full ">
+                    <h3 className="text-md font-semibold mb-2">Zona Hijau</h3>
+
+                    <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
+                      {formState.akses_ruangan_otmil_id?.map((zonaId: any) => (
+                        <div
+                          key={zonaId}
+                          className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                          data-te-ripple-color="dark"
+                        >
+                          <p className="capitalize text-center">
+                            {
+                              zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId,
+                              )?.nama_ruangan_otmil
+                            }
+                          </p>
+                          <span
+                            data-te-chip-close
+                            onClick={() =>
+                              handleRemoveZona(zonaId, 'akses_ruangan_otmil_id')
+                            }
+                            className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="h-3 w-3"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="zona-merah w-full ">
+                    <h3 className="text-md font-semibold mb-2">Zona Merah</h3>
+                    <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
+                      {formState.zona_merah?.map((zonaId: any) => (
+                        <div
+                          key={zonaId}
+                          className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                          data-te-ripple-color="dark"
+                        >
+                          <p className="capitalize text-center">
+                            {
+                              zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId,
+                              )?.nama_ruangan_otmil
+                            }
+                          </p>
+                          <span
+                            data-te-chip-close
+                            onClick={() =>
+                              handleRemoveZona(zonaId, 'zona_merah')
+                            }
+                            className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="h-3 w-3"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
             </div>
           </div>
 

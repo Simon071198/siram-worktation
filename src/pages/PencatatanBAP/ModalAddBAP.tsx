@@ -89,74 +89,88 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   };
 
   const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.input-bap',
+        popover: {
+          title: 'Nama Dokumen BAP',
+          description: 'Isi nama dokumen BAP',
+        },
+      },
+      {
+        element: '.p-nomor',
+        popover: {
+          title: 'Nomor Penyidikan',
+          description: 'Pilih nomor penyidikan yang diinginkan',
+        },
+      },
+      {
+        element: '.input-kasus',
+        popover: { title: 'Nomor Kasus', description: 'Isi nomor kasus' },
+      },
+      {
+        element: '.input-nama',
+        popover: {
+          title: 'Nama Kasus',
+          description: 'Isi nama kasus',
+        },
+      },
+      {
+        element: '.input-pihak',
+        popover: {
+          title: 'Pihak Terlibat',
+          description: 'Isi pihak terlibat',
+        },
+      },
+    ];
+
+    // Check if the condition to show NRP tutorial is met
+    if (formState.nama && formState.nama.trim()) {
+      // If yes, add NRP tutorial step
+      steps.push({
+        element: '.input-nrp',
+        popover: {
+          title: 'NRP',
+          description: 'Isi NRP',
+        },
+      });
+    }
+
+    steps.push(
+      {
+        element: '.t-agenda',
+        popover: {
+          title: 'Agenda Penyidikan',
+          description: 'Isi agenda penyidikan dengan lengkap',
+        },
+      },
+      {
+        element: '.d-dokumen',
+        popover: {
+          title: 'Dokumen BAP',
+          description: 'Unggah file yang dibutuhkan',
+        },
+      },
+      {
+        element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
+        popover: {
+          title: `${isEdit ? 'Ubah' : 'Tambah'}`,
+          description: `${isEdit ? 'Ubah' : 'Tambah'} data BAP`,
+        },
+      },
+    );
+
+    // Initialize driver with the updated steps
     const driverObj = driver({
       showProgress: true,
-      steps: [
-        {
-          element: '.input-bap',
-          popover: {
-            title: 'Nama Dokumen BAP',
-            description: 'Isi nama dokumen BAP',
-          },
-        },
-        {
-          element: '.p-nomor',
-          popover: {
-            title: 'Nomor Penyidikan',
-            description: 'Pilih nomor penyidikan yang diinginkan',
-          },
-        },
-        {
-          element: '.input-kasus',
-          popover: { title: 'Nomor Kasus', description: 'Isi nomor kasus' },
-        },
-        {
-          element: '.input-nama',
-          popover: {
-            title: 'Nama Kasus',
-            description: 'Isi nama kasus',
-          },
-        },
-        {
-          element: '.input-pihak',
-          popover: {
-            title: 'Pihak Terlibat',
-            description: 'Isi pihak terlibat',
-          },
-        },
-        {
-          element: '.input-nrp',
-          popover: {
-            title: 'NRP',
-            description: 'Isi NRP',
-          },
-        },
-        {
-          element: '.t-agenda',
-          popover: {
-            title: 'Agenda Penyidikan',
-            description: 'Isi agenda penyidikan dengan lengkap',
-          },
-        },
-        {
-          element: '.d-dokumen',
-          popover: {
-            title: 'Dokumen BAP',
-            description: 'Unggah file yang dibutuhkan',
-          },
-        },
-        {
-          element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
-          popover: {
-            title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: 'Unggah file yang dibutuhkan',
-          },
-        },
-      ],
+      steps: steps,
     });
 
+    // Start the tutorial
     driverObj.drive();
   };
+
+
 
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
@@ -484,7 +498,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-70">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -493,7 +507,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-60">
+                  <button className="pr-95">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -702,9 +716,9 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                 </div>
 
                 {/* Dokumentasi */}
-                <div className="grid grid-cols-1">
+                <div className="grid grid-cols-1 d-dokumen">
                   <label
-                    className="block text-sm font-medium text-black dark:text-white d-dokumen"
+                    className="block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
                   >
                     Dokumen BAP

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { FaRegEyeSlash } from 'react-icons/fa';
+import { FaRegEye } from 'react-icons/fa';
 
 export const UbahPasswordModal = ({
   closeModal,
@@ -17,7 +19,15 @@ export const UbahPasswordModal = ({
   const modalContainerRef: any = useRef(null);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [filter, setFilter] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const toggleNewPasswordVisibility = () => {
+    setShowNewPassword(!showNewPassword);
+  };
   // useEffect(() => {
   //   const handleOutsideClick = (e: any) => {
   //     if (
@@ -152,42 +162,58 @@ export const UbahPasswordModal = ({
               </strong>
             </div>
             <div className="grid grid-row-1 mt-5 gap-4">
-              <div className="form-group w-full ">
+              {/* new input  current password*/}
+              <div className="form-group w-full">
                 <label
                   className="block text-sm font-medium text-black dark:text-white"
                   htmlFor="id"
                 >
                   Password Sekarang
                 </label>
-                <input
-                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-sekarang"
-                  name="password"
-                  type="password"
-                  onChange={handleChange}
-                  placeholder="Current password"
-                />
+                <div className="relative">
+                  <input
+                    className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-12 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-sekarang"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    onChange={handleChange}
+                    placeholder="Current password"
+                  />
+                  <button
+                    className="absolute inset-y-0 right-0 px-3 py-2 bg-transparent focus:outline-none"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                  </button>
+                </div>
                 <p className="error-text">
                   {errors.map((item) =>
                     item === 'password' ? 'Masukan password lama' : '',
                   )}
                 </p>
               </div>
-
-              <div className="form-group w-full ">
+              {/* new input  new password*/}
+              <div className="form-group w-full">
                 <label
                   className="block text-sm font-medium text-black dark:text-white"
                   htmlFor="id"
                 >
                   Password Baru
                 </label>
-                <input
-                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-baru"
-                  name="new_password"
-                  type="password"
-                  onChange={handleChange}
-                  placeholder="New password"
-                />
-
+                <div className="relative">
+                  <input
+                    className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-12 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-baru"
+                    name="new_password"
+                    type={showNewPassword ? 'text' : 'password'}
+                    onChange={handleChange}
+                    placeholder="New password"
+                  />
+                  <button
+                    className="absolute inset-y-0 right-0 px-3 py-2 bg-transparent focus:outline-none"
+                    onClick={toggleNewPasswordVisibility}
+                  >
+                    {showNewPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                  </button>
+                </div>
                 <p className="error-text">
                   {errors.map((item) =>
                     item === 'new_password' ? 'Masukan password baru' : '',
