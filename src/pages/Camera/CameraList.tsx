@@ -529,7 +529,7 @@ const CameraList = () => {
                   className={`${rows && columns === 3 ? 'w-[17rem]' : 'w-52'} rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm`}
                 >
                   <Link
-                    to={`/home`}
+                    to="0fbd7311-a953-4c76-a6d2-e7e3f1b05d43"
                     style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
                   >
                     <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
