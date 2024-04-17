@@ -3,14 +3,19 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { set } from 'react-hook-form';
-import { allKameraOtmilByLocation, apiDeviceDetail } from '../../services/api';
+import {
+  allKameraOtmilByLocation,
+  apiBuilding,
+  apiDeviceDetail,
+} from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
+import { IoMdDownload } from 'react-icons/io';
 
 const tokenItem = localStorage.getItem('token');
 const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -64,6 +69,8 @@ const CameraPlayback = (props) => {
   const [timeFinish, setTimeFinish] = useState(getTime());
   const [detailKamera, setDetailKamera] = useState();
   const [deviceName, setDeviceName] = useState('');
+  const [building, setBuilding] = useState([]);
+  const [cameraid, setCameraId] = useState();
   let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([
     {
       nama_ruangan_otmil: '',
@@ -112,6 +119,44 @@ const CameraPlayback = (props) => {
   const calculateFutureTime = (date, minutes) => {
     const futureDate = new Date(date.getTime() + minutes * 60000); // Menambahkan menit ke waktu sekarang
     return formatTime(futureDate);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  let fetchData = async () => {
+    try {
+      let dataLocal = localStorage.getItem('dataUser');
+      let dataUser = JSON.parse(dataLocal!);
+      dataUser = {
+        lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
+        lokasi_otmil_id: dataUser.lokasi_otmil_id,
+        nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+        nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+      };
+      console.log('data user', dataUser);
+
+      const response = await apiBuilding(dataUser);
+      console.log('response from apiBuilding', response);
+
+      if (response.data.status === 'OK') {
+        setBuilding(response);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (e: any) {
+      console.log('error', e);
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.response.status === 403 ? 'warning' : 'error',
+      //   title: e.response.status === 403 ? Error403Message : e.message,
+      // });
+    }
+    // setIsLoading(false);
   };
   // const client = useRef(new W3CWebSocket('ws://100.81.142.71:4007'));
 
@@ -228,10 +273,10 @@ const CameraPlayback = (props) => {
   }, [date, selectedCamera]);
   useEffect(() => {
     fetchDeviceDetail();
-  }, []);
+  }, [cameraid]);
   const fetchDeviceDetail = async () => {
-    const { id } = props;
-    console.log(props, 'props from data camera playback');
+    const id = cameraid;
+    console.log(id, 'props from data camera playback');
 
     try {
       const res = await apiDeviceDetail(id);
@@ -248,7 +293,10 @@ const CameraPlayback = (props) => {
       });
     }
   };
-
+  const handleClickCam = (camId) => {
+    setCameraId(camId);
+    console.log('iii', camId);
+  };
   useEffect(() => {
     if (forUrl) {
       // Set the video URL when `forUrl` changes
@@ -351,39 +399,32 @@ const CameraPlayback = (props) => {
     const driverObj = driver({
       showProgress: true,
       steps: [
-        // {
-        //   element: '.p-kamera',
-        //   popover: {
-        //     title: 'Select Camera',
-        //     description: 'Pilih camera yang diinginkan',
-        //   },
-        // },
         {
-          element: '.i-date',
+          element: '.i-gedung',
           popover: {
-            title: 'Date',
-            description: 'Menentukan tanggal playback camera',
+            title: 'Gedung',
+            description: 'Pilih Gedung',
           },
         },
         {
-          element: '.i-time',
+          element: '.i-lantai',
           popover: {
-            title: 'Time',
-            description: 'Menentukan waktu playback camera',
+            title: 'Lantai',
+            description: 'Pilih lantai',
           },
         },
         {
-          element: '.i-times',
+          element: '.i-ruangan',
           popover: {
-            title: 'Time',
-            description: 'Menentukan waktu playback camera',
+            title: 'Ruangan',
+            description: 'Pilih ruangan',
           },
         },
         {
-          element: '.r-player',
+          element: '.i-kamera',
           popover: {
-            title: 'React Player',
-            description: 'Menampilkan hasil playback camera',
+            title: 'Kamera',
+            description: 'Pilih kamera',
           },
         },
       ],
@@ -401,6 +442,7 @@ const CameraPlayback = (props) => {
   // };
 
   // Load the video URL when the current video index changes
+
   useEffect(() => {
     if (playlistPlayback[currentVideoIndex]) {
       playerRef = playlistPlayback[currentVideoIndex];
@@ -415,64 +457,23 @@ const CameraPlayback = (props) => {
     // setForurl(recording);
     setCurrentRecordingIndex(index);
   };
-
+  const handleDownload = () => {
+    // Create a new anchor element
+    const anchor = document.createElement('a');
+    anchor.href = forUrl;
+    anchor.download = 'video.mp4'; // Nama file yang akan diunduh
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  };
   return (
     <div className="px-10">
       <div className="flex items-center gap-x-2 pt-4">
         <Breadcrumbs url={window.location.href} />
       </div>
-      <div className="flex items-center justify-center gap-4 pt-4">
-        <div className="flex flex-col items-center w-full md:w-11/12 lg:w-2/3">
-          <div className="flex flex-col items-center mb-4">
-            <h1 className="text-2xl font-bold tracking-wider">
-              Playback Camera
-            </h1>
-            <h1 className="font-semibold text-lg mt-1 tracking-wider">
-              (
-              {`${detailKamera?.nama_kamera} - ${detailKamera?.nama_ruangan_otmil} - ${detailKamera?.nama_lokasi_otmil}`}
-              )
-            </h1>
-          </div>
-          <div className="flex justify-around gap-4 mb-4">
-            {/* <select onChange={handleCameraChange} className="p-kamera">
-            <option value="">Select a Camera</option>
-            {dataAllCamera.map((data, index) => (
-              <option key={data.kamera_id} value={index}>
-                {data.nama_kamera}
-              </option>
-            ))}
-          </select> */}
-
-            <input
-              type="date"
-              value={date}
-              onChange={handleDateChange}
-              className="i-date"
-            />
-            <input
-              type="time"
-              value={timeStart}
-              onChange={handleTimeStartChange}
-              className="i-time"
-            />
-            <input
-              type="time"
-              value={timeFinish}
-              onChange={handleTimeFinishChange}
-              className="i-times"
-            />
-            <div className="w-5">
-              <button>
-                <HiQuestionMarkCircle
-                  values={filter}
-                  aria-placeholder="Show tutorial"
-                  // onChange={}
-                  onClick={handleClickTutorial}
-                />
-              </button>
-            </div>
-          </div>
-          <div className="mr-[40rem] mb-2">
+      <div className="flex items-center justify-center gap-2 pt-4">
+        <div className="flex flex-col items-center w-full md:w-11/12 lg:w-full">
+          <div className="mr-4 mb-2">
             {client.current.readyState !== WebSocket.OPEN && (
               <h1 className="font-semibold text-xl text-red-500 animate-pulse">
                 Error connection
@@ -484,7 +485,50 @@ const CameraPlayback = (props) => {
           </div>
           {/* <div className="w-full h-full">{playlistPlayback.length > 0 ? ( */}
           <div className="player-wrapper r-player flex justify-center space-x-8 w-full">
-            <div className="w-full bg-graydark p-4 flex justify-center">
+            <div className="w-full bg-graydark p-4 flex flex-col justify-center">
+              <div className="flex flex-col justify-center ">
+                <div className="flex justify-center items-center gap-2 mb-4">
+                  <h1 className="text-xl font-bold tracking-wider">
+                    Playback Camera
+                  </h1>
+                  <h1 className="font-semibold text-lg mt-1 tracking-wider">
+                    {detailKamera?.nama_kamera !== undefined
+                      ? `(${detailKamera?.nama_kamera} - ${detailKamera?.nama_ruangan_otmil} - ${detailKamera?.nama_lokasi_otmil})`
+                      : ''}
+                  </h1>
+                </div>
+                {detailKamera?.nama_kamera !== undefined && (
+                  <div className="flex gap-4 justify-center mb-4">
+                    {/* <select onChange={handleCameraChange} className="p-kamera">
+            <option value="">Select a Camera</option>
+            {dataAllCamera.map((data, index) => (
+              <option key={data.kamera_id} value={index}>
+                {data.nama_kamera}
+              </option>
+            ))}
+          </select> */}
+
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={handleDateChange}
+                      className="i-date"
+                    />
+                    <input
+                      type="time"
+                      value={timeStart}
+                      onChange={handleTimeStartChange}
+                      className="i-time"
+                    />
+                    <input
+                      type="time"
+                      value={timeFinish}
+                      onChange={handleTimeFinishChange}
+                      className="i-times"
+                    />
+                  </div>
+                )}
+              </div>
               {playlistPlayback.length > 0 ? (
                 <ReactPlayer
                   className="react-player"
@@ -498,30 +542,206 @@ const CameraPlayback = (props) => {
                   onError={handleVideoError}
                 />
               ) : (
-                <p className="tracking-wider">Silahkan pilih rekaman</p>
+                <p className="tracking-wider text-center">
+                  {!cameraid
+                    ? 'Silahkan pilih gedung'
+                    : 'Silahkan pilih tanggal dan waktu'}
+                </p>
               )}
             </div>
-            <div className="box w-2/6 ">
-              <h2 className="text-xl font-bold mb-2 text-center tracking-wider">
-                Recordings
-              </h2>
-              <ul className="flex flex-col overflow-auto h-96 divide-y divide-dashed divide-zinc-500">
-                {playlistPlayback.map((recording, index) => {
-                  const urlParts = recording.split('/');
-                  const fileName = urlParts[urlParts.length - 1];
-                  const isActive = index === currentRecordingIndex;
+            {playlistPlayback.length > 0 && (
+              <div className="box w-2/6 ">
+                <h2 className="text-xl font-bold mb-2 text-center tracking-wider">
+                  Recordings
+                </h2>
+                <ul className="flex flex-col overflow-auto h-96 divide-y divide-dashed divide-zinc-500">
+                  {playlistPlayback.map((recording, index) => {
+                    const urlParts = recording.split('/');
+                    const fileName = urlParts[urlParts.length - 1];
+                    const isActive = index === currentRecordingIndex;
 
-                  return (
-                    <li
-                      className={`cursor-pointer text-white text-center ${isActive ? 'bg-green-700' : 'bg-transparent'} font-light tracking-widest py-2`}
-                      key={index}
-                      onClick={() => handleRecordingClick(recording, index)}
-                    >
-                      {extractTimeFromURL(recording)}
-                    </li>
-                  );
-                })}
-              </ul>
+                    return (
+                      <div className="flex items-center justify-center gap-8">
+                        <li
+                          className={`flex p-4 gap-3 items-center cursor-pointer text-white text-center ${isActive ? 'bg-green-700' : 'bg-transparent'} font-light tracking-widest py-2`}
+                          key={index}
+                          onClick={() => handleRecordingClick(recording, index)}
+                        >
+                          {extractTimeFromURL(recording)}
+                          <a href={forUrl}>
+                            <IoMdDownload className="hover:text-2xl hover:text-orange-200" />
+                          </a>
+                        </li>
+                      </div>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+            <div className="w-1/2 border border-gray-2 p-4 h-[26rem] overflow-y-scroll">
+              <div className="w-full flex justify-center pt-2">
+                <h2 className="font-bold text-xl tracking-tight mr-3">
+                  Daftar Gedung
+                </h2>
+                <button>
+                  <HiQuestionMarkCircle
+                    values={filter}
+                    aria-placeholder="Show tutorial"
+                    // onChange={}
+                    onClick={handleClickTutorial}
+                  />
+                </button>
+              </div>
+              {building?.data?.records?.gedung.map((gedung, i) => {
+                return (
+                  <>
+                    <div className="i-gedung grid divide-y divide-neutral-200 max-w-xl border-b mx-auto">
+                      <div className="py-5" id="s-gedung">
+                        <details className="group">
+                          <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                            <span key={i}>{gedung.nama_gedung_otmil}</span>
+                            <span className="transition-transform group-open:rotate-180">
+                              <svg
+                                fill="none"
+                                height="24"
+                                shapeRendering="geometricPrecision"
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="1.5"
+                                viewBox="0 0 24 24"
+                                width="24"
+                              >
+                                <path d="M6 9l6 6 6-6"></path>
+                              </svg>
+                            </span>
+                          </summary>
+
+                          <div className="pt-2 ml-[20px] i-lantai">
+                            {gedung?.lantai.map((a) => {
+                              return (
+                                <>
+                                  <details className="groupChild">
+                                    <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                                      <span>
+                                        {a?.nama_lantai
+                                          ? a?.nama_lantai
+                                          : 'Undifined'}
+                                      </span>
+                                      <span className="transition-transform groupChild-open:rotate-180">
+                                        <svg
+                                          fill="none"
+                                          height="24"
+                                          shapeRendering="geometricPrecision"
+                                          stroke="currentColor"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="1.5"
+                                          viewBox="0 0 24 24"
+                                          width="24"
+                                        >
+                                          <path d="M6 9l6 6 6-6"></path>
+                                        </svg>
+                                      </span>
+                                    </summary>
+                                    <div className="mb-2 ml-[20px]">
+                                      {a?.ruangan.map((r) => {
+                                        return (
+                                          <>
+                                            <details className="groupChild">
+                                              <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                                                <span className="i-ruangan">
+                                                  {r?.nama_ruangan_otmil}
+                                                </span>
+                                                <span className="transition-transform groupChild-open:rotate-180">
+                                                  <svg
+                                                    fill="none"
+                                                    height="24"
+                                                    shapeRendering="geometricPrecision"
+                                                    stroke="currentColor"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="1.5"
+                                                    viewBox="0 0 24 24"
+                                                    width="24"
+                                                  >
+                                                    <path d="M6 9l6 6 6-6"></path>
+                                                  </svg>
+                                                </span>
+                                              </summary>
+                                              {r?.kamera.map((k) => (
+                                                // <NavLink
+                                                //   to={`/kamera-playback/${k.kamera_id}`}
+                                                //   state={k.nama_kamera}
+                                                // >
+                                                //   <p
+                                                //     className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
+                                                //       k.status_kamera ==
+                                                //         'aktif' ||
+                                                //       k.status_kamera ==
+                                                //         'online'
+                                                //         ? 'text-green-500' // warna teks hijau jika status kamera aktif
+                                                //         : k.status_kamera ===
+                                                //             'rusak'
+                                                //           ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
+                                                //           : 'text-red-500' // warna teks merah untuk status kamera lainnya
+                                                //     }`}
+                                                //   >
+                                                //     {k.nama_kamera} (
+                                                //     {k.status_kamera ===
+                                                //       'aktif' ||
+                                                //     k.status_kamera == 'online'
+                                                //       ? 'aktif'
+                                                //       : k.status_kamera ===
+                                                //           'rusak'
+                                                //         ? 'rusak'
+                                                //         : 'tidak aktif'}
+                                                //     )
+                                                //   </p>
+                                                // </NavLink>
+                                                <p
+                                                  onClick={() =>
+                                                    handleClickCam(k.kamera_id)
+                                                  }
+                                                  className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
+                                                    k.status_kamera ==
+                                                      'aktif' ||
+                                                    k.status_kamera == 'online'
+                                                      ? 'text-green-500' // warna teks hijau jika status kamera aktif
+                                                      : k.status_kamera ===
+                                                          'rusak'
+                                                        ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
+                                                        : 'text-red-500' // warna teks merah untuk status kamera lainnya
+                                                  } i-kamera`}
+                                                >
+                                                  {k.nama_kamera} (
+                                                  {k.status_kamera ===
+                                                    'aktif' ||
+                                                  k.status_kamera == 'online'
+                                                    ? 'aktif'
+                                                    : k.status_kamera ===
+                                                        'rusak'
+                                                      ? 'rusak'
+                                                      : 'tidak aktif'}
+                                                  )
+                                                </p>
+                                              ))}
+                                            </details>
+                                          </>
+                                        );
+                                      })}
+                                    </div>
+                                  </details>
+                                </>
+                              );
+                            })}
+                          </div>
+                        </details>
+                      </div>
+                    </div>
+                  </>
+                );
+              })}
             </div>
           </div>
           {/* <Player>
