@@ -7,6 +7,8 @@ const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataUser = dataUserItem ? JSON.parse(dataUserItem) : null;
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-transparent-dark1 dark:drop-shadow-none">
       {/* <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-slate-300 dark:drop-shadow-none"> */}
@@ -59,15 +61,20 @@ const Header = (props: {
           {/* <!-- Hamburger Toggle BTN --> */}
 
           {/* <Link className="block flex-shrink-0 lg:hidden" to="/"> */}
-     
-            <NavLink
-              to="/"
-              className="flex justify-center items-center gap-x-2 w-full"
-            >
-              <img src={Logo} alt="Logo" className="w-10" />
-              <span className="text-xl text-white">SIRAM Workstation OTMIL</span>
-              {/* <span className="text-xl text-meta-4">SIRAM Workstation</span> */}
-            </NavLink>
+
+          <NavLink
+            to="/"
+            className="flex justify-center items-center gap-x-2 w-full"
+          >
+            <img src={Logo} alt="Logo" className="w-10" />
+            <span className="text-xl text-white uppercase">
+              SIRAM Workstation OTMIL{' '}
+              {dataUser.nama_lokasi_otmil
+                ? dataUser.nama_lokasi_otmil
+                : dataUser.nama_lokasi_lemasmil}
+            </span>
+            {/* <span className="text-xl text-meta-4">SIRAM Workstation</span> */}
+          </NavLink>
         </div>
 
         <div className="hidden sm:block"></div>

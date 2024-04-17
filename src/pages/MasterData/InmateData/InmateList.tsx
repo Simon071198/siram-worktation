@@ -131,6 +131,13 @@ const InmateList = () => {
       tanggal_penetapan_tersangka: item?.tanggal_penetapan_tersangka,
       tanggal_penetapan_terdakwa: item?.tanggal_penetapan_terdakwa,
       tanggal_penetapan_terpidana: item?.tanggal_penetapan_terpidana,
+      jenis_perkara_id: item?.jenis_perkara_id,
+      nama_jenis_perkara: item?.nama_jenis_perkara,
+      vonis_tahun_perkara: item?.vonis_tahun_perkara,
+      vonis_bulan_perkara: item?.vonis_bulan_perkara,
+      vonis_hari_perkara: item?.vonis_hari_perkara,
+      nama_gelang: item?.nama_gelang,
+      kasus_id: item?.kasus_id,
     };
 
     setEditData(newEditItem);

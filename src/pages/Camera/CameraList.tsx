@@ -29,6 +29,8 @@ const CameraList = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [columns, setColumns] = useState(3);
   const [rows, setRows] = useState(3);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = columns * rows;
   // useEffect(() => {
   //   apiLocationOnlineDeviceList()
   //     .then((res) => {
@@ -156,11 +158,14 @@ const CameraList = () => {
   console.log(building, 'set build');
   const handleClickRoom = (roomId) => {
     setSelectedRoom(roomId);
+    setCurrentPage(1);
   };
   const handleLayoutChange = (columns, rows) => {
     setColumns(columns);
     setRows(rows);
+    setCurrentPage(1);
   };
+
   const dummyCameras = [
     {
       kamera_id: '1',
@@ -274,6 +279,17 @@ const CameraList = () => {
       status_kamera: 'online',
     },
     {
+      kamera_id: '11',
+      nama_kamera: 'Camera 11',
+      url_rtsp: 'rtsp://dummy.url/camera11',
+      ip_address: '192.168.1.11',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
       kamera_id: '12',
       nama_kamera: 'Camera 12',
       url_rtsp: 'rtsp://dummy.url/camera12',
@@ -306,8 +322,163 @@ const CameraList = () => {
       is_deleted: '0',
       status_kamera: 'online',
     },
+    {
+      kamera_id: '15',
+      nama_kamera: 'Camera 15',
+      url_rtsp: 'rtsp://dummy.url/camera15',
+      ip_address: '192.158.1.15',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '16',
+      nama_kamera: 'Camera 16',
+      url_rtsp: 'rtsp://dummy.url/camera16',
+      ip_address: '192.168.1.14',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '17',
+      nama_kamera: 'Camera 17',
+      url_rtsp: 'rtsp://dummy.url/camera17',
+      ip_address: '192.168.1.17',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '18',
+      nama_kamera: 'Camera 18',
+      url_rtsp: 'rtsp://dummy.url/camera18',
+      ip_address: '182.168.1.18',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '19',
+      nama_kamera: 'Camera 19',
+      url_rtsp: 'rtsp://dummy.url/camera19',
+      ip_address: '192.168.1.19',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '20',
+      nama_kamera: 'Camera 20',
+      url_rtsp: 'rtsp://dummy.url/camera20',
+      ip_address: '192.168.1.20',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '21',
+      nama_kamera: 'Camera 21',
+      url_rtsp: 'rtsp://dummy.url/camera21',
+      ip_address: '192.168.1.21',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '23',
+      nama_kamera: 'Camera 23',
+      url_rtsp: 'rtsp://dummy.url/camera23',
+      ip_address: '192.168.1.22',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '24',
+      nama_kamera: 'Camera 24',
+      url_rtsp: 'rtsp://dummy.url/camera24',
+      ip_address: '192.168.1.24',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '25',
+      nama_kamera: 'Camera 25',
+      url_rtsp: 'rtsp://dummy.url/camera25',
+      ip_address: '192.168.1.25',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '26',
+      nama_kamera: 'Camera 26',
+      url_rtsp: 'rtsp://dummy.url/camera26',
+      ip_address: '192.168.1.26',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '27',
+      nama_kamera: 'Camera 27',
+      url_rtsp: 'rtsp://dummy.url/camera27',
+      ip_address: '192.168.1.27',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
+    {
+      kamera_id: '28',
+      nama_kamera: 'Camera 28',
+      url_rtsp: 'rtsp://dummy.url/camera28',
+      ip_address: '192.168.1.28',
+      ruangan_otmil_id: 'room2',
+      merk: 'DummyBrand',
+      model: 'DummyModel',
+      is_deleted: '0',
+      status_kamera: 'online',
+    },
   ];
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCameras = dummyCameras.slice(indexOfFirstItem, indexOfLastItem);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // const totalPages = Math.ceil(
+  //   dummyCameras.filter((camera) => camera.ruangan_otmil_id === selectedRoom)
+  //     .length / itemsPerPage,
+  // );
+  const totalPages = Math.ceil(dummyCameras.length / itemsPerPage);
+
+  console.log('pages', totalPages);
   const renderCameraList = () => {
     const selectedRoomData = building?.data?.records?.gedung.flatMap((gedung) =>
       gedung.lantai.flatMap((lantai) =>
@@ -351,14 +522,14 @@ const CameraList = () => {
             </div>
           ))} */}
           {selectedRoom && (
-            <div className="flex flex-wrap gap-2">
-              {dummyCameras.slice(0, columns * rows).map((camera) => (
+            <div className="flex flex-wrap gap-3">
+              {currentCameras.map((camera) => (
                 <div
                   key={camera.kamera_id}
-                  className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm"
+                  className={`${rows && columns === 3 ? 'w-[17rem]' : 'w-52'} rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm`}
                 >
                   <Link
-                    to={`/home`}
+                    to="0fbd7311-a953-4c76-a6d2-e7e3f1b05d43"
                     style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
                   >
                     <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
@@ -374,6 +545,27 @@ const CameraList = () => {
                   </Link>
                 </div>
               ))}
+            </div>
+          )}
+          {totalPages > 1 && (
+            <div
+              className={`mt-6 w-full flex justify-end ${columns && rows === 3 ? 'mr-14' : 'mr-5'}`}
+            >
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    className={`px-3 py-1 mx-1 border rounded ${
+                      currentPage === page
+                        ? 'bg-gray-500 text-white'
+                        : 'bg-gray-200 text-gray-800'
+                    }`}
+                    onClick={() => paginate(page)}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
             </div>
           )}
         </div>
@@ -405,22 +597,25 @@ const CameraList = () => {
         <div className="w-4/5">
           <div className="py-4 pl-6 w-[95%] flex justify-between items-center">
             <Breadcrumbs url={window.location.href} />
-            <div className="flex gap-2">
-              <p>{getRoomLocation()}</p>
-            </div>
-            <select
-              id="layoutSelect"
-              className="p-2 border rounded"
-              value={`${columns}x${rows}`}
-              onChange={(e) => {
-                const [cols, rows] = e.target.value.split('x').map(Number);
-                handleLayoutChange(cols, rows);
-              }}
-            >
-              <option value="2x2">2x2</option>
-              <option value="3x3">3x3</option>
-              {/* Add more layout options as needed */}
-            </select>
+            {selectedRoom && (
+              <>
+                <div className="flex gap-2">
+                  <p>{getRoomLocation()}</p>
+                </div>
+                <select
+                  id="layoutSelect"
+                  className="p-2 border rounded w-20 bg-meta-4 font-semibold"
+                  value={`${columns}x${rows}`}
+                  onChange={(e) => {
+                    const [cols, rows] = e.target.value.split('x').map(Number);
+                    handleLayoutChange(cols, rows);
+                  }}
+                >
+                  <option value="3x3">3x3</option>
+                  <option value="4x4">4x4</option>
+                </select>
+              </>
+            )}
           </div>
           <>
             {selectedRoom ? (
@@ -538,357 +733,3 @@ const CameraList = () => {
 };
 
 export default CameraList;
-
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 2
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 3
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 4
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 5
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 6
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 7
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 8
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 9
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 10
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 11
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 12
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 13
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 14
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 15
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 16
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-// <div className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm">
-// <Link
-//   to={'/home'}
-//   // key={index}
-//   style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-// >
-//   <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-//     <CiCamera className="w-3/5 h-3/5" />
-//   </div>
-
-//   <div className="mt-4 flex items-end justify-between">
-//     <div className="w-full">
-//       <h4 className="text-title-md text-center font-bold text-white">
-//         Camera 17
-//       </h4>
-//     </div>
-//   </div>
-// </Link>
-// </div>
-
-{
-  /* <details className="groupChild">
-                                          <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
-                                            <span>{r?.nama_ruangan_otmil}</span>
-                                            <span className="transition-transform groupChild-open:rotate-180">
-                                              <svg
-                                                fill="none"
-                                                height="24"
-                                                shapeRendering="geometricPrecision"
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="1.5"
-                                                viewBox="0 0 24 24"
-                                                width="24"
-                                              >
-                                                <path d="M6 9l6 6 6-6"></path>
-                                              </svg>
-                                            </span>
-                                          </summary>
-                                          {r?.kamera.map((k) => (
-                                            <NavLink
-                                              to={`/kamera-live/${k.kamera_id}`}
-                                            >
-                                              <p
-                                                className={` group-open:animate-fadeIn cursor-pointer ml-3 ${
-                                                  k.status_kamera == 'aktif' ||
-                                                  k.status_kamera == 'online'
-                                                    ? 'text-green-500' // warna teks hijau jika status kamera aktif
-                                                    : k.status_kamera ===
-                                                        'rusak'
-                                                      ? 'text-yellow-500' // warna teks kuning jika status kamera rusak
-                                                      : 'text-red-500' // warna teks merah untuk status kamera lainnya
-                                                }`}
-                                              >
-                                                {k.nama_kamera} (
-                                                {k.status_kamera === 'aktif' ||
-                                                k.status_kamera == 'online'
-                                                  ? 'aktif'
-                                                  : k.status_kamera === 'rusak'
-                                                    ? 'rusak'
-                                                    : 'tidak aktif'}
-                                                )
-                                              </p>
-                                            </NavLink>
-                                          ))}
-                                        </details> */
-}

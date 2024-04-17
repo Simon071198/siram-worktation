@@ -346,7 +346,10 @@ export default function InmateDatabaseSearchByName() {
                           {item.nama_tersangka}
                         </p>
                         <p className="text-2xl font-base text-slate-500">
-                          {item.nama_tersangka}
+                          {item.pangkat.nama_pangkat}
+                        </p>
+                        <p className="text-2xl font-base text-slate-500">
+                          {item.nrp}
                         </p>
                       </div>
                       <div className="flex flex-col mt-6 item-center  w-full">
