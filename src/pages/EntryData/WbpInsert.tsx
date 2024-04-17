@@ -104,6 +104,7 @@ export const WbpInsert = () => {
     nama_status_wbp_kasus: '',
     jenisPerkara: dataAdmin.jenisPerkara ?? {value: '', label: 'Pilih Jenis Perkara'},
     jenis_perkara_id: '',
+    // vonisTahun: dataAdmin.vonisTahunPerkara ?? {value: '', label: 'Pilih Vonis Tahun Perkara'},
     vonis_tahun_perkara: '',
     vonis_bulan_perkara: '',
     vonis_hari_perkara: '',
@@ -113,7 +114,8 @@ export const WbpInsert = () => {
     bidang_keahlian_id: '',
     gelang : dataAdmin.gelang ?? {value: '', label: 'Pilih Gelang'},
     gelang_id: '',
-    DMAC: '',
+    // dmacGelang: dataAdmin.dmacGelang ?? {value: '', label: 'Pilih DMAC Gelang'},
+    dmac: '',
     residivis: '',
     hunian_wbp_otmil : dataAdmin.hunian_wbp_otmil ?? {value: '', label: 'Pilih Hunian WBP OTMIL'},
     hunian_wbp_otmil_id: '',
@@ -156,34 +158,37 @@ export const WbpInsert = () => {
   const [dataWbp, setDataWbp] = useState([]);
   //end handle state
 
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    let updatedFormState;
+    const handleChange = (e: any) => {
+      const { name, value } = e.target;
+      let updatedFormState;
+      console.log('selectedGelang', e.target);
 
-    if (name === 'gelang_id') {
-      const selectedGelang = gelang.find( (item: any) => item.gelang_id === value);
-      updatedFormState = {
-        ...formState,
-        gelang_id: value,
-        DMAC: selectedGelang ? selectedGelang.dmac : '',
-      };
-    } else if (name === 'is_sick') {
-      const newWbpSickness = value === '0' ? '' : formState.wbp_sickness;
-      updatedFormState = {
-        ...formState,
-        is_sick: value,
-        wbp_sickness: newWbpSickness,
-      };
-    } else {
-      updatedFormState = { ...formState, [name]: value };
-    }
+      if (name === 'gelang_id') {
+        const selectedGelang = gelang.find( (item: any) => item.gelang_id === value);
+        console.log('selectedGelang', selectedGelang);
+        updatedFormState = {
+          ...formState,
+          gelang_id: value,
+          dmac: selectedGelang ? selectedGelang.dmac : ''
+        };
+      } else if (name === 'is_sick') {
+        const newWbpSickness = value === '0' ? '' : formState.wbp_sickness;
+        updatedFormState = {
+          ...formState,
+          is_sick: value,
+          wbp_sickness: newWbpSickness,
+        };
+      } else {
+        updatedFormState = { ...formState, [name]: value };
+      }
 
-    // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
-    localStorage.setItem('formState', JSON.stringify(updatedFormState));
+      // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
+      localStorage.setItem('formState', JSON.stringify(updatedFormState));
 
-    // Memperbarui state formState
-    setFormState(updatedFormState);
-  };
+      // Memperbarui state formState
+      setFormState(updatedFormState);
+    };
+
 
   useEffect(() => {
     // Memeriksa apakah ada nilai formState yang disimpan di localStorage saat komponen dimuat
@@ -739,25 +744,39 @@ export const WbpInsert = () => {
 
   const handleSelectGelang = (selectedOption: any) => {
     // setFormState({ ...formState, gelang_id: e?.value });
-
-    let newFormState = { ...formState, gelang_id: selectedOption?.value, gelang: {label: selectedOption?.label, value: selectedOption?.value}};
+    console.log('selectedOption', selectedOption);
+    
+    
+    let newFormState = { ...formState,
+      dmac : selectedOption?.dmac,
+      gelang_id: selectedOption?.value, gelang: {label: selectedOption?.label, value: selectedOption?.value, 
+      dmac: selectedOption?.dmac}};
     setFormState(newFormState);
-
+    
+    console.log('newFormState', newFormState);
     localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectJenisPerkara = (e: any) => {
-    const vonisFilter: any = dataWbp.find(
-      (item: any) => item.jenis_perkara_id === e?.value,
+  const handleSelectJenisPerkara = (selectedOption: any) => {
+    const vonisFilter: any = jenisPerkara.find(
+        (item: any) => item.jenis_perkara_id === selectedOption?.value
     );
-    setFormState({
-      ...formState,
-      jenis_perkara_id: e?.value,
-      vonis_tahun_perkara: vonisFilter?.vonis_tahun_perkara,
-      vonis_bulan_perkara: vonisFilter?.vonis_bulan_perkara,
-      vonis_hari_perkara: vonisFilter?.vonis_hari_perkara,
-    });
-  };
+
+    const newFormState = {
+        ...formState,
+        jenis_perkara_id: selectedOption?.value,
+        jenisPerkara: { label: selectedOption?.label, value: selectedOption?.value },
+        vonis_tahun_perkara: vonisFilter?.vonis_tahun_perkara,
+        vonis_bulan_perkara: vonisFilter?.vonis_bulan_perkara,
+        vonis_hari_perkara: vonisFilter?.vonis_hari_perkara,
+    };
+
+    setFormState(newFormState); // Update form state with the newFormState
+
+    localStorage.setItem('formState', JSON.stringify(newFormState)); // Save the newFormState to localStorage
+};
+
+  
   
   //end handle select
 
@@ -1034,6 +1053,7 @@ export const WbpInsert = () => {
                 className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                 name="jenis_kelamin"
                 onChange={handleChange}
+                value={formState.jenis_kelamin}
               >
                 <option disabled value="">
                   Pilih Jenis Kelamin
@@ -1374,7 +1394,7 @@ export const WbpInsert = () => {
                       label: item.nama_jenis_perkara,
                     }))}
                     onChange={handleSelectJenisPerkara}
-                    // defaultValue={formState.jenis_perkara_id}
+                    defaultValue={formState.jenisPerkara}
                   />
                   <p className="error-text">
                     {errors.map((item) =>
@@ -1485,9 +1505,10 @@ export const WbpInsert = () => {
                       options={gelang.map((item: any) => ({
                         value: item.gelang_id,
                         label: item.nama_gelang,
+                        dmac: item.dmac,
                       }))}
                       onChange={handleSelectGelang}
-                      defaultValue={formState.gelang_id}
+                      defaultValue={formState.gelang}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1509,6 +1530,9 @@ export const WbpInsert = () => {
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="DMAC"
                       placeholder="DMAC"
+                      disabled
+                      // onChange={handleChange}
+                      value={formState.dmac}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1529,6 +1553,8 @@ export const WbpInsert = () => {
                     <select
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="residivis"
+                      onChange={handleChange}
+                      value={formState.residivis}
                     >
                       <option value="" disabled>
                         Pilih Residivis
@@ -1565,7 +1591,7 @@ export const WbpInsert = () => {
                         label: item.nama_hunian_wbp_otmil,
                       }))}
                       onChange={handleSelectHunianTahanan}
-                      defaultValue={formState.hunian_wbp_otmil_id}
+                      defaultValue={formState.hunian_wbp_otmil}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1609,6 +1635,7 @@ export const WbpInsert = () => {
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="is_isolated"
                       onChange={handleChange}
+                      value={formState.is_isolated}
                     >
                       <option value="" disabled>
                         Silahkan Dipilih
@@ -1786,6 +1813,7 @@ export const WbpInsert = () => {
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         name="is_sick"
                         onChange={handleChange}
+                        value={formState.is_sick}
                       >
                         <option value="" disabled>
                           Silahkan Pilih
@@ -1816,6 +1844,7 @@ export const WbpInsert = () => {
                             name="wbp_sickness"
                             placeholder="Nama Penyakit"
                             onChange={handleChange}
+                            value={formState.wbp_sickness}
                           />
                           <p className="error-text">
                             {errors.map((item) =>
@@ -1852,6 +1881,7 @@ export const WbpInsert = () => {
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         name="jenis_olahraga"
                         onChange={handleChange}
+                        value={formState.jenis_olahraga}
                       >
                         <option disabled value="">
                           Pilih Jenis Olahraga
@@ -1885,6 +1915,7 @@ export const WbpInsert = () => {
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                         name="zat_adiktif"
                         onChange={handleChange}
+                        value={formState.zat_adiktif}
                       >
                         <option disabled value="">
                           Pilih Jenis Zat Adiktif
