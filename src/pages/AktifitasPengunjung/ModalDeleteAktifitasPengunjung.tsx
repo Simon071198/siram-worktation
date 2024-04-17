@@ -82,7 +82,7 @@ export const DeleteAktifitasPengunjungModal = ({
                 Apakah Anda yakin ingin menghapus data ini?
               </p>
               <p className="text-sm text-center text-black dark:text-white">
-                aktifitas{' '}
+                Aktivitas{' '}
                 <span className="text-red-400">
                   {formState.nama_aktivitas_pengunjung}
                 </span>{' '}

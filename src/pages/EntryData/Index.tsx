@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProgressBar from '../../components/ProgressBar';
 import { useNavigate } from 'react-router-dom';
 import DetailKasus from './DetailKasus';
@@ -11,6 +11,12 @@ import { WbpInsert } from './WbpInsert';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('formState');
+    }
+  }, [])
 
   const formList = [
     {
