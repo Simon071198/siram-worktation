@@ -152,7 +152,7 @@ const SignIn = () => {
                 SIRAM Workstation
               </h2>
               <h2 className="text-center xl:text-left mb-9 text-xl font-bold text-white sm:text-title-xl2">
-                OTMIL Cimahi
+                OTMIL
               </h2>
 
               <p

@@ -196,7 +196,7 @@ const CameraPlaybackDetail = lazy(
 );
 const MenuTutorial = lazy(() => import('../pages/Tutorial/TutorialList'));
 
-const EntryData = lazy(() => import('../pages/EntryData/Index'))
+const EntryData = lazy(() => import('../pages/EntryData/Index'));
 
 const AddSidang = lazy(() => import('../pages/EntryData/AddSidang'));
 const AddBAP = lazy(() => import('../pages/EntryData/AddBAP'));
@@ -294,13 +294,13 @@ const coreRoutes = [
   {
     path: '/kamera-playback',
     title: 'kamera playback',
-    component: CameraPlaybackList,
-  },
-  {
-    path: '/kamera-playback/:id',
-    title: 'kamera playback detail',
     component: CameraPlaybackDetail,
   },
+  // {
+  //   path: '/kamera-playback/:id',
+  //   title: 'kamera playback detail',
+  //   component: CameraPlaybackDetail,
+  // },
   {
     path: '/shift-jaga',
     title: 'Shift Jaga',
