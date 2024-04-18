@@ -301,20 +301,19 @@ const CaseTypeList = () => {
 
   // function untuk mengubah data
   const handleSubmitEditJenisJahat = async (params: any) => {
-    console.log(params, 'edit');
     try {
       const responseEdit = await apiUpdateJenisJahat(params, token);
-      if (responseEdit.data.status === 'OK') {
+      if (responseEdit.data.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
         fetchData();
-      } else if (responseEdit.data.status === 'NO') {
+      } else if (responseEdit.data.status === 400) {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal mengubah data',
+          title: responseEdit.data.message,
         });
       } else {
         throw new Error(responseEdit.data.message);

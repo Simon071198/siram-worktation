@@ -12,6 +12,8 @@ import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../utils/constants';
+import { FaRegEyeSlash } from 'react-icons/fa';
+import { FaRegEye } from 'react-icons/fa';
 
 interface AddUserModalProps {
   closeModal: () => void;
@@ -748,25 +750,32 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
 
                   {/* Password */}
                   {!isEdit && !isDetail && (
-                    <div className="form-group w-full ">
+                    <div className="form-group w-full">
                       <label
                         className="block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
                       >
                         Password
                       </label>
-                      <input
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-password"
-                        name="password"
-                        type="password"
-                        onChange={handleChange}
-                        placeholder="Password"
-                        value={formState.password}
-                        disabled={isDetail}
-                      />
+                      <div className="relative">
+                        <input
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary i-password"
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          onChange={handleChange}
+                          placeholder="Password"
+                          disabled={isDetail}
+                        />
+                        <button
+                          className="absolute inset-y-0 right-0 px-3 py-2 bg-transparent focus:outline-none"
+                          onClick={toggleShowPassword}
+                        >
+                          {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                        </button>
+                      </div>
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'password' ? 'Masukan password' : '',
+                          item === 'password' ? 'Masukan password lama' : '',
                         )}
                       </p>
                     </div>
