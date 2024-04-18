@@ -13,6 +13,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Alerts } from './AlertPenyidikan';
 import { Error403Message } from '../../../utils/constants';
+import { set } from 'react-hook-form';
 
 dayjs.locale('id');
 dayjs.extend(utc);
@@ -32,8 +33,8 @@ export const AddPenyidikanModal = ({
     nomor_penyidikan: defaultValue?.nomor_penyidikan,
     nama_kasus: defaultValue?.nama_kasus,
     agenda_penyidikan: defaultValue?.agenda_penyidikan,
-    waktu_dimulai_penyidikan: defaultValue?.waktu_dimulai_penyidikan,
-    waktu_selesai_penyidikan: defaultValue?.waktu_selesai_penyidikan,
+    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
+    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
     wbp_profile_id: defaultValue?.wbp_profile_id,
     nomor_kasus: defaultValue?.no_kasus,
     saksi_id: defaultValue?.saksi_id,
@@ -53,6 +54,8 @@ export const AddPenyidikanModal = ({
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [dataKasus, setDataKasus] = useState<any[]>([]);
   const [filter, setFilter] = useState('');
+
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
     const params = {
@@ -382,7 +385,10 @@ export const AddPenyidikanModal = ({
     e.preventDefault();
     if (!validateForm()) return;
     setButtonLoad(true);
-    onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState).then(() => 
+      setButtonLoad(false),
+      setFormSubmitted(true)
+    );
   };
 
   const modalStyles: any = {
@@ -764,16 +770,19 @@ export const AddPenyidikanModal = ({
 
                     <div className="flex items-center justify-center">
                       <DatePicker
-                        selected={dayjs(
-                          formState.waktu_dimulai_penyidikan,
-                        ).toDate()}
+                        selected = {
+                          formState.waktu_dimulai_penyidikan
+                          ? dayjs(formState.waktu_dimulai_penyidikan).toDate()
+                          : dayjs().toDate()
+                        }
                         onChange={handleChangeWaktu}
                         dateFormat="dd/MM/yyyy HH:mm"
-                        timeCaption="Pilih Waktu" // Ganti dengan caption waktu yang diinginkan
+                        timeCaption="Pilih Waktu"
                         showTimeInput
-                        timeInputLabel="Waktu" // Ganti dengan label waktu yang diinginkan
-                        timeFormat="HH:mm" // Ganti dengan format waktu yang diinginkan
-                        disabled={false} // Ganti dengan kondisi yang sesuai
+                        name='waktu_dimulai_penyidikan'
+                        timeInputLabel="Waktu"
+                        timeFormat="HH:mm"
+                        disabled={false}
                         customTimeInput={<ExampleCustomTimeInput />}
                         className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                         locale="id"
@@ -781,17 +790,15 @@ export const AddPenyidikanModal = ({
 
                       <input
                         type="text"
-                        value={formState?.zona_waktu}
+                        value={formState.zona_waktu}
                         disabled
                         className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       />
                     </div>
                     <p className="error-text">
-                      {errors?.map((item) =>
-                        item === 'waktu_dimulai_penyidikan'
-                          ? 'Masukan Waktu Mulai Penyidikan'
-                          : '',
-                      )}
+                      {formSubmitted &&
+                        errors.includes('waktu_dimulai_penyidikan') &&
+                        'Masukan Waktu Mulai Penyidikan'}
                     </p>
                   </div>
                   <div className="form-group w-full h-22">
@@ -804,9 +811,11 @@ export const AddPenyidikanModal = ({
 
                     <div className="flex items-center justify-center">
                       <DatePicker
-                        selected={dayjs(
-                          formState.waktu_selesai_penyidikan,
-                        ).toDate()}
+                        selected={
+                          formState.waktu_selesai_penyidikan
+                            ? dayjs(formState.waktu_selesai_penyidikan).toDate()
+                            : dayjs().toDate()
+                        }
                         onChange={(date) => handleChangeWaktuSelesai(date)}
                         dateFormat="dd/MM/yyyy HH:mm"
                         timeCaption="Pilih Waktu" // Ganti dengan caption waktu yang diinginkan
@@ -817,20 +826,19 @@ export const AddPenyidikanModal = ({
                         customTimeInput={<ExampleCustomTimeInput />}
                         className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                         locale="id"
+                        name='waktu_selesai_penyidikan'
                       />
                       <input
                         type="text"
-                        value={formState?.zona_waktu}
+                        value={formState.zona_waktu}
                         disabled
                         className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       />
                     </div>
                     <p className="error-text">
-                      {errors?.map((item) =>
-                        item === 'waktu_selesai_penyidikan'
-                          ? 'Masukan Waktu Selesai Penyidikan'
-                          : '',
-                      )}
+                      {formSubmitted &&
+                        errors.includes('waktu_selesai_penyidikan') &&
+                        'Masukan Waktu Selesai Penyidikan'}
                     </p>
                   </div>
                 </div>

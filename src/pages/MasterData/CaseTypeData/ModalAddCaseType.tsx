@@ -398,7 +398,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'nama_jenis_perkara'
-                          ? 'Pilih Jenis Perkara'
+                          ? 'Masukan Jenis Perkara'
                           : '',
                       )}
                     </p>
@@ -421,7 +421,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'pasal' ? 'Pilih Pasal' : '',
+                        item === 'pasal' ? 'Masukan Pasal' : '',
                       )}
                     </p>
                   </div>
