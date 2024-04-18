@@ -177,7 +177,7 @@ export const AddStaffModal = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== 'lokasi_lemasmil_id' &&
+        key !== 'lokasi_lemasmil_id' && 
         key !== 'foto_wajah_fr' &&
         key !== 'nomor_petugas' &&
         key !== 'grup_petugas_id' &&
