@@ -83,10 +83,9 @@ const MainMenu = () => {
         <div className="flex justify-center items-center gap-x-2 bg-transparent-dark1 backdrop-blur w-full py-5 fixed z-10">
           <img src={Logo} alt="Logo" className="w-12" />
           <span className="text-4xl text-white font-bold tracking-wider uppercase">
-            SIRAM Workstation OTMIL{' '}
-            {dataUser.nama_lokasi_otmil
-              ? dataUser.nama_lokasi_otmil
-              : dataUser.nama_lokasi_lemasmil}
+          {dataUser.nama_lokasi_otmil
+              ?   "SIRAM Workstation OTMIL " + dataUser.nama_lokasi_otmil
+              :  "SIRAM Workstation LEMASMIL " + dataUser.nama_lokasi_lemasmil}
           </span>
         </div>
         <div className="pb-20 pt-30 px-20 overflow-y-auto grid grid-cols-1 gap-20 md:grid-cols-2 md:gap-20 xl:grid-cols-3 2xl:gap-20 relative">
@@ -216,7 +215,7 @@ const routes = [
   },
   {
     id: 5,
-    name: 'Aktifitas Pengunjung',
+    name: 'Aktivitas Pengunjung',
     link: '/pengunjung',
     icon: Pengunjung,
   },
