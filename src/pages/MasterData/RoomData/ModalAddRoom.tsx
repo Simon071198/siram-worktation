@@ -270,7 +270,8 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       formState.nama_ruangan_otmil &&
       formState.jenis_ruangan_otmil &&
       formState.zona_id &&
-      formState.lokasi_otmil_id
+      formState.lokasi_otmil_id &&
+      formState.lantai_otmil_id
     ) {
       // Menghapus semua kesalahan jika kondisi ini terpenuhi
       setErrors({
@@ -311,7 +312,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       if (!formState.posisi_Y) {
         newErrors.posisi_Y = 'Posisi Y harus diisi';
       }
-      if (!formState.lantai) {
+      if (!formState.lantai_otmil_id) {
         newErrors.lantai = 'Lantai harus diisi';
       }
       // Mengatur kesalahan sesuai dengan validasi

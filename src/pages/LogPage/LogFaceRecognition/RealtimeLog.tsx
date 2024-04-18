@@ -599,6 +599,7 @@ export default function Realtime() {
           </div>
 
           {data.map((item) => {
+            console.log(item, 'item');
             return (
               <div className="grid grid-cols-8 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8">
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
@@ -606,7 +607,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/gema_admin_api' +
+                        'http://dev.transforme.co.id/siram_admin_api' +
                         item.image
                       }
                       alt=""
@@ -622,7 +623,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/gema_admin_api' +
+                        'http://dev.transforme.co.id/siram_admin_api' +
                         item.face_pics
                       }
                       alt=""
@@ -669,7 +670,7 @@ export default function Realtime() {
                 </div>
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
                   <p className="text-black dark:text-white">
-                    {item.device_name}-{item.location_name}
+                    {item.nama_kamera}
                   </p>
                 </div>
                 <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">

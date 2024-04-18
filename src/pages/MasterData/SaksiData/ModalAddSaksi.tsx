@@ -481,7 +481,7 @@ export const AddSaksiModal = ({
                       ) : (
                         ''
                       )}
-                      Ubah Data Tipe
+                      Ubah Data Saksi
                     </button>
                   ) : (
                     <button
@@ -516,7 +516,7 @@ export const AddSaksiModal = ({
                       ) : (
                         ''
                       )}
-                      Tambah Data Tipe
+                      Tambah Data Saksi
                     </button>
                   )}
                   {errors.filter((item: string) =>

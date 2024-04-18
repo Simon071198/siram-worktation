@@ -45,7 +45,7 @@ const BAPList = () => {
   const [alertIsAdded, setAlertIsAdded] = useState(false);
   const [alertIsEdited, setAlertIsEdited] = useState(false);
   const [alertIsDeleted, setAlertIsDeleted] = useState(false);
-  const [currentPage,  ] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [filter, setFilter] = useState('');
@@ -182,7 +182,7 @@ const BAPList = () => {
   };
 
   const handleChagePage = (pageNumber: any) => {
-     (pageNumber);
+    pageNumber;
   };
 
   const handleChangePageSize = async (e: any) => {
@@ -387,10 +387,11 @@ const BAPList = () => {
         setModalAddOpen(false);
         fetchData();
       } else if (responseCreate.data.status === 'NO') {
-        Alerts.fire({
-          icon: 'error',
-          title: 'Gagal membuat data',
-        });
+        // Alerts.fire({
+        //   icon: 'error',
+        //   title: 'Gagal membuat data',
+        // });
+        console.log(responseCreate.data.status.message, 'ERROR');
       } else {
         throw new Error(responseCreate.data.message);
       }

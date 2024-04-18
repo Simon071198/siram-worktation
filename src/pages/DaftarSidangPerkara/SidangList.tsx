@@ -598,6 +598,7 @@ const SidangList = () => {
       handleSearchSidang();
     }
   };
+
   return isLoading ? (
     <Loader />
   ) : (

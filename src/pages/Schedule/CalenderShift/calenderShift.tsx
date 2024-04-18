@@ -408,7 +408,7 @@ const shiftJaga = () => {
   };
 
   const grup = grupPetugas?.filter((item: any) =>
-    staff.some(
+    staff.map(
       (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id,
     ),
   );
@@ -964,7 +964,7 @@ const shiftJaga = () => {
                 return (
                   <div
                     key={index}
-                    className={`w-26 xl:flex items-center justify-center ${backgroundColor}`}
+                    className={`w-full xl:flex items-center justify-center ${backgroundColor}`}
                   >
                     <h3 className={`flex justify-center font-bold text-2xl`}>
                       {item}
@@ -1136,14 +1136,14 @@ const shiftJaga = () => {
                                       handleOpenModalDelete(dataEdit)
                                     }
                                     key={index}
-                                    className={`${shiftBackgroundColor} w-26 flex justify-center items-center h-16`}
+                                    className={`${shiftBackgroundColor} w-full flex justify-center items-center h-16`}
                                   >
                                     <BsTrash className="w-5 text-black h-5" />
                                   </button>
                                 ) : (
                                   <button
                                     key={index}
-                                    className={`w-26 flex justify-center ${shiftBackgroundColor} h-16`}
+                                    className={`w-full flex justify-center ${shiftBackgroundColor} h-16`}
                                     onClick={() =>
                                       handleOpenDetailModal(dataEdit)
                                     }
@@ -1167,7 +1167,7 @@ const shiftJaga = () => {
                             ) : (
                               <div
                                 key={index}
-                                className={`w-26 flex justify-center items-center ${backgroundColor} h-16`}
+                                className={`w-full flex justify-center items-center ${backgroundColor} h-16`}
                               >
                                 {scheduleShift ? (
                                   <>
@@ -1344,7 +1344,7 @@ const shiftJaga = () => {
                             {jadwalPegawai ? (
                               <button
                                 key={index}
-                                className={`w-26 flex justify-center ${shiftBackgroundColor} h-16 `}
+                                className={`w-full flex justify-center ${shiftBackgroundColor} h-16 `}
                                 onClick={() =>
                                   handleopenPegawaiShift(jadwalPegawai)
                                 }
@@ -1375,7 +1375,7 @@ const shiftJaga = () => {
                             ) : (
                               <div
                                 key={index}
-                                className={`w-26 flex justify-center items-center ${backgroundColor} h-16`}
+                                className={`w-full flex justify-center items-center ${backgroundColor} h-16`}
                               >
                                 {scheduleShift ? (
                                   <></>

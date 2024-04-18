@@ -44,8 +44,8 @@ export const AddDaftarKasusModal = ({
     jenis_perkara_id: defaultValue?.jenis_perkara_id,
     jenis_pidana_id: defaultValue?.jenis_pidana_id,
     kategori_perkara_id: '',
-    waktu_kejadian: '',
-    waktu_pelaporan_kasus: '',
+    waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
     wbp_profile_ids: [],
     keterangans: [],
     role_ketua_oditur_ids: '',
@@ -77,6 +77,8 @@ export const AddDaftarKasusModal = ({
   const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
   const [dataSaksi, setDataSaksi] = useState([]);
   const [filter, setFilter] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [dateEdited, setDateEdited] = useState(false);
 
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
 
@@ -224,7 +226,10 @@ export const AddDaftarKasusModal = ({
     if (!validateForm()) return;
     setButtonLoad(true);
 
-    onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState).then(
+      () => setFormSubmitted(true),
+      setButtonLoad(false),
+    );
   };
 
   const jenisPerkara = async () => {
@@ -339,6 +344,8 @@ export const AddDaftarKasusModal = ({
       waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
     });
+
+    setDateEdited(true);
   };
 
   const getTimeZone = () => {
@@ -924,6 +931,7 @@ export const AddDaftarKasusModal = ({
                       </p>
                     </div>
                   </div>
+                  {/* Tanggal Kejadian */}
                   <div className="form-group w-full">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -959,14 +967,13 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map((item) =>
-                          item === 'waktu_kejadian'
-                            ? 'Masukan Tanggal Kejadian Kasus'
-                            : '',
-                        )}
+                        {formSubmitted &&
+                          errors.includes('waktu_kejadian') &&
+                          'Masukan Tanggal Kejadian Kasus'}
                       </p>
                     </div>
                   </div>
+                  {/* tanggal pelaporan */}
                   <div className="form-group w-full">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -977,7 +984,7 @@ export const AddDaftarKasusModal = ({
                     <div className="flex flex-row">
                       <DatePicker
                         selected={
-                          formState.waktu_pelaporan_kasus
+                          dateEdited && formState.waktu_pelaporan_kasus
                             ? dayjs(formState.waktu_pelaporan_kasus).toDate()
                             : dayjs().toDate()
                         }
@@ -1003,11 +1010,9 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map((item) =>
-                          item === 'waktu_pelaporan_kasus'
-                            ? 'Masukan Tanggal Pelaporan Kasus'
-                            : '',
-                        )}
+                        {formSubmitted &&
+                          errors.includes('waktu_pelaporan_kasus') &&
+                          'Masukan Tanggal Pelaporan Kasus'}
                       </p>
                     </div>
                   </div>
