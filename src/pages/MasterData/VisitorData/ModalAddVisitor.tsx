@@ -283,7 +283,12 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
         setprovinsi(dataProvici.records);
 
         const wbp = await apiReadAllWBP(paramsWbp, token);
-        setnameWBP(wbp.data.records);
+
+        const filteredWbp = wbp.data.records.filter(
+          (namaWbp: any) => namaWbp.nama != null && namaWbp.nama != '',
+        );
+
+        setnameWBP(filteredWbp);
 
         setIsLoading(false);
       } catch (e: any) {
