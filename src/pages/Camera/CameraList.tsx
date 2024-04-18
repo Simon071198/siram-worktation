@@ -25,8 +25,10 @@ const CameraList = () => {
   // let [locationDeviceListLemasmil, setLocationDeviceListLemasmil] = useState(
   //   [],
   // );
-  const [building, setBuilding] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [buildings, setBuilding] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [selectedBuilding, setSelectedBuilding] = useState('');
+  const [selectedFloor, setSelectedFloor] = useState('');
   const [columns, setColumns] = useState(3);
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
@@ -155,8 +157,9 @@ const CameraList = () => {
 
     driverObj.drive();
   };
-  console.log(building, 'set build');
+  console.log(buildings, 'set build');
   const handleClickRoom = (roomId) => {
+    console.log('id', roomId);
     setSelectedRoom(roomId);
     setCurrentPage(1);
   };
@@ -210,7 +213,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '5',
@@ -221,7 +224,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '6',
@@ -232,7 +235,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '7',
@@ -276,7 +279,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '11',
@@ -287,7 +290,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '12',
@@ -298,7 +301,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '13',
@@ -309,7 +312,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '14',
@@ -320,7 +323,7 @@ const CameraList = () => {
       merk: 'DummyBrand',
       model: 'DummyModel',
       is_deleted: '0',
-      status_kamera: 'online',
+      status_kamera: 'offline',
     },
     {
       kamera_id: '15',
@@ -480,12 +483,13 @@ const CameraList = () => {
 
   console.log('pages', totalPages);
   const renderCameraList = () => {
-    const selectedRoomData = building?.data?.records?.gedung.flatMap((gedung) =>
-      gedung.lantai.flatMap((lantai) =>
-        lantai.ruangan
-          .filter((ruangan) => ruangan.ruangan_otmil_id === selectedRoom)
-          .flatMap((ruangan) => ruangan.kamera),
-      ),
+    const selectedRoomData = buildings?.data?.records?.gedung.flatMap(
+      (gedung) =>
+        gedung.lantai.flatMap((lantai) =>
+          lantai.ruangan
+            .filter((ruangan) => ruangan.ruangan_otmil_id === selectedRoom)
+            .flatMap((ruangan) => ruangan.kamera),
+        ),
     );
 
     if (!selectedRoomData || selectedRoomData.length === 0) {
@@ -540,13 +544,31 @@ const CameraList = () => {
                     style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
                   >
                     <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-                      <CiCamera className="w-3/5 h-3/5" />
+                      <CiCamera
+                        className={`w-3/5 h-3/5 ${camera.status_kamera === 'online' ? 'text-green-500' : 'text-red-500'}`}
+                      />
                     </div>
                     <div className="mt-4 flex items-end justify-between">
-                      <div className="w-full">
-                        <h4 className="text-title-md text-center font-bold text-white">
+                      <div
+                        className={`w-full ${rows && columns === 3 && 'flex items-center justify-center'} gap-4`}
+                      >
+                        <h4 className="text-title-sm text-center font-bold text-white">
                           {camera.nama_kamera}
                         </h4>
+                        <h5
+                          className={`${
+                            camera.status_kamera === 'online'
+                              ? 'text-green-500'
+                              : 'text-red-500'
+                          } flex justify-center
+                          `}
+                        >
+                          (
+                          {camera.status_kamera === 'online'
+                            ? ' Online '
+                            : ' Offline '}
+                          )
+                        </h5>
                       </div>
                     </div>
                   </Link>
@@ -584,7 +606,7 @@ const CameraList = () => {
     if (!selectedRoom) return null;
 
     let location = '';
-    building?.data?.records?.gedung.forEach((gedung) => {
+    buildings?.data?.records?.gedung.forEach((gedung) => {
       gedung.lantai.forEach((lantai) => {
         const foundRoom = lantai.ruangan.find(
           (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
@@ -600,7 +622,7 @@ const CameraList = () => {
 
   return (
     <>
-      <div className="w-3/4 ml-1 flex gap-x-30  px-7 mt-4 items-center">
+      <div className="w-full ml-1 flex gap-5  px-7 mt-4 items-center">
         <Breadcrumbs url={window.location.href} />
         {selectedRoom && (
           <>
@@ -621,9 +643,79 @@ const CameraList = () => {
             </select>
           </>
         )}
+        <div className="flex gap-2">
+          <select
+            value={selectedBuilding}
+            onChange={(e) => setSelectedBuilding(e.target.value)}
+            className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+          >
+            <option disabled value="">
+              Pilih Gedung
+            </option>
+            {buildings?.data?.records?.gedung?.map((building) => (
+              <option
+                key={building.gedung_otmil_id}
+                value={building.gedung_otmil_id}
+              >
+                {building.nama_gedung_otmil}
+              </option>
+            ))}
+          </select>
+          {selectedBuilding && (
+            <select
+              value={selectedFloor}
+              onChange={(e) => setSelectedFloor(e.target.value)}
+              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+            >
+              <option disabled value="">
+                Pilih Lantai
+              </option>
+              {buildings?.data?.records?.gedung
+                ?.find(
+                  (building) => building.gedung_otmil_id === selectedBuilding,
+                )
+                ?.lantai.map((floor) => (
+                  <option
+                    key={floor.lantai_otmil_id}
+                    value={floor.lantai_otmil_id}
+                  >
+                    {floor.nama_lantai}
+                  </option>
+                ))}
+            </select>
+          )}
+
+          {selectedFloor && (
+            <select
+              value={selectedRoom}
+              onChange={(e) => setSelectedRoom(e.target.value)}
+              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+            >
+              <option disabled value="">
+                Pilih Ruangan
+              </option>
+              {buildings?.data?.records?.gedung
+                .find(
+                  (building) => building.gedung_otmil_id === selectedBuilding,
+                )
+                ?.lantai.find(
+                  (floor) => floor.lantai_otmil_id === selectedFloor,
+                )
+                ?.ruangan.map((room) => (
+                  <option
+                    key={room.ruangan_otmil_id}
+                    value={room.ruangan_otmil_id}
+                    onClick={() => handleClickRoom(room.ruangan_otmil_id)}
+                  >
+                    {room.nama_ruangan_otmil}
+                  </option>
+                ))}
+            </select>
+          )}
+        </div>
       </div>
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen flex gap-4">
-        <div className="w-4/5">
+        <div className="w-4/5 h-screen">
           <div className="py-4 pl-6 w-[95%] flex justify-between items-center"></div>
           <>
             {selectedRoom ? (
@@ -643,106 +735,6 @@ const CameraList = () => {
         </div>
       )} */}
           </>
-        </div>
-        <div className="w-1/4 border border-gray-2 p-4 mt-8 h-[28rem] overflow-y-auto">
-          <div className="w-full flex justify-center">
-            <h2 className="font-bold text-xl tracking-tight mr-3">
-              Daftar Gedung
-            </h2>
-            <button>
-              <HiQuestionMarkCircle
-                values={filter}
-                aria-placeholder="Show tutorial"
-                // onChange={}
-                onClick={handleClickTutorial}
-              />
-            </button>
-          </div>
-          {building?.data?.records?.gedung.map((gedung, i) => {
-            return (
-              <>
-                <div className="grid divide-y divide-neutral-200 max-w-xl border-b mx-auto">
-                  <div className="py-5">
-                    <details className="group">
-                      <summary
-                        id="s-gedung"
-                        className="flex justify-between items-center font-medium cursor-pointer list-none"
-                      >
-                        <span key={i}>{gedung.nama_gedung_otmil}</span>
-                        <span className="transition-transform group-open:rotate-180">
-                          <svg
-                            fill="none"
-                            height="24"
-                            shapeRendering="geometricPrecision"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                            viewBox="0 0 24 24"
-                            width="24"
-                          >
-                            <path d="M6 9l6 6 6-6"></path>
-                          </svg>
-                        </span>
-                      </summary>
-
-                      <div className="pt-2 ml-[20px]">
-                        {gedung?.lantai.map((a) => {
-                          return (
-                            <>
-                              <details className="groupChild">
-                                <summary
-                                  id="s-lantai"
-                                  className="flex justify-between items-center font-medium cursor-pointer list-none"
-                                >
-                                  <span>
-                                    {a?.nama_lantai
-                                      ? a?.nama_lantai
-                                      : 'Undifined'}
-                                  </span>
-                                  <span className="transition-transform groupChild-open:rotate-180">
-                                    <svg
-                                      fill="none"
-                                      height="24"
-                                      shapeRendering="geometricPrecision"
-                                      stroke="currentColor"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="1.5"
-                                      viewBox="0 0 24 24"
-                                      width="24"
-                                    >
-                                      <path d="M6 9l6 6 6-6"></path>
-                                    </svg>
-                                  </span>
-                                </summary>
-                                <div
-                                  id="s-ruangan"
-                                  className="mb-2 ml-[20px] cursor-pointer"
-                                >
-                                  {a?.ruangan.map((r) => {
-                                    return (
-                                      <p
-                                        onClick={() =>
-                                          handleClickRoom(r.ruangan_otmil_id)
-                                        }
-                                      >
-                                        {r.nama_ruangan_otmil}
-                                      </p>
-                                    );
-                                  })}
-                                </div>
-                              </details>
-                            </>
-                          );
-                        })}
-                      </div>
-                    </details>
-                  </div>
-                </div>
-              </>
-            );
-          })}
         </div>
       </div>
     </>
