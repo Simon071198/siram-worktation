@@ -13,7 +13,7 @@ import { Error403Message } from '../../utils/constants';
 
 interface AddBAPModalProps {
   closeModal: () => void;
-  onSubmit: (params: any) => void;
+  onSubmit: any;
   defaultValue?: any;
   isDetail?: boolean;
   isEdit?: boolean;
@@ -51,6 +51,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const token = dataToken.token;
   const [file, setFile] = useState(null);
   const [filter, setFilter] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -170,32 +171,24 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
     driverObj.drive();
   };
 
-
-
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    console.log(formState, 'formState');
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (formState) {
+      e.preventDefault();
+      console.log(formState, 'From State');
+      if (!validateForm()) return;
+      setButtonLoad(true);
 
-    if (!validateForm()) return;
-    setButtonLoad(true);
-    onSubmit(formState);
+      setSubmitted(true);
+      onSubmit(formState).then(() => setButtonLoad(false));
+      console.log('berhasil');
+    }
   };
 
-  //   useEffect(() => {
-  //   if (isEdit || isDetail) {
-  //     setFormState({
-  //       ...formState,
-  //       pdf_file_base64: formState.link_dokumen_bap,
-  //     });
-  //   }
-  // }, [formState.link_dokumen_bap]);
-
   useEffect(() => {
-    console.log(formState, 'FORMSTATE');
     checkFileType(formState.link_dokumen_bap);
 
     if (isDetail || isEdit) {
@@ -234,9 +227,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
     }
   };
 
-  const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
-  console.log(formState, 'ada');
-
+  // const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
   const openNewWindow = () => {
     // URL to be opened in the new window
     const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
@@ -311,8 +302,6 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       });
     }
   };
-
-  console.log(dataPenyidikan, 'data');
 
   const customStyles = {
     container: (provided: any) => ({
@@ -583,10 +572,19 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       }))}
                       onChange={handlePenyidikanChange}
                     />
-                    <p className="error-text">
+
+                    {/* <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'penyidikan_id' ? 'Pilih penyidikan' : '',
+                        item === 'penyidikan_id'
+                          ? 'Pilih nomor penyidikan'
+                          : '',
                       )}
+                    </p> */}
+
+                    <p className="error-text">
+                      {submitted &&
+                        !formState.penyidikan_id &&
+                        'Pilih Nomor Penyidikan'}
                     </p>
                   </div>
                 </div>
@@ -609,10 +607,15 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       value={formState.nomor_kasus}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'nomor_kasus' ? 'Pilih Nomor Kasus' : '',
                       )}
+                    </p> */}
+                    <p className="error-text">
+                      {submitted &&
+                        !formState.nomor_kasus &&
+                        'Pilih Nomor Kasus'}
                     </p>
                   </div>
 
@@ -633,10 +636,15 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       value={formState.nama_kasus}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'nama_kasus' ? 'Pilih Nama Kasus' : '',
                       )}
+                    </p> */}
+                    <p className="error-text">
+                      {submitted &&
+                        !formState.penyidikan_id &&
+                        'Pilih Nama Kasus'}
                     </p>
                   </div>
 
@@ -656,10 +664,15 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       value={valueTerlibat}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === '' ? 'Pilih Pihak Terlibat' : '',
                       )}
+                    </p> */}
+                    <p className="error-text">
+                      {submitted &&
+                        !formState.penyidikan_id &&
+                        'Pilih Pihak Terlibat'}
                     </p>
                   </div>
 
@@ -680,11 +693,11 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                         value={formState.nama_saksi ? '' : formState.nrp_wbp}
                         disabled
                       />
-                      <p className="error-text">
+                      {/* <p className="error-text">
                         {errors.map((item) =>
                           item === 'nrp_wbp' ? 'Pilih NRP' : '',
                         )}
-                      </p>
+                      </p> */}
                     </div>
                   )}
                 </div>
@@ -706,12 +719,17 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     // disabled={isDetail}
                     disabled
                   />
-                  <p className="error-text">
+                  {/* <p className="error-text">
                     {errors?.map((item) =>
                       item === 'agenda_penyidikan'
                         ? 'Masukan Agenda Penyidikan'
                         : '',
                     )}
+                  </p> */}
+                  <p className="error-text">
+                    {submitted &&
+                      !formState.agenda_penyidikan &&
+                      'Pilih Agenda Penyidikan'}
                   </p>
                 </div>
 
@@ -785,20 +803,6 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                 )}
                               </div>
                             )}
-                            {/* {formState.pdf_file_base64 && (
-                                  <div className="">
-                                          <embed
-                                              src={`${formState.pdf_file_base64}`}
-                                              title="pdf"
-                                              type="application/pdf"
-                                              width="100%"
-                                              height="600px" // Adjust the height as per your requirement
-                                              className="border-0 text-center justify-center"
-                                              // scrolling="no"
-                                          />
-                                   
-                                  </div>
-                              )} */}
                           </div>
                         </div>
                         <p className="text-center text-sm text-blue-500">
@@ -859,12 +863,15 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     )}
                   </div>
                   <p className="error-text">
-                    {errors.map((item) =>
-                      item === 'pdf_file_base64'
-                        ? 'Masukan dokumen sidang'
-                        : '',
-                    )}
+                    {submitted &&
+                      !formState.pdf_file_base64 &&
+                      'Masukan Dokumen BAP'}
                   </p>
+                  {/* <p className="error-text">
+                    {errors.map((item) =>
+                      item == 'pdf_file_base64' ? 'Masukan dokumen sidang' : '',
+                    )}
+                  </p> */}
                 </div>
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
@@ -881,17 +888,6 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     </div>
                   </>
                 )}
-                {/* {errors.filter((item: string) => !item.startsWith('INVALID_ID'))
-              .length > 0 && (
-              <div className="error mt-4">
-                <span>Please input :</span>
-                <p className="text-red-400">
-                  {errors
-                    .filter((item: string) => !item.startsWith('INVALID_ID'))
-                    .join(', ')}
-                </p>
-              </div>
-            )} */}
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
                   {isDetail ? null : isEdit ? (
                     <button
