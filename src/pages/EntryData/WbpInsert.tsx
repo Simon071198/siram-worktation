@@ -286,7 +286,7 @@ export const WbpInsert = () => {
   //   console.log(formState, 'received values');
   // };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'formstate');
     if (!validateForm()) return;
@@ -818,6 +818,16 @@ export const WbpInsert = () => {
     });
   }, []);
 
+  const [isZonaHijauEmpty, setIsZonaHijauEmpty] = useState(false);
+  const [isZonaMerahEmpty, setIsZonaMerahEmpty] = useState(false);
+
+  const handleZona = () => {
+    setIsZonaHijauEmpty(formState.akses_ruangan_otmil_id.length === 0);
+    setIsZonaMerahEmpty(formState.zona_merah.length === 0);
+  };
+
+
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -886,7 +896,7 @@ export const WbpInsert = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
                 {/* Nama */}
                 <div className="f-nama form-group w-full flex flex-col">
                   <label
@@ -910,7 +920,7 @@ export const WbpInsert = () => {
                 </div>
 
                 {/* Pangkat */}
-                <div className="f-pangkat form-group w-full flex flex-col">
+                <div className="f-pangkat form-group w-full flex flex-col mt-3">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -940,7 +950,7 @@ export const WbpInsert = () => {
                 </div>
 
                 {/* Matra */}
-                <div className="f-pangkat form-group w-full flex flex-col">
+                <div className="f-pangkat form-group w-full flex flex-col mt-3">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -964,13 +974,13 @@ export const WbpInsert = () => {
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'maatra_id' ? 'Pilih matra' : '',
+                      item === 'matra_id' ? 'Pilih matra' : '',
                     )}
                   </p>
                 </div>
 
                 {/* NRP  */}
-                <div className="f-nrp form-group w-full flex flex-col">
+                <div className="f-nrp form-group w-full flex flex-col mt-3">
                   <label
                     className="  block text-sm font-medium text-black dark:text-white"
                     htmlFor="id"
@@ -978,7 +988,7 @@ export const WbpInsert = () => {
                     NRP
                   </label>
                   <input
-                    className="w-full rounded border border-stroke  py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-gray dark:bg-slate-800  dark:focus:border-primary"
+                    className="w-full rounded border border-stroke  py-3 pl-3 pr-4.5  text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-gray dark:bg-slate-800  dark:focus:border-primary"
                     name="nrp"
                     placeholder="Nomor registrasi"
                     onChange={handleChange}
@@ -986,7 +996,7 @@ export const WbpInsert = () => {
                   />
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'nrp' ? 'Masukan nomor registrasi' : '',
+                      item === 'nrp' ? 'Masukan nomor' : '',
                     )}
                   </p>
                 </div>
@@ -994,7 +1004,7 @@ export const WbpInsert = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-4">
+          <div className="grid grid-cols-2 gap-2 mt-18">
             {/* Pendidikan*/}
             <div className="f-pendidikan form-group w-full flex flex-col ">
               <label
@@ -1336,7 +1346,10 @@ export const WbpInsert = () => {
                 name="nomor_kontak_keluarga"
                 placeholder="Kontak keluarga"
                 onChange={handleChange}
+<<<<<<< HEAD
+=======
                 value={formState.nomor_kontak_keluarga} 
+>>>>>>> c7be4731ea29bcf6f8a08cf0f705a6b81e35adb5
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -1545,9 +1558,14 @@ export const WbpInsert = () => {
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                       name="DMAC"
                       placeholder="DMAC"
+<<<<<<< HEAD
+                      onChange={handleChange}
+                      // disabled
+=======
                       disabled
                       // onChange={handleChange}
                       value={formState.dmac}
+>>>>>>> c7be4731ea29bcf6f8a08cf0f705a6b81e35adb5
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -2059,6 +2077,9 @@ export const WbpInsert = () => {
                         </div>
                       ))}
                     </div>
+                    <p className="error-text">
+                      {isZonaHijauEmpty ? 'Pilih zona hijau' : ''}
+                    </p>
                   </div>
 
                   <div className="zona-merah w-full ">
@@ -2103,6 +2124,9 @@ export const WbpInsert = () => {
                         </div>
                       ))}
                     </div>
+                    <p className="error-text">
+                        {isZonaMerahEmpty ? 'Pilih zona merah' : ''}
+                      </p>
                   </div>
                 </div>
               </>
@@ -2112,6 +2136,7 @@ export const WbpInsert = () => {
           <button
             className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 mt-5`}
             type="submit"
+            onClick={handleZona}
           >
             {buttonLoad ? (
               <svg

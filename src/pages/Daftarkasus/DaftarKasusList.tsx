@@ -260,14 +260,14 @@ const DaftarKasus = () => {
     setIsLoading(true);
     try {
       const response = await apiReadDaftarKasus(param, token);
-      if (response.data.status !== 'OK') {
+      if (response.data.status === 'OK') {
+        const result = response.data.records;
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
         throw new Error(response.data.message);
       }
-      const result = response.data.records;
-      setData(result);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-      setIsLoading(false);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -279,6 +279,7 @@ const DaftarKasus = () => {
         title: e.response.status === 403 ? Error403Message : e.message,
       });
     }
+    setIsLoading(false);
   };
 
   const getAllJenisPidana = async () => {
@@ -366,7 +367,7 @@ const DaftarKasus = () => {
         });
         setModalDeleteOpen(false);
         fetchData();
-      } else if (responseDelete.data.status === 'NO') {
+      } else if (responseDelete.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -399,7 +400,7 @@ const DaftarKasus = () => {
         });
         setModalAddOpen(false);
         fetchData();
-      } else if (responseCreate.data.status === 'NO') {
+      } else if (responseCreate.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
@@ -432,7 +433,7 @@ const DaftarKasus = () => {
         });
         setModalEditOpen(false);
         fetchData();
-      } else if (responseEdit.data.status === 'NO') {
+      } else if (responseEdit.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',
@@ -935,6 +936,14 @@ const DaftarKasus = () => {
         )}
         {modalAddOpen && (
           <DetailKasus
+            closeModal={handleCloseModal}
+            onSubmit={handleSubmitAdd}
+            defaultValue={nomorKasus}
+            token={token}
+          />
+        )}
+        {modalAddOpen && (
+          <DetailPerkara
             closeModal={handleCloseModal}
             onSubmit={handleSubmitAdd}
             defaultValue={nomorKasus}

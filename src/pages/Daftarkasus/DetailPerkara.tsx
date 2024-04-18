@@ -15,12 +15,19 @@ import Kasasi from './Kasasi';
 import PeninjauanKembali from './PeninjauanKembali';
 import Saksi from './Saksi';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
+import Loader from '../../common/Loader';
+
 
 const DetailPerkara = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const dataPerkara = state.data;
+
+
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
     'Data Umum',
@@ -38,7 +45,11 @@ const DetailPerkara = () => {
   ];
   console.log(tapIndex);
 
-  return (
+  const currentUrl = window.location.href;
+
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div>
       <button
         className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ms-3 mt-3"
@@ -46,6 +57,10 @@ const DetailPerkara = () => {
       >
         Kembali
       </button>
+      <div className="p-3">
+        <Breadcrumbs url={currentUrl} />
+      </div>
+
       <div className=" p-2 bg-slate-500 m-3">
         <div className="flex flex-row mt-3 ml-10 overflow-auto">
           {tabMenu.map((data, index) => {

@@ -755,6 +755,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       className="hidden"
                     />
                     {formState.pdf_file_base64 ? (
+                      console.log(formState.pdf_file_base64),
                       <div className="grid grid-cols-1">
                         <div
                           className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
