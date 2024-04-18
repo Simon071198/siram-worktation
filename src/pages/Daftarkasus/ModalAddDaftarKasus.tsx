@@ -122,7 +122,6 @@ export const AddDaftarKasusModal = ({
     return true;
   };
 
-
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -227,9 +226,10 @@ export const AddDaftarKasusModal = ({
     if (!validateForm()) return;
     setButtonLoad(true);
 
-    onSubmit(formState).then(() => 
-      setFormSubmitted(true),
-      setButtonLoad(false));
+    onSubmit(formState).then(
+      () => setFormSubmitted(true),
+      setButtonLoad(false),
+    );
   };
 
   const jenisPerkara = async () => {
@@ -966,11 +966,11 @@ export const AddDaftarKasusModal = ({
                       />
                     </div>
                     <div className="h-2">
-                    <p className="error-text">
-                      {formSubmitted &&
-                        errors.includes('waktu_kejadian') &&
-                        'Masukan Tanggal Kejadian Kasus'}
-                    </p>
+                      <p className="error-text">
+                        {formSubmitted &&
+                          errors.includes('waktu_kejadian') &&
+                          'Masukan Tanggal Kejadian Kasus'}
+                      </p>
                     </div>
                   </div>
                   {/* tanggal pelaporan */}
@@ -983,11 +983,11 @@ export const AddDaftarKasusModal = ({
                     </label>
                     <div className="flex flex-row">
                       <DatePicker
-                       selected={
-                        dateEdited && formState.waktu_pelaporan_kasus
-                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
-                          : dayjs().toDate()
-                      }
+                        selected={
+                          dateEdited && formState.waktu_pelaporan_kasus
+                            ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                            : dayjs().toDate()
+                        }
                         showTimeInput
                         timeFormat="HH:mm"
                         // timeIntervals={15}
