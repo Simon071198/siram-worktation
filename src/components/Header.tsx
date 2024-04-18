@@ -68,10 +68,9 @@ const Header = (props: {
           >
             <img src={Logo} alt="Logo" className="w-10" />
             <span className="text-xl text-white uppercase">
-              SIRAM Workstation OTMIL{' '}
-              {dataUser.nama_lokasi_otmil
-                ? dataUser.nama_lokasi_otmil
-                : dataUser.nama_lokasi_lemasmil}
+            {dataUser.nama_lokasi_otmil
+              ?   "SIRAM Workstation OTMIL " + dataUser.nama_lokasi_otmil
+              :  "SIRAM Workstation LEMASMIL " + dataUser.nama_lokasi_lemasmil}
             </span>
             {/* <span className="text-xl text-meta-4">SIRAM Workstation</span> */}
           </NavLink>

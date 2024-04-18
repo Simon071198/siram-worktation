@@ -542,7 +542,7 @@ const CameraPlayback = (props) => {
                   onError={handleVideoError}
                 />
               ) : (
-                <p className="tracking-wider text-center">
+                <p className="tracking-wider text-center animate-pulse mr-2">
                   {!cameraid
                     ? 'Silahkan pilih gedung'
                     : 'Silahkan pilih tanggal dan waktu'}

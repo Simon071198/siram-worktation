@@ -600,7 +600,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     </label>
                     <input
                       type=""
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-kasus"
+                      className={`w-full rounded border border-stroke dark:text-gray  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none input-kasus ${isEdit ? "bg-transparent" : "bg-slate-800 dark:bg-slate-800"}`}
                       name="nomor_kasus"
                       placeholder="Nomor Kasus"
                       onChange={handleChange}
@@ -629,7 +629,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     </label>
                     <input
                       type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nama"
+                      className={`w-full rounded border border-stroke dark:text-gray  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none input-nama ${isEdit ? "bg-transparent" : "bg-slate-800 dark:bg-slate-800"}`}
                       name="nama_kasus"
                       placeholder="Nama Kasus"
                       onChange={handleChange}
@@ -658,7 +658,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     </label>
                     <input
                       type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-pihak"
+                      className={`w-full rounded border border-stroke dark:text-gray  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none input-pihak ${isEdit ? "bg-transparent" : "bg-slate-800 dark:bg-slate-800"}`}
                       placeholder="Pihak Terlibat"
                       onChange={handleChange}
                       value={valueTerlibat}
@@ -686,7 +686,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       </label>
                       <input
                         type="text"
-                        className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nrp"
+                        className={`w-full rounded border border-stroke dark:text-gray  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none input-nrp ${isEdit ? "bg-transparent" : "bg-slate-800 dark:bg-slate-800"}`}
+
                         placeholder="NRP"
                         name="nrp_wbp"
                         onChange={handleChange}
@@ -710,7 +711,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     Agenda Penyidikan
                   </label>
                   <textarea
-                    className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-agenda"
+                    className={`w-full rounded border border-stroke dark:text-gray  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none t-agenda input-agenda ${isEdit ? "bg-transparent" : "bg-slate-800 dark:bg-slate-800"}`}
                     name="agenda_penyidikan"
                     id="textArea"
                     placeholder="Agenda Penyidikan"

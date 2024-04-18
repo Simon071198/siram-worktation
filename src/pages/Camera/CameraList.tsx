@@ -130,24 +130,24 @@ const CameraList = () => {
       showProgress: true,
       steps: [
         {
-          element: '#s-lemas',
+          element: '#s-gedung',
           popover: {
-            title: 'LEMASMIL',
-            description: 'Pilih lemasmil yang diinginkan',
+            title: 'GEDUNG',
+            description: 'Pilih gedung yang diinginkan',
           },
         },
         {
-          element: '#s-otmil',
+          element: '#s-lantai',
           popover: {
-            title: 'OTMIL',
-            description: 'Pilih otmil yang diinginkan',
+            title: 'LANTAI',
+            description: 'Pilih lantai yang diinginkan',
           },
         },
         {
-          element: '#s-babin',
+          element: '#s-ruangan',
           popover: {
-            title: 'BABINKUM TNI (Badan Pembinaan Hukun TNI)',
-            description: 'Pilih babinkum tni yang diinginkan',
+            title: 'RUANGAN',
+            description: 'Pilih ruangan yang diinginkan',
           },
         },
       ],
@@ -497,7 +497,14 @@ const CameraList = () => {
     }
 
     return (
-      <div className=" h-full bg-graydark">
+      <div
+        style={{
+          backgroundColor: '#333a48',
+          height: '100%',
+          maxHeight: '90vh',
+          overflowY: 'scroll',
+        }}
+      >
         <div className="flex flex-wrap gap-4 p-5">
           {/* {selectedRoomData.slice(0, columns * rows).map((kamera) => (
             <div
@@ -593,35 +600,36 @@ const CameraList = () => {
 
   return (
     <>
+      <div className="w-3/4 ml-1 flex gap-x-30  px-7 mt-4 items-center">
+        <Breadcrumbs url={window.location.href} />
+        {selectedRoom && (
+          <>
+            <div className="flex">
+              <p>{getRoomLocation()}</p>
+            </div>
+            <select
+              id="layoutSelect"
+              className="p-2 border rounded w-22 bg-meta-4 font-semibold"
+              value={`${columns}x${rows}`}
+              onChange={(e) => {
+                const [cols, rows] = e.target.value.split('x').map(Number);
+                handleLayoutChange(cols, rows);
+              }}
+            >
+              <option value="3x3">3x3</option>
+              <option value="4x4">4x4</option>
+            </select>
+          </>
+        )}
+      </div>
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen flex gap-4">
         <div className="w-4/5">
-          <div className="py-4 pl-6 w-[95%] flex justify-between items-center">
-            <Breadcrumbs url={window.location.href} />
-            {selectedRoom && (
-              <>
-                <div className="flex gap-2">
-                  <p>{getRoomLocation()}</p>
-                </div>
-                <select
-                  id="layoutSelect"
-                  className="p-2 border rounded w-20 bg-meta-4 font-semibold"
-                  value={`${columns}x${rows}`}
-                  onChange={(e) => {
-                    const [cols, rows] = e.target.value.split('x').map(Number);
-                    handleLayoutChange(cols, rows);
-                  }}
-                >
-                  <option value="3x3">3x3</option>
-                  <option value="4x4">4x4</option>
-                </select>
-              </>
-            )}
-          </div>
+          <div className="py-4 pl-6 w-[95%] flex justify-between items-center"></div>
           <>
             {selectedRoom ? (
               renderCameraList()
             ) : (
-              <div className="flex justify-center items-center  bg-graydark w-11/12 h-5/6">
+              <div className="flex justify-center items-center  bg-graydark w-11/12 h-5/6 animate-pulse">
                 <h1 className="font-semibold text-lg">
                   Silahkan pilih gedung, lantai dan ruangan
                 </h1>
@@ -636,8 +644,8 @@ const CameraList = () => {
       )} */}
           </>
         </div>
-        <div className="w-1/4 border border-gray-2 p-4 mt-14">
-          <div className="w-full flex justify-center pt-2">
+        <div className="w-1/4 border border-gray-2 p-4 mt-8 h-[28rem] overflow-y-auto">
+          <div className="w-full flex justify-center">
             <h2 className="font-bold text-xl tracking-tight mr-3">
               Daftar Gedung
             </h2>
@@ -654,9 +662,12 @@ const CameraList = () => {
             return (
               <>
                 <div className="grid divide-y divide-neutral-200 max-w-xl border-b mx-auto">
-                  <div className="py-5" id="s-lemas">
+                  <div className="py-5">
                     <details className="group">
-                      <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                      <summary
+                        id="s-gedung"
+                        className="flex justify-between items-center font-medium cursor-pointer list-none"
+                      >
                         <span key={i}>{gedung.nama_gedung_otmil}</span>
                         <span className="transition-transform group-open:rotate-180">
                           <svg
@@ -680,7 +691,10 @@ const CameraList = () => {
                           return (
                             <>
                               <details className="groupChild">
-                                <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
+                                <summary
+                                  id="s-lantai"
+                                  className="flex justify-between items-center font-medium cursor-pointer list-none"
+                                >
                                   <span>
                                     {a?.nama_lantai
                                       ? a?.nama_lantai
@@ -702,7 +716,10 @@ const CameraList = () => {
                                     </svg>
                                   </span>
                                 </summary>
-                                <div className="mb-2 ml-[20px] cursor-pointer">
+                                <div
+                                  id="s-ruangan"
+                                  className="mb-2 ml-[20px] cursor-pointer"
+                                >
                                   {a?.ruangan.map((r) => {
                                     return (
                                       <p
