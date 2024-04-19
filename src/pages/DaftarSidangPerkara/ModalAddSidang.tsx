@@ -129,7 +129,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'perubahan_jadwal_sidang' &&
         key !== 'waktu_mulai_sidang' &&
         key !== 'waktu_selesai_sidang' &&
-        key !== 'hasil_keputusan_sidang' &&
+        // key !== 'hasil_keputusan_sidang' &&
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
         key !== 'nama_kota'
@@ -1293,7 +1293,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'nama_sidang' ? 'Masukan nama sidang' : '',
+                          item === 'nama_sidang' ? 'Pilih nama sidang' : '',
                         )}
                       </p>
                     </div>
@@ -1361,8 +1361,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       />
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'nama_jenis_persidangan'
-                            ? 'Masukan jenis sidang'
+                          item === 'jenis_persidangan_id'
+                            ? 'Pilih jenis sidang'
                             : '',
                         )}
                       </p>
@@ -1403,7 +1403,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'jaksa_penuntut_id' ? 'Pilih jaksa' : '',
+                        item === 'oditur_penuntut_id' ? 'Pilih jaksa' : '',
                       )}
                     </p>
                   </div>

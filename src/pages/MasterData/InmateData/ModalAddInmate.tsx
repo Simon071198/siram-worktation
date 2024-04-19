@@ -623,6 +623,27 @@ export const AddInmateModal = ({
   };
   // End Handle Kasus
 
+  const validateForm = () => {
+    let errorFields:any[] = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+        if (!value) {
+          errorFields.push(key);
+        }
+      }
+    }
+
+    if (errorFields.length > 0) {
+      console.log(errorFields,'errorfields detected');
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  }
+
   // const validateForm = () => {
   //   let errorFields: any = [];
 
@@ -2055,7 +2076,13 @@ export const AddInmateModal = ({
                                 value: item.pangkat_id,
                                 label: item.nama_pangkat,
                               }))}
-                              onChange={handleSelectPangkat}
+                              onChange={(e) => {
+                                setFormState({
+                                  ...formState,
+                                  pangkat_id: e?.value,
+                                  nama_pangkat: e?.label,
+                                });
+                              }}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
