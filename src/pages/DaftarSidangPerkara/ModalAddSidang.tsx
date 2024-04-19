@@ -379,12 +379,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
+      // const wbpMap = formState.wbpHolder.map((item:any) => item.wbp_profile_id)
       // const pengacaraMap = formState.sidang_pengacara.map(
       //   (item: any) => item.nama_pengacara,
       // );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
       const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
-      // const wbpMap = formState.wbpHolder.map((item:any) => item.wbp_profile_id)
       setFormState({
         ...formState,
         hakim_id: hakimMap,
@@ -453,6 +453,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
   console.log('forms', formState);
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     // console.log(formState, 'formState');
@@ -1996,7 +1997,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   </div>
 
                   {/* WBP */}
-                  <div className="form-group w-full ">
+                  {/* <div className="form-group w-full ">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -2009,10 +2010,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
+                          ? (formState.wbp && formState.wbp.length > 0)
                           ? formState.wbp.map((item: any) => ({
                               value: item.wbp_profile_id,
                               label: item.nama,
                             }))
+                            : null
                           : formState.wbp_profile_id
                       }
                       placeholder={'Pilih wbp'}
@@ -2034,7 +2037,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         item === 'wbp' ? 'Pilih wbp' : '',
                       )}
                     </p>
-                  </div>
+                  </div> */}
 
                   {/* Ahli */}
                   <div className="form-group w-full ">
