@@ -646,20 +646,36 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
 
                   <div className="form-group h-22 w-full">
                     <label htmlFor="ruangan_otmil_id">
-                      Pilih Ruangan otmil:
+                      Pilih Ruangan Otmil:
                     </label>
                     <Select
                       className="basic-single p-otmil"
                       classNamePrefix="select"
-                      isSearchable
+                      isSearchable = {true}
+                      isClearable={true}
                       isDisabled={isDetail}
                       styles={customStyles}
                       name="ruangan_otmil_id"
-                      options={ruanganotmil.map((item) => ({
+                      defaultValue={
+                        isEdit || isDetail
+                          ? {
+                              value: formState.ruangan_otmil_id,
+                              label: formState.nama_ruangan_otmil,
+                            }
+                          : formState.ruangan_otmil_id
+                      }
+                      // onChange={handleRuanganChange}
+                      options={ruanganotmil.map((item: any) => ({
                         value: item.ruangan_otmil_id,
                         label: item.nama_ruangan_otmil,
                       }))}
-                      onChange={handleRuanganChange}
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          ruangan_otmil_id: e?.value,
+                          nama_ruangan_otmil: e?.label,
+                        });
+                      }}
                     />
                     {/* <select
                       id="ruangan_otmil_id"
