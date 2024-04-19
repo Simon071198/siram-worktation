@@ -384,8 +384,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
       const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
-      const wbpMap = formState.wbpHolder.map((item:any) => item.wbp_profile_id)
-      console.log(wbpMap, 'wbp map')
+      // const wbpMap = formState.wbpHolder.map((item:any) => item.wbp_profile_id)
       setFormState({
         ...formState,
         hakim_id: hakimMap,
@@ -395,7 +394,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
         ahli: ahliMap,
         saksi: saksiMap,
-        wbp: wbpMap,
+        // wbp: wbpMap,
         // pengacara: pengacaraMap,
         // pdf_file_base64: formState.link_dokumen_persidangan,
       });
@@ -933,6 +932,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       });
     }
   };
+
 
   const getAllKasus = async () => {
     let params = {
@@ -2004,40 +2004,34 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       WBP
                     </label>
                     <Select
-                      className="basic-multi-select p-ahli"
+                      className="basic-multi-select"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
-                          ? formState.wbpHolder.map((item: any) => ({
-                              value: item.wbp_profile_id_kasus,
-                              label:
-                                item.nama_wbp 
-                                // +
-                                // ' ' +
-                                // '(' +
-                                // item.bidang_ahli +
-                                // ')',
+                          ? formState.wbp.map((item: any) => ({
+                              value: item.wbp_profile_id,
+                              label: item.nama,
                             }))
-                          : formState.wbp_profile_id_kasus
+                          : formState.wbp_profile_id
                       }
                       placeholder={'Pilih wbp'}
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
-                      name="ahli"
+                      name="wbp"
                       styles={customStyles}
                       options={wbp.map((item: any) => ({
-                        value: item.wbp_profile_id_kasus,
+                        value: item.wbp_profile_id,
                         label:
-                          item.nama_wbp,
+                          item.nama,
                           // + ' ' + '(' + item.bidang_ahli + ')',
                       }))}
                       onChange={handleSelectWbp}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'wbp_profile_id_kasus' ? 'Pilih wbp' : '',
+                        item === 'wbp' ? 'Pilih wbp' : '',
                       )}
                     </p>
                   </div>

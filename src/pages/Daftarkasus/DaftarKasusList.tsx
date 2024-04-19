@@ -942,14 +942,6 @@ const DaftarKasus = () => {
             token={token}
           />
         )}
-        {modalAddOpen && (
-          <DetailPerkara
-            closeModal={handleCloseModal}
-            onSubmit={handleSubmitAdd}
-            defaultValue={nomorKasus}
-            token={token}
-          />
-        )}
         {modalDeleteOpen && (
           <DeleteDaftarKasusModal
             closeModal={handleCloseModal}
