@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { CustomStyles } from '../../EntryData/CustomStyle';
+import { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import {
   apiReadAllPangkat,
   apiReadAllRuanganOtmil,
-  apiReadAllKesatuan,
-  apiReadAllJenisJahat,
   apiReadAllKategoriJahat,
   apiReadAllJenisPerkara,
-  apiReadAllLokasi,
   apiKota,
   apiProvinsi,
   apiAgama,
@@ -20,17 +16,32 @@ import {
   apiGelang,
   apiMatraRead,
   apiStatusWbp,
+  apiKasusRead,
+
+  // API FOR KASUS
+  apiReadAllWBP,
+  apiReadJaksaPenyidik,
+  apiReadSaksi,
+  apiReadStatusWBP,
+  apiReadjenisperkara,
+  apiJenisPidanaRead,
 } from '../../../services/api';
-import { useFetcher, useLocation, useNavigate } from 'react-router-dom';
-import { deflate } from 'zlib';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertInmate';
-import { TbLockSquareRoundedFilled } from 'react-icons/tb';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Error403Message } from '../../../utils/constants';
-import { set } from 'react-hook-form';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 interface Kota {
   kota_id: string;
   nama_kota: string;
@@ -74,10 +85,14 @@ interface JenisPerkara {
   vonis_hari_perkara: string;
 }
 
+interface KasusData {
+  kasus_id : string,
+  wbp_profile: { wbp_profile_id: string }[]; 
+}
+
 const dataUserItem = localStorage.getItem('dataUser');
 const tokenItem = localStorage.getItem('token');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-// const [isLoading, setIsLoading] = useState(false);
 
 export const AddInmateModal = ({
   closeModal,
@@ -107,13 +122,17 @@ export const AddInmateModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
+  const [kasusData, setKasusData] = useState<KasusData[]>([]);
+  const [buatKasusBaru, setBuatKasusBaru] = useState('false');
 
+  
+  // console.log(kasusData[0], 'ISI DATA ID WBP');
   const [formState, setFormState] = useState(
     defaultValue || {
       foto_wajah: '',
       nama: '',
       pangkat_id: '',
-      // nama_pangkat: '',
+      nama_pangkat: '',
       matra_id: '',
       nrp: '',
       alamat: '',
@@ -132,9 +151,7 @@ export const AddInmateModal = ({
       is_sick: '',
       wbp_sickness: '',
       nama_status_wbp_kasus: '',
-      // kejahatan: 'a',
-      // kategori_perkara_id_jenis_perkara: '',
-      jenis_perkara_id: '',
+      // jenis_perkara_id: '',
       vonis_tahun_perkara: '',
       vonis_bulan_perkara: '',
       vonis_hari_perkara: '',
@@ -157,15 +174,27 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
-      // penyakit: '',
-      // berat_badan: '',
-      // tinggi_badan: '',
-      // pola_makan: '',
-      // zona_hijau: [],
-      // zona_kuning: [],
-      // zona_merah: [],
-      // lokasi_lemasmil_id:'',
-      // nama_gateway:''
+
+      // Form State Kasus
+      is_new_kasus: 'false',
+      wbp_existing_id : '',
+      nama_kasus: '',
+      nomor_kasus: '',
+      lokasi_kasus: '',
+      jenis_perkara_id: '',
+      jenis_pidana_id: '',
+      kategori_perkara_id: '',
+      waktu_kejadian: '',
+      waktu_pelaporan_kasus: '',
+      wbp_profile_ids: [],
+      keterangans: [],
+      role_ketua_oditur_ids: '',
+      oditur_penyidik_id: [],
+      nama_jenis_perkara: '',
+      nama_jenis_pidana: '',
+      saksi_id: [],
+      keteranganSaksis: [],
+      zona_waktu: '',
     },
   );
 
@@ -173,25 +202,426 @@ export const AddInmateModal = ({
   const [zona, setZona]: any = useState([]);
   const modalContainerRef = useRef(null);
   const [autocompleteDataZona, setAutocompleteDataZona]: any = useState(zona);
-  const [filteredJenisPerkara, setFilteredJenisPerkara] = useState([]);
-  const [dataArrayPasal, setDataArrayPasal]: any = useState([]);
-  const [inputPasal, setInputPasal]: any = useState('');
 
-  // useEffect(() => {
-  //   const handleOutsideClick = (e: any) => {
-  //     if (
-  //       modalContainerRef.current &&
-  //       !modalContainerRef.current.contains(e.target)
-  //     ) {
-  //       closeModal();
-  //     }
-  //   };
+  // Handle Kasus
 
-  //   document.addEventListener('mousedown', handleOutsideClick);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, [closeModal]);
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+
+  const [data, setData] = useState([]);
+
+  const [DataWBP, setDataWBP] = useState<WBP[]>([]);
+  const [dataStatusWBP, setDataStatusWBP] = useState([]);
+  const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
+  const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
+  const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
+  const [dataSaksi, setDataSaksi] = useState([]);
+  const [pihakTerlibat, setPihakTerlibat] = useState([]);
+
+  const [ketuaOditurPenyidik, setKetuaOditurPenyidik] = useState([
+    {
+      value: '',
+      label: '',
+    },
+  ]);
+
+  const [selectSaksi, setSelectSaksi] = useState([]);
+  const [selectTersangka, setSelectTersangka] = useState([]);
+
+  const handleNewCase = (e: any) => {
+    const checked = e.target.value;
+    setBuatKasusBaru(checked);
+    setFormState({
+      ...formState,
+      is_new_kasus: checked,
+      vonis_bulan_perkara: '',
+      vonis_tahun_perkara: '',
+      vonis_hari_perkara: '', 
+    });
+  };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
+
+  const handleWaktuKejadian = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const handleWaktuPelaporan = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  };
+
+  const fetchJenisPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadjenisperkara(params, token)
+      .then((res) => {
+        setDataJenisPerkara(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const fetchJenisPidana = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiJenisPidanaRead(params, token)
+      .then((res) => {
+        setDataJenisPidana(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const Oditur = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadJaksaPenyidik(params, token)
+      .then((res) => {
+        setDataOditurPenyidik(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const tersangka = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadAllWBP(params, token)
+      .then((res) => {
+        setDataWBP(res.data.records);
+        const tersangka = res.data.records?.map((item: any) => ({
+          value: item.wbp_profile_id,
+          label: `${item.nama} (Tersangka)`,
+        }));
+        setPihakTerlibat((prevPihakTerlibat) =>
+          prevPihakTerlibat.concat(tersangka),
+        );
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const Saksi = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadSaksi(params, token)
+      .then((res) => {
+        setDataSaksi(res.data.records);
+        console.log('responsaksi', res.data.records);
+
+        const Saksi = res.data.records?.map((item: any) => ({
+          value: item.saksi_id,
+          label: `${item.nama_saksi} (Saksi)`,
+        }));
+        setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const status = async () => {
+    let params = {};
+    await apiReadStatusWBP(params, token)
+      .then((res) => {
+        setDataStatusWBP(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const handleGenerateNomorKasus = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const location = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let largestNumber = 0;
+
+    data.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+        const number = parseInt(caseNumber, 10);
+
+        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
+          largestNumber = Math.max(largestNumber, number);
+        }
+      }
+    });
+
+    largestNumber += 1;
+
+    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
+    console.log(caseNumberFormatted, 'caseNumberFormatted');
+
+    setFormState({
+      ...formState,
+      nomor_kasus: caseNumberFormatted,
+    });
+
+  };
+
+  useEffect(() => {
+    console.log(formState, 'formState coy');
+    handleGenerateNomorKasus();
+  }, [buatKasusBaru]);
+
+  const handleSelectJenisPerkara = (e: any) => {
+    const selectedId = e?.value;
+    const vonisFilter = jenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === selectedId,
+    );
+    const kategoriPerkara: any = dataJenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === e?.value,
+    );
+    setFormState({
+      ...formState,
+      jenis_perkara_id: selectedId,
+      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
+      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
+      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
+
+      kategori_perkara_id: kategoriPerkara
+        ? kategoriPerkara.kategori_perkara_id
+        : '',
+      jenis_pidana_id: kategoriPerkara ? kategoriPerkara.jenis_pidana_id : '',
+      nama_jenis_perkara: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_perkara
+        : '',
+      nama_jenis_pidana: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_pidana
+        : '',
+    });
+  };
+
+
+  const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
+    value: item.oditur_penyidik_id,
+    label: item.nama_oditur,
+  }));
+
+  const handleSelectOditurPenyidik = (e: any) => {
+    let arrayTemp: any = [];
+    let arrayAnggota: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      arrayTemp.push(e[i].value);
+      arrayAnggota.push(e[i]);
+    }
+    setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
+    setKetuaOditurPenyidik(arrayAnggota);
+  };
+
+  const handleSelectKetuaOditur = (e: any) => {
+    setFormState({ ...formState, role_ketua_oditur_ids: e.value });
+  };
+
+  const handleSelectPihakTerlibat = (e: any) => {
+    let arrayTersangka: any = [];
+    let arraySaksi: any = [];
+    let arraySaksiOptions: any = [];
+    let arrayTersangkaOptions: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      if (e[i].label.includes('(Tersangka)')) {
+        arrayTersangka.push(e[i].value);
+        arrayTersangkaOptions.push(e[i]);
+      } else if (e[i].label.includes('(Saksi)')) {
+        arraySaksi.push(e[i].value);
+        arraySaksiOptions.push(e[i]);
+      }
+    }
+    setFormState({
+      ...formState,
+      wbp_profile_ids: arrayTersangka,
+      saksi_id: arraySaksi,
+    });
+    setSelectSaksi(arraySaksiOptions);
+    setSelectTersangka(arrayTersangkaOptions);
+  };
+
+  const handleChangeKeteranganTersangka = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keterangans]; 
+    newKeteranganSaksi[index] = e.target.value;
+    setFormState({
+      ...formState,
+      keterangans: newKeteranganSaksi, 
+    });
+  };
+
+  const handleChangeKeterangan = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keteranganSaksis]; 
+    newKeteranganSaksi[index] = e.target.value; 
+    setFormState({
+      ...formState,
+      keteranganSaksis: newKeteranganSaksi,
+    });
+  };
+  // End Handle Kasus
 
   // const validateForm = () => {
   //   let errorFields: any = [];
@@ -243,9 +673,6 @@ export const AddInmateModal = ({
   //         key === 'tanggal_penetapan_tersangka' ||
   //         key === 'tanggal_penetapan_terpidana'
   //       ) {
-  //         // if (!value) {
-  //         //   errorFields.push(key);
-  //         // }
   //         continue;
   //       }
   //     } else if (
@@ -260,9 +687,6 @@ export const AddInmateModal = ({
   //         continue;
   //       }
   //     }
-  //     // else {
-  //     //   console.log('STATUS ANEH');
-  //     // }
 
   //     if (!value) {
   //       errorFields.push(key);
@@ -299,7 +723,6 @@ export const AddInmateModal = ({
         wbp_sickness: newWbpSickness,
       });
     } else {
-      // console.log('tanpa if');
       setFormState({ ...formState, [e.target.name]: e.target.value });
     }
   };
@@ -369,18 +792,10 @@ export const AddInmateModal = ({
     setFormState({ ...formState, kota_id: e?.value });
   };
 
-  const handleSelectJenisPerkara = (selectedOption: any) => {
-    const selectedId = selectedOption?.value;
-    const vonisFilter = jenisPerkara.find(
-      (item: any) => item.jenis_perkara_id === selectedId,
-    );
-    setFormState({
-      ...formState,
-      jenis_perkara_id: selectedId,
-      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
-      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
-      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
-    });
+  const handleSelectJenisKasus = (e: any) => {
+    const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+    const existingWbpId = filterKasus?.wbp_profile.map((item) => item.wbp_profile_id);
+    setFormState({ ...formState, kasus_id: e?.value, wbp_existing_id: existingWbpId });
   };
 
   const handleImageChange = (e: any) => {
@@ -404,7 +819,7 @@ export const AddInmateModal = ({
     console.log(formState, 'received values');
     // if (!validateForm()) return;
     // setButtonLoad(true);
-    onSubmit(formState).then(() => setButtonLoad(false)); //dikasih  then ... catch
+    onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
     // closeModal();
@@ -458,6 +873,7 @@ export const AddInmateModal = ({
 
   useEffect(() => {
     Promise.all([
+      fecthKasusData(),
       matraData(),
       pangkatData(),
       kotaData(),
@@ -473,6 +889,13 @@ export const AddInmateModal = ({
       getAllKategoriPerkara(),
       getAllRuangan(),
       statusWbpData(),
+      getTimeZone(),
+      tersangka(),
+      Saksi(),
+      status(),
+      fetchJenisPerkara(),
+      fetchJenisPidana(),
+      Oditur(),
     ]).then(() => {
       setIsLoading(false);
     });
@@ -486,32 +909,6 @@ export const AddInmateModal = ({
       });
     }
   }, [isDetail]);
-
-  // const handleInputPasal = (e: any) => {
-  //   const newValue = e.target.value;
-  //   setFormState({ ...formState, input_pasal: newValue });
-  // };
-
-  // const handlePasal = () => {
-  //   if (formState.input_pasal.trim() !== '') {
-  //     setFormState({
-  //       ...formState,
-  //       array_pasal: [...formState.array_pasal, formState.input_pasal],
-  //       input_pasal: '', // Mengosongkan nilai input setelah ditambahkan ke dalam array
-  //     });
-  //   }
-  // };
-
-  // const handleRemovePasal = (index: any) => {
-  //   const newArrayPasal = formState.array_pasal.filter(
-  //     (_: any, i: any) => i !== index
-  //   );
-
-  //   setFormState({
-  //     ...formState,
-  //     array_pasal: newArrayPasal,
-  //   });
-  // };
 
   const getAllRuangan = async () => {
     await apiReadAllRuanganOtmil(
@@ -818,6 +1215,30 @@ export const AddInmateModal = ({
       .then((res) => {
         setStatusWbp(res.data.records);
       })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const fecthKasusData = async () => {
+    let params = {
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+    await apiKasusRead(params, token)
+      .then((res) => {
+        const result = res.data.records;
+        setKasusData(result);
+      }, token)
       .catch((e: any) => {
         if (e.response.status === 403) {
           navigate('/auth/signin', {
@@ -2265,295 +2686,595 @@ export const AddInmateModal = ({
                     </p>
 
                     <div className="flex flex-col gap-4">
-                      {/* Pasal */}
-                      {/* <div className="hidden">
-                        <p className="text-white">Pasal</p>
-                        <select className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
-                          <option value="">Pilih Jenis Perkara</option>
-                          {jenisPerkara.map((item: any) => (
-                            <option value={item.pasal}>{item.pasal}</option>
-                          ))}
-                        </select> */}
-
-                      {/* <div className="border-[1px] border-slate-500 rounded-md p-2">
-                      <div className="flex flex-row gap-2">
-
-                        <input
-                          type="text"
-                          value={formState.input_pasal}
-                          placeholder={isDetail ? '' : 'Input Pasal'}
-                          onChange={handleInputPasal}
-                          disabled={isDetail}
-                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                        ></input>
-
-                        <button
-                          onClick={handlePasal}
-                          type="button"
-                          className="py-3 px-3 rounded-md bg-blue-500"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="w-6 h-6 text-white"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <div
-                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${
-                          formState.array_pasal?.length === 0
-                            ? 'hidden'
-                            : 'block'
-                        }`}
-                      >
-                        {formState.array_pasal?.map((item: any, index: any) => (
-                          <div className="flex flex-row items-center">
-                            <p
-                              key={index}
-                              className="capitalize px-3 py-1 truncate w-full  rounded-md bg-boxdark border-[1px] border-slate-500  text-white"
-                            >
-                              {item}
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                handleRemovePasal(index);
-                              }}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
+                        {/* Handle Kasus */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Penyakit */}
+                            <div className="f-penyakit form-group w-full ">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M6 18L18 6M6 6l12 12"
+                                Buat Kasus Baru (?)
+                              </label>
+                              <select
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="is_new_kasus"
+                                onChange={handleNewCase}
+                                disabled={isDetail}
+                              >
+                                <option value="" disabled>
+                                  Silahkan Pilih
+                                </option>
+
+                                <option value="false">Tidak</option>
+                                <option value="true">Ya</option>
+                              </select>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'is_kasus_new' ? 'Pilih Ya/Tidak' : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                        {buatKasusBaru === 'true' ? (
+                          // Kasus Baru
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Nomor Kasus
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Nomor Kasus"
+                                name="nomor_kasus"
+                                value={formState.nomor_kasus}
+                              />
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'nomor_kasus'
+                                      ? 'Masukan Nomor Kasus'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Nama Kasus
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Nama Kasus"
+                                name="nama_kasus"
+                                onChange={handleChange}
+                                disabled={isDetail}
+                              />
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'nama_kasus' ? 'Masukkan Nama Kasus' : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Jenis Perkara
+                              </label>
+                              <Select
+                                className="basic-single p-gelang"
+                                classNamePrefix="select"
+                                defaultValue={
+                                  isEdit || isDetail
+                                    ? {
+                                        value: formState.jenis_perkara_id,
+                                        label: formState.nama_jenis_perkara,
+                                      }
+                                    : formState.jenis_perkara_id
+                                }
+                                placeholder={'Pilih Jenis Perkara'}
+                                isSearchable={true}
+                                isDisabled={isDetail}
+                                isClearable={true}
+                                name="jenis_perkara_id"
+                                styles={customStyles}
+                                options={jenisPerkara.map((item: any) => ({
+                                  value: item.jenis_perkara_id,
+                                  label: item.nama_jenis_perkara,
+                                }))}
+                                onChange={handleSelectJenisPerkara}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'jenis_perkara_id'
+                                    ? 'Pilih jenis perkara'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="f-alamat form-group">
+                                <label
+                                  htmlFor="id"
+                                  className="block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Vonis Tahun
+                                </label>
+                                <input
+                                  type="text"
+                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="vonis_tahun_perkara"
+                                  value={formState.vonis_tahun_perkara}
+                                  disabled
                                 />
-                              </svg>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div> */}
-                      {/* </div> */}
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'vonis_tahun_perkara'
+                                      ? 'Masukan tanggal masa penahanan'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
 
-                      {/* Vonis */}
-                      {isDetail && (
-                        <div className=" grid grid-cols-3 gap-4">
-                          {/* Vonis Tahun */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Tahun
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_tahun_perkara"
-                              placeholder="Tahun"
-                              onChange={handleChange}
-                              value={formState.vonis_tahun_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_tahun_perkara'
-                                  ? 'Masukan vonis tahun'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
+                              <div className="f-alamat form-group">
+                                <label
+                                  htmlFor="id"
+                                  className="block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Vonis Bulan
+                                </label>
+                                <input
+                                  type="text"
+                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="vonis_bulan_perkara"
+                                  value={formState.vonis_bulan_perkara}
+                                  disabled
+                                />
+                              </div>
 
-                          {/* Vonis Bulan */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Bulan
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_bulan_perkara"
-                              placeholder="Bulan"
-                              onChange={handleChange}
-                              value={formState.vonis_bulan_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_bulan_perkara'
-                                  ? 'Masukan vonis bulan'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
+                              <div className="f-alamat form-group">
+                                <label
+                                  htmlFor="id"
+                                  className="block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Vonis Hari
+                                </label>
+                                <input
+                                  type="text"
+                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                  name="vonis_hari_perkara"
+                                  value={formState.vonis_hari_perkara}
+                                  disabled
+                                />
+                              </div>
+                            </div>
 
-                          {/* Vonis Hari */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Hari
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_hari_perkara"
-                              placeholder="Hari"
-                              onChange={handleChange}
-                              value={formState.vonis_hari_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_hari_perkara'
-                                  ? 'Masukan vonis hari'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
-                        </div>
-                      )}
-                      <div className="grid grid-cols-1 gap-4">
-                        {/* jenis perkara */}
-                        <div className="f-alamat form-group w-full flex flex-col">
-                          <label
-                            htmlFor="id"
-                            className="block text-sm font-medium text-black dark:text-white"
-                          >
-                            Jenis Perkara
-                          </label>
-                          {/* <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="jenis_perkara_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Jenis Perkara"
-                            defaultValue={
-                              (isEdit || isDetail) &&
-                              !formState.jenis_perkara_id
-                                ? { value: null, label: 'No Data' }
-                                : formState.jenis_perkara_id !== null
-                                  ? {
-                                      value: formState.jenis_perkara_id,
-                                      label: formState.nama_jenis_perkara,
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white pt-3"
+                                htmlFor="id"
+                              >
+                                Nama Jenis Pidana
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Nama Jenis Pidana"
+                                name="nama_jenis_pidana"
+                                onChange={handleChange}
+                                value={formState.nama_jenis_pidana}
+                                disabled
+                              />
+                              <div className="h-2">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'nama_jenis_pidana'
+                                      ? 'Masukan Nama Jenis Pidana'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Lokasi Kasus
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Lokasi Kasus"
+                                name="lokasi_kasus"
+                                onChange={handleChange}
+                                disabled={isDetail}
+                              />
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+
+                            <div className='grid grid-cols-2'>
+                              <div className="form-group w-full">
+                                <label
+                                  className="block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal Kejadian Kasus
+                                </label>
+                                <div className="flex flex-row">
+                                  <DatePicker
+                                    selected={
+                                      formState.waktu_kejadian
+                                        ? dayjs(formState.waktu_kejadian).toDate()
+                                        : dayjs().toDate()
                                     }
-                                  : { value: null, label: 'No Data' }
-                            }
-                            options={jenisPerkara.map((item: any) => ({
-                              value: item.jenis_perkara_id,
-                              label: item.nama_jenis_perkara,
-                            }))}
-                            onChange={handleSelectJenisPerkara}
-                          /> */}
+                                    showTimeInput
+                                    timeFormat="HH:mm"
+                                    onChange={handleWaktuKejadian}
+                                    timeCaption="Time"
+                                    dateFormat="dd/MM/yyyy HH:mm"
+                                    customTimeInput={<ExampleCustomTimeInput />}
+                                    className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    name="waktu_kejadian"
+                                    disabled={false}
+                                    locale="id"
+                                  />
+                                  <input
+                                    type="text"
+                                    className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                    name="zona_waktu"
+                                    value={formState.zona_waktu}
+                                    disabled
+                                  />
+                                </div>
+                                <div className="">
+                                  <p className="error-text">
+                                    {errors.map((item) =>
+                                      item === 'waktu_kejadian'
+                                        ? 'Masukan Tanggal Kejadian Kasus'
+                                        : '',
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
 
-                          <Select
-                            className="basic-single p-gelang"
-                            classNamePrefix="select"
-                            defaultValue={
-                              isEdit || isDetail
-                                ? {
-                                    value: formState.jenis_perkara_id,
-                                    label: formState.nama_jenis_perkara,
-                                  }
-                                : formState.jenis_perkara_id
-                            }
-                            placeholder={'Pilih Jenis Perkara'}
-                            isSearchable={true}
-                            isDisabled={isDetail}
-                            name="jenis_perkara_id"
-                            styles={customStyles}
-                            options={jenisPerkara.map((item: any) => ({
-                              value: item.jenis_perkara_id,
-                              label: item.nama_jenis_perkara,
-                            }))}
-                            onChange={handleSelectJenisPerkara}
-                          />
+                              <div className="form-group w-full">
+                                <label
+                                  className="block text-sm font-medium text-black dark:text-white"
+                                  htmlFor="id"
+                                >
+                                  Tanggal Pelaporan Kasus
+                                </label>
+                                <div className="flex flex-row">
+                                  <DatePicker
+                                    selected={
+                                      formState.waktu_pelaporan_kasus
+                                        ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                                        : dayjs().toDate()
+                                    }
+                                    showTimeInput
+                                    timeFormat="HH:mm"
+                                    onChange={handleWaktuPelaporan}
+                                    timeCaption="Time"
+                                    dateFormat="dd/MM/yyyy HH:mm"
+                                    customTimeInput={<ExampleCustomTimeInput />}
+                                    className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    name="waktu_kejadian"
+                                    disabled={false}
+                                    locale="id"
+                                  />
+                                  <input
+                                    type="text"
+                                    className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                    name="zona_waktu"
+                                    value={formState.zona_waktu}
+                                    disabled
+                                  />
+                                </div>
+                                <div className="">
+                                  <p className="error-text">
+                                    {errors.map((item) =>
+                                      item === 'waktu_pelaporan_kasus'
+                                        ? 'Masukan Tanggal Pelaporan Kasus'
+                                        : '',
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'jenis_perkara_id'
-                                ? 'Pilih jenis perkara'
-                                : '',
-                            )}
-                          </p>
+                            <div className={`${isDetail ? 'block mt-4' : 'hidden'}`}>
+            <div className="form-group w-full">
+              <label
+                className="block text-sm font-medium text-black dark:text-white pt-3"
+                htmlFor="id"
+              >
+                Jumlah Penyidikan
+              </label>
+              <input
+                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                placeholder="Jumlah Penyidikan"
+                name="waktu_pelaporan_kasus"
+                onChange={handleChange}
+                disabled={isDetail}
+              />
+              <p className="error-text">
+                {errors.map((item) =>
+                  item === 'waktu_pelaporan_kasus'
+                    ? 'Masukan Jumlah Penyidikan'
+                    : '',
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="form-group w-full">
+            <label
+              className="block text-sm font-medium text-black dark:text-white pt-3"
+              htmlFor="id"
+            >
+              Oditur Penyidik
+            </label>
+            <Select
+              className="capitalize text-white"
+              isMulti
+              placeholder="Pilih Oditur Penyidik"
+              styles={customStyles}
+              isDisabled={isDetail}
+              options={oditurPenyidikOptions}
+              onChange={handleSelectOditurPenyidik}
+            />
+            <div className="h-2">
+              <p className="error-text">
+                {errors.map((item) =>
+                  item === 'nama' ? 'Masukan Tersangka' : '',
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="form-group w-full">
+            <label
+              className="block text-sm font-medium text-black dark:text-white pt-3"
+              htmlFor="id"
+            >
+              Ketua Oditur Penyidik
+            </label>
+            <Select
+              className="capitalize"
+              isDisabled={isDetail}
+              placeholder="Pilih Ketua Oditur"
+              styles={customStyles}
+              options={ketuaOditurPenyidik}
+              onChange={handleSelectKetuaOditur}
+            />
+            <div className="h-2">
+              <p className="error-text">
+                {errors.map((item) =>
+                  item === 'role_ketua_oditur_ids'
+                    ? 'Pilih Ketua Oditur Penyidik'
+                    : '',
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="form-group w-full">
+            <label
+              className="block text-sm font-medium text-black dark:text-white pt-3"
+              htmlFor="id"
+            >
+              Pihak Terlibat
+            </label>
+            <Select
+              className="capitalize"
+              isMulti
+              isDisabled={isDetail}
+              placeholder="Pihak Terlibat"
+              styles={customStyles}
+              options={pihakTerlibat}
+              onChange={handleSelectPihakTerlibat}
+            />
+            <div className="h-2">
+              <p className="error-text">
+                {errors.includes('saksi_id') ||
+                errors.includes('wbp_profile_ids')
+                  ? `${errors.includes('wbp_profile_ids') ? 'Tersangka' : ''} ${errors.includes('saksi_id') && errors.includes('wbp_profiles_ids') ? 'Dan' : ''} ${errors.includes('saksi_id') ? 'Saksi' : ''} Belum di Pilih`
+                  : ''}
+              </p>
+            </div>
+          </div>
+          {selectTersangka.length === 0 ? null : (
+            <>
+              <div className="grid grid-rows-2">
+                <label
+                  htmlFor="id"
+                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                >
+                  Tersangka
+                </label>
+
+                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                  <div className="form-group w-2/6">
+                    <label
+                      htmlFor="id"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Nama Tersangka
+                    </label>
+                  </div>
+
+                  <div className="form-group w-4/6">
+                    <label
+                      htmlFor="id"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Keterangan
+                    </label>
+                  </div>
+                </div>
+
+                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                  {selectTersangka.map((item: any, index: number) => {
+                    return (
+                      <div
+                        className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                        key={index}
+                      >
+                        <div className="form-group w-2/6">
+                          <label
+                            htmlFor={`keterangans-${index}`}
+                            className="capitalize block text-sm font-medium text-black dark:text-white"
+                          >
+                            {item.label}
+                          </label>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="">
+                        <div className="form-group w-4/6 flex items-center mr-2">
+                          <input
+                            id={`keterangans${index}`}
+                            className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                            placeholder={`${errors.includes('keterangan') ? 'Keterangan Belum Di Isi' : 'Keterangan'}`}
+                            onChange={(e) =>
+                              handleChangeKeteranganTersangka(e, index)
+                            }
+                            disabled={isDetail}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+          {selectSaksi.length === 0 ? null : (
+            <>
+              <div className="grid grid-rows-2">
+                <label
+                  htmlFor="id"
+                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                >
+                  Saksi
+                </label>
+
+                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                  <div className="form-group w-2/6">
+                    <label
+                      htmlFor="id"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Nama Saksi
+                    </label>
+                  </div>
+
+                  <div className="form-group w-4/6">
+                    <label
+                      htmlFor="id"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Keterangan Saksi
+                    </label>
+                  </div>
+                </div>
+
+                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                  {selectSaksi.map((item: any, index: number) => {
+                    return (
+                      <div
+                        className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                        key={index}
+                      >
+                        <div className="form-group w-2/6">
+                          <label
+                            className="capitalize block text-sm font-medium text-black dark:text-white"
+                            htmlFor={`keterangan-${index}`}
+                          >
+                            {item.label}
+                          </label>
+                        </div>
+
+                        <div className="form-group w-4/6 flex items-center mr-2">
+                          <input
+                            id={`keterangan-${index}`}
+                            className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                            placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
+                            onChange={(e) => handleChangeKeterangan(e, index)}
+                            disabled={isDetail}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+
+                          </div>
+                        ) : (
+                          // Select Kasus
+                          <div className="f-alamat form-group">
                             <label
                               htmlFor="id"
                               className="block text-sm font-medium text-black dark:text-white"
                             >
-                              Vonis Tahun
+                              Jenis Kasus
                             </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_tahun_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_tahun_perkara}
-                              disabled
+                            <Select
+                              className="basic-single p-gelang"
+                              classNamePrefix="select"
+                              defaultValue={
+                                isEdit || isDetail
+                                  ? {
+                                      value: formState.kasus_id,
+                                      label: formState.nama_kasus,
+                                    }
+                                  : formState.kasus_id
+                              }
+                              placeholder={'Pilih Jenis Kasus'}
+                              isSearchable={true}
+                              isDisabled={isDetail}
+                              name="kasus_id"
+                              styles={customStyles}
+                              options={kasusData.map((item: any) => ({
+                                value: item.kasus_id,
+                                label: item.nama_kasus,
+                              }))}
+                              onChange={handleSelectJenisKasus}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
-                                item === 'vonis_tahun_perkara'
-                                  ? 'Masukan tanggal masa penahanan'
+                                item === 'jenis_perkara_id'
+                                  ? 'Pilih jenis perkara'
                                   : '',
                               )}
                             </p>
                           </div>
-                          <div className="form-group w-full">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Vonis Bulan
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_bulan_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_bulan_perkara}
-                              disabled
-                            />
-                          </div>
-                          <div className="form-group w-full">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Vonis Hari
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_hari_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_hari_perkara}
-                              disabled
-                            />
-                          </div>
-                        </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-4">
                           {/* Tanggal diTahan */}
                           <div className="f-tanggal-ditahan form-group w-full ">
@@ -3039,7 +3760,7 @@ export const AddInmateModal = ({
                             </p>
                           </div>
                         </div>
-                      </div>
+                      
                     </div>
 
                     {/* ----- DATA KESEHATAN ----- */}
