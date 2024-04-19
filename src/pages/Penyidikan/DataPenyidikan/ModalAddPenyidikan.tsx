@@ -109,28 +109,33 @@ export const AddPenyidikanModal = ({
   const validateForm = () => {
     let errorFields = [];
 
+    // Validasi elemen Select
+    if (!formState.wbp_profile_id && !formState.saksi_id) {
+        errorFields.push('pihak_terlibat');
+    }
+
     for (const [key, value] of Object.entries(formState)) {
-      if (
-        key !== 'wbp_profile_id' &&
-        key !== 'penyidikan_id' &&
-        key !== 'nrp' &&
-        key !== 'no_kasus' &&
-        key !== 'nomor_kasus' &&
-        key !== 'saksi_id'
-      ) {
-        if (!value) {
-          errorFields.push(key);
+        if (
+            key !== 'wbp_profile_id' &&
+            key !== 'penyidikan_id' &&
+            key !== 'nrp' &&
+            key !== 'no_kasus' &&
+            key !== 'nomor_kasus' &&
+            key !== 'saksi_id'
+        ) {
+            if (!value) {
+                errorFields.push(key);
+            }
         }
-      }
     }
     if (errorFields.length > 0) {
-      console.log(errorFields);
-      setErrors(errorFields);
-      return false;
+        console.log(errorFields);
+        setErrors(errorFields);
+        return false;
     }
     setErrors([]);
     return true;
-  };
+};
 
   //select Penyidik
   const selectedKasus = dataKasus?.find(
@@ -187,23 +192,23 @@ export const AddPenyidikanModal = ({
         nrp: '',
       });
     } else {
-      // Jika yang dipilih adalah tersangka, ambil data terkait
-      const tersangkaData = dataKasusSelect?.wbp_profile?.find(
-        (tersangka: any) => tersangka.wbp_profile_id === e.value,
-      );
-
-      if (tersangkaData) {
-        setFormState({
-          ...formState,
-          wbp_profile_id: e.value,
-          saksi_id: null,
-          nrp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
-        });
-      } else {
-        // Handle jika data tersangkaData tidak ditemukan
-        console.error('Data Tersangka tidak ditemukan.');
-      }
+      setFormState({
+        ...formState,
+        wbp_profile_id: e.value,
+        saksi_id: null,
+        nrp: selectedOption?.nrp,
+      });
     }
+
+    console.log('selectedOption', selectedOption);
+
+    console.log('formState', formState);
+
+    console.log('e', e);
+
+    console.log('terlibatOptions', terlibatOptions);
+
+    console.log('terlibatOptionsValue', terlibatOptionsValue);
   };
 
   //select kasus
@@ -698,21 +703,19 @@ export const AddPenyidikanModal = ({
                     >
                       Pihak Terlibat
                     </label>
-                    <Select
-                      className="capitalize"
-                      options={terlibatOptions}
-                      isDisabled={isDetail}
-                      defaultValue={terlibatOptionsValue}
-                      onChange={handleSelectPihakTerlibat}
-                      placeholder="Pihak Terlibat"
-                      styles={customStyles}
-                      id="p-terlibat"
-                    />
-                    <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'nama' ? 'Masukan Tersangka' : '',
-                      )}
-                    </p>
+                      <Select
+                        className="capitalize"
+                        options={terlibatOptions}
+                        isDisabled={isDetail}
+                        defaultValue={terlibatOptionsValue}
+                        onChange={handleSelectPihakTerlibat}
+                        placeholder="Pihak Terlibat"
+                        styles={customStyles}
+                        id="p-terlibat"
+                      />
+                        {errors.includes('pihak_terlibat') && (
+                            <p className="error-text">Pilih salah satu pihak terlibat.</p>
+                        )}
                   </div>
                   <div className="form-group w-full h-22">
                     <label
@@ -755,7 +758,7 @@ export const AddPenyidikanModal = ({
                   />
                   <p className="error-text">
                     {errors?.map((item) =>
-                      item === 'oditur_penyidik_id' ? 'Masukan Penyidik' : ''
+                      item === 'oditur_penyidik_id' ? 'Pilih Penyidik' : ''
                     )}
                   </p>
                 </div>
@@ -855,7 +858,7 @@ export const AddPenyidikanModal = ({
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary t-agenda"
                       name="agenda_penyidikan"
                       id="textArea"
-                      placeholder="Alasan Penyidikan"
+                      placeholder="Agenda Penyidikan"
                       onChange={handleChange}
                       value={formState.agenda_penyidikan}
                       disabled={isDetail}
@@ -863,7 +866,7 @@ export const AddPenyidikanModal = ({
                     <p className="error-text absolute bottom-1">
                       {errors?.map((item) =>
                         item === 'agenda_penyidikan'
-                          ? 'Masukan Alasan Penyidikan'
+                          ? 'Masukan Agenda Penyidikan'
                           : '',
                       )}
                     </p>
