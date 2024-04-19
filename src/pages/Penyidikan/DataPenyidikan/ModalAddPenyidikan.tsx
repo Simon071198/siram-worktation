@@ -41,7 +41,7 @@ export const AddPenyidikanModal = ({
     oditur_penyidik_id: defaultValue?.oditur_penyidik_id,
     nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
     nama_kategori_perkara: defaultValue?.nama_kategori_perkara,
-    nrp_wbp: defaultValue?.nrp_wbp,
+    nrp: defaultValue?.nrp,
     zona_waktu: defaultValue?.zona_waktu,
   });
 
@@ -113,7 +113,7 @@ export const AddPenyidikanModal = ({
       if (
         key !== 'wbp_profile_id' &&
         key !== 'penyidikan_id' &&
-        key !== 'nrp_wbp' &&
+        key !== 'nrp' &&
         key !== 'no_kasus' &&
         key !== 'nomor_kasus' &&
         key !== 'saksi_id'
@@ -184,7 +184,7 @@ export const AddPenyidikanModal = ({
         ...formState,
         saksi_id: e.value,
         wbp_profile_id: null,
-        nrp_wbp: '',
+        nrp: '',
       });
     } else {
       // Jika yang dipilih adalah tersangka, ambil data terkait
@@ -197,7 +197,7 @@ export const AddPenyidikanModal = ({
           ...formState,
           wbp_profile_id: e.value,
           saksi_id: null,
-          nrp_wbp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
+          nrp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
         });
       } else {
         // Handle jika data tersangkaData tidak ditemukan
@@ -723,16 +723,16 @@ export const AddPenyidikanModal = ({
                     </label>
                     <input
                       className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-nrp"
-                      name="nrp_wbp"
+                      name="nrp"
                       placeholder="NRP"
                       onChange={handleChange}
-                      value={formState.nrp_wbp}
+                      value={formState.nrp}
                       // disabled={isDetail}
                       disabled
                     />
                     <p className="error-text">
                       {errors?.map((item) =>
-                        item === 'nrp_wbp' ? 'Masukan NRP' : '',
+                        item === 'nrp' ? 'Masukan NRP' : '',
                       )}
                     </p>
                   </div>
@@ -753,11 +753,11 @@ export const AddPenyidikanModal = ({
                     styles={customStyles}
                     id="p-penyidikan"
                   />
-                  {/* <p className="error-text">
+                  <p className="error-text">
                     {errors?.map((item) =>
-                      item === 'wbp_profile_id' ? 'Masukan Penyidik' : ''
+                      item === 'oditur_penyidik_id' ? 'Masukan Penyidik' : ''
                     )}
-                  </p> */}
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-x-4">
                   <div className="form-group w-full h-22">
