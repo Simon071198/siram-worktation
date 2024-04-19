@@ -9,6 +9,7 @@ import {
   apiGedungOtmilRead,
   apiReadAlllokasiOtmil,
 } from '../../../services/api';
+import { set } from 'react-hook-form';
 
 const dataUserItem = localStorage.getItem('dataUser');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
@@ -26,6 +27,7 @@ export const ModalAddGedung = ({
       nama_lantai: '',
       lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
       gedung_otmil_id: '',
+      nama_gedung_otmil: '',
       panjang: '',
       lebar: '',
       posisi_X: '',
@@ -49,7 +51,7 @@ export const ModalAddGedung = ({
     for (const [key, value] of Object.entries(formState)) {
       if (key !== 'nama_lokasi_otmil') {
         if (!value) {
-          errorFields.push(key);
+          errorFields.push(key); // untuk menampilkan pesan error pada form
         }
       }
     }
@@ -392,11 +394,19 @@ export const ModalAddGedung = ({
                         value: item.gedung_otmil_id,
                         label: item.nama_gedung_otmil,
                       }))}
-                      onChange={handleSelectGedungOtmil}
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          gedung_otmil_id: e?.value,
+                          nama_gedung_otmil: e?.label,
+                        });
+                      }}
+
+                      
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'lokasi_otmil_id' ? 'Pilih lokasi gedung' : '',
+                        item === 'gedung_otmil_id' ? 'Pilih lokasi gedung' : '',
                       )}
                     </p>
                   </div>

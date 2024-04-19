@@ -60,10 +60,6 @@ export const AddBarangBuktiModal = ({
   );
   console.log('formsate', formState);
 
-  // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
-
-  //state
-
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dataKasus, setDataKasus] = useState([]);
@@ -89,6 +85,10 @@ export const AddBarangBuktiModal = ({
           }
         }
       }
+  
+      if (!formState.gambar_barang_bukti) {
+        errorFields.push('gambar_barang_bukti');
+      }
     } else {
       for (const [key, value] of Object.entries(formState)) {
         if (
@@ -104,16 +104,17 @@ export const AddBarangBuktiModal = ({
         }
       }
     }
-
+  
     if (errorFields.length > 0) {
       console.log(errorFields);
       setErrors(errorFields);
       return false;
     }
-
+  
     setErrors([]);
     return true;
   };
+  
   // console.log('erreo', errors);
 
   // useEffect(() => {
@@ -231,6 +232,10 @@ export const AddBarangBuktiModal = ({
   };
 
   const handleRemoveFoto = () => {
+    // if (isEdit && !formState.gambar_barang_bukti) {
+    //   setFormState({ ...formState, gambar_barang_bukti: '' });
+    // }
+
     setFormState({ ...formState, gambar_barang_bukti: '' });
     setDataDefaultValue({
       ...dataDefaultValue,
@@ -541,11 +546,14 @@ export const AddBarangBuktiModal = ({
                             </button>
                           </div>
                           <p className="error-text absolute bottom-0">
-                            {errors.map((item) =>
+                            {/* {errors.map((item) =>
                               item === 'gambar_barang_bukti'
                                 ? 'Masukan foto barang'
                                 : '',
-                            )}
+                            )} */}
+                            {errors.includes('gambar_barang_bukti') && isEdit
+                              ? 'Masukan foto barang'
+                              : ''}
                           </p>
                         </div>
                       </div>
