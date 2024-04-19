@@ -152,6 +152,8 @@ const shiftJaga = () => {
 
     console.log(isOperator, 'Operator');
   }, [isOperator]);
+  const [selectedFilterGrup, setSelectedFilterGrup] = useState('1');
+  const [filteredGrup, setFilteredGrup] = useState([]);
 
   //Pegawai
   const [staff, setStaff] = useState<any[]>([
@@ -174,56 +176,56 @@ const shiftJaga = () => {
     },
   ]);
 
-  useEffect(() => {
-    const filter = {
-      filter: {},
-    };
+  const filterFetch = {
+    filter: {},
+  };
 
-    const filterSchedule = {
-      pageSize: Number.MAX_SAFE_INTEGER,
-      filter: {
-        tanggal: `${startDate}-${startDate + 6}`,
-        bulan: dayjs(selectedDate).format('M'),
-        tahun: dayjs(selectedDate).format('YYYY'),
-      },
-    };
-    const filter1bln = {
-      pageSize: Number.MAX_SAFE_INTEGER,
-      filter: {
-        bulan: dayjs(selectedDate).format('M'),
-        tahun: dayjs(selectedDate).format('YYYY'),
-      },
-    };
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const shift = await apiReadAllShift(filter, token);
-        const schedule = await apiReadAllScheduleShift(filterSchedule, token);
-        const grupPetugas = await apiReadAllGrupPetugas(filter, token);
-        const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
-        const staff = await apiReadAllStaff(filter, token);
-        const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
+  const filterSchedule = {
+    pageSize: Number.MAX_SAFE_INTEGER,
+    filter: {
+      tanggal: `${startDate}-${startDate + 6}`,
+      bulan: dayjs(selectedDate).format('M'),
+      tahun: dayjs(selectedDate).format('YYYY'),
+    },
+  };
+  const filter1bln = {
+    pageSize: Number.MAX_SAFE_INTEGER,
+    filter: {
+      bulan: dayjs(selectedDate).format('M'),
+      tahun: dayjs(selectedDate).format('YYYY'),
+    },
+  };
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const shift = await apiReadAllShift(filterFetch, token);
+      const schedule = await apiReadAllScheduleShift(filterSchedule, token);
+      const grupPetugas = await apiReadAllGrupPetugas(filterFetch, token);
+      const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
+      const staff = await apiReadAllStaff(filterFetch, token);
+      const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
 
-        setDataExcel(petugasShift.data.records);
-        setGrupPetugas(grupPetugas.data.records);
-        setShift(shift.data.records);
-        setPetugasShift(Petugas.data.records);
-        setSchedule(schedule.data.records);
-        setStaffFilter(staff.data.records);
-        setStaff(staff.data.records);
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
+      setDataExcel(petugasShift.data.records);
+      setGrupPetugas(grupPetugas.data.records);
+      setShift(shift.data.records);
+      setPetugasShift(Petugas.data.records);
+      setSchedule(schedule.data.records);
+      setStaffFilter(staff.data.records);
+      setStaff(staff.data.records);
+      setIsLoading(false);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
         });
       }
-    };
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, [selectedDate, loadSchedule]);
 
@@ -395,7 +397,6 @@ const shiftJaga = () => {
       setOpenGrup(false);
     }
   };
-
   const handleFilterPegawai = (e: any) => {
     const filter = staffFilter.filter(
       (item: any) => item.petugas_id === e.value,
@@ -407,21 +408,45 @@ const shiftJaga = () => {
     }
   };
 
-  const grup = grupPetugas?.filter((item: any) =>
-    staff.map(
-      (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id,
-    ),
-  );
+  const handleFilterGrup = (e: any) => {
+    // console.log(e.label, 'label');
+    console.log(e.value, 'value');
+    // console.log(grup, 'grup dalem fun');
+    // const filter = grup?.filter((data) => data.grup_petugas_id == '');
+    // if (e.value == '1') {
+    //   set;
+    // }
+    setSelectedFilterGrup(e.value);
+  };
 
+  useEffect(() => {
+    if (selectedFilterGrup == '1') {
+      const grup = grupPetugas?.filter((item: any) =>
+        staff.map(
+          (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id,
+        ),
+      );
+      setFilteredGrup(grup);
+    } else {
+      const grup = grupPetugas
+        ?.filter((item: any) =>
+          staff.map(
+            (staffItem) => staffItem.grup_petugas_id === item.grup_petugas_id,
+          ),
+        )
+        .filter((data) => data.grup_petugas_id == selectedFilterGrup);
+      setFilteredGrup(grup);
+    }
+  }, [selectedFilterGrup, grupPetugas, staff]);
+
+  console.log(filteredGrup, 'filteredGrup');
   //Schedule Create
   const [modalAddScheduleOpen, setModalAddScheduleOpen] = useState(false);
   const handleSubmitSchedule = async (data: any) => {
     let alertShown = false;
     try {
-      for (let i = 0; i < data.length; i++) {
-        const singleData = data[i];
+      const promises = data.map(async (singleData: any) => {
         const AddDataSchedule = await apiCreateScheduleShift(singleData, token);
-
         if (AddDataSchedule.data.status === 'OK') {
           if (!alertShown) {
             Alerts.fire({
@@ -440,7 +465,10 @@ const shiftJaga = () => {
             title: AddDataSchedule.data.message,
           });
         }
-      }
+      });
+
+      await Promise.all(promises);
+      fetchData();
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -458,10 +486,8 @@ const shiftJaga = () => {
   const handleAddPetugasShift = async (data: any) => {
     let alertShown = false;
     try {
-      for (let i = 0; i < data.length; i++) {
-        const singleData = data[i];
+      const promises = data.map(async (singleData: any) => {
         const addPetugasShift = await apiCretePetugasShift(singleData, token);
-
         if (addPetugasShift.data.status === 'OK') {
           if (!alertShown) {
             alertShown = true; // Set alertShown menjadi true
@@ -475,7 +501,10 @@ const shiftJaga = () => {
             }, 500);
           }
         }
-      }
+      });
+
+      await Promise.all(promises);
+      fetchData();
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -559,13 +588,11 @@ const shiftJaga = () => {
   const handleDeleteSchedule = async (data: any) => {
     let alertShown = false;
     try {
-      for (let i = 0; i < data.length; i++) {
-        const singleData = data[i];
+      const promises = data.map(async (singleData: any) => {
         const deletePetugasShift = await apiDeleteScheduleShift(
           singleData,
           token,
         );
-
         if (deletePetugasShift.data.status === 'OK') {
           if (!alertShown) {
             Alerts.fire({
@@ -579,7 +606,10 @@ const shiftJaga = () => {
             handleCloseModal();
           }
         }
-      }
+      });
+
+      await Promise.all(promises);
+      fetchData();
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -608,13 +638,11 @@ const shiftJaga = () => {
   const handleDeletePetugasShiftGrup = async (data: any) => {
     let alertShown = false;
     try {
-      for (let i = 0; i < data.length; i++) {
-        const singleData = data[i];
+      const promises = data.map(async (singleData: any) => {
         const deletePetugasShift = await apiDeletePetugasShift(
           singleData,
           token,
         );
-
         if (deletePetugasShift.data.status === 'OK') {
           if (!alertShown) {
             Alerts.fire({
@@ -628,7 +656,10 @@ const shiftJaga = () => {
             setLoadSchedule(!loadSchedule);
           }, 500);
         }
-      }
+      });
+
+      await Promise.all(promises);
+      fetchData();
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -871,10 +902,12 @@ const shiftJaga = () => {
           <div className={` ${openGrup ? 'hidden' : 'w-1/3'}`}>
             <Select
               className="text-black capitalize p-semua"
-              isDisabled
+              // isDisabled
               styles={customStyles}
               options={grupPetugasOption}
               defaultValue={grupPetugasOption[0]}
+              // value={{ value: '1', label: 'Semua Grup' }}
+              onChange={handleFilterGrup}
             />
           </div>
           <div className={` ${!openGrup ? 'hidden' : 'w-1/3'}`}>
@@ -1008,7 +1041,7 @@ const shiftJaga = () => {
           </div>
         ) : (
           <>
-            {grup?.map((itemNama: any) => {
+            {filteredGrup?.map((itemNama: any) => {
               const jadwal = petugasShift.filter(
                 (itemJadwal: any) =>
                   itemJadwal.grup_petugas_id === itemNama.grup_petugas_id,
@@ -1037,6 +1070,8 @@ const shiftJaga = () => {
                       {tanggal.map((item: any, index) => {
                         const backgroundColor =
                           index % 2 === 0 ? 'bg-slate-500' : 'bg-slate-600';
+                        const backgroundColorHover =
+                          index % 2 === 0 ? 'bg-slate-300' : 'bg-slate-300';
 
                         // Cari shift sesuai dengan tanggal
                         //Apii
@@ -1167,7 +1202,7 @@ const shiftJaga = () => {
                             ) : (
                               <div
                                 key={index}
-                                className={`w-full flex justify-center items-center ${backgroundColor} h-16`}
+                                className={`w-full flex justify-center items-center ${backgroundColor} hover:${backgroundColorHover} h-16`}
                               >
                                 {scheduleShift ? (
                                   <>
@@ -1177,7 +1212,7 @@ const shiftJaga = () => {
                                       }
                                       className={`${
                                         hapusPetugasShift ? 'block' : 'hidden'
-                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      } text-white h-5 w-5 hover:${backgroundColorHover} rounded flex items-center justify-center`}
                                     >
                                       <BsTrash className="w-full h-full" />
                                     </button>
@@ -1187,9 +1222,12 @@ const shiftJaga = () => {
                                       }
                                       className={`${
                                         !hapusPetugasShift ? 'block' : 'hidden'
-                                      } text-white h-5 w-5 hover:border rounded flex items-center justify-center`}
+                                      } text-white max-w-xs h-full w-auto  rounded flex flex-col items-center justify-center pt-2`}
                                     >
-                                      <BsPlusSquareDotted className="w-full h-full" />
+                                      <BsPlusSquareDotted className="h-[40%] w-[40%] mb-2" />
+                                      <span className="text-xs">
+                                        Tambah Shift
+                                      </span>
                                     </button>
                                   </>
                                 ) : (
@@ -1378,7 +1416,11 @@ const shiftJaga = () => {
                                 className={`w-full flex justify-center items-center ${backgroundColor} h-16`}
                               >
                                 {scheduleShift ? (
-                                  <></>
+                                  <>
+                                    <h1 className="text-gray-200	">
+                                      Tidak Ada Shift
+                                    </h1>
+                                  </>
                                 ) : (
                                   <h1 className="flex text-xs text-center justify-center items-center text-white w-full h-full bg-red-600">
                                     Jadwal Belum Dibuat
