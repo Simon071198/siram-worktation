@@ -138,6 +138,9 @@ const InmateList = () => {
       vonis_hari_perkara: item?.vonis_hari_perkara,
       nama_gelang: item?.nama_gelang,
       kasus_id: item?.kasus_id,
+      nama_kasus: item?.nama_kasus,
+      is_new_kasus: 'false',
+      existing_kasus_id: item.kasus_id,
     };
 
     setEditData(newEditItem);

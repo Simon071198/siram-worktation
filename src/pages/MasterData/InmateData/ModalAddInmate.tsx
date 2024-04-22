@@ -39,7 +39,6 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 interface Kota {
@@ -86,8 +85,8 @@ interface JenisPerkara {
 }
 
 interface KasusData {
-  kasus_id : string,
-  wbp_profile: { wbp_profile_id: string }[]; 
+  kasus_id: string;
+  wbp_profile: { wbp_profile_id: string }[];
 }
 
 const dataUserItem = localStorage.getItem('dataUser');
@@ -125,7 +124,6 @@ export const AddInmateModal = ({
   const [kasusData, setKasusData] = useState<KasusData[]>([]);
   const [buatKasusBaru, setBuatKasusBaru] = useState('false');
 
-  
   // console.log(kasusData[0], 'ISI DATA ID WBP');
   const [formState, setFormState] = useState(
     defaultValue || {
@@ -176,8 +174,8 @@ export const AddInmateModal = ({
       jenis_olahraga: '',
 
       // Form State Kasus
-      is_new_kasus: 'false',
-      wbp_existing_id : '',
+      is_new_kasus: '',
+      wbp_existing_id: '',
       nama_kasus: '',
       nomor_kasus: '',
       lokasi_kasus: '',
@@ -229,7 +227,7 @@ export const AddInmateModal = ({
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
 
-  const handleNewCase = (e: any) => {
+  const handleNewKasus = (e: any) => {
     const checked = e.target.value;
     setBuatKasusBaru(checked);
     setFormState({
@@ -237,7 +235,7 @@ export const AddInmateModal = ({
       is_new_kasus: checked,
       vonis_bulan_perkara: '',
       vonis_tahun_perkara: '',
-      vonis_hari_perkara: '', 
+      vonis_hari_perkara: '',
     });
   };
 
@@ -524,7 +522,6 @@ export const AddInmateModal = ({
       ...formState,
       nomor_kasus: caseNumberFormatted,
     });
-
   };
 
   useEffect(() => {
@@ -559,7 +556,6 @@ export const AddInmateModal = ({
         : '',
     });
   };
-
 
   const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
     value: item.oditur_penyidik_id,
@@ -605,44 +601,86 @@ export const AddInmateModal = ({
   };
 
   const handleChangeKeteranganTersangka = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keterangans]; 
+    const newKeteranganSaksi = [...formState.keterangans];
     newKeteranganSaksi[index] = e.target.value;
     setFormState({
       ...formState,
-      keterangans: newKeteranganSaksi, 
+      keterangans: newKeteranganSaksi,
     });
   };
 
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; 
-    newKeteranganSaksi[index] = e.target.value; 
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
     setFormState({
       ...formState,
       keteranganSaksis: newKeteranganSaksi,
     });
   };
+
+  const handleSelectJenisKasus = (e: any) => {
+    const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+    const existingWbpId = filterKasus?.wbp_profile.map(
+      (item) => item.wbp_profile_id,
+    );
+    console.log(filterKasus, 'INI HASIL FILTER');
+    console.log(existingWbpId, 'INI HASIL EXISTING');
+    console.log(kasusData, 'INI KASUS DATA');
+    setFormState({
+      ...formState,
+      kasus_id: e?.value,
+    });
+  };
   // End Handle Kasus
 
   const validateForm = () => {
-    let errorFields:any[] = [];
+    let errorFields: any[] = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+      if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
+        console.log('here!', key)
         if (!value) {
           errorFields.push(key);
+        }
+      }
+
+      // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
+      //   if (!value) {
+      //     errorFields.push(key);
+      //   }
+      // }
+      // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
+
+      if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+        if (
+          formState.is_new_kasus == 'false' &&
+          key != 'nama_kasus' &&
+          key != 'jenis_perkara_id' &&
+          key != 'vonis_tahun_perkara' &&
+          key != 'vonis_bulan_perkara' &&
+          key != 'vonis_hari_perkara' &&
+          key != 'nama_jenis_pidana' &&
+          key != 'lokasi_kasus' &&
+          key != 'oditur_penyidik_id' &&
+          key != 'role_ketua_oditur_ids' &&
+          key != 'saksi_id'
+        ) {
+          if (!value) {
+            errorFields.push(key);
+          }
         }
       }
     }
 
     if (errorFields.length > 0) {
-      console.log(errorFields,'errorfields detected');
+      console.log(errorFields, 'errorfields detected');
       setErrors(errorFields);
       return false;
     }
 
     setErrors([]);
     return true;
-  }
+  };
 
   // const validateForm = () => {
   //   let errorFields: any = [];
@@ -656,6 +694,10 @@ export const AddInmateModal = ({
   //           }
   //         }
   //       }
+
+  //     // if (key === 'is_kasus_new' && value != 'pilih') {
+  //     //   continue;
+  //     // }
 
   //     if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
   //       console.log('STATUS ADA');
@@ -713,8 +755,10 @@ export const AddInmateModal = ({
   //       errorFields.push(key);
   //     }
   //   }
-
   //   if (errorFields.length > 0) {
+  //     if (formState.is_new_kasus == '') {
+  //       errorFields.push('is_new_kasus');
+  //     }
   //     console.log(errorFields);
   //     setErrors(errorFields);
   //     return false;
@@ -796,7 +840,12 @@ export const AddInmateModal = ({
   };
 
   const handleSelectWbpStatus = (e: any) => {
-    setFormState({ ...formState, status_wbp_kasus_id: e?.value });
+    setFormState({
+      ...formState,
+      status_wbp_kasus_id: e?.value,
+      nama_status_wbp_kasus: e?.label,
+    });
+    console.log(e.label, 'handle status');
   };
 
   const handleSelectMatra = (e: any) => {
@@ -811,12 +860,6 @@ export const AddInmateModal = ({
   const handleSelectKota = (e: any) => {
     // setSelectedOption(e)
     setFormState({ ...formState, kota_id: e?.value });
-  };
-
-  const handleSelectJenisKasus = (e: any) => {
-    const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
-    const existingWbpId = filterKasus?.wbp_profile.map((item) => item.wbp_profile_id);
-    setFormState({ ...formState, kasus_id: e?.value, wbp_existing_id: existingWbpId });
   };
 
   const handleImageChange = (e: any) => {
@@ -838,8 +881,8 @@ export const AddInmateModal = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
-    // if (!validateForm()) return;
-    // setButtonLoad(true);
+    if (!validateForm()) return;
+    setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
@@ -2713,562 +2756,94 @@ export const AddInmateModal = ({
                     </p>
 
                     <div className="flex flex-col gap-4">
-                        {/* Handle Kasus */}
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Penyakit */}
-                            <div className="f-penyakit form-group w-full ">
-                              <label
-                                className="  block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Buat Kasus Baru (?)
-                              </label>
-                              <select
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="is_new_kasus"
-                                onChange={handleNewCase}
-                                disabled={isDetail}
-                              >
-                                <option value="" disabled>
-                                  Silahkan Pilih
-                                </option>
+                      {/* Handle Kasus */}
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Field Kasus */}
+                        <div className="form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Buat Kasus Baru (?)
+                          </label>
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_new_kasus"
+                            onChange={handleNewKasus}
+                            disabled={isDetail || isEdit}
+                          >
+                            <option value="">Silahkan Pilih</option>
 
-                                <option value="false">Tidak</option>
-                                <option value="true">Ya</option>
-                              </select>
+                            <option value="false">Tidak</option>
+                            <option value="true">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_new_kasus' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      {formState.is_new_kasus == '' ? null : buatKasusBaru ===
+                        'true' ? (
+                        // Kasus Baru
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Nomor Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nomor Kasus"
+                              name="nomor_kasus"
+                              value={formState.nomor_kasus}
+                            />
+                            <div className="">
                               <p className="error-text">
                                 {errors.map((item) =>
-                                  item === 'is_kasus_new' ? 'Pilih Ya/Tidak' : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>
-
-                        {buatKasusBaru === 'true' ? (
-                          // Kasus Baru
-                          <div className="grid grid-cols-1 gap-4">
-                            <div className="form-group w-full">
-                              <label
-                                className="block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Nomor Kasus
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder="Nomor Kasus"
-                                name="nomor_kasus"
-                                value={formState.nomor_kasus}
-                              />
-                              <div className="">
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'nomor_kasus'
-                                      ? 'Masukan Nomor Kasus'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="form-group w-full">
-                              <label
-                                className="block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Nama Kasus
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder="Nama Kasus"
-                                name="nama_kasus"
-                                onChange={handleChange}
-                                disabled={isDetail}
-                              />
-                              <div className="">
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'nama_kasus' ? 'Masukkan Nama Kasus' : '',
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="f-alamat form-group">
-                              <label
-                                htmlFor="id"
-                                className="block text-sm font-medium text-black dark:text-white"
-                              >
-                                Jenis Perkara
-                              </label>
-                              <Select
-                                className="basic-single p-gelang"
-                                classNamePrefix="select"
-                                defaultValue={
-                                  isEdit || isDetail
-                                    ? {
-                                        value: formState.jenis_perkara_id,
-                                        label: formState.nama_jenis_perkara,
-                                      }
-                                    : formState.jenis_perkara_id
-                                }
-                                placeholder={'Pilih Jenis Perkara'}
-                                isSearchable={true}
-                                isDisabled={isDetail}
-                                isClearable={true}
-                                name="jenis_perkara_id"
-                                styles={customStyles}
-                                options={jenisPerkara.map((item: any) => ({
-                                  value: item.jenis_perkara_id,
-                                  label: item.nama_jenis_perkara,
-                                }))}
-                                onChange={handleSelectJenisPerkara}
-                              />
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'jenis_perkara_id'
-                                    ? 'Pilih jenis perkara'
+                                  item === 'nomor_kasus'
+                                    ? 'Masukan Nomor Kasus'
                                     : '',
                                 )}
                               </p>
                             </div>
-
-                            <div className="grid grid-cols-3 gap-4">
-                              <div className="f-alamat form-group">
-                                <label
-                                  htmlFor="id"
-                                  className="block text-sm font-medium text-black dark:text-white"
-                                >
-                                  Vonis Tahun
-                                </label>
-                                <input
-                                  type="text"
-                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="vonis_tahun_perkara"
-                                  value={formState.vonis_tahun_perkara}
-                                  disabled
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'vonis_tahun_perkara'
-                                      ? 'Masukan tanggal masa penahanan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-
-                              <div className="f-alamat form-group">
-                                <label
-                                  htmlFor="id"
-                                  className="block text-sm font-medium text-black dark:text-white"
-                                >
-                                  Vonis Bulan
-                                </label>
-                                <input
-                                  type="text"
-                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="vonis_bulan_perkara"
-                                  value={formState.vonis_bulan_perkara}
-                                  disabled
-                                />
-                              </div>
-
-                              <div className="f-alamat form-group">
-                                <label
-                                  htmlFor="id"
-                                  className="block text-sm font-medium text-black dark:text-white"
-                                >
-                                  Vonis Hari
-                                </label>
-                                <input
-                                  type="text"
-                                  className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="vonis_hari_perkara"
-                                  value={formState.vonis_hari_perkara}
-                                  disabled
-                                />
-                              </div>
-                            </div>
-
-                            <div className="form-group w-full">
-                              <label
-                                className="block text-sm font-medium text-black dark:text-white pt-3"
-                                htmlFor="id"
-                              >
-                                Nama Jenis Pidana
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder="Nama Jenis Pidana"
-                                name="nama_jenis_pidana"
-                                onChange={handleChange}
-                                value={formState.nama_jenis_pidana}
-                                disabled
-                              />
-                              <div className="h-2">
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'nama_jenis_pidana'
-                                      ? 'Masukan Nama Jenis Pidana'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            <div className="form-group w-full">
-                              <label
-                                className="block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Lokasi Kasus
-                              </label>
-                              <input
-                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                placeholder="Lokasi Kasus"
-                                name="lokasi_kasus"
-                                onChange={handleChange}
-                                disabled={isDetail}
-                              />
-                              <div className="">
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-
-
-                            <div className='grid grid-cols-2'>
-                              <div className="form-group w-full">
-                                <label
-                                  className="block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal Kejadian Kasus
-                                </label>
-                                <div className="flex flex-row">
-                                  <DatePicker
-                                    selected={
-                                      formState.waktu_kejadian
-                                        ? dayjs(formState.waktu_kejadian).toDate()
-                                        : dayjs().toDate()
-                                    }
-                                    showTimeInput
-                                    timeFormat="HH:mm"
-                                    onChange={handleWaktuKejadian}
-                                    timeCaption="Time"
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    customTimeInput={<ExampleCustomTimeInput />}
-                                    className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                    name="waktu_kejadian"
-                                    disabled={false}
-                                    locale="id"
-                                  />
-                                  <input
-                                    type="text"
-                                    className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                                    name="zona_waktu"
-                                    value={formState.zona_waktu}
-                                    disabled
-                                  />
-                                </div>
-                                <div className="">
-                                  <p className="error-text">
-                                    {errors.map((item) =>
-                                      item === 'waktu_kejadian'
-                                        ? 'Masukan Tanggal Kejadian Kasus'
-                                        : '',
-                                    )}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="form-group w-full">
-                                <label
-                                  className="block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal Pelaporan Kasus
-                                </label>
-                                <div className="flex flex-row">
-                                  <DatePicker
-                                    selected={
-                                      formState.waktu_pelaporan_kasus
-                                        ? dayjs(formState.waktu_pelaporan_kasus).toDate()
-                                        : dayjs().toDate()
-                                    }
-                                    showTimeInput
-                                    timeFormat="HH:mm"
-                                    onChange={handleWaktuPelaporan}
-                                    timeCaption="Time"
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    customTimeInput={<ExampleCustomTimeInput />}
-                                    className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                    name="waktu_kejadian"
-                                    disabled={false}
-                                    locale="id"
-                                  />
-                                  <input
-                                    type="text"
-                                    className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                                    name="zona_waktu"
-                                    value={formState.zona_waktu}
-                                    disabled
-                                  />
-                                </div>
-                                <div className="">
-                                  <p className="error-text">
-                                    {errors.map((item) =>
-                                      item === 'waktu_pelaporan_kasus'
-                                        ? 'Masukan Tanggal Pelaporan Kasus'
-                                        : '',
-                                    )}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className={`${isDetail ? 'block mt-4' : 'hidden'}`}>
-            <div className="form-group w-full">
-              <label
-                className="block text-sm font-medium text-black dark:text-white pt-3"
-                htmlFor="id"
-              >
-                Jumlah Penyidikan
-              </label>
-              <input
-                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                placeholder="Jumlah Penyidikan"
-                name="waktu_pelaporan_kasus"
-                onChange={handleChange}
-                disabled={isDetail}
-              />
-              <p className="error-text">
-                {errors.map((item) =>
-                  item === 'waktu_pelaporan_kasus'
-                    ? 'Masukan Jumlah Penyidikan'
-                    : '',
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="form-group w-full">
-            <label
-              className="block text-sm font-medium text-black dark:text-white pt-3"
-              htmlFor="id"
-            >
-              Oditur Penyidik
-            </label>
-            <Select
-              className="capitalize text-white"
-              isMulti
-              placeholder="Pilih Oditur Penyidik"
-              styles={customStyles}
-              isDisabled={isDetail}
-              options={oditurPenyidikOptions}
-              onChange={handleSelectOditurPenyidik}
-            />
-            <div className="h-2">
-              <p className="error-text">
-                {errors.map((item) =>
-                  item === 'nama' ? 'Masukan Tersangka' : '',
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="form-group w-full">
-            <label
-              className="block text-sm font-medium text-black dark:text-white pt-3"
-              htmlFor="id"
-            >
-              Ketua Oditur Penyidik
-            </label>
-            <Select
-              className="capitalize"
-              isDisabled={isDetail}
-              placeholder="Pilih Ketua Oditur"
-              styles={customStyles}
-              options={ketuaOditurPenyidik}
-              onChange={handleSelectKetuaOditur}
-            />
-            <div className="h-2">
-              <p className="error-text">
-                {errors.map((item) =>
-                  item === 'role_ketua_oditur_ids'
-                    ? 'Pilih Ketua Oditur Penyidik'
-                    : '',
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="form-group w-full">
-            <label
-              className="block text-sm font-medium text-black dark:text-white pt-3"
-              htmlFor="id"
-            >
-              Pihak Terlibat
-            </label>
-            <Select
-              className="capitalize"
-              isMulti
-              isDisabled={isDetail}
-              placeholder="Pihak Terlibat"
-              styles={customStyles}
-              options={pihakTerlibat}
-              onChange={handleSelectPihakTerlibat}
-            />
-            <div className="h-2">
-              <p className="error-text">
-                {errors.includes('saksi_id') ||
-                errors.includes('wbp_profile_ids')
-                  ? `${errors.includes('wbp_profile_ids') ? 'Tersangka' : ''} ${errors.includes('saksi_id') && errors.includes('wbp_profiles_ids') ? 'Dan' : ''} ${errors.includes('saksi_id') ? 'Saksi' : ''} Belum di Pilih`
-                  : ''}
-              </p>
-            </div>
-          </div>
-          {selectTersangka.length === 0 ? null : (
-            <>
-              <div className="grid grid-rows-2">
-                <label
-                  htmlFor="id"
-                  className="mt-4 block text-sm font-medium text-black dark:text-white"
-                >
-                  Tersangka
-                </label>
-
-                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
-                  <div className="form-group w-2/6">
-                    <label
-                      htmlFor="id"
-                      className="block text-sm font-medium text-black dark:text-white"
-                    >
-                      Nama Tersangka
-                    </label>
-                  </div>
-
-                  <div className="form-group w-4/6">
-                    <label
-                      htmlFor="id"
-                      className="block text-sm font-medium text-black dark:text-white"
-                    >
-                      Keterangan
-                    </label>
-                  </div>
-                </div>
-
-                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
-                  {selectTersangka.map((item: any, index: number) => {
-                    return (
-                      <div
-                        className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
-                        key={index}
-                      >
-                        <div className="form-group w-2/6">
-                          <label
-                            htmlFor={`keterangans-${index}`}
-                            className="capitalize block text-sm font-medium text-black dark:text-white"
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-
-                        <div className="form-group w-4/6 flex items-center mr-2">
-                          <input
-                            id={`keterangans${index}`}
-                            className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                            placeholder={`${errors.includes('keterangan') ? 'Keterangan Belum Di Isi' : 'Keterangan'}`}
-                            onChange={(e) =>
-                              handleChangeKeteranganTersangka(e, index)
-                            }
-                            disabled={isDetail}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )}
-
-          {selectSaksi.length === 0 ? null : (
-            <>
-              <div className="grid grid-rows-2">
-                <label
-                  htmlFor="id"
-                  className="mt-4 block text-sm font-medium text-black dark:text-white"
-                >
-                  Saksi
-                </label>
-
-                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
-                  <div className="form-group w-2/6">
-                    <label
-                      htmlFor="id"
-                      className="block text-sm font-medium text-black dark:text-white"
-                    >
-                      Nama Saksi
-                    </label>
-                  </div>
-
-                  <div className="form-group w-4/6">
-                    <label
-                      htmlFor="id"
-                      className="block text-sm font-medium text-black dark:text-white"
-                    >
-                      Keterangan Saksi
-                    </label>
-                  </div>
-                </div>
-
-                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
-                  {selectSaksi.map((item: any, index: number) => {
-                    return (
-                      <div
-                        className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
-                        key={index}
-                      >
-                        <div className="form-group w-2/6">
-                          <label
-                            className="capitalize block text-sm font-medium text-black dark:text-white"
-                            htmlFor={`keterangan-${index}`}
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-
-                        <div className="form-group w-4/6 flex items-center mr-2">
-                          <input
-                            id={`keterangan-${index}`}
-                            className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                            placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
-                            onChange={(e) => handleChangeKeterangan(e, index)}
-                            disabled={isDetail}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )}
-
-
                           </div>
-                        ) : (
-                          // Select Kasus
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Nama Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nama Kasus"
+                              name="nama_kasus"
+                              onChange={handleChange}
+                              disabled={isDetail}
+                            />
+                            <div className="">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama_kasus'
+                                    ? 'Masukkan Nama Kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
                           <div className="f-alamat form-group">
                             <label
                               htmlFor="id"
                               className="block text-sm font-medium text-black dark:text-white"
                             >
-                              Jenis Kasus
+                              Jenis Perkara
                             </label>
                             <Select
                               className="basic-single p-gelang"
@@ -3276,21 +2851,22 @@ export const AddInmateModal = ({
                               defaultValue={
                                 isEdit || isDetail
                                   ? {
-                                      value: formState.kasus_id,
-                                      label: formState.nama_kasus,
+                                      value: formState.jenis_perkara_id,
+                                      label: formState.nama_jenis_perkara,
                                     }
-                                  : formState.kasus_id
+                                  : formState.jenis_perkara_id
                               }
-                              placeholder={'Pilih Jenis Kasus'}
+                              placeholder={'Pilih Jenis Perkara'}
                               isSearchable={true}
                               isDisabled={isDetail}
-                              name="kasus_id"
+                              isClearable={true}
+                              name="jenis_perkara_id"
                               styles={customStyles}
-                              options={kasusData.map((item: any) => ({
-                                value: item.kasus_id,
-                                label: item.nama_kasus,
+                              options={jenisPerkara.map((item: any) => ({
+                                value: item.jenis_perkara_id,
+                                label: item.nama_jenis_perkara,
                               }))}
-                              onChange={handleSelectJenisKasus}
+                              onChange={handleSelectJenisPerkara}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -3300,67 +2876,545 @@ export const AddInmateModal = ({
                               )}
                             </p>
                           </div>
-                        )}
 
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Tanggal diTahan */}
-                          <div className="f-tanggal-ditahan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal Ditahan
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_ditahan_otmil"
-                              onChange={handleChange}
-                              value={formState.tanggal_ditahan_otmil}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_ditahan_otmil'
-                                  ? 'Masukan tanggal ditahan'
-                                  : '',
-                              )}
-                            </p>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Tahun
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_tahun_perkara"
+                                value={formState.vonis_tahun_perkara}
+                                disabled
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'vonis_tahun_perkara'
+                                    ? 'Masukan tanggal masa penahanan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Bulan
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_bulan_perkara"
+                                value={formState.vonis_bulan_perkara}
+                                disabled
+                              />
+                            </div>
+
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Hari
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_hari_perkara"
+                                value={formState.vonis_hari_perkara}
+                                disabled
+                              />
+                            </div>
                           </div>
 
-                          {/* Gelang */}
-                          <div className="f-gelang form-group w-full ">
+                          <div className="form-group w-full">
                             <label
-                              className="  block text-sm font-medium text-black dark:text-white"
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
                               htmlFor="id"
                             >
-                              Gelang
+                              Nama Jenis Pidana
                             </label>
-
-                            <Select
-                              className="basic-single p-gelang"
-                              classNamePrefix="select"
-                              defaultValue={
-                                isEdit || isDetail
-                                  ? {
-                                      value: formState.gelang_id,
-                                      label: formState.nama_gelang,
-                                    }
-                                  : formState.gelang_id
-                              }
-                              placeholder={'Pilih Gelang'}
-                              isSearchable={true}
-                              isDisabled={isDetail}
-                              name="gelang_id"
-                              styles={customStyles}
-                              options={gelang.map((item: any) => ({
-                                value: item.gelang_id,
-                                label: item.nama_gelang,
-                              }))}
-                              onChange={handleSelectGelang}
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nama Jenis Pidana"
+                              name="nama_jenis_pidana"
+                              onChange={handleChange}
+                              value={formState.nama_jenis_pidana}
+                              disabled
                             />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama_jenis_pidana'
+                                    ? 'Masukan Nama Jenis Pidana'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
 
-                            {/* <select
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Lokasi Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Lokasi Kasus"
+                              name="lokasi_kasus"
+                              onChange={handleChange}
+                              disabled={isDetail}
+                            />
+                            <div className="">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'lokasi_kasus'
+                                    ? 'Masukan Lokasi Kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2">
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Kejadian Kasus
+                              </label>
+                              <div className="flex flex-row">
+                                <DatePicker
+                                  selected={
+                                    formState.waktu_kejadian
+                                      ? dayjs(formState.waktu_kejadian).toDate()
+                                      : dayjs().toDate()
+                                  }
+                                  showTimeInput
+                                  timeFormat="HH:mm"
+                                  onChange={handleWaktuKejadian}
+                                  timeCaption="Time"
+                                  dateFormat="dd/MM/yyyy HH:mm"
+                                  customTimeInput={<ExampleCustomTimeInput />}
+                                  className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                  name="waktu_kejadian"
+                                  disabled={false}
+                                  locale="id"
+                                />
+                                <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                                />
+                              </div>
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'waktu_kejadian'
+                                      ? 'Masukan Tanggal Kejadian Kasus'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Pelaporan Kasus
+                              </label>
+                              <div className="flex flex-row">
+                                <DatePicker
+                                  selected={
+                                    formState.waktu_pelaporan_kasus
+                                      ? dayjs(
+                                          formState.waktu_pelaporan_kasus,
+                                        ).toDate()
+                                      : dayjs().toDate()
+                                  }
+                                  showTimeInput
+                                  timeFormat="HH:mm"
+                                  onChange={handleWaktuPelaporan}
+                                  timeCaption="Time"
+                                  dateFormat="dd/MM/yyyy HH:mm"
+                                  customTimeInput={<ExampleCustomTimeInput />}
+                                  className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                  name="waktu_kejadian"
+                                  disabled={false}
+                                  locale="id"
+                                />
+                                <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                                />
+                              </div>
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'waktu_pelaporan_kasus'
+                                      ? 'Masukan Tanggal Pelaporan Kasus'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`${isDetail ? 'block mt-4' : 'hidden'}`}
+                          >
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white pt-3"
+                                htmlFor="id"
+                              >
+                                Jumlah Penyidikan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Jumlah Penyidikan"
+                                name="waktu_pelaporan_kasus"
+                                onChange={handleChange}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_pelaporan_kasus'
+                                    ? 'Masukan Jumlah Penyidikan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Oditur Penyidik
+                            </label>
+                            <Select
+                              className="capitalize text-white"
+                              isMulti
+                              placeholder="Pilih Oditur Penyidik"
+                              styles={customStyles}
+                              isDisabled={isDetail}
+                              options={oditurPenyidikOptions}
+                              onChange={handleSelectOditurPenyidik}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama' ? 'Masukan Tersangka' : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Ketua Oditur Penyidik
+                            </label>
+                            <Select
+                              className="capitalize"
+                              isDisabled={isDetail}
+                              placeholder="Pilih Ketua Oditur"
+                              styles={customStyles}
+                              options={ketuaOditurPenyidik}
+                              onChange={handleSelectKetuaOditur}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'role_ketua_oditur_ids'
+                                    ? 'Pilih Ketua Oditur Penyidik'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Pihak Terlibat
+                            </label>
+                            <Select
+                              className="capitalize"
+                              isMulti
+                              isDisabled={isDetail}
+                              placeholder="Pihak Terlibat"
+                              styles={customStyles}
+                              options={pihakTerlibat}
+                              onChange={handleSelectPihakTerlibat}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.includes('saksi_id') ||
+                                errors.includes('wbp_profile_ids')
+                                  ? `${errors.includes('wbp_profile_ids') ? 'Tersangka' : ''} ${errors.includes('saksi_id') && errors.includes('wbp_profiles_ids') ? 'Dan' : ''} ${errors.includes('saksi_id') ? 'Saksi' : ''} Belum di Pilih`
+                                  : ''}
+                              </p>
+                            </div>
+                          </div>
+                          {selectTersangka.length === 0 ? null : (
+                            <>
+                              <div className="grid grid-rows-2">
+                                <label
+                                  htmlFor="id"
+                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Tersangka
+                                </label>
+
+                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                                  <div className="form-group w-2/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Nama Tersangka
+                                    </label>
+                                  </div>
+
+                                  <div className="form-group w-4/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Keterangan
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                                  {selectTersangka.map(
+                                    (item: any, index: number) => {
+                                      return (
+                                        <div
+                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                          key={index}
+                                        >
+                                          <div className="form-group w-2/6">
+                                            <label
+                                              htmlFor={`keterangans-${index}`}
+                                              className="capitalize block text-sm font-medium text-black dark:text-white"
+                                            >
+                                              {item.label}
+                                            </label>
+                                          </div>
+
+                                          <div className="form-group w-4/6 flex items-center mr-2">
+                                            <input
+                                              id={`keterangans${index}`}
+                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                              placeholder={`${errors.includes('keterangan') ? 'Keterangan Belum Di Isi' : 'Keterangan'}`}
+                                              onChange={(e) =>
+                                                handleChangeKeteranganTersangka(
+                                                  e,
+                                                  index,
+                                                )
+                                              }
+                                              disabled={isDetail}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    },
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {selectSaksi.length === 0 ? null : (
+                            <>
+                              <div className="grid grid-rows-2">
+                                <label
+                                  htmlFor="id"
+                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Saksi
+                                </label>
+
+                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                                  <div className="form-group w-2/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Nama Saksi
+                                    </label>
+                                  </div>
+
+                                  <div className="form-group w-4/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Keterangan Saksi
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                                  {selectSaksi.map(
+                                    (item: any, index: number) => {
+                                      return (
+                                        <div
+                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                          key={index}
+                                        >
+                                          <div className="form-group w-2/6">
+                                            <label
+                                              className="capitalize block text-sm font-medium text-black dark:text-white"
+                                              htmlFor={`keterangan-${index}`}
+                                            >
+                                              {item.label}
+                                            </label>
+                                          </div>
+
+                                          <div className="form-group w-4/6 flex items-center mr-2">
+                                            <input
+                                              id={`keterangan-${index}`}
+                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                              placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
+                                              onChange={(e) =>
+                                                handleChangeKeterangan(e, index)
+                                              }
+                                              disabled={isDetail}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    },
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        // Select Kasus
+                        <div className="f-alamat form-group">
+                          <label
+                            htmlFor="id"
+                            className="block text-sm font-medium text-black dark:text-white"
+                          >
+                            Jenis Kasus
+                          </label>
+                          <Select
+                            className="basic-single p-gelang"
+                            classNamePrefix="select"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.kasus_id,
+                                    label: formState.nama_kasus,
+                                  }
+                                : formState.kasus_id
+                            }
+                            placeholder={'Pilih Jenis Kasus'}
+                            isSearchable={true}
+                            isDisabled={isDetail}
+                            name="kasus_id"
+                            styles={customStyles}
+                            options={kasusData.map((item: any) => ({
+                              value: item.kasus_id,
+                              label: item.nama_kasus,
+                            }))}
+                            onChange={handleSelectJenisKasus}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'kasus_id' ? 'Pilih kasus' : '',
+                            )}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Tanggal diTahan */}
+                        <div className="f-tanggal-ditahan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Tanggal Ditahan
+                          </label>
+                          <input
+                            type="date"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="tanggal_ditahan_otmil"
+                            onChange={handleChange}
+                            value={formState.tanggal_ditahan_otmil}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'tanggal_ditahan_otmil'
+                                ? 'Masukan tanggal ditahan'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Gelang */}
+                        <div className="f-gelang form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Gelang
+                          </label>
+
+                          <Select
+                            className="basic-single p-gelang"
+                            classNamePrefix="select"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.gelang_id,
+                                    label: formState.nama_gelang,
+                                  }
+                                : formState.gelang_id
+                            }
+                            placeholder={'Pilih Gelang'}
+                            isSearchable={true}
+                            isDisabled={isDetail}
+                            name="gelang_id"
+                            styles={customStyles}
+                            options={gelang.map((item: any) => ({
+                              value: item.gelang_id,
+                              label: item.nama_gelang,
+                            }))}
+                            onChange={handleSelectGelang}
+                          />
+
+                          {/* <select
                               className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="gelang_id"
                               onChange={handleChange}
@@ -3411,205 +3465,205 @@ export const AddInmateModal = ({
                                         </option>
                                       ))}
                             </select> */}
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'gelang_id' ? 'Pilih gelang' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* DMAC Gelang */}
-                          <div className="f-dmac-gelang form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              DMAC Gelang
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="DMAC"
-                              placeholder="DMAC"
-                              onChange={handleChange}
-                              value={formState.DMAC}
-                              disabled
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'DMAC' ? 'Pilih gelang dulu' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Residivis */}
-                          <div className="f-residivis form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Residivis
-                            </label>
-
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="residivis"
-                              onChange={handleChange}
-                              value={formState.residivis}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Residivis
-                              </option>
-
-                              <option value="0">Tidak</option>
-                              <option value="1">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'residivis' ? 'Pilih Ya/Tidak' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Hunian Tahanan */}
-                          <div className="f-hunian-tahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Hunian Tahanan
-                            </label>
-                            <Select
-                              className="basic-single"
-                              classNamePrefix="select"
-                              styles={customStyles}
-                              name="hunian_wbp_otmil_id"
-                              isDisabled={isDetail}
-                              isClearable={true}
-                              isSearchable={true}
-                              placeholder="Pilih Hunian Tahanan"
-                              defaultValue={
-                                isEdit || isDetail
-                                  ? {
-                                      value: formState.hunian_wbp_otmil_id,
-                                      label: formState.nama_hunian_wbp_otmil,
-                                    }
-                                  : formState.hunian_wbp_otmil_id
-                              }
-                              options={hunian.map((item: any) => ({
-                                value: item.hunian_wbp_otmil_id,
-                                label: item.nama_hunian_wbp_otmil,
-                              }))}
-                              onChange={handleSelectHunianTahanan}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'hunian_wbp_otmil_id'
-                                  ? 'Pilih hunian'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Nomor Tahanan*/}
-                          <div className="f-nomor-tahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Nomor Tahanan
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="nomor_tahanan"
-                              placeholder="Nomor Tahanan"
-                              onChange={handleChange}
-                              value={formState.nomor_tahanan}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'nomor_tahanan'
-                                  ? 'Masukan nomor tahanan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Terisolasi */}
-                          <div className="f-status-terisolasi form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Terisolasi (?)
-                            </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="is_isolated"
-                              onChange={handleChange}
-                              value={formState.is_isolated}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Silahkan Dipilih
-                              </option>
-                              <option value="0">Tidak</option>
-                              <option value="1">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : '',
-                              )}
-                            </p>
-                          </div>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'gelang_id' ? 'Pilih gelang' : '',
+                            )}
+                          </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Status Wbp*/}
-                          <div className="f-status-tersangka form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Status Tersangka
-                            </label>
-                            <Select
-                              className="basic-single"
-                              classNamePrefix="select"
-                              styles={customStyles}
-                              name="status_wbp_kasus_id"
-                              isDisabled={isDetail}
-                              isClearable={true}
-                              isSearchable={true}
-                              placeholder="Pilih Status"
-                              defaultValue={
-                                (isEdit || isDetail) &&
-                                formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
-                                  ? {
-                                      value: formState.status_wbp_kasus_id,
-                                      label: formState.nama_status_wbp_kasus,
-                                    }
-                                  : formState.status_wbp_kasus_id
-                              }
-                              options={statusWbp.map((item: any) => ({
-                                value: item.status_wbp_kasus_id,
-                                label: item.nama_status_wbp_kasus,
-                              }))}
-                              onChange={handleSelectWbpStatus}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'status_wbp_kasus_id'
-                                  ? 'Pilih status'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
 
-                          {/* Tanggal Penetapan*/}
-                          {/* <div
+                        {/* DMAC Gelang */}
+                        <div className="f-dmac-gelang form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            DMAC Gelang
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="DMAC"
+                            placeholder="DMAC"
+                            onChange={handleChange}
+                            value={formState.DMAC}
+                            disabled
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'DMAC' ? 'Pilih gelang dulu' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Residivis */}
+                        <div className="f-residivis form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Residivis
+                          </label>
+
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="residivis"
+                            onChange={handleChange}
+                            value={formState.residivis}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Pilih Residivis
+                            </option>
+
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'residivis' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Hunian Tahanan */}
+                        <div className="f-hunian-tahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Hunian Tahanan
+                          </label>
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="hunian_wbp_otmil_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Hunian Tahanan"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.hunian_wbp_otmil_id,
+                                    label: formState.nama_hunian_wbp_otmil,
+                                  }
+                                : formState.hunian_wbp_otmil_id
+                            }
+                            options={hunian.map((item: any) => ({
+                              value: item.hunian_wbp_otmil_id,
+                              label: item.nama_hunian_wbp_otmil,
+                            }))}
+                            onChange={handleSelectHunianTahanan}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'hunian_wbp_otmil_id'
+                                ? 'Pilih hunian'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Nomor Tahanan*/}
+                        <div className="f-nomor-tahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Nomor Tahanan
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="nomor_tahanan"
+                            placeholder="Nomor Tahanan"
+                            onChange={handleChange}
+                            value={formState.nomor_tahanan}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'nomor_tahanan'
+                                ? 'Masukan nomor tahanan'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Terisolasi */}
+                        <div className="f-status-terisolasi form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Terisolasi (?)
+                          </label>
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_isolated"
+                            onChange={handleChange}
+                            value={formState.is_isolated}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Silahkan Dipilih
+                            </option>
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_isolated' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Status Wbp*/}
+                        <div className="f-status-tersangka form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Status Tersangka
+                          </label>
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="status_wbp_kasus_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Status"
+                            defaultValue={
+                              (isEdit || isDetail) &&
+                              formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
+                                ? {
+                                    value: formState.status_wbp_kasus_id,
+                                    label: formState.nama_status_wbp_kasus,
+                                  }
+                                : formState.status_wbp_kasus_id
+                            }
+                            options={statusWbp.map((item: any) => ({
+                              value: item.status_wbp_kasus_id,
+                              label: item.nama_status_wbp_kasus,
+                            }))}
+                            onChange={handleSelectWbpStatus}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'status_wbp_kasus_id'
+                                ? 'Pilih status'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Tanggal Penetapan*/}
+                        {/* <div
                             className={`form-group w-full ${
                               formState.status_wbp_kasus_id === '' ||
                               formState.status_wbp_kasus_id === null
@@ -3676,118 +3730,117 @@ export const AddInmateModal = ({
                             </p>
                           </div> */}
 
-                          {formState.status_wbp_kasus_id === '' ||
-                          formState.status_wbp_kasus_id === null ? null : (
-                            <>
-                              {/* Tanggal Penetapan Terpidana*/}
-                              <div
-                                className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan terpidana
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_terpidana"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_terpidana}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_terpidana'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-
-                              {/* Tanggal Penetapan Terdakwa*/}
-                              <div
-                                className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan terdakwa
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_terdakwa"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_terdakwa}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_terdakwa'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-
-                              {/* Tanggal Penetapan Tersangka*/}
-                              <div
-                                className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan tersangka
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_tersangka"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_tersangka}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_tersangka'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-                            </>
-                          )}
-
-                          {/* Tanggal Masa Penahanan */}
-                          <div className="f-tanggal-masa-penahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
+                        {formState.status_wbp_kasus_id === '' ||
+                        formState.status_wbp_kasus_id === null ? null : (
+                          <>
+                            {/* Tanggal Penetapan Terpidana*/}
+                            <div
+                              className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
                             >
-                              Tanggal Masa Penahanan
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_masa_penahanan_otmil"
-                              onChange={handleChange}
-                              value={formState.tanggal_masa_penahanan_otmil}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_masa_penahanan_otmil'
-                                  ? 'Masukan tanggal masa penahanan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan terpidana
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_terpidana"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_terpidana}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_terpidana'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Tanggal Penetapan Terdakwa*/}
+                            <div
+                              className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                            >
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan terdakwa
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_terdakwa"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_terdakwa}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_terdakwa'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Tanggal Penetapan Tersangka*/}
+                            <div
+                              className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                            >
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan tersangka
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_tersangka"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_tersangka}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_tersangka'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Tanggal Masa Penahanan */}
+                        <div className="f-tanggal-masa-penahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Tanggal Masa Penahanan
+                          </label>
+                          <input
+                            type="date"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="tanggal_masa_penahanan_otmil"
+                            onChange={handleChange}
+                            value={formState.tanggal_masa_penahanan_otmil}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'tanggal_masa_penahanan_otmil'
+                                ? 'Masukan tanggal masa penahanan'
+                                : '',
+                            )}
+                          </p>
                         </div>
-                      
+                      </div>
                     </div>
 
                     {/* ----- DATA KESEHATAN ----- */}
