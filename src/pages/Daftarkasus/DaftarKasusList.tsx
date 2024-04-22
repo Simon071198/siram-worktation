@@ -508,13 +508,16 @@ const DaftarKasus = () => {
     let angkaTerbesar = 0;
 
     data.forEach((item) => {
-      const nomorKasus = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
-      const angka = parseInt(nomorKasus, 10);
-
-      if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
-        angkaTerbesar = Math.max(angkaTerbesar, angka);
+      if (item.nomor_kasus) {
+        const nomorKasus = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+        const angka = parseInt(nomorKasus, 10);
+    
+        if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
+          angkaTerbesar = Math.max(angkaTerbesar, angka);
+        }
       }
     });
+    
 
     // Increment the largest number by 1 if the date is the same
     if (angkaTerbesar === 0) {

@@ -34,6 +34,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       nama_dokumen_bap: '',
       link_dokumen_bap: '',
       penyidikan_id: '',
+      nomor_penyidikan: '',
       pdf_file_base64: '',
     },
   );
@@ -254,6 +255,14 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       (item: any) => item.penyidikan_id === e?.value,
     );
 
+    if (!e?.value) {
+      // Jika penyidikan_id tidak terdefinisi, set pesan kesalahan
+      setErrors(['penyidikan_id']);
+    } else {
+      // Jika penyidikan_id terdefinisi, hapus pesan kesalahan jika ada
+      setErrors(errors.filter((item) => item !== 'penyidikan_id'));
+    }
+
     setFormState({
       ...formState,
       penyidikan_id: e?.value,
@@ -274,7 +283,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       saksi_id: selectedPenyidikan ? selectedPenyidikan.saksi_id : '',
       nama_saksi: selectedPenyidikan ? selectedPenyidikan.nama_saksi : '',
     });
-  };
+};
+
 
   const penyidikan = async () => {
     try {
@@ -573,15 +583,16 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       onChange={handlePenyidikanChange}
                     />
 
-                    {/* <p className="error-text bottom-0">
-                      {errors.map((item) =>
+                    <p className="error-text bottom-0">
+                      {/* {errors.map((item) =>
                         item === 'penyidikan_id'
                           ? 'Pilih nomor penyidikan'
                           : '',
-                      )}
-                    </p> */}
+                      )} */}
+                      {/* {(isEdit || isDetail) && !formState.penyidikan_id && 'Pilih nomor penyidikan'} */}
+                    </p>
 
-                    <p className="error-text">
+                    <p className="error-text error-text p-0 m-0">
                       {submitted &&
                         !formState.penyidikan_id &&
                         'Pilih Nomor Penyidikan'}
@@ -612,11 +623,11 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                         item === 'nomor_kasus' ? 'Pilih Nomor Kasus' : '',
                       )}
                     </p> */}
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {submitted &&
                         !formState.nomor_kasus &&
                         'Pilih Nomor Kasus'}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Nama Kasus */}
@@ -637,15 +648,10 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       disabled
                     />
                     {/* <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'nama_kasus' ? 'Pilih Nama Kasus' : '',
-                      )}
-                    </p> */}
-                    <p className="error-text">
                       {submitted &&
                         !formState.penyidikan_id &&
                         'Pilih Nama Kasus'}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Pihak Terlibat */}
@@ -665,15 +671,10 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       disabled
                     />
                     {/* <p className="error-text">
-                      {errors.map((item) =>
-                        item === '' ? 'Pilih Pihak Terlibat' : '',
-                      )}
-                    </p> */}
-                    <p className="error-text">
                       {submitted &&
                         !formState.penyidikan_id &&
                         'Pilih Pihak Terlibat'}
-                    </p>
+                    </p> */}
                   </div>
 
                   {formState.nama && (
@@ -721,17 +722,10 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     disabled
                   />
                   {/* <p className="error-text">
-                    {errors?.map((item) =>
-                      item === 'agenda_penyidikan'
-                        ? 'Masukan Agenda Penyidikan'
-                        : '',
-                    )}
-                  </p> */}
-                  <p className="error-text">
                     {submitted &&
                       !formState.agenda_penyidikan &&
                       'Pilih Agenda Penyidikan'}
-                  </p>
+                  </p> */}
                 </div>
 
                 {/* Dokumentasi */}
