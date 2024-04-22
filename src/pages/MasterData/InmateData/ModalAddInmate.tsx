@@ -633,54 +633,54 @@ export const AddInmateModal = ({
   };
   // End Handle Kasus
 
-  // const validateForm = () => {
-  //   let errorFields: any[] = [];
+  const validateForm = () => {
+    let errorFields: any[] = [];
 
-  //   for (const [key, value] of Object.entries(formState)) {
-  //     if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
-  //       console.log('here!', key)
-  //       if (!value) {
-  //         errorFields.push(key);
-  //       }
-  //     }
+    for (const [key, value] of Object.entries(formState)) {
+      if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
+        console.log('here!', key)
+        if (!value) {
+          errorFields.push(key);
+        }
+      }
 
-  //     // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
-  //     //   if (!value) {
-  //     //     errorFields.push(key);
-  //     //   }
-  //     // }
-  //     // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
+      // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
+      //   if (!value) {
+      //     errorFields.push(key);
+      //   }
+      // }
+      // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
 
-  //     if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
-  //       if (
-  //         formState.is_new_kasus == 'true' &&
-  //         key != 'nama_kasus' &&
-  //         key != 'jenis_perkara_id' &&
-  //         key != 'vonis_tahun_perkara' &&
-  //         key != 'vonis_bulan_perkara' &&
-  //         key != 'vonis_hari_perkara' &&
-  //         key != 'nama_jenis_pidana' &&
-  //         key != 'lokasi_kasus' &&
-  //         key != 'oditur_penyidik_id' &&
-  //         key != 'role_ketua_oditur_ids' &&
-  //         key != 'saksi_id'
-  //       ) {
-  //         if (!value) {
-  //           errorFields.push(key);
-  //         }
-  //       }
-  //     }
-  //   }
+      if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+        if (
+          formState.is_new_kasus == 'false' &&
+          key != 'nama_kasus' &&
+          key != 'jenis_perkara_id' &&
+          key != 'vonis_tahun_perkara' &&
+          key != 'vonis_bulan_perkara' &&
+          key != 'vonis_hari_perkara' &&
+          key != 'nama_jenis_pidana' &&
+          key != 'lokasi_kasus' &&
+          key != 'oditur_penyidik_id' &&
+          key != 'role_ketua_oditur_ids' &&
+          key != 'saksi_id'
+        ) {
+          if (!value) {
+            errorFields.push(key);
+          }
+        }
+      }
+    }
 
-  //   if (errorFields.length > 0) {
-  //     console.log(errorFields, 'errorfields detected');
-  //     setErrors(errorFields);
-  //     return false;
-  //   }
+    if (errorFields.length > 0) {
+      console.log(errorFields, 'errorfields detected');
+      setErrors(errorFields);
+      return false;
+    }
 
-  //   setErrors([]);
-  //   return true;
-  // };
+    setErrors([]);
+    return true;
+  };
 
   // const validateForm = () => {
   //   let errorFields: any = [];
