@@ -134,7 +134,7 @@ const AktifitasPengunjungList = () => {
       //   pageSize: 3,
       // },
       filter: {
-        nama_aktivitas_pengunjung: filter,
+        nama_wbp: filter,
         nama_lokasi_otmil: 'Cimahi',
         waktu_mulai_kunjungan: selectedMonth ? selectedMonth : null,
       },
@@ -414,7 +414,7 @@ const AktifitasPengunjungList = () => {
             <div className="flex items-center w-full search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama Aktivitas"
+                placehorder="Cari nama WBP"
                 onChange={handleFilterChange}
 
                 // onClick={handleSearchClick}
