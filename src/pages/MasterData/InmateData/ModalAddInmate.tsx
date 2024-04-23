@@ -715,6 +715,16 @@ export const AddInmateModal = ({
           }
         }
 
+        if(formState.is_new_kasus == 'true'){
+          const ignoredFields = [
+            "kasus_id",
+          ];
+          
+          if(ignoredFields.includes(key) && !value){
+            continue;
+          }
+        }
+
         if (formState.is_new_kasus == 'false') {
           // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
           const ignoredFields = [
@@ -733,16 +743,11 @@ export const AddInmateModal = ({
             "nama_jenis_pidana"
           ];
         
-          // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong,
-          // maka abaikan validasi untuk field tersebut.
+          // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
           if (ignoredFields.includes(key) && !value) {
             continue; // Melanjutkan iterasi ke field selanjutnya.
           }
         }
-
-      // if (key === 'is_kasus_new' && value != 'pilih') {
-      //   continue;
-      // }
 
       if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
         console.log('STATUS ADA');
