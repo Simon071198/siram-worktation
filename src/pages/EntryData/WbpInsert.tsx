@@ -1969,16 +1969,16 @@ export const WbpInsert = () => {
               </div>
             </div>
 
-            <div className="mt-4">
-              <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+            {/* <div className=""> */}
+              {/* <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                 Data Perilaku
-              </p>
+              </p> */}
 
-              <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="grid grid-cols-2 gap-4">
+              {/* <div className="flex flex-col gap-4"> */}
+                {/* <div className="grid grid-cols-1 gap-4"> */}
+                  {/* <div className="grid grid-cols-2 gap-4"> */}
                     {/* Jenis Olahraga */}
-                    <div className="f-jenis-olahraga form-group w-full flex flex-col">
+                    {/* <div className="f-jenis-olahraga form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -2009,10 +2009,10 @@ export const WbpInsert = () => {
                             : '',
                         )}
                       </p>
-                    </div>
+                    </div> */}
 
                     {/* Konsumsi Zat Adiktif */}
-                    <div className="f-zat-adiktif form-group w-full flex flex-col">
+                    {/* <div className="f-zat-adiktif form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -2043,11 +2043,11 @@ export const WbpInsert = () => {
                             : '',
                         )}
                       </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    </div> */}
+                  {/* </div> */}
+                {/* </div> */}
+              {/* </div> */}
+            {/* </div> */}
 
             <div className="mt-4">
               <>
