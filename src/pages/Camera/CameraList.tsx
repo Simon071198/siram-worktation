@@ -185,18 +185,22 @@ const CameraList = () => {
 
   const indexOfLastCamera = currentPage * camerasPerPage;
   const indexOfFirstCamera = indexOfLastCamera - camerasPerPage;
-  const currentCameras = buildings?.data?.records?.gedung
-    .flatMap((gedung) =>
-      gedung.lantai.flatMap((lantai) =>
-        lantai.ruangan
-          .filter((ruangan) => ruangan.ruangan_otmil_id === selectedRoom)
-          .flatMap((ruangan) => ruangan.kamera),
-      ),
-    )
-    .slice(indexOfFirstCamera, indexOfLastCamera);
-  console.log('cccccc', currentCameras);
+  const totalCameras = buildings?.data?.records?.gedung.flatMap((gedung: any) =>
+    gedung.lantai.flatMap((lantai: any) =>
+      lantai.ruangan
+        .filter((ruangan: any) => ruangan.ruangan_otmil_id === selectedRoom)
+        .flatMap((ruangan: any) => ruangan.kamera),
+    ),
+  );
+  if (!totalCameras) {
+    return null;
+  }
+  const currentCameras = totalCameras.slice(
+    indexOfFirstCamera,
+    indexOfLastCamera,
+  );
 
-  const totalPages = Math.ceil(currentCameras?.length / camerasPerPage);
+  const totalPages = Math.ceil(totalCameras.length / camerasPerPage);
   console.log(totalPages, 'total');
   const renderPagination = () => {
     const pageNumbers = [];
