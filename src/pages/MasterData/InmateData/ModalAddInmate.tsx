@@ -806,9 +806,6 @@ export const AddInmateModal = ({
       }
     }
     if (errorFields.length > 0) {
-      // if (formState.is_new_kasus == '') {
-      //   errorFields.push('is_new_kasus');
-      // }
       setErrors(errorFields);
       return false;
     }
@@ -931,11 +928,11 @@ export const AddInmateModal = ({
     e.preventDefault();
     console.log(formState, 'received values');
     if (!validateForm()) return;
-    // setButtonLoad(true);
-    // onSubmit(formState).then(() => setButtonLoad(false));
+    setButtonLoad(true);
+    onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
-    // closeModal();
+    closeModal();
   };
 
   // Function to handle adding a "zona" to a specific input
