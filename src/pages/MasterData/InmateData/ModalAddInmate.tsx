@@ -732,6 +732,7 @@ export const AddInmateModal = ({
             "vonis_bulan_perkara",
             "vonis_hari_perkara",
             "nama_kasus",
+            "nomor_kasus",
             "lokasi_kasus",
             "jenis_perkara_id",
             "jenis_pidana_id",
