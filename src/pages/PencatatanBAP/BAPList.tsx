@@ -224,7 +224,6 @@ const BAPList = () => {
       setData(result);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
-      setIsLoading(false);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -235,6 +234,8 @@ const BAPList = () => {
         icon: e.response.status === 403 ? 'warning' : 'error',
         title: e.response.status === 403 ? Error403Message : e.message,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -185,7 +185,7 @@ export async function apiReadBAP(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/bap_read.php',
+      url: newwebserviceurl + 'siram_api/dokumen_bap_read.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
