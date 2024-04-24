@@ -90,47 +90,51 @@ export const EditDaftarKasusModal = ({
       ]
     : [];
 
-  const validateForm = () => {
-    let errorFields = [];
-
-    for (const [key, value] of Object.entries(formState)) {
-      if (key !== 'tanggal_pelimpahan_kasus') {
-        if (!value) {
+    const validateForm = () => {
+      let errorFields = [];
+    
+      for (const [key, value] of Object.entries(formState)) {
+        if (!value || (Array.isArray(value) && value.length === 0)) {
+          errorFields.push(key);
+        }
+    
+        // Tambahkan validasi khusus untuk oditur_penyidik_id
+        if (key === 'oditur_penyidik_id' && Array.isArray(value) && value.length === 0) {
+          errorFields.push(key);
+        }
+    
+        if (
+          key === 'wbp_profile_ids' &&
+          Array.isArray(value) &&
+          value.length === 0
+        ) {
+          errorFields.push(key);
+        }
+    
+        if (key === 'keterangans' && Array.isArray(value) && value.length === 0) {
+          errorFields.push(key);
+        }
+        if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
+          errorFields.push(key);
+        }
+    
+        if (
+          key === 'keteranganSaksis' &&
+          Array.isArray(value) &&
+          value.length === 0
+        ) {
           errorFields.push(key);
         }
       }
-      if (
-        key === 'wbp_profile_ids' &&
-        Array.isArray(value) &&
-        value.length === 0
-      ) {
-        errorFields.push(key);
+    
+      if (errorFields.length > 0) {
+        setErrors(errorFields);
+        return false;
       }
-
-      if (key === 'keterangans' && Array.isArray(value) && value.length === 0) {
-        errorFields.push(key);
-      }
-      if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
-        errorFields.push(key);
-      }
-
-      if (
-        key === 'keteranganSaksis' &&
-        Array.isArray(value) &&
-        value.length === 0
-      ) {
-        errorFields.push(key);
-      }
-    }
-
-    if (errorFields.length > 0) {
-      setErrors(errorFields);
-      return false;
-    }
-
-    setErrors([]);
-    return true;
-  };
+    
+      setErrors([]);
+      return true;
+    };
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -246,11 +250,13 @@ export const EditDaftarKasusModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(formState, 'formState');
 
     if (!validateForm()) return;
-    setButtonLoad(true);
+    // setButtonLoad(true);
 
     onSubmit(formState).then(() => setButtonLoad(false));
+    console.log(formState, 'formState gais');
   };
 
   const getTimeZone = () => {
@@ -1014,7 +1020,15 @@ export const EditDaftarKasusModal = ({
                       defaultValue={defaultValue.tanggal_pelimpahan_kasus}
                       disabled={isDetail}
                     />
+                    <p className='error-text'>
+                      {errors.map((item) =>
+                        item === 'tanggal_pelimpahan_kasus'
+                          ? 'Masukan Tanggal Pelimpahan Kasus'
+                          : '',
+                      )}
+                    </p>
                   </div>
+                  
                   <div className="form-group w-full ">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -1054,11 +1068,12 @@ export const EditDaftarKasusModal = ({
                       placeholder="Pilih Oditur Penyidik"
                       styles={customStyles}
                     />
-                    {/* <p className="error-text">
-                      {errors.map((item) =>
+                     <p className="error-text">
+                      {/* {errors.map((item) =>
                         item === 'nama' ? 'Masukan Tersangka' : ''
-                      )}
-                    </p> */}
+                      )} */}
+                    {errors.includes('oditur_penyidik_id') ? 'Pilih oditur' : ''}
+                    </p>
                   </div>
 
                   <div className="form-group w-full ">

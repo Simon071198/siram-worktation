@@ -205,15 +205,16 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'formState');
 
-    if (!validateForm()) return;
-    setButtonLoad(true);
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
 
-    onSubmit(formState);
+    onSubmit(formState).then(() => setButtonLoad(false));
     // closeModal();
+    console.log(formState, 'formstateSuccesValidate');
   };
 
   const handleRuanganChange = (e: any) => {

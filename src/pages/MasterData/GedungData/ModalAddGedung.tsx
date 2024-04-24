@@ -344,7 +344,7 @@ export const ModalAddGedung = ({
                     />
                     <p className="error-text bottom-0">
                       {errors.map((item) =>
-                        item === 'nama_gedung_otmil' ? 'Masukan nama' : '',
+                        item === 'nama_gedung_otmil' ? 'Masukan nama gedung' : '',
                       )}
                     </p>
                   </div>

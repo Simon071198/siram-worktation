@@ -352,7 +352,7 @@ export default function InmateDatabaseSearchByName() {
                           {item.nrp}
                         </p>
                       </div>
-                      <div className="flex flex-col mt-6 item-center  w-full">
+                      {/* <div className="flex flex-col mt-6 item-center  w-full">
                         <p className="text-lg">Keterangan</p>
                         <div className="flex items-center gap-2">
                           <svg
@@ -373,7 +373,7 @@ export default function InmateDatabaseSearchByName() {
 
                           <p className="text-md">2023-12-05 14:32:15</p>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))}

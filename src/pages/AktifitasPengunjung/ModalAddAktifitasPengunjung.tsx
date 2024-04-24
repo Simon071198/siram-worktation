@@ -673,7 +673,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'nama_aktivitas_pengunjung'
-                          ? 'Pilih Aktivitas'
+                          ? 'Masukan Aktivitas'
                           : '',
                       )}
                     </p>
@@ -783,7 +783,7 @@ export const AddAktifitasPengunjung: React.FC<
                     <p className="error-text p-0 m-0">
                       {errors.map((item) =>
                         item === 'tujuan_kunjungan'
-                          ? 'Pilih tujuan kunjungan'
+                          ? 'Masukan tujuan kunjungan'
                           : '',
                       )}
                     </p>

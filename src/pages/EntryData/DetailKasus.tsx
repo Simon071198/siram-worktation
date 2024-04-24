@@ -34,12 +34,7 @@ interface WBP {
 //   nama_jenis_pidana: string;
 // }
 
-const DetailKasus = ({
-  onSubmit,
-  defaultValue,
-  isDetail,
-  
-}: any) => {
+const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   const [formState, setFormState] = useState({
     nama_kasus: '',
     nomor_kasus: '',

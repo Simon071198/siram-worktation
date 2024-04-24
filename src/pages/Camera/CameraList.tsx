@@ -7,7 +7,9 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
-import { CiCamera } from 'react-icons/ci';
+import { RiCameraOffLine } from 'react-icons/ri';
+import { IoMdArrowRoundBack } from 'react-icons/io';
+import ReactPlayer from 'react-player';
 
 const CameraList = () => {
   const navigate = useNavigate();
@@ -25,12 +27,15 @@ const CameraList = () => {
   // let [locationDeviceListLemasmil, setLocationDeviceListLemasmil] = useState(
   //   [],
   // );
-  const [building, setBuilding] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [columns, setColumns] = useState(3);
+  const [buildings, setBuilding] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [selectedBuilding, setSelectedBuilding] = useState('');
+  const [selectedFloor, setSelectedFloor] = useState('');
+  const [columns, setColumns] = useState(2);
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = columns * rows;
+  const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
+  const camerasPerPage = columns * rows;
   // useEffect(() => {
   //   apiLocationOnlineDeviceList()
   //     .then((res) => {
@@ -125,29 +130,30 @@ const CameraList = () => {
     }
     // setIsLoading(false);
   };
+
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
       steps: [
         {
-          element: '#s-lemas',
+          element: '#s-gedung',
           popover: {
-            title: 'LEMASMIL',
-            description: 'Pilih lemasmil yang diinginkan',
+            title: 'GEDUNG',
+            description: 'Pilih gedung yang diinginkan',
           },
         },
         {
-          element: '#s-otmil',
+          element: '#s-lantai',
           popover: {
-            title: 'OTMIL',
-            description: 'Pilih otmil yang diinginkan',
+            title: 'LANTAI',
+            description: 'Pilih lantai yang diinginkan',
           },
         },
         {
-          element: '#s-babin',
+          element: '#s-ruangan',
           popover: {
-            title: 'BABINKUM TNI (Badan Pembinaan Hukun TNI)',
-            description: 'Pilih babinkum tni yang diinginkan',
+            title: 'RUANGAN',
+            description: 'Pilih ruangan yang diinginkan',
           },
         },
       ],
@@ -155,8 +161,21 @@ const CameraList = () => {
 
     driverObj.drive();
   };
-  console.log(building, 'set build');
+
+  const handleSelectBuilding = (e) => {
+    const selectedBuildingId = e.target.value;
+    setSelectedBuilding(selectedBuildingId);
+    setSelectedFloor(''); // Reset selected floor when building changes
+    setSelectedRoom(''); // Reset selected room when building changes
+  };
+
+  const handleSelectFloor = (e) => {
+    const selectedFloorId = e.target.value;
+    setSelectedFloor(selectedFloorId);
+    setSelectedRoom(''); // Reset selected room when floor changes
+  };
   const handleClickRoom = (roomId) => {
+    console.log('id', roomId);
     setSelectedRoom(roomId);
     setCurrentPage(1);
   };
@@ -166,326 +185,128 @@ const CameraList = () => {
     setCurrentPage(1);
   };
 
-  const dummyCameras = [
-    {
-      kamera_id: '1',
-      nama_kamera: 'Camera 1',
-      url_rtsp: 'rtsp://dummy.url/camera1',
-      ip_address: '192.168.1.1',
-      ruangan_otmil_id: 'room1',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '2',
-      nama_kamera: 'Camera 2',
-      url_rtsp: 'rtsp://dummy.url/camera2',
-      ip_address: '192.168.1.2',
-      ruangan_otmil_id: 'room1',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'offline',
-    },
-    // Tambahkan data kamera lainnya di sini...
-    {
-      kamera_id: '3',
-      nama_kamera: 'Camera 3',
-      url_rtsp: 'rtsp://dummy.url/camera3',
-      ip_address: '192.168.1.20',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '4',
-      nama_kamera: 'Camera 4',
-      url_rtsp: 'rtsp://dummy.url/camera4',
-      ip_address: '192.168.1.20',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '5',
-      nama_kamera: 'Camera 5',
-      url_rtsp: 'rtsp://dummy.url/camera5',
-      ip_address: '192.168.1.5',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '6',
-      nama_kamera: 'Camera 6',
-      url_rtsp: 'rtsp://dummy.url/camera6',
-      ip_address: '192.168.1.6',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '7',
-      nama_kamera: 'Camera 7',
-      url_rtsp: 'rtsp://dummy.url/camera7',
-      ip_address: '192.168.1.7',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '8',
-      nama_kamera: 'Camera 8',
-      url_rtsp: 'rtsp://dummy.url/camera8',
-      ip_address: '192.168.1.8',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '9',
-      nama_kamera: 'Camera 9',
-      url_rtsp: 'rtsp://dummy.url/camera9',
-      ip_address: '192.168.1.9',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '10',
-      nama_kamera: 'Camera 10',
-      url_rtsp: 'rtsp://dummy.url/camera10',
-      ip_address: '192.168.1.10',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '11',
-      nama_kamera: 'Camera 11',
-      url_rtsp: 'rtsp://dummy.url/camera11',
-      ip_address: '192.168.1.11',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '12',
-      nama_kamera: 'Camera 12',
-      url_rtsp: 'rtsp://dummy.url/camera12',
-      ip_address: '192.168.1.12',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '13',
-      nama_kamera: 'Camera 13',
-      url_rtsp: 'rtsp://dummy.url/camera13',
-      ip_address: '192.168.1.13',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '14',
-      nama_kamera: 'Camera 14',
-      url_rtsp: 'rtsp://dummy.url/camera14',
-      ip_address: '192.168.1.14',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '15',
-      nama_kamera: 'Camera 15',
-      url_rtsp: 'rtsp://dummy.url/camera15',
-      ip_address: '192.158.1.15',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '16',
-      nama_kamera: 'Camera 16',
-      url_rtsp: 'rtsp://dummy.url/camera16',
-      ip_address: '192.168.1.14',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '17',
-      nama_kamera: 'Camera 17',
-      url_rtsp: 'rtsp://dummy.url/camera17',
-      ip_address: '192.168.1.17',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '18',
-      nama_kamera: 'Camera 18',
-      url_rtsp: 'rtsp://dummy.url/camera18',
-      ip_address: '182.168.1.18',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '19',
-      nama_kamera: 'Camera 19',
-      url_rtsp: 'rtsp://dummy.url/camera19',
-      ip_address: '192.168.1.19',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '20',
-      nama_kamera: 'Camera 20',
-      url_rtsp: 'rtsp://dummy.url/camera20',
-      ip_address: '192.168.1.20',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '21',
-      nama_kamera: 'Camera 21',
-      url_rtsp: 'rtsp://dummy.url/camera21',
-      ip_address: '192.168.1.21',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '23',
-      nama_kamera: 'Camera 23',
-      url_rtsp: 'rtsp://dummy.url/camera23',
-      ip_address: '192.168.1.22',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '24',
-      nama_kamera: 'Camera 24',
-      url_rtsp: 'rtsp://dummy.url/camera24',
-      ip_address: '192.168.1.24',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '25',
-      nama_kamera: 'Camera 25',
-      url_rtsp: 'rtsp://dummy.url/camera25',
-      ip_address: '192.168.1.25',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '26',
-      nama_kamera: 'Camera 26',
-      url_rtsp: 'rtsp://dummy.url/camera26',
-      ip_address: '192.168.1.26',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '27',
-      nama_kamera: 'Camera 27',
-      url_rtsp: 'rtsp://dummy.url/camera27',
-      ip_address: '192.168.1.27',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-    {
-      kamera_id: '28',
-      nama_kamera: 'Camera 28',
-      url_rtsp: 'rtsp://dummy.url/camera28',
-      ip_address: '192.168.1.28',
-      ruangan_otmil_id: 'room2',
-      merk: 'DummyBrand',
-      model: 'DummyModel',
-      is_deleted: '0',
-      status_kamera: 'online',
-    },
-  ];
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCameras = dummyCameras.slice(indexOfFirstItem, indexOfLastItem);
+  const indexOfLastCamera = currentPage * camerasPerPage;
+  const indexOfFirstCamera = indexOfLastCamera - camerasPerPage;
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const indexOfLastCameraOnline = currentPageCamOnline * camerasPerPage;
+  const indexOfFirstCameraOnline = indexOfLastCameraOnline - camerasPerPage;
 
-  // const totalPages = Math.ceil(
-  //   dummyCameras.filter((camera) => camera.ruangan_otmil_id === selectedRoom)
-  //     .length / itemsPerPage,
-  // );
-  const totalPages = Math.ceil(dummyCameras.length / itemsPerPage);
-
-  console.log('pages', totalPages);
-  const renderCameraList = () => {
-    const selectedRoomData = building?.data?.records?.gedung.flatMap((gedung) =>
-      gedung.lantai.flatMap((lantai) =>
+  const totalCameras = buildings?.data?.records?.gedung.flatMap((gedung: any) =>
+    gedung.lantai.flatMap((lantai: any) =>
+      lantai.ruangan
+        .filter((ruangan: any) => ruangan.ruangan_otmil_id === selectedRoom)
+        .flatMap((ruangan: any) => ruangan.kamera),
+    ),
+  );
+  const totalCamerasOnline = buildings?.data?.records?.gedung.flatMap(
+    (gedung: any) =>
+      gedung.lantai.flatMap((lantai: any) =>
         lantai.ruangan
-          .filter((ruangan) => ruangan.ruangan_otmil_id === selectedRoom)
-          .flatMap((ruangan) => ruangan.kamera),
+          .flatMap((ruangan: any) => ruangan.kamera)
+          .filter((kamera) => kamera.status_kamera === 'online'),
       ),
+  );
+  if (!totalCameras || !totalCamerasOnline) {
+    return null;
+  }
+  const currentCameras = totalCameras.slice(
+    indexOfFirstCamera,
+    indexOfLastCamera,
+  );
+  const currentCamerasOnline = totalCamerasOnline.slice(
+    indexOfFirstCameraOnline,
+    indexOfLastCameraOnline,
+  );
+  console.log('online', currentCamerasOnline);
+  const totalPages = Math.ceil(totalCameras.length / camerasPerPage);
+  const totalPagesCameraOnline = Math.ceil(
+    totalCamerasOnline.length / camerasPerPage,
+  );
+
+  const renderPagination = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      // pageNumbers.push(i);
+      console.log('push', pageNumbers.push(i));
+    }
+    return pageNumbers;
+  };
+  const renderPaginationCameraOnline = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPagesCameraOnline; i++) {
+      // pageNumbers.push(i);
+      console.log('push', pageNumbers.push(i));
+    }
+    return pageNumbers;
+  };
+  const handlePageClick = (pageNumber: any) => {
+    if (selectedRoom) {
+      setCurrentPage(pageNumber);
+    } else {
+      setCurrentPageCamOnline(pageNumber);
+    }
+  };
+  const handleNextPage = () => {
+    if (selectedRoom) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    } else {
+      setCurrentPageCamOnline((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (selectedRoom) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    } else {
+      setCurrentPageCamOnline((prevPage) => prevPage - 1);
+    }
+  };
+  const getPageNumbers = () => {
+    const maxPageNumbersToShow = 5;
+    let startPage = Math.max(
+      1,
+      currentPage - Math.floor(maxPageNumbersToShow / 2),
+    );
+    let endPage = startPage + maxPageNumbersToShow - 1;
+    if (selectedRoom) {
+      if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = Math.max(1, endPage - maxPageNumbersToShow + 1);
+      }
+    } else {
+      if (endPage > totalPagesCameraOnline) {
+        endPage = totalPagesCameraOnline;
+        startPage = Math.max(1, endPage - maxPageNumbersToShow + 1);
+      }
+    }
+
+    return { startPage, endPage };
+  };
+  console.log('cccrrr', currentCamerasOnline);
+  const { startPage, endPage } = getPageNumbers();
+  const renderThumb = (cam) => {
+    var urlStream =
+      'http://192.168.1.111:5000/stream/' + cam.ip_address + '_.m3u8';
+    console.log('stream', urlStream);
+    return (
+      <ReactPlayer
+        url={urlStream}
+        playing={true}
+        height="100%"
+        width="100%"
+        muted
+      />
+    );
+  };
+  console.log(currentCamerasOnline, 'current page');
+  const renderCameraList = () => {
+    const selectedRoomData = buildings?.data?.records?.gedung.flatMap(
+      (gedung) =>
+        gedung.lantai.flatMap((lantai) =>
+          lantai.ruangan
+            .filter((ruangan) => ruangan.ruangan_otmil_id === selectedRoom)
+            .flatMap((ruangan) => ruangan.kamera),
+        ),
     );
 
     if (!selectedRoomData || selectedRoomData.length === 0) {
@@ -497,90 +318,246 @@ const CameraList = () => {
     }
 
     return (
-      <div className=" h-full bg-graydark">
-        <div className="flex flex-wrap gap-4 p-5">
-          {/* {selectedRoomData.slice(0, columns * rows).map((kamera) => (
-            <div
-              key={kamera.kamera_id}
-              className="w-52 rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm"
-            >
-              <Link
-                to={kamera.kamera_id}
-                style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
-              >
-                <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-                  <CiCamera className="w-3/5 h-3/5" />
-                </div>
-                <div className="mt-4 flex items-end justify-between">
-                  <div className="w-full">
-                    <h4 className="text-title-md text-center font-bold text-white">
-                      {kamera.nama_kamera}
-                    </h4>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          ))} */}
+      <div
+        style={{
+          backgroundColor: '#333a48',
+          height: '90%',
+          maxHeight: '90vh',
+          overflowY: 'scroll',
+        }}
+      >
+        <div className="flex flex-col justify-between p-5">
           {selectedRoom && (
-            <div className="flex flex-wrap gap-3">
+            <div
+              className={`grid ${
+                columns === 1 && rows === 1
+                  ? 'grid-cols-1 grid-rows-1'
+                  : columns === 2 && rows === 2
+                    ? 'grid-cols-2 grid-rows-2'
+                    : columns === 2 && rows === 3
+                      ? 'grid-cols-3 grid-rows-2'
+                      : columns === 2 && rows === 4
+                        ? 'grid-cols-4 grid-rows-2'
+                        : 'grid-cols-1 grid-rows-1'
+              } gap-4 justify-center w-full`}
+            >
               {currentCameras.map((camera) => (
                 <div
                   key={camera.kamera_id}
-                  className={`${rows && columns === 3 ? 'w-[17rem]' : 'w-52'} rounded-sm border bg-meta-4-dark py-6 px-7.5 shadow-default backdrop-blur-sm`}
+                  className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
                 >
                   <Link
-                    to="0fbd7311-a953-4c76-a6d2-e7e3f1b05d43"
-                    style={{ backgroundColor: 'rgba(32,33,35, 0.7)' }}
+                    to={camera.kamera_id}
+                    className="block w-full h-full rounded-lg overflow-hidden relative"
                   >
-                    <div className="flex h-32 w-full items-center justify-center rounded-lg bg-meta-4 text-white">
-                      <CiCamera className="w-3/5 h-3/5" />
+                    {/* header */}
+                    <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
+                      {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )}
                     </div>
-                    <div className="mt-4 flex items-end justify-between">
-                      <div className="w-full">
-                        <h4 className="text-title-md text-center font-bold text-white">
-                          {camera.nama_kamera}
-                        </h4>
-                      </div>
+                    {/* footer kamera */}
+
+                    <div className="absolute top-1 right-2 flex items-center">
+                      {camera.status_kamera === 'online' ? (
+                        <>
+                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
+                          <h5 className="text-green-500 text-center mt-1">
+                            Online
+                          </h5>
+                        </>
+                      ) : (
+                        <>
+                          <h5 className="text-red-500 text-center mt-1">
+                            Offline
+                          </h5>
+                        </>
+                      )}
+                    </div>
+                    <div className="absolute bottom-2 left-2 text-white">
+                      <h4
+                        className={`${(rows === 3 && 'text-xs') || (rows === 4 && 'text-xs')} text-center font-bold text-red-50`}
+                      >
+                        {camera.nama_kamera} (
+                        {getRoomLocationCamOnline(camera.ruangan_otmil_id)})
+                      </h4>
                     </div>
                   </Link>
                 </div>
               ))}
             </div>
           )}
-          {totalPages > 1 && (
-            <div
-              className={`mt-6 w-full flex justify-end ${columns && rows === 3 ? 'mr-14' : 'mr-5'}`}
-            >
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    className={`px-3 py-1 mx-1 border rounded ${
-                      currentPage === page
-                        ? 'bg-gray-500 text-white'
-                        : 'bg-gray-200 text-gray-800'
-                    }`}
-                    onClick={() => paginate(page)}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-            </div>
-          )}
+          <div className="mt-4 flex justify-end">
+            {currentPage > 1 && (
+              <button
+                onClick={handlePrevPage}
+                className="mx-1 px-3 py-1 rounded bg-blue-500 text-white"
+              >
+                Previous
+              </button>
+            )}
+            {renderPagination()
+              .filter((page) => page >= startPage && page <= endPage)
+              .map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageClick(page)}
+                  className={`mx-1 px-3 py-1 rounded ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                >
+                  {page}
+                </button>
+              ))}
+            {currentPage < totalPages && (
+              <button
+                onClick={handleNextPage}
+                className="mx-1 px-3 py-1 rounded bg-blue-500 text-white"
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
   };
 
-  const getRoomLocation = () => {
-    if (!selectedRoom) return null;
+  const renderCameraOnlineList = () => {
+    const onlineCamera = buildings?.data?.records?.gedung.flatMap((gedung) =>
+      gedung.lantai.flatMap((lantai) =>
+        lantai.ruangan
+          .flatMap((ruangan) => ruangan.kamera)
+          .filter((kamera) => kamera.kamera_id),
+      ),
+    );
 
+    if (onlineCamera.length === 0) {
+      return (
+        <div className="flex justify-center items-center bg-graydark w-11/12 h-5/6">
+          <h1 className="font-semibold text-lg">Tidak ada kamera yang aktif</h1>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        style={{
+          backgroundColor: '#333a48',
+          height: '90%',
+          maxHeight: '90vh',
+          overflowY: 'scroll',
+        }}
+      >
+        <div className="flex flex-col justify-between p-5">
+          {onlineCamera && (
+            <div
+              className={`grid ${
+                columns === 1 && rows === 1
+                  ? 'grid-cols-1 grid-rows-1'
+                  : columns === 2 && rows === 2
+                    ? 'grid-cols-2 grid-rows-2'
+                    : columns === 2 && rows === 3
+                      ? 'grid-cols-3 grid-rows-2'
+                      : columns === 2 && rows === 4
+                        ? 'grid-cols-4 grid-rows-2'
+                        : 'grid-cols-1 grid-rows-1'
+              } gap-4 justify-center w-full`}
+            >
+              {currentCamerasOnline.map((camera: any) => (
+                <div
+                  key={camera.kamera_id}
+                  className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
+                >
+                  <Link
+                    to={camera.kamera_id}
+                    className="block w-full h-full rounded-lg overflow-hidden relative"
+                  >
+                    {/* header */}
+                    <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
+                      {/* <CiCamera className={`w-3/5 h-3/5 text-white`} /> */}
+                      {renderThumb(camera)}
+                    </div>
+                    {/* footer kamera */}
+
+                    <div className="absolute top-1 right-2 flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
+                      <h5 className="text-green-500 text-center mt-1">
+                        Online
+                      </h5>
+                    </div>
+                    <div className="absolute bottom-2 left-2 text-white">
+                      <h4
+                        className={`${(rows === 3 && 'text-xs') || (rows === 4 && 'text-xs')} text-center font-bold text-red-50`}
+                      >
+                        {camera.nama_kamera} (
+                        {getRoomLocationCamOnline(camera.ruangan_otmil_id)})
+                      </h4>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-4 flex justify-end">
+            {currentPageCamOnline > 1 && (
+              <button
+                onClick={handlePrevPage}
+                className="mx-1 px-3 py-1 rounded bg-blue-500 text-white"
+              >
+                Previous
+              </button>
+            )}
+            {renderPaginationCameraOnline()
+              .filter((page) => page >= startPage && page <= endPage)
+              .map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageClick(page)}
+                  className={`mx-1 px-3 py-1 rounded ${currentPageCamOnline === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                >
+                  {page}
+                </button>
+              ))}
+            {currentPageCamOnline < totalPagesCameraOnline && (
+              <button
+                onClick={handleNextPage}
+                className="mx-1 px-3 py-1 rounded bg-blue-500 text-white"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // const getRoomLocation = () => {
+  //   if (!selectedRoom) return null;
+
+  //   let location = '';
+  //   buildings?.data?.records?.gedung.forEach((gedung) => {
+  //     gedung.lantai.forEach((lantai) => {
+  //       const foundRoom = lantai.ruangan.find(
+  //         (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
+  //       );
+  //       if (foundRoom) {
+  //         location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
+  //       }
+  //     });
+  //   });
+
+  //   return location;
+  // };
+  const getRoomLocationCamOnline = (id: any) => {
     let location = '';
-    building?.data?.records?.gedung.forEach((gedung) => {
+    buildings?.data?.records?.gedung.forEach((gedung) => {
       gedung.lantai.forEach((lantai) => {
         const foundRoom = lantai.ruangan.find(
-          (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
+          (ruangan) => ruangan.ruangan_otmil_id === id,
         );
         if (foundRoom) {
           location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
@@ -593,139 +570,107 @@ const CameraList = () => {
 
   return (
     <>
-      <div className="max-w-screen-xl mx-auto px-5 min-h-sceen flex gap-4">
-        <div className="w-4/5">
-          <div className="py-4 pl-6 w-[95%] flex justify-between items-center">
-            <Breadcrumbs url={window.location.href} />
-            {selectedRoom && (
-              <>
-                <div className="flex gap-2">
-                  <p>{getRoomLocation()}</p>
-                </div>
-                <select
-                  id="layoutSelect"
-                  className="p-2 border rounded w-20 bg-meta-4 font-semibold"
-                  value={`${columns}x${rows}`}
-                  onChange={(e) => {
-                    const [cols, rows] = e.target.value.split('x').map(Number);
-                    handleLayoutChange(cols, rows);
-                  }}
-                >
-                  <option value="3x3">3x3</option>
-                  <option value="4x4">4x4</option>
-                </select>
-              </>
-            )}
-          </div>
+      <div className="w-full ml-1 flex gap-5  px-7 mt-4 items-center justify-between">
+        <div className="flex items-center justify-between w-1/2">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 border border-white rounded-md px-4 py-2 text-white hover:bg-meta-4 hover:text-white transition duration-300 ease-in-out"
+          >
+            <IoMdArrowRoundBack /> Kembali
+          </button>
+        </div>
+        <div className="flex gap-2">
           <>
-            {selectedRoom ? (
-              renderCameraList()
-            ) : (
-              <div className="flex justify-center items-center  bg-graydark w-11/12 h-5/6">
-                <h1 className="font-semibold text-lg">
-                  Silahkan pilih gedung, lantai dan ruangan
-                </h1>
-              </div>
-            )}
-
-            {/* Add this part if you want to display "Silahkan pilih gedung" initially */}
-            {/* {!selectedRoom && (
-        <div className="flex justify-center items-center bg-gray-400 w-11/12 h-5/6">
-          <h1 className="font-semibold text-lg">Silahkan pilih gedung</h1>
-        </div>
-      )} */}
+            <select
+              id="layoutSelect"
+              className="p-2  border rounded w-22  bg-meta-4 font-semibold"
+              value={`${columns}x${rows}`}
+              onChange={(e) => {
+                const [cols, rows] = e.target.value.split('x').map(Number);
+                handleLayoutChange(cols, rows);
+              }}
+            >
+              <option value="1x1">1x1</option>
+              <option value="2x2">2x2</option>
+              <option value="2x3">2x3</option>
+              <option value="2x4">2x4</option>
+            </select>
           </>
-        </div>
-        <div className="w-1/4 border border-gray-2 p-4 mt-14">
-          <div className="w-full flex justify-center pt-2">
-            <h2 className="font-bold text-xl tracking-tight mr-3">
-              Daftar Gedung
-            </h2>
-            <button>
-              <HiQuestionMarkCircle
-                values={filter}
-                aria-placeholder="Show tutorial"
-                // onChange={}
-                onClick={handleClickTutorial}
-              />
-            </button>
-          </div>
-          {building?.data?.records?.gedung.map((gedung, i) => {
-            return (
-              <>
-                <div className="grid divide-y divide-neutral-200 max-w-xl border-b mx-auto">
-                  <div className="py-5" id="s-lemas">
-                    <details className="group">
-                      <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
-                        <span key={i}>{gedung.nama_gedung_otmil}</span>
-                        <span className="transition-transform group-open:rotate-180">
-                          <svg
-                            fill="none"
-                            height="24"
-                            shapeRendering="geometricPrecision"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                            viewBox="0 0 24 24"
-                            width="24"
-                          >
-                            <path d="M6 9l6 6 6-6"></path>
-                          </svg>
-                        </span>
-                      </summary>
+          <select
+            value={selectedBuilding}
+            onChange={handleSelectBuilding}
+            className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+          >
+            <option disabled value="">
+              Pilih Gedung
+            </option>
+            {buildings?.data?.records?.gedung?.map((building) => (
+              <option
+                key={building.gedung_otmil_id}
+                value={building.gedung_otmil_id}
+              >
+                {building.nama_gedung_otmil}
+              </option>
+            ))}
+          </select>
 
-                      <div className="pt-2 ml-[20px]">
-                        {gedung?.lantai.map((a) => {
-                          return (
-                            <>
-                              <details className="groupChild">
-                                <summary className="flex justify-between items-center font-medium cursor-pointer list-none">
-                                  <span>
-                                    {a?.nama_lantai
-                                      ? a?.nama_lantai
-                                      : 'Undifined'}
-                                  </span>
-                                  <span className="transition-transform groupChild-open:rotate-180">
-                                    <svg
-                                      fill="none"
-                                      height="24"
-                                      shapeRendering="geometricPrecision"
-                                      stroke="currentColor"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="1.5"
-                                      viewBox="0 0 24 24"
-                                      width="24"
-                                    >
-                                      <path d="M6 9l6 6 6-6"></path>
-                                    </svg>
-                                  </span>
-                                </summary>
-                                <div className="mb-2 ml-[20px] cursor-pointer">
-                                  {a?.ruangan.map((r) => {
-                                    return (
-                                      <p
-                                        onClick={() =>
-                                          handleClickRoom(r.ruangan_otmil_id)
-                                        }
-                                      >
-                                        {r.nama_ruangan_otmil}
-                                      </p>
-                                    );
-                                  })}
-                                </div>
-                              </details>
-                            </>
-                          );
-                        })}
-                      </div>
-                    </details>
-                  </div>
-                </div>
-              </>
-            );
-          })}
+          {selectedBuilding && (
+            <select
+              value={selectedFloor}
+              onChange={handleSelectFloor}
+              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+            >
+              <option disabled value="">
+                Pilih Lantai
+              </option>
+              {buildings?.data?.records?.gedung
+                ?.find(
+                  (building) => building.gedung_otmil_id === selectedBuilding,
+                )
+                ?.lantai.map((floor) => (
+                  <option
+                    key={floor.lantai_otmil_id}
+                    value={floor.lantai_otmil_id}
+                  >
+                    {floor.nama_lantai}
+                  </option>
+                ))}
+            </select>
+          )}
+
+          {selectedFloor && (
+            <select
+              value={selectedRoom}
+              onChange={(e) => setSelectedRoom(e.target.value)}
+              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+            >
+              <option disabled value="">
+                Pilih Ruangan
+              </option>
+              {buildings?.data?.records?.gedung
+                ?.find(
+                  (building) => building.gedung_otmil_id === selectedBuilding,
+                )
+                ?.lantai.find(
+                  (floor) => floor.lantai_otmil_id === selectedFloor,
+                )
+                ?.ruangan.map((room) => (
+                  <option
+                    key={room.ruangan_otmil_id}
+                    value={room.ruangan_otmil_id}
+                    onClick={() => handleClickRoom(room.ruangan_otmil_id)}
+                  >
+                    {room.nama_ruangan_otmil}
+                  </option>
+                ))}
+            </select>
+          )}
+        </div>
+      </div>
+      <div className="max-w-screen-xl mx-auto px-5 min-h-sceen flex gap-4">
+        <div className="w-full h-screen">
+          <div className="py-4 pl-6 w-[95%] flex justify-between items-center"></div>
+          <>{selectedRoom ? renderCameraList() : renderCameraOnlineList()}</>
         </div>
       </div>
     </>

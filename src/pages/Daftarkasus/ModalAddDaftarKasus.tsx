@@ -84,11 +84,17 @@ export const AddDaftarKasusModal = ({
 
   const validateForm = () => {
     let errorFields = [];
-
+  
     for (const [key, value] of Object.entries(formState)) {
-      if (!value) {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
         errorFields.push(key);
       }
+  
+      // Tambahkan validasi khusus untuk oditur_penyidik_id
+      if (key === 'oditur_penyidik_id' && Array.isArray(value) && value.length === 0) {
+        errorFields.push(key);
+      }
+  
       if (
         key === 'wbp_profile_ids' &&
         Array.isArray(value) &&
@@ -96,14 +102,14 @@ export const AddDaftarKasusModal = ({
       ) {
         errorFields.push(key);
       }
-
+  
       if (key === 'keterangans' && Array.isArray(value) && value.length === 0) {
         errorFields.push(key);
       }
       if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
         errorFields.push(key);
       }
-
+  
       if (
         key === 'keteranganSaksis' &&
         Array.isArray(value) &&
@@ -112,16 +118,17 @@ export const AddDaftarKasusModal = ({
         errorFields.push(key);
       }
     }
-
+  
     if (errorFields.length > 0) {
       setErrors(errorFields);
       return false;
     }
-
+  
     setErrors([]);
     return true;
   };
-
+  
+  
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -221,15 +228,16 @@ export const AddDaftarKasusModal = ({
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
 
     if (!validateForm()) return;
     setButtonLoad(true);
 
-    onSubmit(formState).then(() => 
-      setFormSubmitted(true),
-      setButtonLoad(false));
+    onSubmit(formState).then(
+      () => setFormSubmitted(true),
+      setButtonLoad(false),
+    );
   };
 
   const jenisPerkara = async () => {
@@ -966,11 +974,11 @@ export const AddDaftarKasusModal = ({
                       />
                     </div>
                     <div className="h-2">
-                    <p className="error-text">
-                      {formSubmitted &&
-                        errors.includes('waktu_kejadian') &&
-                        'Masukan Tanggal Kejadian Kasus'}
-                    </p>
+                      <p className="error-text">
+                        {formSubmitted &&
+                          errors.includes('waktu_kejadian') &&
+                          'Masukan Tanggal Kejadian Kasus'}
+                      </p>
                     </div>
                   </div>
                   {/* tanggal pelaporan */}
@@ -983,11 +991,11 @@ export const AddDaftarKasusModal = ({
                     </label>
                     <div className="flex flex-row">
                       <DatePicker
-                       selected={
-                        dateEdited && formState.waktu_pelaporan_kasus
-                          ? dayjs(formState.waktu_pelaporan_kasus).toDate()
-                          : dayjs().toDate()
-                      }
+                        selected={
+                          dateEdited && formState.waktu_pelaporan_kasus
+                            ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                            : dayjs().toDate()
+                        }
                         showTimeInput
                         timeFormat="HH:mm"
                         // timeIntervals={15}
@@ -1105,15 +1113,18 @@ export const AddDaftarKasusModal = ({
                     isMulti
                     options={OditurPenyidikOpstions}
                     isDisabled={isDetail}
+                    isClearable={true}
+                    isSearchable={true}
                     onChange={handleSelectOditurPenyidik}
                     placeholder="Pilih Oditur Penyidik"
                     styles={customStyles}
                   />
                   <div className="h-2">
                     <p className="error-text">
-                      {errors.map((item) =>
-                        item === 'nama' ? 'Masukan Tersangka' : '',
-                      )}
+                      {/* {errors.map((item) =>
+                        item === 'oditur_penyidik_id' ? 'Masukan Tersangka' : '',
+                      )} */}
+                      {errors.includes('oditur_penyidik_id') ? 'Masukan oditur' : ''}
                     </p>
                   </div>
                 </div>
