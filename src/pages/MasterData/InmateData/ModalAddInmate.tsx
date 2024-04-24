@@ -174,8 +174,9 @@ export const AddInmateModal = ({
       jenis_olahraga: '',
 
       // Form State Kasus
+      kasus_id : '',
       is_new_kasus: '',
-      wbp_existing_id: '',
+      // wbp_existing_id: '',
       nama_kasus: '',
       nomor_kasus: '',
       lokasi_kasus: '',
@@ -248,8 +249,6 @@ export const AddInmateModal = ({
   );
 
   const handleWaktuKejadian = (e: any) => {
-    console.log('1213', e);
-
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
     switch (timeZone) {
@@ -265,7 +264,6 @@ export const AddInmateModal = ({
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
-
     setFormState({
       ...formState,
       waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
@@ -274,8 +272,6 @@ export const AddInmateModal = ({
   };
 
   const handleWaktuPelaporan = (e: any) => {
-    console.log('1213', e);
-
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
     switch (timeZone) {
@@ -297,6 +293,29 @@ export const AddInmateModal = ({
       zona_waktu: zonaWaktu,
     });
   };
+
+  //Set Waktu Kejadian dan Waktu Pelaporan Kasus
+  // useEffect(() => {
+  //   const formattedDate = dayjs().format('YYYY-MM-DDTHH:mm');
+  //   console.log("formattedDate:", formattedDate);
+  //   const dateObject = dayjs(formattedDate).toDate();
+  //   console.log("dateObject:", dateObject);
+  //   if(buatKasusBaru === 'true'){
+  //     setFormState({
+  //       ...formState,
+  //       waktu_pelaporan_kasus: 'kontol',
+  //       waktu_kejadian: 'kontol'
+  //     });
+  //     console.log('formattedTest1')
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       waktu_pelaporan_kasus: '',
+  //       waktu_kejadian: ''
+  //     });
+  //     console.log('formattedTest2')
+  //   }
+  // }, [buatKasusBaru]);
 
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
@@ -633,133 +652,48 @@ export const AddInmateModal = ({
   };
   // End Handle Kasus
 
-  const validateForm = () => {
-    let errorFields: any[] = [];
-
-    for (const [key, value] of Object.entries(formState)) {
-      if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
-        console.log('here!', key)
-        if (!value) {
-          errorFields.push(key);
-        }
-      }
-
-      // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
-      //   if (!value) {
-      //     errorFields.push(key);
-      //   }
-      // }
-      // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
-
-      if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
-        if (
-          formState.is_new_kasus == 'false' &&
-          key != 'nama_kasus' &&
-          key != 'jenis_perkara_id' &&
-          key != 'vonis_tahun_perkara' &&
-          key != 'vonis_bulan_perkara' &&
-          key != 'vonis_hari_perkara' &&
-          key != 'nama_jenis_pidana' &&
-          key != 'lokasi_kasus' &&
-          key != 'oditur_penyidik_id' &&
-          key != 'role_ketua_oditur_ids' &&
-          key != 'saksi_id'
-        ) {
-          if (!value) {
-            errorFields.push(key);
-          }
-        }
-      }
-    }
-
-    if (errorFields.length > 0) {
-      console.log(errorFields, 'errorfields detected');
-      setErrors(errorFields);
-      return false;
-    }
-
-    setErrors([]);
-    return true;
-  };
-
+  console.log(errors, 'ini error')
   // const validateForm = () => {
-  //   let errorFields: any = [];
+  //   let errorFields: any[] = [];
 
   //   for (const [key, value] of Object.entries(formState)) {
-  //     if (key !== 'lokasi_otmil_id')
-  //       if (formState.is_sick === '0') {
-  //         if (key === 'wbp_sickness') {
-  //           if (!value) {
-  //             continue;
-  //           }
+  //     if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
+  //       console.log('here!', key)
+  //       if (!value) {
+  //         errorFields.push(key);
+  //       }
+  //     }
+
+  //     // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
+  //     //   if (!value) {
+  //     //     errorFields.push(key);
+  //     //   }
+  //     // }
+  //     // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
+
+  //     if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+  //       if (
+  //         formState.is_new_kasus == 'false' &&
+  //         key != 'nama_kasus' &&
+  //         key != 'jenis_perkara_id' &&
+  //         key != 'vonis_tahun_perkara' &&
+  //         key != 'vonis_bulan_perkara' &&
+  //         key != 'vonis_hari_perkara' &&
+  //         key != 'nama_jenis_pidana' &&
+  //         key != 'lokasi_kasus' &&
+  //         key != 'oditur_penyidik_id' &&
+  //         key != 'role_ketua_oditur_ids' &&
+  //         key != 'saksi_id'
+  //       ) {
+  //         if (!value) {
+  //           errorFields.push(key);
   //         }
   //       }
-
-  //     // if (key === 'is_kasus_new' && value != 'pilih') {
-  //     //   continue;
-  //     // }
-
-  //     if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
-  //       console.log('STATUS ADA');
-  //       continue;
-  //     }
-
-  //     if (
-  //       formState.status_wbp_kasus_id === '' ||
-  //       formState.status_wbp_kasus_id === null
-  //     ) {
-  //       console.log('STATUS KOSONG');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terdakwa' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
-  //     ) {
-  //       //terpidana
-  //       console.log('STATUS terpidana');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terdakwa'
-  //       ) {
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
-  //     ) {
-  //       //terdakwa
-  //       console.log('STATUS terdakwa');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
-  //     ) {
-  //       //tersangka
-  //       console.log('STATUS tersangka');
-  //       if (
-  //         key === 'tanggal_penetapan_terdakwa' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         continue;
-  //       }
-  //     }
-
-  //     if (!value) {
-  //       errorFields.push(key);
   //     }
   //   }
+
   //   if (errorFields.length > 0) {
-  //     if (formState.is_new_kasus == '') {
-  //       errorFields.push('is_new_kasus');
-  //     }
-  //     console.log(errorFields);
+  //     console.log(errorFields, 'errorfields detected');
   //     setErrors(errorFields);
   //     return false;
   //   }
@@ -767,6 +701,119 @@ export const AddInmateModal = ({
   //   setErrors([]);
   //   return true;
   // };
+
+  const validateForm = () => {
+    let errorFields: any = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (key !== 'lokasi_otmil_id')
+        if (formState.is_sick === '0') {
+          if (key === 'wbp_sickness') {
+            if (!value) {
+              continue;
+            }
+          }
+        }
+
+        if(formState.is_new_kasus == 'true'){
+          const ignoredFields = [
+            "kasus_id",
+          ];
+          
+          if(ignoredFields.includes(key) && !value){
+            continue;
+          }
+        }
+
+        if (formState.is_new_kasus == 'false') {
+          // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
+          const ignoredFields = [
+            "vonis_tahun_perkara",
+            "vonis_bulan_perkara",
+            "vonis_hari_perkara",
+            "nama_kasus",
+            "nomor_kasus",
+            "lokasi_kasus",
+            "jenis_perkara_id",
+            "jenis_pidana_id",
+            "kategori_perkara_id",
+            "waktu_kejadian",
+            "waktu_pelaporan_kasus",
+            "role_ketua_oditur_ids",
+            "nama_jenis_perkara",
+            "nama_jenis_pidana"
+          ];
+        
+          // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
+          if (ignoredFields.includes(key) && !value) {
+            continue; // Melanjutkan iterasi ke field selanjutnya.
+          }
+        }
+
+      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
+        console.log('STATUS ADA');
+        continue;
+      }
+
+      if (
+        formState.status_wbp_kasus_id === '' ||
+        formState.status_wbp_kasus_id === null
+      ) {
+        console.log('STATUS KOSONG');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+      ) {
+        //terpidana
+        console.log('STATUS terpidana');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+      ) {
+        //terdakwa
+        console.log('STATUS terdakwa');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
+      ) {
+        //tersangka
+        console.log('STATUS tersangka');
+        if (
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      }
+
+      if (!value) {
+        errorFields.push(key);
+      }
+    }
+    if (errorFields.length > 0) {
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
 
   const handleChange = (e: any) => {
     if (e.target.name === 'gelang_id') {
@@ -886,7 +933,7 @@ export const AddInmateModal = ({
     onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
-    // closeModal();
+    closeModal();
   };
 
   // Function to handle adding a "zona" to a specific input
@@ -2986,7 +3033,7 @@ export const AddInmateModal = ({
                           </div>
 
                           <div className="grid grid-cols-2">
-                            <div className="form-group w-full">
+                            {/* <div className="form-group w-full">
                               <label
                                 className="block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -3010,6 +3057,7 @@ export const AddInmateModal = ({
                                   name="waktu_kejadian"
                                   disabled={false}
                                   locale="id"
+                                  placeholderText='Masukkan Tanggal'
                                 />
                                 <input
                                   type="text"
@@ -3019,6 +3067,7 @@ export const AddInmateModal = ({
                                   disabled
                                 />
                               </div>
+                              
                               <div className="">
                                 <p className="error-text">
                                   {errors.map((item) =>
@@ -3028,9 +3077,9 @@ export const AddInmateModal = ({
                                   )}
                                 </p>
                               </div>
-                            </div>
+                            </div> */}
 
-                            <div className="form-group w-full">
+                            {/* <div className="form-group w-full">
                               <label
                                 className="block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -3039,13 +3088,11 @@ export const AddInmateModal = ({
                               </label>
                               <div className="flex flex-row">
                                 <DatePicker
-                                  selected={
-                                    formState.waktu_pelaporan_kasus
-                                      ? dayjs(
-                                          formState.waktu_pelaporan_kasus,
-                                        ).toDate()
-                                      : dayjs().toDate()
-                                  }
+                                  // selected={
+                                  //   formState.waktu_pelaporan_kasus
+                                  //     ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                                  //     : dayjs().toDate()
+                                  // }
                                   showTimeInput
                                   timeFormat="HH:mm"
                                   onChange={handleWaktuPelaporan}
@@ -3055,6 +3102,7 @@ export const AddInmateModal = ({
                                   className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                                   name="waktu_kejadian"
                                   disabled={false}
+                                  placeholderText='Masukkan Tanggal'
                                   locale="id"
                                 />
                                 <input
@@ -3074,7 +3122,75 @@ export const AddInmateModal = ({
                                   )}
                                 </p>
                               </div>
+                            </div> */}
+
+                            <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Kejadian Kasus
+                              </label>
+                              <div className='flex'>
+                              <input
+                                type="datetime-local"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="waktu_kejadian"
+                                onChange={handleChange}
+                                value={formState.waktu_kejadian}
+                                disabled={isDetail}
+                              />
+                              <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                              />
+                              </div>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_kejadian'
+                                    ? 'Masukan waktu kejadian'
+                                    : '',
+                                )}
+                              </p>
                             </div>
+                            
+                            <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Pelaporan Kasus
+                              </label>
+                              <div className='flex'>
+                              <input
+                                type="datetime-local"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="waktu_pelaporan_kasus"
+                                onChange={handleChange}
+                                value={formState.waktu_pelaporan_kasus}
+                                disabled={isDetail}
+                              />
+                              <input
+                                type="text"
+                                className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                name="zona_waktu"
+                                value={formState.zona_waktu}
+                                disabled
+                              />
+                              </div>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_pelaporan_kasus'
+                                    ? 'Masukan waktu pelaporan kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            
                           </div>
 
                           <div
