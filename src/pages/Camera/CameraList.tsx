@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { apiBuilding } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -35,6 +36,7 @@ const CameraList = () => {
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
+  const [liveViewCalled, setLiveViewCalled] = useState({});
   const camerasPerPage = columns * rows;
   // useEffect(() => {
   //   apiLocationOnlineDeviceList()
@@ -131,6 +133,10 @@ const CameraList = () => {
     // setIsLoading(false);
   };
 
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+  const sendRequest = (method, params) => {
+    client.current.send(JSON.stringify({ method: method, params: params }));
+  };
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -284,7 +290,9 @@ const CameraList = () => {
   };
   console.log('cccrrr', currentCamerasOnline);
   const { startPage, endPage } = getPageNumbers();
+
   const renderThumb = (cam) => {
+    console.log('camren', cam);
     var urlStream =
       'http://192.168.1.111:5000/stream/' + cam.ip_address + '_.m3u8';
     console.log('stream', urlStream);
@@ -298,6 +306,68 @@ const CameraList = () => {
       />
     );
   };
+
+  // const renderThumb = (cam) => {
+  //   const urlStream = `http://192.168.1.111:5000/stream/${cam.ip_address}_.m3u8`;
+
+  //   // Send startLiveView request here
+  //   sendRequest('startLiveView', {
+  //     listViewCameraData: [
+  //       {
+  //         IpAddress: cam.ip_address,
+  //         urlRTSP: cam.url_rtsp,
+  //         deviceName: cam.nama_kamera,
+  //         deviceId: cam.kamera_id,
+  //       },
+  //     ],
+  //   });
+
+  //   return (
+  //     <ReactPlayer
+  //       url={urlStream}
+  //       playing={true}
+  //       height="100%"
+  //       width="100%"
+  //       muted
+  //     />
+  //   );
+  // };
+
+  // const renderThumb = (cam) => {
+  //   const urlStream = `http://192.168.1.111:5000/stream/${cam.ip_address}_.m3u8`;
+
+  //   // Check if startLiveView has already been called for this camera
+  //   if (!liveViewCalled[cam.kamera_id]) {
+  //     // Call startLiveView
+  //     sendRequest('startLiveView', {
+  //       listViewCameraData: [
+  //         {
+  //           IpAddress: cam.ip_address,
+  //           urlRTSP: cam.url_rtsp,
+  //           deviceName: cam.nama_kamera,
+  //           deviceId: cam.kamera_id,
+  //         },
+  //       ],
+  //     });
+
+  //     // Mark this camera as having startLiveView called
+  //     setLiveViewCalled((prev) => ({
+  //       ...prev,
+  //       [cam.kamera_id]: true,
+  //     }));
+  //   }
+
+  //   return (
+  //     <ReactPlayer
+  //       url={urlStream}
+  //       playing={true}
+  //       height="100%"
+  //       width="100%"
+  //       muted
+  //     />
+  //   );
+  // };
+
   console.log(currentCamerasOnline, 'current page');
   const renderCameraList = () => {
     const selectedRoomData = buildings?.data?.records?.gedung.flatMap(
@@ -534,24 +604,6 @@ const CameraList = () => {
       </div>
     );
   };
-
-  // const getRoomLocation = () => {
-  //   if (!selectedRoom) return null;
-
-  //   let location = '';
-  //   buildings?.data?.records?.gedung.forEach((gedung) => {
-  //     gedung.lantai.forEach((lantai) => {
-  //       const foundRoom = lantai.ruangan.find(
-  //         (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
-  //       );
-  //       if (foundRoom) {
-  //         location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
-  //       }
-  //     });
-  //   });
-
-  //   return location;
-  // };
   const getRoomLocationCamOnline = (id: any) => {
     let location = '';
     buildings?.data?.records?.gedung.forEach((gedung) => {

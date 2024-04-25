@@ -12,10 +12,7 @@ import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { CiCamera } from 'react-icons/ci';
-import { IoMdDownload } from 'react-icons/io';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { Toast } from 'react-toastify/dist/components';
-import Swal from 'sweetalert2';
 
 const CameraPlayback = () => {
   const navigate = useNavigate();
@@ -24,13 +21,9 @@ const CameraPlayback = () => {
   const [startDate, setStartDate] = useState(currentDate);
   const [endDate, setEndDate] = useState(currentDate);
   const [mulaiDate, setMulaiDate] = useState(new Date());
-  const [pilihKamera, setPilihKamera] = useState('');
   const [selesaiDate, setSelesaiDate] = useState(new Date());
   const [playlistPlayback, setPlaylistPlayback] = useState([]);
   const [date, setDate] = useState(getCurrentDate());
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [currentRecordingIndex, setCurrentRecordingIndex] = useState(-1);
-  const [forUrl, setForurl] = useState('');
   const [baseUrl] = useState('http://100.81.142.71:4007/record/');
   const [filter, setFilter] = useState('');
   const [dense, setDense] = React.useState(false);
@@ -49,7 +42,7 @@ const CameraPlayback = () => {
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
   const [selectedCamera, setSelectedCamera] = useState('');
-  const [selectedData, setSelectedData] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
   const [selectedTrue, setSelectedTrue] = useState(false);
   const [columns, setColumns] = useState(2);
   const [rows, setRows] = useState(3);
@@ -57,18 +50,6 @@ const CameraPlayback = () => {
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
   const camerasPerPage = columns * rows;
-  function extractTimeFromURL(url) {
-    const regex = /\/(\d{2})(\d{2})(\d{2})\.mp4$/;
-    const match = url.match(regex);
-    if (match) {
-      const hours = match[1];
-      const minutes = match[2];
-      const seconds = match[3];
-      return `${hours} : ${minutes} : ${seconds}`;
-    } else {
-      return null; // Return null if no match found
-    }
-  }
   useEffect(() => {
     fetchData();
   }, []);
@@ -81,35 +62,11 @@ const CameraPlayback = () => {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
-  let playerRef = useRef(null);
 
   useEffect(() => {
     setStartDate(formatDate(new Date()));
     setEndDate(formatDate(new Date()));
   }, []);
-
-  useEffect(() => {
-    if (playlistPlayback[currentVideoIndex]) {
-      playerRef = playlistPlayback[currentVideoIndex];
-    }
-  }, [currentVideoIndex]);
-
-  useEffect(() => {
-    if (forUrl) {
-      // Set the video URL when `forUrl` changes
-      playerRef = forUrl;
-      console.log(playerRef, 'ini url');
-    }
-  }, [forUrl]);
-
-  const handleRecordingClick = (recording: any, index: any) => {
-    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
-    // console.log('Recording clicked:', newUrl);
-    console.log('clicked', recording);
-    setForurl(newUrl);
-    // setForurl(recording);
-    setCurrentRecordingIndex(index);
-  };
 
   useEffect(() => {
     client.current.onopen = () => {
@@ -147,13 +104,9 @@ const CameraPlayback = () => {
         });
         setPlaylistPlayback(playlist);
         console.log('ini_playback', playlist);
-        setSelectedData(false);
-        setCurrentRecordingIndex(0);
-        setForurl(playlist[0]);
       } else if (dataFromServer.message === 'FILE FROM DIRECTORY EMPTY') {
         console.log('Got reply from the server:', dataFromServer);
         setPlaylistPlayback([]);
-        setSelectedData(true);
       }
     };
 
@@ -196,22 +149,10 @@ const CameraPlayback = () => {
   };
 
   const handleSubmitCamera = async () => {
-    //cek dahulu apakah data kamera sudah dipilih atau belum
-
-    if (!selectedCamera) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Pilih Kamera Terlebih Dahulu!',
-      });
-      return;
-    }
-
-    setSelectedTrue(true);
     await sendRequest('getPlayback', {
       dataCamera: [
         {
-          deviceName: selectedCamera?.nama_kamera,
+          deviceName: 'Camera 1',
           // deviceName: selectedCamera?.nama_kamera,
           urlRTSP: selectedCamera?.url_rtsp,
           IpAddress: selectedCamera?.ip_address,
@@ -307,8 +248,6 @@ const CameraPlayback = () => {
     console.log('ini_camera', cam);
     let dataKamera = JSON.parse(cam);
     setSelectedCamera(dataKamera);
-    // setPilihKamera(dataKamera.kamera_id);
-    console.log('data_kamera1', pilihKamera);
     console.log('data_kamera', dataKamera);
     console.log('data_kamera2', dataKamera.nama_kamera);
   };
@@ -422,64 +361,8 @@ const CameraPlayback = () => {
           maxHeight: '90vh',
         }}
       >
-        <div className="flex flex-col justify-center p-5 w-3/4">
-          <div className="h-full bg-slate-600 flex justify-center items-center">
-            {selectedData ? (
-              <>
-                <h1 className="text-white text-2xl">
-                  Data Hasil Rekaman Tidak Ditemukan
-                </h1>
-              </>
-            ) : (
-              <>
-                <ReactPlayer
-                  className="react-player"
-                  url={forUrl}
-                  playing={true}
-                  controls={true}
-                  width="95%"
-                  height="95%"
-                  muted={true}
-                  ref={playerRef}
-                />
-              </>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col items-center p-5  w-1/4 ">
-          <div className="h-[100%] w-full bg-slate-600 items-center justify-center pt-8">
-            <p className="text-3xl text-white text-center h-[10%]">Playlist</p>
-            <div className=" h-[82%] overflow-y-scroll w-full mt-6 pl-6">
-              <ul className="flex flex-col overflow-auto h-96 divide-y divide-dashed divide-zinc-500">
-                {playlistPlayback.map((recording, index) => {
-                  const urlParts = recording.split('/');
-                  const fileName = urlParts[urlParts.length - 1];
-                  const isActive = index === currentRecordingIndex;
-                  console.log('recording', recording);
-
-                  let dataTanggal;
-                  dataTanggal = recording.split('/');
-                  dataTanggal = dataTanggal[dataTanggal.length - 3];
-
-                  return (
-                    <div className="flex items-center justify-center gap-8">
-                      <li
-                        className={`flex p-4 gap-3 items-center cursor-pointer text-white text-center ${isActive ? 'bg-green-700' : 'bg-transparent'} font-light tracking-widest py-2`}
-                        key={index}
-                        onClick={() => handleRecordingClick(recording, index)}
-                      >
-                        {extractTimeFromURL(recording)}
-                        <a href={forUrl}>
-                          <IoMdDownload className="hover:text-2xl hover:text-orange-200" />
-                        </a>
-                      </li>
-                    </div>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        </div>
+        <div className="flex flex-col justify-between p-5 bg-red-400 w-3/4"></div>
+        <div className="flex flex-col justify-between p-5 bg-blue-600 w-1/4"></div>
       </div>
     );
   };
@@ -653,12 +536,8 @@ const CameraPlayback = () => {
           )}
           {selectedRoom && (
             <select
-              value={pilihKamera}
-              onChange={(e) => {
-                handleClickKamera(e.target.value);
-                setPilihKamera(e.target.value);
-                // console.log('eTargetValue', e.target.value);
-              }}
+              value={selectedCamera}
+              onChange={(e) => handleClickKamera(e.target.value)}
               className="p-2 border rounded w-36 bg-meta-4 font-semibold"
             >
               <option disabled value="">
@@ -714,7 +593,7 @@ const CameraPlayback = () => {
           className="w-[100%] text-center text-slate-950"
         />
         <div
-          className="bg-green-400 py-2 px-5 text-white rounded-lg hover:cursor-pointer"
+          className="bg-green-400 py-2 px-5 text-white rounded-lg"
           onClick={handleSubmitCamera}
         >
           Submit
@@ -724,7 +603,7 @@ const CameraPlayback = () => {
       <div className="max-w-screen-xl mx-auto px-5 min-h-sceen flex gap-4">
         <div className="w-full h-screen">
           <div className="py-4 pl-6 w-[95%] flex justify-between items-center"></div>
-          <>{selectedTrue ? renderCameraList() : renderCameraOnlineList()}</>
+          <>{selectedCamera ? renderCameraList() : renderCameraList()}</>
         </div>
       </div>
     </>

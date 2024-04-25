@@ -577,7 +577,10 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black text-center dark:text-white">
-                          {item.waktu_mulai_kunjungan}
+                          {/* {item.waktu_mulai_kunjungan} */}
+                          {dayjs(item.waktu_mulai_kunjungan).format(
+                            'YYYY-MMM-DD HH:mm',
+                          )}
                         </p>
                       </div>
                       <div
@@ -585,7 +588,8 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black dark:text-white">
-                          {item.waktu_selesai_kunjungan}
+                          {/* {item.waktu_selesai_kunjungan} */}
+                          {dayjs(item.waktu_selesai_kunjungan).format('YYYY-MMM-DD HH:mm',)}
                         </p>
                       </div>
                       <div
