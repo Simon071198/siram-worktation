@@ -609,63 +609,6 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
 
-  // const handleSelectPihakTerlibat = (e: any) => {
-  //   let arrayTersangka: any = [];
-  //   let arraySaksi: any = [];
-  //   let arraySaksiOptions: any = [];
-  //   let arrayTersangkaOptions: any = [];
-  //   for (let i = 0; i < e?.length; i++) {
-  //     if (e[i].label.includes('(Tersangka)')) {
-  //       arrayTersangka.push(e[i].value);
-  //       arrayTersangkaOptions.push(e[i]);
-  //     } else if (e[i].label.includes('(Saksi)')) {
-  //       arraySaksi.push(e[i].value);
-  //       arraySaksiOptions.push(e[i]);
-  //     }
-  //   }
-  //   setFormState({
-  //     ...formState,
-  //     wbp_profile_ids: arrayTersangka,
-  //     saksi_id: arraySaksi,
-  //   });
-  //   setSelectSaksi(arraySaksiOptions);
-  //   setSelectTersangka(arrayTersangkaOptions);
-  // };
-
-  // const handleSelectPihakTerlibat = async (selectedOptions: any) => {
-  //   let arrayTersangka: any = [];
-  //   let arraySaksi: any = [];
-  //   let arraySaksiOptions: any = [];
-  //   let arrayTersangkaOptions: any = [];
-  
-  //   for (let i = 0; i < selectedOptions?.length; i++) {
-  //     if (selectedOptions[i].label.includes('(Tersangka)')) {
-  //       arrayTersangka.push(selectedOptions[i].value);
-  //       arrayTersangkaOptions.push(selectedOptions[i]);
-  //     } else if (selectedOptions[i].label.includes('(Saksi)')) {
-  //       arraySaksi.push(selectedOptions[i].value);
-  //       arraySaksiOptions.push(selectedOptions[i]);
-  //     }
-  //   }
-  
-  //   // Mengupdate state form dan state array opsi tersangka dan saksi
-  //   const updatedFormState = {
-  //     ...formState,
-  //     wbp_profile_ids: arrayTersangka,
-  //     saksi_id: arraySaksi,
-  //   };
-  //   setFormState(updatedFormState);
-  //   setSelectSaksi(arraySaksiOptions);
-  //   setSelectTersangka(arrayTersangkaOptions);
-  
-  //   // Simpan data ke localStorage
-  //   await localStorage.setItem('formState', JSON.stringify(updatedFormState));
-
-  //   console.log(arrayTersangkaOptions, 'qwertyui arrayTersangka');
-  //   console.log(arraySaksiOptions, 'qwertyui arraySaksi');
-  //   console.log('qwertyui updatedFormState', localStorage.getItem('formState'));
-  // };
-
   const handleSelectPihakTerlibat = async (selectedOptions: any) => {
     console.log('123456',selectedOptions);
     
@@ -684,13 +627,11 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
         }
     }
   
-    // Update form state with selected options
     const updatedFormState = {
         ...formState,
         wbp_profile_ids: arrayTersangka,
         saksi_id: arraySaksi,
         wbpProfile:arrayTersangkaOptions,
-        // Include complete saksi object
         saksi: arraySaksiOptions,
     };
 
@@ -722,12 +663,14 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   };
 
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
-    newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
     setFormState({
       ...formState,
-      keteranganSaksis: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keteranganSaksis: newKeteranganSaksi, 
     });
+
+    localStorage.setItem('formState', JSON.stringify(formState));
   };
 
   const handleModalAddOpen = () => {
@@ -1269,6 +1212,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                             placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
                             onChange={(e) => handleChangeKeterangan(e, index)}
                             disabled={isDetail}
+                            value={formState.keteranganSaksis[index]}
                           />
                         </div>
                       </div>
