@@ -1,8 +1,24 @@
-import {React, useState} from "react";
+import {React, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from 'react-datepicker';
 import dayjs from "dayjs";
+import { Alerts } from '../../pages/DaftarSidangPerkara/AlertSidang';
+import { Error403Message } from '../../utils/constants';
+import {
+  apiAhliRead,
+  apiHakimRead,
+  apiJaksaRead,
+  apiJenisSidangRead,
+  apiKasusRead,
+  apiPengadilanMiliterRead,
+  apiReadAllRole,
+  apiReadAllStaff,
+  apiReadAllUser,
+  apiReadAllWBP,
+  apiReadJaksapenuntut,
+  apiReadSaksi,
+} from '../../services/api';
 
 
 interface AddSidangProps {
@@ -12,9 +28,92 @@ interface AddSidangProps {
   }
 
 const AddSidang = () => {
-     const navigate = useNavigate();
+  const [formState, setFormState] = useState({
+      waktu_mulai_sidang: '',
+      waktu_selesai_sidang: '',
+      jadwal_sidang: '',
+      perubahan_jadwal_sidang: '',
+      kasus_id: '',
+      nama_kasus: '',
+      nomor_kasus: '',
+      masa_tahanan_tahun: '',
+      masa_tahanan_bulan: '',
+      masa_tahanan_hari: '',
+      nama_sidang: '',
+      nama_wbp: '',
+      wbp_profile_id_kasus: '',
+      wbp: [],
+      juru_sita: '',
+      nama_jenis_persidangan: '',
+      hasil_keputusan_sidang: '',
+      pengawas_peradilan_militer: '',
+      jenis_persidangan_id: '',
+      pengadilan_militer_id: '',
+      nama_dokumen_persidangan: '',
+      pdf_file_base64: '',
+      hasil_vonis: '',
+      ahli: [],
+      agenda_sidang: '',
+      saksi: [],
+      pengacara: [],
+      // link_dokumen_persidangan: defaultValue.link_dokumen_persidangan,
+      // hakim_id: [],
+      // role_ketua_hakim: '',
+      oditur_penuntut_id: [],
+      role_ketua_oditur: {},
+      zona_waktu: '',
+  });
 
-     const [pengacaraEror, setPengacaraEror] = useState(false);
+    const tokenItem = localStorage.getItem('token');
+    const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+    const token = dataToken.token;
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [pengacaraEror, setPengacaraEror] = useState(false);
+    const [jenisSidang, setJenisSidang] = useState([]);
+
+    const getAllJenisSidang = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      };
+      try {
+        const response = await apiJenisSidangRead(params, token);
+        const data = response.data.data;
+        const uniqueData: any[] = [];
+        const trackedNames: any[] = [];
+  
+        data.forEach((item: any) => {
+          if (!trackedNames.includes(item.nama_jenis_persidangan)) {
+            trackedNames.push(item.nama_jenis_persidangan);
+            uniqueData.push(item);
+          }
+        });
+        setJenisSidang(uniqueData);
+        console.log('uniq', uniqueData);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    };
+
+    const handleJenisPersidangan = (e: any) => {
+      setFormState({ ...formState, jenis_persidangan_id: e?.value });
+    };
+
+    useEffect(() => {
+      Promise.all([
+        getAllJenisSidang(),
+      ]).then(()=> setIsLoading(false));
+      // getAllJenisSidang();
+    }, []);
 
      const customStyles = {
       container: (provided: any) => ({
@@ -132,15 +231,27 @@ const AddSidang = () => {
                       htmlFor="id">
                         Pilih Jenis Sidang
                     </label>
-                    <select 
-                      className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary p-nama"
-                      name="" 
-                      id=""
-                    >
-                      <option value="">
-                        Pilih jenis sidang{" "}
-                      </option>
-                    </select>
+                    <Select 
+                    className="basic-single p-jenis"
+                    name="jenis_persidangan_id"
+                    isClearable={true}
+                    isSearchable={true}
+                    placeholder="Pilih jenis sidang"
+                    styles={customStyles}
+                    defaultValue={
+                      formState.jenis_persidangan_id
+                        ? {
+                            value: formState.jenis_persidangan_id,
+                            label: formState.nama_jenis_persidangan,
+                          }
+                        : ''
+                    }
+                    options={jenisSidang.map((item: any) => ({
+                      value: item.jenis_persidangan_id,
+                      label: item.nama_jenis_persidangan,
+                    }))}
+                    onChange={handleJenisPersidangan}
+                    />
                   </div>
                 </div>
                 <div className="form-group w-full ">

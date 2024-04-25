@@ -308,7 +308,7 @@ export const WbpInsert = () => {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'formstate');
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
     setButtonLoad(true);
 
     onSubmit(formState).then(() => setButtonLoad(false));
