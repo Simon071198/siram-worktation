@@ -109,7 +109,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     }
 
     if (!dataGrup.ketua_grup) {
-      errorFields.push('Isi Ketua Grup');
+      errorFields.push('Pilih Ketua Grup');
       setErrors2(errorFields);
     }
 
@@ -283,11 +283,11 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                   </select>
                   <div className="h-3">
                     {errors2.length > 0 &&
-                      errors2.some((error) => error === 'Isi Ketua Grup') && (
+                      errors2.some((error) => error === 'Pilih Ketua Grup') && (
                         <div className="error text-red-500 text-sm">
                           {errors2.map(
                             (error, index) =>
-                              error === 'Isi Ketua Grup' && (
+                              error === 'Pilih Ketua Grup' && (
                                 <div key={index}>{error}</div>
                               ),
                           )}

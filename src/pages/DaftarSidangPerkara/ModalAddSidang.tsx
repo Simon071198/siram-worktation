@@ -124,6 +124,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     }, []);
 
   // useEffect untuk mengambil data dari api
+
   const validateForm = () => {
     let errorFields = [];
 
@@ -159,20 +160,36 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           (key === 'wbp_profile' && Array.isArray(value) && value.length === 0)||
           (key === 'pengacara' && Array.isArray(value) && value.length === 0)
         ) {
-          errorFields.push(key);
+            if (
+                !value ||
+                (key === 'oditur_penuntut_id' && (
+                    value === '' ||
+                    (Array.isArray(value) && value.length === 0)
+                )) ||
+                (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
+                (key === 'pengacara' && Array.isArray(value) && value.length === 0) ||
+                (key === 'wbp' && Array.isArray(value) && value.length === 0) ||
+                (key === 'ahli' && Array.isArray(value) && value.length === 0)
+            ) {
+                errorFields.push(key);
+            }
         }
-      }
+    }
+
+    if (!formState.oditur_penuntut_id) {
+      errorFields.push('role_ketua_oditur') ;
     }
 
     if (errorFields.length > 0) {
-      console.log(errorFields);
-      setErrors(errorFields);
-      return false;
+        console.log(errorFields);
+        setErrors(errorFields);
+        return false;
     }
 
     setErrors([]);
     return true;
-  };
+};
+
 
   const handleSelectKetuaHakim = (e: any) => {
     setFormState({ ...formState, role_ketua_oditur: e?.value });
@@ -457,17 +474,29 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
+  console.log('forms', formState);
+  // const handleSubmit = (e: any) => {
+  //   e.preventDefault();
+  //   // console.log(formState, 'formState');
+  //   console.log('SUBMIT', e);
+
+  //   if (!validateForm()) return;
+  //   setButtonLoad(true);
+  //   console.log('formstateValidate', formState);
+  //   onSubmit(formState).then(() => setButtonLoad(false));
+  // };
+
   const handleSubmit = (e: any) => {
     console.log('forms', formState);
     e.preventDefault();
-    // console.log(formState, 'formState');
     console.log('SUBMIT', e);
 
     if (!validateForm()) return;
+
     setButtonLoad(true);
     console.log('formstateValidate', formState);
     onSubmit(formState).then(() => setButtonLoad(false));
-  };
+}
 
   //pengacara
   const handleInputPengacara = (e: any) => {
@@ -1482,38 +1511,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           }))}
                         onChange={handleSelectKetuaHakim}
                       />
-                      {/* <Select
-                          className="basic-select"
-                          classNamePrefix="select"
-                          defaultValue={
-                            isEdit || isDetail
-                              ? {
-                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
-                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
-                                }
-                              : {
-                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
-                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
-                                }
-                          }
-                          placeholder={'Pilih ketua oditur'}
-                          isClearable={true}
-                          isSearchable={true}
-                          isDisabled={isDetail}
-                          name="role_ketua_jaksa"
-                          styles={customStyles}
-                          options={
-                            jaksa
-                              ?.filter((jaksa: any) =>
-                                formState?.oditur_penuntut_id?.includes(jaksa.oditur_penuntut_id)
-                              )
-                              ?.map((item: any) => ({
-                                value: item.oditur_penuntut_id,
-                                label: item.nama_oditur,
-                              }))
-                          }
-                          onChange={handleSelectKetuaJaksa}
-                        /> */}
 
                       <p className="error-text">
                         {errors.map((item) =>
@@ -1602,11 +1599,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         value={formState?.nomor_kasus}
                         disabled
                       />
-                      <p className="error-text">
+                      {/* <p className="error-text">
                         {errors.map((item) =>
                           item === 'nomor_kasus' ? 'Masukan nomor kasus' : '',
                         )}
-                      </p>
+                      </p> */}
                     </div>
 
                     {/* pengadilan militer */}

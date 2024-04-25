@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { CustomStyles } from '../../EntryData/CustomStyle';
+import { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import {
   apiReadAllPangkat,
   apiReadAllRuanganOtmil,
-  apiReadAllKesatuan,
-  apiReadAllJenisJahat,
   apiReadAllKategoriJahat,
   apiReadAllJenisPerkara,
-  apiReadAllLokasi,
   apiKota,
   apiProvinsi,
   apiAgama,
@@ -20,17 +16,31 @@ import {
   apiGelang,
   apiMatraRead,
   apiStatusWbp,
+  apiKasusRead,
+
+  // API FOR KASUS
+  apiReadAllWBP,
+  apiReadJaksaPenyidik,
+  apiReadSaksi,
+  apiReadStatusWBP,
+  apiReadjenisperkara,
+  apiJenisPidanaRead,
 } from '../../../services/api';
-import { useFetcher, useLocation, useNavigate } from 'react-router-dom';
-import { deflate } from 'zlib';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertInmate';
-import { TbLockSquareRoundedFilled } from 'react-icons/tb';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Error403Message } from '../../../utils/constants';
-import { set } from 'react-hook-form';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 interface Kota {
   kota_id: string;
   nama_kota: string;
@@ -74,10 +84,14 @@ interface JenisPerkara {
   vonis_hari_perkara: string;
 }
 
+interface KasusData {
+  kasus_id: string;
+  wbp_profile: { wbp_profile_id: string }[];
+}
+
 const dataUserItem = localStorage.getItem('dataUser');
 const tokenItem = localStorage.getItem('token');
 const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-// const [isLoading, setIsLoading] = useState(false);
 
 export const AddInmateModal = ({
   closeModal,
@@ -88,6 +102,7 @@ export const AddInmateModal = ({
   token,
   dataWbp,
 }: any) => {
+  console.log(defaultValue, "defaultValue")
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -107,13 +122,16 @@ export const AddInmateModal = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
+  const [kasusData, setKasusData] = useState<KasusData[]>([]);
+  const [buatKasusBaru, setBuatKasusBaru] = useState('false');
 
+  // console.log(kasusData[0], 'ISI DATA ID WBP');
   const [formState, setFormState] = useState(
     defaultValue || {
       foto_wajah: '',
       nama: '',
       pangkat_id: '',
-      // nama_pangkat: '',
+      nama_pangkat: '',
       matra_id: '',
       nrp: '',
       alamat: '',
@@ -132,9 +150,7 @@ export const AddInmateModal = ({
       is_sick: '',
       wbp_sickness: '',
       nama_status_wbp_kasus: '',
-      // kejahatan: 'a',
-      // kategori_perkara_id_jenis_perkara: '',
-      jenis_perkara_id: '',
+      // jenis_perkara_id: '',
       vonis_tahun_perkara: '',
       vonis_bulan_perkara: '',
       vonis_hari_perkara: '',
@@ -157,15 +173,28 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
-      // penyakit: '',
-      // berat_badan: '',
-      // tinggi_badan: '',
-      // pola_makan: '',
-      // zona_hijau: [],
-      // zona_kuning: [],
-      // zona_merah: [],
-      // lokasi_lemasmil_id:'',
-      // nama_gateway:''
+
+      // Form State Kasus
+      kasus_id : '',
+      is_new_kasus: 'false',
+      // wbp_existing_id: '',
+      nama_kasus: '',
+      nomor_kasus: '',
+      lokasi_kasus: '',
+      jenis_perkara_id: '',
+      jenis_pidana_id: '',
+      kategori_perkara_id: '',
+      waktu_kejadian: '',
+      waktu_pelaporan_kasus: '',
+      wbp_profile_ids: [],
+      keterangans: [],
+      role_ketua_oditur_ids: '',
+      oditur_penyidik_id: [],
+      nama_jenis_perkara: '',
+      nama_jenis_pidana: '',
+      saksi_id: [],
+      keteranganSaksis: [],
+      zona_waktu: '',
     },
   );
 
@@ -173,104 +202,499 @@ export const AddInmateModal = ({
   const [zona, setZona]: any = useState([]);
   const modalContainerRef = useRef(null);
   const [autocompleteDataZona, setAutocompleteDataZona]: any = useState(zona);
-  const [filteredJenisPerkara, setFilteredJenisPerkara] = useState([]);
-  const [dataArrayPasal, setDataArrayPasal]: any = useState([]);
-  const [inputPasal, setInputPasal]: any = useState('');
 
+  // Handle Kasus
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+
+  const [data, setData] = useState([]);
+
+  const [DataWBP, setDataWBP] = useState<WBP[]>([]);
+  const [dataStatusWBP, setDataStatusWBP] = useState([]);
+  const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
+  const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
+  const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
+  const [dataSaksi, setDataSaksi] = useState([]);
+  const [pihakTerlibat, setPihakTerlibat] = useState([]);
+
+  const [ketuaOditurPenyidik, setKetuaOditurPenyidik] = useState([
+    {
+      value: '',
+      label: '',
+    },
+  ]);
+
+  const [selectSaksi, setSelectSaksi] = useState([]);
+  const [selectTersangka, setSelectTersangka] = useState([]);
+
+  const handleNewKasus = (e: any) => {
+    const checked = e.target.value;
+    setBuatKasusBaru(checked);
+    setFormState({
+      ...formState,
+      is_new_kasus: checked,
+      vonis_bulan_perkara: '',
+      vonis_tahun_perkara: '',
+      vonis_hari_perkara: '',
+    });
+  };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
+
+  const handleWaktuKejadian = (e: any) => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const handleWaktuPelaporan = (e: any) => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  //Set Waktu Kejadian dan Waktu Pelaporan Kasus
   // useEffect(() => {
-  //   const handleOutsideClick = (e: any) => {
-  //     if (
-  //       modalContainerRef.current &&
-  //       !modalContainerRef.current.contains(e.target)
-  //     ) {
-  //       closeModal();
-  //     }
-  //   };
+  //   const formattedDate = dayjs().format('YYYY-MM-DDTHH:mm');
+  //   console.log("formattedDate:", formattedDate);
+  //   const dateObject = dayjs(formattedDate).toDate();
+  //   console.log("dateObject:", dateObject);
+  //   if(buatKasusBaru === 'true'){
+  //     setFormState({
+  //       ...formState,
+  //       waktu_pelaporan_kasus: 'kontol',
+  //       waktu_kejadian: 'kontol'
+  //     });
+  //     console.log('formattedTest1')
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       waktu_pelaporan_kasus: '',
+  //       waktu_kejadian: ''
+  //     });
+  //     console.log('formattedTest2')
+  //   }
+  // }, [buatKasusBaru]);
 
-  //   document.addEventListener('mousedown', handleOutsideClick);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, [closeModal]);
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  };
 
+  const fetchJenisPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadjenisperkara(params, token)
+      .then((res) => {
+        setDataJenisPerkara(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const fetchJenisPidana = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiJenisPidanaRead(params, token)
+      .then((res) => {
+        setDataJenisPidana(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const Oditur = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadJaksaPenyidik(params, token)
+      .then((res) => {
+        setDataOditurPenyidik(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const tersangka = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadAllWBP(params, token)
+      .then((res) => {
+        setDataWBP(res.data.records);
+        const tersangka = res.data.records?.map((item: any) => ({
+          value: item.wbp_profile_id,
+          label: `${item.nama} (Tersangka)`,
+        }));
+        setPihakTerlibat((prevPihakTerlibat) =>
+          prevPihakTerlibat.concat(tersangka),
+        );
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const Saksi = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadSaksi(params, token)
+      .then((res) => {
+        setDataSaksi(res.data.records);
+        console.log('responsaksi', res.data.records);
+
+        const Saksi = res.data.records?.map((item: any) => ({
+          value: item.saksi_id,
+          label: `${item.nama_saksi} (Saksi)`,
+        }));
+        setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const status = async () => {
+    let params = {};
+    await apiReadStatusWBP(params, token)
+      .then((res) => {
+        setDataStatusWBP(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const handleGenerateNomorKasus = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const location = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let largestNumber = 0;
+
+    data.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+        const number = parseInt(caseNumber, 10);
+
+        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
+          largestNumber = Math.max(largestNumber, number);
+        }
+      }
+    });
+
+    largestNumber += 1;
+
+    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
+    console.log(caseNumberFormatted, 'caseNumberFormatted');
+
+    setFormState({
+      ...formState,
+      nomor_kasus: caseNumberFormatted,
+    });
+  };
+
+  useEffect(() => {
+    console.log(formState, 'formState coy');
+    handleGenerateNomorKasus();
+  }, [buatKasusBaru]);
+
+  const handleSelectJenisPerkara = (e: any) => {
+    const selectedId = e?.value;
+    const vonisFilter = jenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === selectedId,
+    );
+    const kategoriPerkara: any = dataJenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === e?.value,
+    );
+    setFormState({
+      ...formState,
+      jenis_perkara_id: selectedId,
+      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
+      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
+      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
+
+      kategori_perkara_id: kategoriPerkara
+        ? kategoriPerkara.kategori_perkara_id
+        : '',
+      jenis_pidana_id: kategoriPerkara ? kategoriPerkara.jenis_pidana_id : '',
+      nama_jenis_perkara: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_perkara
+        : '',
+      nama_jenis_pidana: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_pidana
+        : '',
+    });
+  };
+
+  const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
+    value: item.oditur_penyidik_id,
+    label: item.nama_oditur,
+  }));
+
+  const handleSelectOditurPenyidik = (e: any) => {
+    let arrayTemp: any = [];
+    let arrayAnggota: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      arrayTemp.push(e[i].value);
+      arrayAnggota.push(e[i]);
+    }
+    setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
+    setKetuaOditurPenyidik(arrayAnggota);
+  };
+
+  const handleSelectKetuaOditur = (e: any) => {
+    setFormState({ ...formState, role_ketua_oditur_ids: e.value });
+  };
+
+  const handleSelectPihakTerlibat = (e: any) => {
+    let arrayTersangka: any = [];
+    let arraySaksi: any = [];
+    let arraySaksiOptions: any = [];
+    let arrayTersangkaOptions: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      if (e[i].label.includes('(Tersangka)')) {
+        arrayTersangka.push(e[i].value);
+        arrayTersangkaOptions.push(e[i]);
+      } else if (e[i].label.includes('(Saksi)')) {
+        arraySaksi.push(e[i].value);
+        arraySaksiOptions.push(e[i]);
+      }
+    }
+    setFormState({
+      ...formState,
+      wbp_profile_ids: arrayTersangka,
+      saksi_id: arraySaksi,
+    });
+    setSelectSaksi(arraySaksiOptions);
+    setSelectTersangka(arrayTersangkaOptions);
+  };
+
+  const handleChangeKeteranganTersangka = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keterangans];
+    newKeteranganSaksi[index] = e.target.value;
+    setFormState({
+      ...formState,
+      keterangans: newKeteranganSaksi,
+    });
+  };
+
+  const handleChangeKeterangan = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
+    setFormState({
+      ...formState,
+      keteranganSaksis: newKeteranganSaksi,
+    });
+  };
+
+  const handleSelectJenisKasus = (e: any) => {
+    const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+    const existingWbpId = filterKasus?.wbp_profile.map(
+      (item) => item.wbp_profile_id,
+    );
+    console.log(filterKasus, 'INI HASIL FILTER');
+    console.log(existingWbpId, 'INI HASIL EXISTING');
+    console.log(kasusData, 'INI KASUS DATA');
+    setFormState({
+      ...formState,
+      kasus_id: e?.value,
+    });
+  };
+  // End Handle Kasus
+
+//  console.log(errors, 'ini error')
   // const validateForm = () => {
-  //   let errorFields: any = [];
+  //   let errorFields: any[] = [];
 
   //   for (const [key, value] of Object.entries(formState)) {
-  //     if (key !== 'lokasi_otmil_id')
-  //       if (formState.is_sick === '0') {
-  //         if (key === 'wbp_sickness') {
-  //           if (!value) {
-  //             continue;
-  //           }
+  //     if (key == 'Terdakwa' && formState.nama_status_wbp_kasus == 'Terdakwa') {
+  //       console.log('here!', key)
+  //       if (!value) {
+  //         errorFields.push(key);
+  //       }
+  //     }
+
+  //     // if (key == 'Terpidana' && formState.nama_status_wbp_kasus == 'Terpidana'){
+  //     //   if (!value) {
+  //     //     errorFields.push(key);
+  //     //   }
+  //     // }
+  //     // if (key == 'Tersangka' && formState.nama_status_wbp_kasus == 'Tersangka'){}
+
+  //     if (key != 'lokasi_otmil_id' && key != 'nama_pangkat') {
+  //       if (
+  //         formState.is_new_kasus == 'false' &&
+  //         key != 'nama_kasus' &&
+  //         key != 'jenis_perkara_id' &&
+  //         key != 'vonis_tahun_perkara' &&
+  //         key != 'vonis_bulan_perkara' &&
+  //         key != 'vonis_hari_perkara' &&
+  //         key != 'nama_jenis_pidana' &&
+  //         key != 'lokasi_kasus' &&
+  //         key != 'oditur_penyidik_id' &&
+  //         key != 'role_ketua_oditur_ids' &&
+  //         key != 'saksi_id'
+  //       ) {
+  //         if (!value) {
+  //           errorFields.push(key);
   //         }
   //       }
-
-  //     if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
-  //       console.log('STATUS ADA');
-  //       continue;
-  //     }
-
-  //     if (
-  //       formState.status_wbp_kasus_id === '' ||
-  //       formState.status_wbp_kasus_id === null
-  //     ) {
-  //       console.log('STATUS KOSONG');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terdakwa' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
-  //     ) {
-  //       //terpidana
-  //       console.log('STATUS terpidana');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terdakwa'
-  //       ) {
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
-  //     ) {
-  //       //terdakwa
-  //       console.log('STATUS terdakwa');
-  //       if (
-  //         key === 'tanggal_penetapan_tersangka' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         // if (!value) {
-  //         //   errorFields.push(key);
-  //         // }
-  //         continue;
-  //       }
-  //     } else if (
-  //       formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
-  //     ) {
-  //       //tersangka
-  //       console.log('STATUS tersangka');
-  //       if (
-  //         key === 'tanggal_penetapan_terdakwa' ||
-  //         key === 'tanggal_penetapan_terpidana'
-  //       ) {
-  //         continue;
-  //       }
-  //     }
-  //     // else {
-  //     //   console.log('STATUS ANEH');
-  //     // }
-
-  //     if (!value) {
-  //       errorFields.push(key);
   //     }
   //   }
 
   //   if (errorFields.length > 0) {
-  //     console.log(errorFields);
+  //     console.log(errorFields, 'errorfields detected');
   //     setErrors(errorFields);
   //     return false;
   //   }
@@ -278,6 +702,119 @@ export const AddInmateModal = ({
   //   setErrors([]);
   //   return true;
   // };
+
+  const validateForm = () => {
+    let errorFields: any = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (key !== 'lokasi_otmil_id')
+        if (formState.is_sick === '0') {
+          if (key === 'wbp_sickness') {
+            if (!value) {
+              continue;
+            }
+          }
+        }
+
+        if(formState.is_new_kasus == 'true'){
+          const ignoredFields = [
+            "kasus_id",
+          ];
+          
+          if(ignoredFields.includes(key) && !value){
+            continue;
+          }
+        }
+
+        if (formState.is_new_kasus == 'false') {
+          // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
+          const ignoredFields = [
+            "vonis_tahun_perkara",
+            "vonis_bulan_perkara",
+            "vonis_hari_perkara",
+            "nama_kasus",
+            "nomor_kasus",
+            "lokasi_kasus",
+            "jenis_perkara_id",
+            "jenis_pidana_id",
+            "kategori_perkara_id",
+            "waktu_kejadian",
+            "waktu_pelaporan_kasus",
+            "role_ketua_oditur_ids",
+            "nama_jenis_perkara",
+            "nama_jenis_pidana"
+          ];
+        
+          // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
+          if (ignoredFields.includes(key) && !value) {
+            continue; // Melanjutkan iterasi ke field selanjutnya.
+          }
+        }
+
+      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
+        console.log('STATUS ADA');
+        continue;
+      }
+
+      if (
+        formState.status_wbp_kasus_id === '' ||
+        formState.status_wbp_kasus_id === null
+      ) {
+        console.log('STATUS KOSONG');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+      ) {
+        //terpidana
+        console.log('STATUS terpidana');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+      ) {
+        //terdakwa
+        console.log('STATUS terdakwa');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
+      ) {
+        //tersangka
+        console.log('STATUS tersangka');
+        if (
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      }
+
+      if (!value) {
+        errorFields.push(key);
+      }
+    }
+    if (errorFields.length > 0) {
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
 
   const handleChange = (e: any) => {
     if (e.target.name === 'gelang_id') {
@@ -299,7 +836,6 @@ export const AddInmateModal = ({
         wbp_sickness: newWbpSickness,
       });
     } else {
-      // console.log('tanpa if');
       setFormState({ ...formState, [e.target.name]: e.target.value });
     }
   };
@@ -352,7 +888,12 @@ export const AddInmateModal = ({
   };
 
   const handleSelectWbpStatus = (e: any) => {
-    setFormState({ ...formState, status_wbp_kasus_id: e?.value });
+    setFormState({
+      ...formState,
+      status_wbp_kasus_id: e?.value,
+      nama_status_wbp_kasus: e?.label,
+    });
+    console.log(e.label, 'handle status');
   };
 
   const handleSelectMatra = (e: any) => {
@@ -367,20 +908,6 @@ export const AddInmateModal = ({
   const handleSelectKota = (e: any) => {
     // setSelectedOption(e)
     setFormState({ ...formState, kota_id: e?.value });
-  };
-
-  const handleSelectJenisPerkara = (selectedOption: any) => {
-    const selectedId = selectedOption?.value;
-    const vonisFilter = jenisPerkara.find(
-      (item: any) => item.jenis_perkara_id === selectedId,
-    );
-    setFormState({
-      ...formState,
-      jenis_perkara_id: selectedId,
-      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
-      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
-      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
-    });
   };
 
   const handleImageChange = (e: any) => {
@@ -404,7 +931,7 @@ export const AddInmateModal = ({
     console.log(formState, 'received values');
     // if (!validateForm()) return;
     // setButtonLoad(true);
-    onSubmit(formState).then(() => setButtonLoad(false)); //dikasih  then ... catch
+    onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
     // closeModal();
@@ -458,6 +985,7 @@ export const AddInmateModal = ({
 
   useEffect(() => {
     Promise.all([
+      fecthKasusData(),
       matraData(),
       pangkatData(),
       kotaData(),
@@ -473,6 +1001,13 @@ export const AddInmateModal = ({
       getAllKategoriPerkara(),
       getAllRuangan(),
       statusWbpData(),
+      getTimeZone(),
+      tersangka(),
+      Saksi(),
+      status(),
+      fetchJenisPerkara(),
+      fetchJenisPidana(),
+      Oditur(),
     ]).then(() => {
       setIsLoading(false);
     });
@@ -486,32 +1021,6 @@ export const AddInmateModal = ({
       });
     }
   }, [isDetail]);
-
-  // const handleInputPasal = (e: any) => {
-  //   const newValue = e.target.value;
-  //   setFormState({ ...formState, input_pasal: newValue });
-  // };
-
-  // const handlePasal = () => {
-  //   if (formState.input_pasal.trim() !== '') {
-  //     setFormState({
-  //       ...formState,
-  //       array_pasal: [...formState.array_pasal, formState.input_pasal],
-  //       input_pasal: '', // Mengosongkan nilai input setelah ditambahkan ke dalam array
-  //     });
-  //   }
-  // };
-
-  // const handleRemovePasal = (index: any) => {
-  //   const newArrayPasal = formState.array_pasal.filter(
-  //     (_: any, i: any) => i !== index
-  //   );
-
-  //   setFormState({
-  //     ...formState,
-  //     array_pasal: newArrayPasal,
-  //   });
-  // };
 
   const getAllRuangan = async () => {
     await apiReadAllRuanganOtmil(
@@ -818,6 +1327,30 @@ export const AddInmateModal = ({
       .then((res) => {
         setStatusWbp(res.data.records);
       })
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const fecthKasusData = async () => {
+    let params = {
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+    await apiKasusRead(params, token)
+      .then((res) => {
+        const result = res.data.records;
+        setKasusData(result);
+      }, token)
       .catch((e: any) => {
         if (e.response.status === 403) {
           navigate('/auth/signin', {
@@ -1315,6 +1848,7 @@ export const AddInmateModal = ({
     //   tanggalTitle = 'Tanggal penetapan tersangka';
     //   tanggalDescription = 'Isi tanggal penetapan tersangka';
     // }
+    
 
     if (
       formState.is_sick === '1' &&
@@ -1346,7 +1880,6 @@ export const AddInmateModal = ({
 
     driverObj.drive();
   };
-
   return (
     // <div
     //   ref={modalContainerRef}
@@ -1634,7 +2167,13 @@ export const AddInmateModal = ({
                                 value: item.pangkat_id,
                                 label: item.nama_pangkat,
                               }))}
-                              onChange={handleSelectPangkat}
+                              onChange={(e) => {
+                                setFormState({
+                                  ...formState,
+                                  pangkat_id: e?.value,
+                                  nama_pangkat: e?.label,
+                                });
+                              }}
                             />
                             <p className="error-text">
                               {errors.map((item) =>
@@ -2265,205 +2804,710 @@ export const AddInmateModal = ({
                     </p>
 
                     <div className="flex flex-col gap-4">
-                      {/* Pasal */}
-                      {/* <div className="hidden">
-                        <p className="text-white">Pasal</p>
-                        <select className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary">
-                          <option value="">Pilih Jenis Perkara</option>
-                          {jenisPerkara.map((item: any) => (
-                            <option value={item.pasal}>{item.pasal}</option>
-                          ))}
-                        </select> */}
-
-                      {/* <div className="border-[1px] border-slate-500 rounded-md p-2">
-                      <div className="flex flex-row gap-2">
-
-                        <input
-                          type="text"
-                          value={formState.input_pasal}
-                          placeholder={isDetail ? '' : 'Input Pasal'}
-                          onChange={handleInputPasal}
-                          disabled={isDetail}
-                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                        ></input>
-
-                        <button
-                          onClick={handlePasal}
-                          type="button"
-                          className="py-3 px-3 rounded-md bg-blue-500"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="w-6 h-6 text-white"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <div
-                        className={`mt-2 flex flex-col overflow-hidden gap-2 ${
-                          formState.array_pasal?.length === 0
-                            ? 'hidden'
-                            : 'block'
-                        }`}
-                      >
-                        {formState.array_pasal?.map((item: any, index: any) => (
-                          <div className="flex flex-row items-center">
-                            <p
-                              key={index}
-                              className="capitalize px-3 py-1 truncate w-full  rounded-md bg-boxdark border-[1px] border-slate-500  text-white"
-                            >
-                              {item}
-                            </p>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                handleRemovePasal(index);
-                              }}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div> */}
-                      {/* </div> */}
-
-                      {/* Vonis */}
-                      {isDetail && (
-                        <div className=" grid grid-cols-3 gap-4">
-                          {/* Vonis Tahun */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Tahun
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_tahun_perkara"
-                              placeholder="Tahun"
-                              onChange={handleChange}
-                              value={formState.vonis_tahun_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_tahun_perkara'
-                                  ? 'Masukan vonis tahun'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
-
-                          {/* Vonis Bulan */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Bulan
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_bulan_perkara"
-                              placeholder="Bulan"
-                              onChange={handleChange}
-                              value={formState.vonis_bulan_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_bulan_perkara'
-                                  ? 'Masukan vonis bulan'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
-
-                          {/* Vonis Hari */}
-                          {/* <div className="form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Vonis Hari
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_hari_perkara"
-                              placeholder="Hari"
-                              onChange={handleChange}
-                              value={formState.vonis_hari_perkara}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_hari_perkara'
-                                  ? 'Masukan vonis hari'
-                                  : '',
-                              )}
-                            </p>
-                          </div> */}
-                        </div>
-                      )}
-                      <div className="grid grid-cols-1 gap-4">
-                        {/* jenis perkara */}
-                        <div className="f-alamat form-group w-full flex flex-col">
+                      {/* Handle Kasus */}
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Field Kasus */}
+                        <div className="form-group w-full ">
                           <label
+                            className="  block text-sm font-medium text-black dark:text-white"
                             htmlFor="id"
-                            className="block text-sm font-medium text-black dark:text-white"
                           >
-                            Jenis Perkara
+                            Buat Kasus Baru (?)
                           </label>
-                          {/* <Select
-                            className="basic-single"
-                            classNamePrefix="select"
-                            styles={customStyles}
-                            name="jenis_perkara_id"
-                            isDisabled={isDetail}
-                            isClearable={true}
-                            isSearchable={true}
-                            placeholder="Pilih Jenis Perkara"
-                            defaultValue={
-                              (isEdit || isDetail) &&
-                              !formState.jenis_perkara_id
-                                ? { value: null, label: 'No Data' }
-                                : formState.jenis_perkara_id !== null
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_new_kasus"
+                            onChange={handleNewKasus}
+                            disabled={isDetail}
+                            defaultValue={formState.is_new_kasus}
+                          >
+                            <option value="">Silahkan Pilih</option>
+
+                            <option value="false">Tidak</option>
+                            <option value="true">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_new_kasus' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      {formState.is_new_kasus == '' ? null : buatKasusBaru ===
+                        'true' ? (
+                        // Kasus Baru
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Nomor Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nomor Kasus"
+                              name="nomor_kasus"
+                              value={formState.nomor_kasus}
+                            />
+                            <div className="">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nomor_kasus'
+                                    ? 'Masukan Nomor Kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Nama Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nama Kasus"
+                              name="nama_kasus"
+                              onChange={handleChange}
+                              disabled={isDetail}
+                            />
+                            <div className="">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama_kasus'
+                                    ? 'Masukkan Nama Kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="f-alamat form-group">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Jenis Perkara
+                            </label>
+                            <Select
+                              className="basic-single p-gelang"
+                              classNamePrefix="select"
+                              defaultValue={
+                                isEdit || isDetail
                                   ? {
                                       value: formState.jenis_perkara_id,
                                       label: formState.nama_jenis_perkara,
                                     }
-                                  : { value: null, label: 'No Data' }
+                                  : formState.jenis_perkara_id
+                              }
+                              placeholder={'Pilih Jenis Perkara'}
+                              isSearchable={true}
+                              isDisabled={isDetail}
+                              isClearable={true}
+                              name="jenis_perkara_id"
+                              styles={customStyles}
+                              options={jenisPerkara.map((item: any) => ({
+                                value: item.jenis_perkara_id,
+                                label: item.nama_jenis_perkara,
+                              }))}
+                              onChange={handleSelectJenisPerkara}
+                            />
+                            <p className="error-text">
+                              {errors.map((item) =>
+                                item === 'jenis_perkara_id'
+                                  ? 'Pilih jenis perkara'
+                                  : '',
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Tahun
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_tahun_perkara"
+                                value={formState.vonis_tahun_perkara}
+                                disabled
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'vonis_tahun_perkara'
+                                    ? 'Masukan tanggal masa penahanan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Bulan
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_bulan_perkara"
+                                value={formState.vonis_bulan_perkara}
+                                disabled
+                              />
+                            </div>
+
+                            <div className="f-alamat form-group">
+                              <label
+                                htmlFor="id"
+                                className="block text-sm font-medium text-black dark:text-white"
+                              >
+                                Vonis Hari
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="vonis_hari_perkara"
+                                value={formState.vonis_hari_perkara}
+                                disabled
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Nama Jenis Pidana
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Nama Jenis Pidana"
+                              name="nama_jenis_pidana"
+                              onChange={handleChange}
+                              value={formState.nama_jenis_pidana}
+                              disabled
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama_jenis_pidana'
+                                    ? 'Masukan Nama Jenis Pidana'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white"
+                              htmlFor="id"
+                            >
+                              Lokasi Kasus
+                            </label>
+                            <input
+                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                              placeholder="Lokasi Kasus"
+                              name="lokasi_kasus"
+                              onChange={handleChange}
+                              disabled={isDetail}
+                            />
+                            <div className="">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'lokasi_kasus'
+                                    ? 'Masukan Lokasi Kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2">
+                            {/* <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Kejadian Kasus
+                              </label>
+                              <div className="flex flex-row">
+                                <DatePicker
+                                  selected={
+                                    formState.waktu_kejadian
+                                      ? dayjs(formState.waktu_kejadian).toDate()
+                                      : dayjs().toDate()
+                                  }
+                                  showTimeInput
+                                  timeFormat="HH:mm"
+                                  onChange={handleWaktuKejadian}
+                                  timeCaption="Time"
+                                  dateFormat="dd/MM/yyyy HH:mm"
+                                  customTimeInput={<ExampleCustomTimeInput />}
+                                  className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                  name="waktu_kejadian"
+                                  disabled={false}
+                                  locale="id"
+                                  placeholderText='Masukkan Tanggal'
+                                />
+                                <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                                />
+                              </div>
+                              
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'waktu_kejadian'
+                                      ? 'Masukan Tanggal Kejadian Kasus'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div> */}
+
+                            {/* <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Pelaporan Kasus
+                              </label>
+                              <div className="flex flex-row">
+                                <DatePicker
+                                  // selected={
+                                  //   formState.waktu_pelaporan_kasus
+                                  //     ? dayjs(formState.waktu_pelaporan_kasus).toDate()
+                                  //     : dayjs().toDate()
+                                  // }
+                                  showTimeInput
+                                  timeFormat="HH:mm"
+                                  onChange={handleWaktuPelaporan}
+                                  timeCaption="Time"
+                                  dateFormat="dd/MM/yyyy HH:mm"
+                                  customTimeInput={<ExampleCustomTimeInput />}
+                                  className="w-[200px] rounded border border-stroke py-3 pl-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                  name="waktu_kejadian"
+                                  disabled={false}
+                                  placeholderText='Masukkan Tanggal'
+                                  locale="id"
+                                />
+                                <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                                />
+                              </div>
+                              <div className="">
+                                <p className="error-text">
+                                  {errors.map((item) =>
+                                    item === 'waktu_pelaporan_kasus'
+                                      ? 'Masukan Tanggal Pelaporan Kasus'
+                                      : '',
+                                  )}
+                                </p>
+                              </div>
+                            </div> */}
+
+                            <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Kejadian Kasus
+                              </label>
+                              <div className='flex'>
+                              <input
+                                type="datetime-local"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="waktu_kejadian"
+                                onChange={handleChange}
+                                value={formState.waktu_kejadian}
+                                disabled={isDetail}
+                              />
+                              <input
+                                  type="text"
+                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                  name="zona_waktu"
+                                  value={formState.zona_waktu}
+                                  disabled
+                              />
+                              </div>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_kejadian'
+                                    ? 'Masukan waktu kejadian'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                            
+                            <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal Pelaporan Kasus
+                              </label>
+                              <div className='flex'>
+                              <input
+                                type="datetime-local"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="waktu_pelaporan_kasus"
+                                onChange={handleChange}
+                                value={formState.waktu_pelaporan_kasus}
+                                disabled={isDetail}
+                              />
+                              <input
+                                type="text"
+                                className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                                name="zona_waktu"
+                                value={formState.zona_waktu}
+                                disabled
+                              />
+                              </div>
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_pelaporan_kasus'
+                                    ? 'Masukan waktu pelaporan kasus'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            
+                          </div>
+
+                          <div
+                            className={`${isDetail ? 'block mt-4' : 'hidden'}`}
+                          >
+                            <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white pt-3"
+                                htmlFor="id"
+                              >
+                                Jumlah Penyidikan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Jumlah Penyidikan"
+                                name="waktu_pelaporan_kasus"
+                                onChange={handleChange}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_pelaporan_kasus'
+                                    ? 'Masukan Jumlah Penyidikan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Oditur Penyidik
+                            </label>
+                            <Select
+                              className="capitalize text-white"
+                              isMulti
+                              placeholder="Pilih Oditur Penyidik"
+                              styles={customStyles}
+                              isDisabled={isDetail}
+                              options={oditurPenyidikOptions}
+                              onChange={handleSelectOditurPenyidik}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'nama' ? 'Masukan Tersangka' : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Ketua Oditur Penyidik
+                            </label>
+                            <Select
+                              className="capitalize"
+                              isDisabled={isDetail}
+                              placeholder="Pilih Ketua Oditur"
+                              styles={customStyles}
+                              options={ketuaOditurPenyidik}
+                              onChange={handleSelectKetuaOditur}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'role_ketua_oditur_ids'
+                                    ? 'Pilih Ketua Oditur Penyidik'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="form-group w-full">
+                            <label
+                              className="block text-sm font-medium text-black dark:text-white pt-3"
+                              htmlFor="id"
+                            >
+                              Pihak Terlibat
+                            </label>
+                            <Select
+                              className="capitalize"
+                              isMulti
+                              isDisabled={isDetail}
+                              placeholder="Pihak Terlibat"
+                              styles={customStyles}
+                              options={pihakTerlibat}
+                              onChange={handleSelectPihakTerlibat}
+                            />
+                            <div className="h-2">
+                              <p className="error-text">
+                                {errors.includes('saksi_id') ||
+                                errors.includes('wbp_profile_ids')
+                                  ? `${errors.includes('wbp_profile_ids') ? 'Tersangka' : ''} ${errors.includes('saksi_id') && errors.includes('wbp_profiles_ids') ? 'Dan' : ''} ${errors.includes('saksi_id') ? 'Saksi' : ''} Belum di Pilih`
+                                  : ''}
+                              </p>
+                            </div>
+                          </div>
+                          {selectTersangka.length === 0 ? null : (
+                            <>
+                              <div className="grid grid-rows-2">
+                                <label
+                                  htmlFor="id"
+                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Tersangka
+                                </label>
+
+                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                                  <div className="form-group w-2/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Nama Tersangka
+                                    </label>
+                                  </div>
+
+                                  <div className="form-group w-4/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Keterangan
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                                  {selectTersangka.map(
+                                    (item: any, index: number) => {
+                                      return (
+                                        <div
+                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                          key={index}
+                                        >
+                                          <div className="form-group w-2/6">
+                                            <label
+                                              htmlFor={`keterangans-${index}`}
+                                              className="capitalize block text-sm font-medium text-black dark:text-white"
+                                            >
+                                              {item.label}
+                                            </label>
+                                          </div>
+
+                                          <div className="form-group w-4/6 flex items-center mr-2">
+                                            <input
+                                              id={`keterangans${index}`}
+                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                              placeholder={`${errors.includes('keterangan') ? 'Keterangan Belum Di Isi' : 'Keterangan'}`}
+                                              onChange={(e) =>
+                                                handleChangeKeteranganTersangka(
+                                                  e,
+                                                  index,
+                                                )
+                                              }
+                                              disabled={isDetail}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    },
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {selectSaksi.length === 0 ? null : (
+                            <>
+                              <div className="grid grid-rows-2">
+                                <label
+                                  htmlFor="id"
+                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
+                                >
+                                  Saksi
+                                </label>
+
+                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                                  <div className="form-group w-2/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Nama Saksi
+                                    </label>
+                                  </div>
+
+                                  <div className="form-group w-4/6">
+                                    <label
+                                      htmlFor="id"
+                                      className="block text-sm font-medium text-black dark:text-white"
+                                    >
+                                      Keterangan Saksi
+                                    </label>
+                                  </div>
+                                </div>
+
+                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                                  {selectSaksi.map(
+                                    (item: any, index: number) => {
+                                      return (
+                                        <div
+                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                          key={index}
+                                        >
+                                          <div className="form-group w-2/6">
+                                            <label
+                                              className="capitalize block text-sm font-medium text-black dark:text-white"
+                                              htmlFor={`keterangan-${index}`}
+                                            >
+                                              {item.label}
+                                            </label>
+                                          </div>
+
+                                          <div className="form-group w-4/6 flex items-center mr-2">
+                                            <input
+                                              id={`keterangan-${index}`}
+                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                              placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
+                                              onChange={(e) =>
+                                                handleChangeKeterangan(e, index)
+                                              }
+                                              disabled={isDetail}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    },
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        // Select Kasus
+                        <div className="f-alamat form-group">
+                          <label
+                            htmlFor="id"
+                            className="block text-sm font-medium text-black dark:text-white"
+                          >
+                            Jenis Kasus
+                          </label>
+                          <Select
+                            className="basic-single p-gelang"
+                            classNamePrefix="select"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.kasus_id,
+                                    label: formState.nama_kasus,
+                                  }
+                                : formState.kasus_id
                             }
-                            options={jenisPerkara.map((item: any) => ({
-                              value: item.jenis_perkara_id,
-                              label: item.nama_jenis_perkara,
+                            placeholder={'Pilih Jenis Kasus'}
+                            isSearchable={true}
+                            isDisabled={isDetail}
+                            name="kasus_id"
+                            styles={customStyles}
+                            options={kasusData.map((item: any) => ({
+                              value: item.kasus_id,
+                              label: item.nama_kasus,
                             }))}
-                            onChange={handleSelectJenisPerkara}
-                          /> */}
+                            onChange={handleSelectJenisKasus}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'kasus_id' ? 'Pilih kasus' : '',
+                            )}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Tanggal diTahan */}
+                        <div className="f-tanggal-ditahan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Tanggal Ditahan
+                          </label>
+                          <input
+                            type="date"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="tanggal_ditahan_otmil"
+                            onChange={handleChange}
+                            value={formState.tanggal_ditahan_otmil}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'tanggal_ditahan_otmil'
+                                ? 'Masukan tanggal ditahan'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Gelang */}
+                        <div className="f-gelang form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Gelang
+                          </label>
 
                           <Select
                             className="basic-single p-gelang"
@@ -2471,148 +3515,24 @@ export const AddInmateModal = ({
                             defaultValue={
                               isEdit || isDetail
                                 ? {
-                                    value: formState.jenis_perkara_id,
-                                    label: formState.nama_jenis_perkara,
+                                    value: formState.gelang_id,
+                                    label: formState.nama_gelang,
                                   }
-                                : formState.jenis_perkara_id
+                                : formState.gelang_id
                             }
-                            placeholder={'Pilih Jenis Perkara'}
+                            placeholder={'Pilih Gelang'}
                             isSearchable={true}
                             isDisabled={isDetail}
-                            name="jenis_perkara_id"
+                            name="gelang_id"
                             styles={customStyles}
-                            options={jenisPerkara.map((item: any) => ({
-                              value: item.jenis_perkara_id,
-                              label: item.nama_jenis_perkara,
+                            options={gelang.map((item: any) => ({
+                              value: item.gelang_id,
+                              label: item.nama_gelang,
                             }))}
-                            onChange={handleSelectJenisPerkara}
+                            onChange={handleSelectGelang}
                           />
 
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'jenis_perkara_id'
-                                ? 'Pilih jenis perkara'
-                                : '',
-                            )}
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Vonis Tahun
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_tahun_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_tahun_perkara}
-                              disabled
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'vonis_tahun_perkara'
-                                  ? 'Masukan tanggal masa penahanan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-                          <div className="form-group w-full">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Vonis Bulan
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_bulan_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_bulan_perkara}
-                              disabled
-                            />
-                          </div>
-                          <div className="form-group w-full">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Vonis Hari
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="vonis_hari_perkara"
-                              // onChange={handleChange}
-                              value={formState.vonis_hari_perkara}
-                              disabled
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Tanggal diTahan */}
-                          <div className="f-tanggal-ditahan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Tanggal Ditahan
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_ditahan_otmil"
-                              onChange={handleChange}
-                              value={formState.tanggal_ditahan_otmil}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_ditahan_otmil'
-                                  ? 'Masukan tanggal ditahan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Gelang */}
-                          <div className="f-gelang form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Gelang
-                            </label>
-
-                            <Select
-                              className="basic-single p-gelang"
-                              classNamePrefix="select"
-                              defaultValue={
-                                isEdit || isDetail
-                                  ? {
-                                      value: formState.gelang_id,
-                                      label: formState.nama_gelang,
-                                    }
-                                  : formState.gelang_id
-                              }
-                              placeholder={'Pilih Gelang'}
-                              isSearchable={true}
-                              isDisabled={isDetail}
-                              name="gelang_id"
-                              styles={customStyles}
-                              options={gelang.map((item: any) => ({
-                                value: item.gelang_id,
-                                label: item.nama_gelang,
-                              }))}
-                              onChange={handleSelectGelang}
-                            />
-
-                            {/* <select
+                          {/* <select
                               className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                               name="gelang_id"
                               onChange={handleChange}
@@ -2663,205 +3583,205 @@ export const AddInmateModal = ({
                                         </option>
                                       ))}
                             </select> */}
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'gelang_id' ? 'Pilih gelang' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* DMAC Gelang */}
-                          <div className="f-dmac-gelang form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              DMAC Gelang
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="DMAC"
-                              placeholder="DMAC"
-                              onChange={handleChange}
-                              value={formState.DMAC}
-                              disabled
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'DMAC' ? 'Pilih gelang dulu' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Residivis */}
-                          <div className="f-residivis form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Residivis
-                            </label>
-
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="residivis"
-                              onChange={handleChange}
-                              value={formState.residivis}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Pilih Residivis
-                              </option>
-
-                              <option value="0">Tidak</option>
-                              <option value="1">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'residivis' ? 'Pilih Ya/Tidak' : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Hunian Tahanan */}
-                          <div className="f-hunian-tahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Hunian Tahanan
-                            </label>
-                            <Select
-                              className="basic-single"
-                              classNamePrefix="select"
-                              styles={customStyles}
-                              name="hunian_wbp_otmil_id"
-                              isDisabled={isDetail}
-                              isClearable={true}
-                              isSearchable={true}
-                              placeholder="Pilih Hunian Tahanan"
-                              defaultValue={
-                                isEdit || isDetail
-                                  ? {
-                                      value: formState.hunian_wbp_otmil_id,
-                                      label: formState.nama_hunian_wbp_otmil,
-                                    }
-                                  : formState.hunian_wbp_otmil_id
-                              }
-                              options={hunian.map((item: any) => ({
-                                value: item.hunian_wbp_otmil_id,
-                                label: item.nama_hunian_wbp_otmil,
-                              }))}
-                              onChange={handleSelectHunianTahanan}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'hunian_wbp_otmil_id'
-                                  ? 'Pilih hunian'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Nomor Tahanan*/}
-                          <div className="f-nomor-tahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Nomor Tahanan
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="nomor_tahanan"
-                              placeholder="Nomor Tahanan"
-                              onChange={handleChange}
-                              value={formState.nomor_tahanan}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'nomor_tahanan'
-                                  ? 'Masukan nomor tahanan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
-
-                          {/* Terisolasi */}
-                          <div className="f-status-terisolasi form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Terisolasi (?)
-                            </label>
-                            <select
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="is_isolated"
-                              onChange={handleChange}
-                              value={formState.is_isolated}
-                              disabled={isDetail}
-                            >
-                              <option value="" disabled>
-                                Silahkan Dipilih
-                              </option>
-                              <option value="0">Tidak</option>
-                              <option value="1">Ya</option>
-                            </select>
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'is_isolated' ? 'Pilih Ya/Tidak' : '',
-                              )}
-                            </p>
-                          </div>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'gelang_id' ? 'Pilih gelang' : '',
+                            )}
+                          </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Status Wbp*/}
-                          <div className="f-status-tersangka form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Status Tersangka
-                            </label>
-                            <Select
-                              className="basic-single"
-                              classNamePrefix="select"
-                              styles={customStyles}
-                              name="status_wbp_kasus_id"
-                              isDisabled={isDetail}
-                              isClearable={true}
-                              isSearchable={true}
-                              placeholder="Pilih Status"
-                              defaultValue={
-                                (isEdit || isDetail) &&
-                                formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
-                                  ? {
-                                      value: formState.status_wbp_kasus_id,
-                                      label: formState.nama_status_wbp_kasus,
-                                    }
-                                  : formState.status_wbp_kasus_id
-                              }
-                              options={statusWbp.map((item: any) => ({
-                                value: item.status_wbp_kasus_id,
-                                label: item.nama_status_wbp_kasus,
-                              }))}
-                              onChange={handleSelectWbpStatus}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'status_wbp_kasus_id'
-                                  ? 'Pilih status'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
 
-                          {/* Tanggal Penetapan*/}
-                          {/* <div
+                        {/* DMAC Gelang */}
+                        <div className="f-dmac-gelang form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            DMAC Gelang
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="DMAC"
+                            placeholder="DMAC"
+                            onChange={handleChange}
+                            value={formState.DMAC}
+                            disabled
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'DMAC' ? 'Pilih gelang dulu' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Residivis */}
+                        <div className="f-residivis form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Residivis
+                          </label>
+
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="residivis"
+                            onChange={handleChange}
+                            value={formState.residivis}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Pilih Residivis
+                            </option>
+
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'residivis' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Hunian Tahanan */}
+                        <div className="f-hunian-tahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Hunian Tahanan
+                          </label>
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="hunian_wbp_otmil_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Hunian Tahanan"
+                            defaultValue={
+                              isEdit || isDetail
+                                ? {
+                                    value: formState.hunian_wbp_otmil_id,
+                                    label: formState.nama_hunian_wbp_otmil,
+                                  }
+                                : formState.hunian_wbp_otmil_id
+                            }
+                            options={hunian.map((item: any) => ({
+                              value: item.hunian_wbp_otmil_id,
+                              label: item.nama_hunian_wbp_otmil,
+                            }))}
+                            onChange={handleSelectHunianTahanan}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'hunian_wbp_otmil_id'
+                                ? 'Pilih hunian'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Nomor Tahanan*/}
+                        <div className="f-nomor-tahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Nomor Tahanan
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="nomor_tahanan"
+                            placeholder="Nomor Tahanan"
+                            onChange={handleChange}
+                            value={formState.nomor_tahanan}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'nomor_tahanan'
+                                ? 'Masukan nomor tahanan'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Terisolasi */}
+                        <div className="f-status-terisolasi form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Terisolasi (?)
+                          </label>
+                          <select
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="is_isolated"
+                            onChange={handleChange}
+                            value={formState.is_isolated}
+                            disabled={isDetail}
+                          >
+                            <option value="" disabled>
+                              Silahkan Dipilih
+                            </option>
+                            <option value="0">Tidak</option>
+                            <option value="1">Ya</option>
+                          </select>
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'is_isolated' ? 'Pilih Ya/Tidak' : '',
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Status Wbp*/}
+                        <div className="f-status-tersangka form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Status Tersangka
+                          </label>
+                          <Select
+                            className="basic-single"
+                            classNamePrefix="select"
+                            styles={customStyles}
+                            name="status_wbp_kasus_id"
+                            isDisabled={isDetail}
+                            isClearable={true}
+                            isSearchable={true}
+                            placeholder="Pilih Status"
+                            defaultValue={
+                              (isEdit || isDetail) &&
+                              formState.nama_status_wbp_kasus // Jika dalam mode edit atau detail dan nama_status_wbp_kasus tidak null
+                                ? {
+                                    value: formState.status_wbp_kasus_id,
+                                    label: formState.nama_status_wbp_kasus,
+                                  }
+                                : formState.status_wbp_kasus_id
+                            }
+                            options={statusWbp.map((item: any) => ({
+                              value: item.status_wbp_kasus_id,
+                              label: item.nama_status_wbp_kasus,
+                            }))}
+                            onChange={handleSelectWbpStatus}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'status_wbp_kasus_id'
+                                ? 'Pilih status'
+                                : '',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Tanggal Penetapan*/}
+                        {/* <div
                             className={`form-group w-full ${
                               formState.status_wbp_kasus_id === '' ||
                               formState.status_wbp_kasus_id === null
@@ -2928,116 +3848,115 @@ export const AddInmateModal = ({
                             </p>
                           </div> */}
 
-                          {formState.status_wbp_kasus_id === '' ||
-                          formState.status_wbp_kasus_id === null ? null : (
-                            <>
-                              {/* Tanggal Penetapan Terpidana*/}
-                              <div
-                                className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan terpidana
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_terpidana"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_terpidana}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_terpidana'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-
-                              {/* Tanggal Penetapan Terdakwa*/}
-                              <div
-                                className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan terdakwa
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_terdakwa"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_terdakwa}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_terdakwa'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-
-                              {/* Tanggal Penetapan Tersangka*/}
-                              <div
-                                className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
-                              >
-                                <label
-                                  className="  block text-sm font-medium text-black dark:text-white"
-                                  htmlFor="id"
-                                >
-                                  Tanggal penetapan tersangka
-                                </label>
-                                <input
-                                  type="date"
-                                  className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                  name="tanggal_penetapan_tersangka"
-                                  onChange={handleChange}
-                                  value={formState.tanggal_penetapan_tersangka}
-                                  disabled={isDetail}
-                                />
-                                <p className="error-text">
-                                  {errors.map((item) =>
-                                    item === 'tanggal_penetapan_tersangka'
-                                      ? 'Masukan tanggal penetapan'
-                                      : '',
-                                  )}
-                                </p>
-                              </div>
-                            </>
-                          )}
-
-                          {/* Tanggal Masa Penahanan */}
-                          <div className="f-tanggal-masa-penahanan form-group w-full ">
-                            <label
-                              className="  block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
+                        {formState.status_wbp_kasus_id === '' ||
+                        formState.status_wbp_kasus_id === null ? null : (
+                          <>
+                            {/* Tanggal Penetapan Terpidana*/}
+                            <div
+                              className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
                             >
-                              Tanggal Masa Penahanan
-                            </label>
-                            <input
-                              type="date"
-                              className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                              name="tanggal_masa_penahanan_otmil"
-                              onChange={handleChange}
-                              value={formState.tanggal_masa_penahanan_otmil}
-                              disabled={isDetail}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'tanggal_masa_penahanan_otmil'
-                                  ? 'Masukan tanggal masa penahanan'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan terpidana
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_terpidana"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_terpidana}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_terpidana'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Tanggal Penetapan Terdakwa*/}
+                            <div
+                              className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                            >
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan terdakwa
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_terdakwa"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_terdakwa}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_terdakwa'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Tanggal Penetapan Tersangka*/}
+                            <div
+                              className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                            >
+                              <label
+                                className="  block text-sm font-medium text-black dark:text-white"
+                                htmlFor="id"
+                              >
+                                Tanggal penetapan tersangka
+                              </label>
+                              <input
+                                type="date"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                name="tanggal_penetapan_tersangka"
+                                onChange={handleChange}
+                                value={formState.tanggal_penetapan_tersangka}
+                                disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'tanggal_penetapan_tersangka'
+                                    ? 'Masukan tanggal penetapan'
+                                    : '',
+                                )}
+                              </p>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Tanggal Masa Penahanan */}
+                        <div className="f-tanggal-masa-penahanan form-group w-full ">
+                          <label
+                            className="  block text-sm font-medium text-black dark:text-white"
+                            htmlFor="id"
+                          >
+                            Tanggal Masa Penahanan
+                          </label>
+                          <input
+                            type="date"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            name="tanggal_masa_penahanan_otmil"
+                            onChange={handleChange}
+                            value={formState.tanggal_masa_penahanan_otmil}
+                            disabled={isDetail}
+                          />
+                          <p className="error-text">
+                            {errors.map((item) =>
+                              item === 'tanggal_masa_penahanan_otmil'
+                                ? 'Masukan tanggal masa penahanan'
+                                : '',
+                            )}
+                          </p>
                         </div>
                       </div>
                     </div>

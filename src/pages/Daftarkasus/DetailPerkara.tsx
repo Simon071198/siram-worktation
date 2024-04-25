@@ -18,15 +18,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import Loader from '../../common/Loader';
 
-
 const DetailPerkara = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const dataPerkara = state.data;
-
 
   const [tapIndex, setTapIndex] = useState(0);
   const tabMenu = [
