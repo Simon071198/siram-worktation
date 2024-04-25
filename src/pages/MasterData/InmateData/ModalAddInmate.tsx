@@ -102,6 +102,7 @@ export const AddInmateModal = ({
   token,
   dataWbp,
 }: any) => {
+  console.log(defaultValue, "defaultValue")
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -175,7 +176,7 @@ export const AddInmateModal = ({
 
       // Form State Kasus
       kasus_id : '',
-      is_new_kasus: '',
+      is_new_kasus: 'false',
       // wbp_existing_id: '',
       nama_kasus: '',
       nomor_kasus: '',
@@ -652,7 +653,7 @@ export const AddInmateModal = ({
   };
   // End Handle Kasus
 
-  console.log(errors, 'ini error')
+//  console.log(errors, 'ini error')
   // const validateForm = () => {
   //   let errorFields: any[] = [];
 
@@ -928,12 +929,12 @@ export const AddInmateModal = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
-    if (!validateForm()) return;
-    setButtonLoad(true);
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
-    closeModal();
+    // closeModal();
   };
 
   // Function to handle adding a "zona" to a specific input
@@ -1847,6 +1848,7 @@ export const AddInmateModal = ({
     //   tanggalTitle = 'Tanggal penetapan tersangka';
     //   tanggalDescription = 'Isi tanggal penetapan tersangka';
     // }
+    
 
     if (
       formState.is_sick === '1' &&
@@ -1878,7 +1880,6 @@ export const AddInmateModal = ({
 
     driverObj.drive();
   };
-
   return (
     // <div
     //   ref={modalContainerRef}
@@ -2817,7 +2818,8 @@ export const AddInmateModal = ({
                             className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                             name="is_new_kasus"
                             onChange={handleNewKasus}
-                            disabled={isDetail || isEdit}
+                            disabled={isDetail}
+                            defaultValue={formState.is_new_kasus}
                           >
                             <option value="">Silahkan Pilih</option>
 
