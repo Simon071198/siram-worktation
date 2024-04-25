@@ -263,6 +263,7 @@ const DaftarKasus = () => {
       if (response.data.status === 'OK') {
         const result = response.data.records;
         setData(result);
+        console.log('result', result)
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
@@ -861,7 +862,8 @@ const DaftarKasus = () => {
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
-                        {item.waktu_pelaporan_kasus}
+                        {/* {item.waktu_pelaporan_kasus} */}
+                        {dayjs(item.waktu_pelaporan_kasus, "DD MMM YYYY HH:mm").format('DD MMMM YYYY HH:mm')}
                       </p>
                     </div>
 
@@ -871,7 +873,8 @@ const DaftarKasus = () => {
                       className="flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">
-                        {item.waktu_kejadian}
+                        {/* {item.waktu_kejadian} */}
+                        {dayjs(item.waktu_kejadian, "DD MMM YYYY HH:mm").format('DD MMMM YYYY HH:mm')}
                       </p>
                     </div>
                     {isOperator ? (
