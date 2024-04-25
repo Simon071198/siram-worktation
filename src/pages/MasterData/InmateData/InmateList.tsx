@@ -81,7 +81,7 @@ const InmateList = () => {
     item?.akses_ruangan_otmil.map((item: any) =>
       newAksesRuangOtmil.push(item?.ruangan_otmil_id),
     );
-
+    console.log(item, "item edit")
     const newEditItem: any = {
       wbp_profile_id: item?.wbp_profile_id,
       foto_wajah: item?.foto_wajah,
@@ -141,6 +141,25 @@ const InmateList = () => {
       nama_kasus: item?.nama_kasus,
       is_new_kasus: 'false',
       existing_kasus_id: item.kasus_id,
+
+
+      // Form State Kasus
+      // wbp_existing_id: '',
+      nomor_kasus: '',
+      lokasi_kasus: '',
+      jenis_pidana_id: '',
+      kategori_perkara_id: '',
+      waktu_kejadian: '',
+      waktu_pelaporan_kasus: '',
+      wbp_profile_ids: [],
+      keterangans: [],
+      role_ketua_oditur_ids: '',
+      oditur_penyidik_id: [],
+      
+      nama_jenis_pidana: '',
+      saksi_id: [],
+      keteranganSaksis: [],
+      zona_waktu: '',
     };
 
     setEditData(newEditItem);

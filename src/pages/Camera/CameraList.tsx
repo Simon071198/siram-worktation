@@ -7,8 +7,9 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { Alerts } from './AlertCamera';
 import { Error403Message } from '../../utils/constants';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
-import { CiCamera } from 'react-icons/ci';
+import { RiCameraOffLine } from 'react-icons/ri';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import ReactPlayer from 'react-player';
 
 const CameraList = () => {
   const navigate = useNavigate();
@@ -186,6 +187,10 @@ const CameraList = () => {
 
   const indexOfLastCamera = currentPage * camerasPerPage;
   const indexOfFirstCamera = indexOfLastCamera - camerasPerPage;
+
+  const indexOfLastCameraOnline = currentPageCamOnline * camerasPerPage;
+  const indexOfFirstCameraOnline = indexOfLastCameraOnline - camerasPerPage;
+
   const totalCameras = buildings?.data?.records?.gedung.flatMap((gedung: any) =>
     gedung.lantai.flatMap((lantai: any) =>
       lantai.ruangan
@@ -201,7 +206,6 @@ const CameraList = () => {
           .filter((kamera) => kamera.status_kamera === 'online'),
       ),
   );
-  console.log('online', totalCamerasOnline);
   if (!totalCameras || !totalCamerasOnline) {
     return null;
   }
@@ -210,10 +214,10 @@ const CameraList = () => {
     indexOfLastCamera,
   );
   const currentCamerasOnline = totalCamerasOnline.slice(
-    indexOfFirstCamera,
-    indexOfLastCamera,
+    indexOfFirstCameraOnline,
+    indexOfLastCameraOnline,
   );
-  console.log('d', currentCamerasOnline);
+  console.log('online', currentCamerasOnline);
   const totalPages = Math.ceil(totalCameras.length / camerasPerPage);
   const totalPagesCameraOnline = Math.ceil(
     totalCamerasOnline.length / camerasPerPage,
@@ -235,7 +239,7 @@ const CameraList = () => {
     }
     return pageNumbers;
   };
-  const handlePageClick = (pageNumber) => {
+  const handlePageClick = (pageNumber: any) => {
     if (selectedRoom) {
       setCurrentPage(pageNumber);
     } else {
@@ -278,9 +282,23 @@ const CameraList = () => {
 
     return { startPage, endPage };
   };
-
+  console.log('cccrrr', currentCamerasOnline);
   const { startPage, endPage } = getPageNumbers();
-
+  const renderThumb = (cam) => {
+    var urlStream =
+      'http://192.168.1.111:5000/stream/' + cam.ip_address + '_.m3u8';
+    console.log('stream', urlStream);
+    return (
+      <ReactPlayer
+        url={urlStream}
+        playing={true}
+        height="100%"
+        width="100%"
+        muted
+      />
+    );
+  };
+  console.log(currentCamerasOnline, 'current page');
   const renderCameraList = () => {
     const selectedRoomData = buildings?.data?.records?.gedung.flatMap(
       (gedung) =>
@@ -333,28 +351,40 @@ const CameraList = () => {
                     className="block w-full h-full rounded-lg overflow-hidden relative"
                   >
                     {/* header */}
-                    <div className="flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
-                      <CiCamera className={`w-3/5 h-3/5 text-white`} />
+                    <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
+                      {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )}
                     </div>
                     {/* footer kamera */}
-                    <div className="absolute bottom-0 right-0 p-4 bg-r text-white flex justify-between w-full">
-                      <h4
-                        className={`${rows === 4 ? 'text-md mt-2' : 'text-title-sm'} text-center font-bold`}
-                      >
-                        {camera.nama_kamera}
-                      </h4>
-                      <div className="flex justify-center items-center">
-                        {camera.status_kamera === 'online' && (
+
+                    <div className="absolute top-1 right-2 flex items-center">
+                      {camera.status_kamera === 'online' ? (
+                        <>
                           <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
-                        )}
-                        <h5
-                          className={`${camera.status_kamera === 'online' ? 'text-green-500' : 'text-red-500'} text-center mt-1`}
-                        >
-                          {camera.status_kamera === 'online'
-                            ? 'Online'
-                            : 'Offline'}
-                        </h5>
-                      </div>
+                          <h5 className="text-green-500 text-center mt-1">
+                            Online
+                          </h5>
+                        </>
+                      ) : (
+                        <>
+                          <h5 className="text-red-500 text-center mt-1">
+                            Offline
+                          </h5>
+                        </>
+                      )}
+                    </div>
+                    <div className="absolute bottom-2 left-2 text-white">
+                      <h4
+                        className={`${(rows === 3 && 'text-xs') || (rows === 4 && 'text-xs')} text-center font-bold text-red-50`}
+                      >
+                        {camera.nama_kamera} (
+                        {getRoomLocationCamOnline(camera.ruangan_otmil_id)})
+                      </h4>
                     </div>
                   </Link>
                 </div>
@@ -446,8 +476,9 @@ const CameraList = () => {
                     className="block w-full h-full rounded-lg overflow-hidden relative"
                   >
                     {/* header */}
-                    <div className="flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
-                      <CiCamera className={`w-3/5 h-3/5 text-white`} />
+                    <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
+                      {/* <CiCamera className={`w-3/5 h-3/5 text-white`} /> */}
+                      {renderThumb(camera)}
                     </div>
                     {/* footer kamera */}
 
@@ -459,7 +490,7 @@ const CameraList = () => {
                     </div>
                     <div className="absolute bottom-2 left-2 text-white">
                       <h4
-                        className={`${(rows === 3 && 'text-xs') || (rows === 4 && 'text-xs')} text-center font-bold`}
+                        className={`${(rows === 3 && 'text-xs') || (rows === 4 && 'text-xs')} text-center font-bold text-red-50`}
                       >
                         {camera.nama_kamera} (
                         {getRoomLocationCamOnline(camera.ruangan_otmil_id)})
@@ -504,23 +535,23 @@ const CameraList = () => {
     );
   };
 
-  const getRoomLocation = () => {
-    if (!selectedRoom) return null;
+  // const getRoomLocation = () => {
+  //   if (!selectedRoom) return null;
 
-    let location = '';
-    buildings?.data?.records?.gedung.forEach((gedung) => {
-      gedung.lantai.forEach((lantai) => {
-        const foundRoom = lantai.ruangan.find(
-          (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
-        );
-        if (foundRoom) {
-          location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
-        }
-      });
-    });
+  //   let location = '';
+  //   buildings?.data?.records?.gedung.forEach((gedung) => {
+  //     gedung.lantai.forEach((lantai) => {
+  //       const foundRoom = lantai.ruangan.find(
+  //         (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
+  //       );
+  //       if (foundRoom) {
+  //         location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
+  //       }
+  //     });
+  //   });
 
-    return location;
-  };
+  //   return location;
+  // };
   const getRoomLocationCamOnline = (id: any) => {
     let location = '';
     buildings?.data?.records?.gedung.forEach((gedung) => {
@@ -528,7 +559,6 @@ const CameraList = () => {
         const foundRoom = lantai.ruangan.find(
           (ruangan) => ruangan.ruangan_otmil_id === id,
         );
-        console.log('found', foundRoom);
         if (foundRoom) {
           location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
         }
@@ -541,18 +571,16 @@ const CameraList = () => {
   return (
     <>
       <div className="w-full ml-1 flex gap-5  px-7 mt-4 items-center justify-between">
-        <div className="flex items-center justify-between w-9/12 gap-2">
+        <div className="flex items-center justify-between w-1/2">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 border border-white rounded-md px-4 py-2 text-white hover:bg-meta-4 hover:text-white transition duration-300 ease-in-out"
           >
             <IoMdArrowRoundBack /> Kembali
           </button>
-
+        </div>
+        <div className="flex gap-2">
           <>
-            <div className="flex">
-              <p>{getRoomLocation()}</p>
-            </div>
             <select
               id="layoutSelect"
               className="p-2  border rounded w-22  bg-meta-4 font-semibold"
@@ -568,8 +596,6 @@ const CameraList = () => {
               <option value="2x4">2x4</option>
             </select>
           </>
-        </div>
-        <div className="flex gap-2">
           <select
             value={selectedBuilding}
             onChange={handleSelectBuilding}
