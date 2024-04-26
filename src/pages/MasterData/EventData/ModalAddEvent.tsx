@@ -66,9 +66,9 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     status_kegiatan: defaultValue?.status_kegiatan ?? '',
     waktu_mulai_kegiatan: defaultValue?.waktu_mulai_kegiatan ?? '',
     waktu_selesai_kegiatan: defaultValue?.waktu_selesai_kegiatan ?? '',
-    peserta: isEdit
-      ? defaultValue?.peserta.map((item: any) => item.wbp_profile_id)
-      : [],
+    peserta: isEdit || isDetail
+      ? defaultValue?.peserta
+      : [], 
     lokasi_otmil_id: defaultValue?.lokasi_otmil_id ?? '',
     ruangan_otmil_id: defaultValue?.ruangan_otmil_id ?? '',
     nama_ruangan_otmil: defaultValue?.nama_ruangan_otmil ?? '',
@@ -343,8 +343,18 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
 
     onSubmit(formState);
     console.log(onSubmit);
-    // closeModal();
+    closeModal();
   };
+  const handlePeserta = (e: any) => {
+    console.log('jaksa', e);
+    let arrayTemp: any = [];
+    for (let i = 0; i < e.length; i++) {
+      arrayTemp.push(e[i].value);
+    }
+
+    setFormState({ ...formState, peserta: arrayTemp });
+  };
+  console.log(formState  , "listnya")
   const getTimeZone = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -1006,6 +1016,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       value={formState.nama_zona}
                       disabled={isDetail}
                     />
+                    
                     <p className="error-text">
                       {errors.map((item) =>
                         item === 'nama_zona' ? 'Masukan Zona' : '',
@@ -1013,184 +1024,32 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                     </p>
                   </div>
                 </div>
-
-                {isEdit ? (
-                  <div className="grid grid-cols-9 w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-peserta">
-                      <h2 className="py-2 rounded-md bg-slate-600 mb-2">
-                        Pilih Peserta
-                      </h2>
-                      <ul>
-                        {sourceList.map((item: namawbpDetail) => (
-                          <li
-                            key={item.wbp_profile_id}
-                            className="text-start px-2 "
-                          >
-                            <label>
-                              <input
-                                className="py-1 mr-1"
-                                name="wbp_profile_id"
-                                type="checkbox"
-                                checked={selectedSourceItems.includes(
-                                  item.wbp_profile_id,
-                                )}
-                                onChange={() =>
-                                  handleCheckboxChange(item.wbp_profile_id)
-                                }
-                              />
-                              {item.wbp_nama}
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className=" box-border m-auto flex-row">
-                      <p onClick={transferLeft} className="cursor-pointer py-2">
-                        <BiSolidLeftArrow size={25} color="white" />
-                      </p>
-                      <p
-                        onClick={transferRight}
-                        className="cursor-pointer py-2"
-                      >
-                        <BiSolidRightArrow size={25} color="white" />
-                      </p>
-                    </div>
-
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
-                      <h2 className="py-2 rounded-md bg-slate-600 mb-2">
-                        Peserta Ikut
-                      </h2>
-                      <ul>
-                        {targetList.map((item: namawbpDetail) => (
-                          <li key={item.wbp_profile_id} className="text-start">
-                            <label>
-                              <input
-                                className="mx-1"
-                                name="wbp_profile_id"
-                                type="checkbox"
-                                value={formState.peserta}
-                                checked={selectedTargetItems.includes(
-                                  item.wbp_profile_id,
-                                )}
-                                onChange={() =>
-                                  setSelectedTargetItems((prevItems) =>
-                                    prevItems.includes(item.wbp_profile_id)
-                                      ? prevItems.filter(
-                                          (id) => id !== item.wbp_profile_id,
-                                        )
-                                      : [...prevItems, item.wbp_profile_id],
-                                  )
-                                }
-                              />
-                              {item.wbp_nama}
-                            </label>
-                          </li>
-                        ))}
-                        <p className="error-text">
-                          {errors.map((item) =>
-                            item === 'wbp_profile_id' ? 'masukan WBP' : '',
-                          )}
-                        </p>
-                      </ul>
-                    </div>
+                  <div className="w-full mt-5">
+                    <Select
+                      className="basic-multi-select p-anggota w-full"
+                      isMulti
+                      classNamePrefix="select"
+                      defaultValue={
+                        isEdit || isDetail
+                          ? formState?.peserta?.map((item: any) => ({
+                              value: item.wbp_profile_id,
+                              label: item.wbp_nama,
+                            }))
+                          : ''
+                      }
+                      placeholder={'Pilih Peserta'}
+                      isClearable={true}
+                      isSearchable={true}
+                      isDisabled={isDetail}
+                      name="peserta"
+                      styles={customStyles}
+                      options={sourceList.map((data) => ({
+                        label: data.wbp_nama,
+                        value: data.wbp_profile_id
+                      }))}
+                      onChange={handlePeserta}
+                    />
                   </div>
-                ) : isDetail ? (
-                  <div className=" w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
-                      <h2 className="py-2 rounded-md bg-slate-600 mb-2">
-                        Peserta Ikut
-                      </h2>
-                      <ul className="grid grid-cols-3 gap-x-5 mx-2">
-                        {defaultValue.peserta.map((item: namawbpDetail) => (
-                          <li
-                            key={item.wbp_profile_id}
-                            className="text-center py-2 rounded-md truncate border-2 border-slate-500 my-2 box-border"
-                          >
-                            <label>{item.wbp_nama}</label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-9 w-full justify-between mt-5">
-                    <div className="max-h-60 focus:border-primary bg-slate-800 focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-peserta">
-                      <h2 className="py-2 rounded-md bg-slate-600 mb-2">
-                        Pilih Peserta
-                      </h2>
-                      <ul>
-                        {sourceList.map((item: namawbpDetail) => (
-                          <li key={item.wbp_profile_id} className="text-start">
-                            <label>
-                              <input
-                                className="mx-1"
-                                name="wbp_profile_id"
-                                type="checkbox"
-                                checked={selectedSourceItems.includes(
-                                  item.wbp_profile_id,
-                                )}
-                                onChange={() =>
-                                  handleCheckboxChange(item.wbp_profile_id)
-                                }
-                              />
-                              {item.wbp_nama}
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className=" box-border m-auto flex-row">
-                      <p onClick={transferLeft} className="cursor-pointer py-2">
-                        <BiSolidLeftArrow size={25} color="white" />
-                      </p>
-                      <p
-                        onClick={transferRight}
-                        className="cursor-pointer py-2"
-                      >
-                        <BiSolidRightArrow size={25} color="white" />
-                      </p>
-                    </div>
-
-                    <div className="max-h-60 focus:border-primary focus-visible:outline-none dark:border-strokedark bg-slate-800 dark:text-white dark:focus:border-primary col-span-4 text-center px-1 py-1 font-medium text-white rounded-md overflow-y-scroll d-ikut">
-                      <h2 className="py-2 rounded-md bg-slate-600 mb-2">
-                        Peserta Ikut
-                      </h2>
-                      <ul>
-                        {targetList.map((item: namawbpDetail) => (
-                          <li key={item.wbp_profile_id} className="text-start">
-                            <label>
-                              <input
-                                className="mr-1"
-                                type="checkbox"
-                                value={formState.peserta}
-                                checked={selectedTargetItems.includes(
-                                  item.wbp_profile_id,
-                                )}
-                                onChange={() =>
-                                  setSelectedTargetItems((prevItems) =>
-                                    prevItems.includes(item.wbp_profile_id)
-                                      ? prevItems.filter(
-                                          (id) => id !== item.wbp_profile_id,
-                                        )
-                                      : [...prevItems, item.wbp_profile_id],
-                                  )
-                                }
-                              />
-                              {item.wbp_nama}
-                            </label>
-                          </li>
-                        ))}
-                        <p className="error-text">
-                          {errors.map((item) =>
-                            item === 'wbp_profile_id' ? 'masukan WBP' : '',
-                          )}
-                        </p>
-                      </ul>
-                    </div>
-                  </div>
-                )}
 
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))
                   .length > 0 && (
