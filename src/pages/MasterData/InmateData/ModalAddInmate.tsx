@@ -931,9 +931,9 @@ export const AddInmateModal = ({
     e.preventDefault();
     console.log(formState, 'received values');
     // console.log(combineZona, "combined")
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
     // setButtonLoad(true);
-    // onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState).then(() => setButtonLoad(false));
     // console.log(formState, 'formstateSuccesValidate');
 
     // closeModal();
