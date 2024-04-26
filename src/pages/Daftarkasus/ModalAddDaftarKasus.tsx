@@ -898,40 +898,6 @@ export const AddDaftarKasusModal = ({
                     />
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map(
-                          (item) =>
-                            item === 'nama_jenis_pidana'
-                              ? 'Masukan Nama Jenis Pidana'
-                              : '',
-                          //    )}
-                          // </p>
-                          // </div>
-                          // </div>
-                          // <div className="form-group w-full">
-                          // <label
-                          // className="  block text-sm font-medium text-black dark:text-white"
-                          // htmlFor="id"
-                          // >
-                          // Jenis Pidana
-                          // </label>
-                          // <Select
-                          // className="capitalize p-jenis"
-                          // name='jenis_pidana_id'
-                          // options={jenisPidanaOptions}
-                          // isDisabled={isDetail}
-                          // isDisabled={true}
-                          // onChange={handleSelectPidana}
-                          // onChange={handleChange}
-                          // placeholder="Pilih Jenis Pidana"
-                          // styles={customStyles}
-                          // value={formState.jenis_pidana_id}
-                          // value={jenisPidanaOptions.find(option => option.value === formState.jenis_pidana_id)}
-                          // />
-                          // <div className="h-2">
-                          // <p className="error-text">
-                          // {errors.map((item) =>
-                          //                           item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
-                        )}
                       </p>
                     </div>
                   </div>

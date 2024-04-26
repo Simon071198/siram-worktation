@@ -716,7 +716,9 @@ export const AddInmateModal = ({
           }
         }
 
-        if(formState.is_new_kasus == 'true'){
+        if(key !== 'jenis_olahraga') // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
+
+        if(formState.is_new_kasus == 'true'){ // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
           const ignoredFields = [
             "kasus_id",
           ];
@@ -930,6 +932,8 @@ export const AddInmateModal = ({
   const handleSubmit = async(e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
+    if (!validateForm()) return;
+    setButtonLoad(true);
     // console.log(combineZona, "combined")
     if (!validateForm()) return;
     // setButtonLoad(true);
@@ -3627,11 +3631,11 @@ export const AddInmateModal = ({
                             value={formState.DMAC}
                             disabled
                           />
-                          <p className="error-text">
+                          {/* <p className="error-text">
                             {errors.map((item) =>
                               item === 'DMAC' ? 'Pilih gelang dulu' : '',
                             )}
-                          </p>
+                          </p> */}
                         </div>
 
                         {/* Residivis */}
@@ -4053,16 +4057,16 @@ export const AddInmateModal = ({
                     </div>
 
                     {/* ----- DATA PERILAKU ----- */}
-                    <div className="mt-4">
-                      <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+                    {/* <div className=""> */}
+                      {/* <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                         Data Perilaku
-                      </p>
+                      </p> */}
 
-                      <div className="flex flex-col gap-4">
-                        <div className="grid grid-cols-1 gap-4">
-                          <div className="grid grid-cols-2 gap-4">
+                      {/* <div className="flex flex-col gap-4"> */}
+                        {/* <div className="grid grid-cols-1 gap-4"> */}
+                          {/* <div className="grid grid-cols-2 gap-4"> */}
                             {/* Jenis Olahraga */}
-                            <div className="f-jenis-olahraga form-group w-full flex flex-col">
+                            {/* <div className="f-jenis-olahraga form-group w-full flex flex-col">
                               <label
                                 className=" block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -4094,10 +4098,10 @@ export const AddInmateModal = ({
                                     : '',
                                 )}
                               </p>
-                            </div>
+                            </div> */}
 
                             {/* Konsumsi Zat Adiktif */}
-                            <div className="f-zat-adiktif form-group w-full flex flex-col">
+                            {/* <div className="f-zat-adiktif form-group w-full flex flex-col">
                               <label
                                 className=" block text-sm font-medium text-black dark:text-white"
                                 htmlFor="id"
@@ -4129,11 +4133,11 @@ export const AddInmateModal = ({
                                     : '',
                                 )}
                               </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                            </div> */}
+                          {/* </div> */}
+                        {/* </div> */}
+                      {/* </div> */}
+                    {/* </div> */}
 
                     {isDetail ? null : (
                       <>
