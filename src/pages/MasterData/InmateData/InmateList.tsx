@@ -123,7 +123,7 @@ const InmateList = () => {
       nama_hunian_wbp_otmil: item?.nama_hunian_wbp_otmil,
       nomor_tahanan: item?.nomor_tahanan,
       is_isolated: item?.is_isolated,
-      akses_ruangan_otmil_id: newAksesRuangOtmil,
+      akses_ruangan_otmil_id: item?.akses_ruangan_otmil,
       zona_merah: [],
       lokasi_otmil_id: item?.lokasi_otmil_id,
       is_deleted: '0',
@@ -141,7 +141,7 @@ const InmateList = () => {
       nama_kasus: item?.nama_kasus,
       is_new_kasus: 'false',
       existing_kasus_id: item.kasus_id,
-      akses_ruangan_otmil: item.akses_ruangan_otmil,
+      // akses_ruangan_otmil: item.akses_ruangan_otmil,
 
 
       // Form State Kasus
