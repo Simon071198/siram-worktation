@@ -123,7 +123,7 @@ const InmateList = () => {
       nama_hunian_wbp_otmil: item?.nama_hunian_wbp_otmil,
       nomor_tahanan: item?.nomor_tahanan,
       is_isolated: item?.is_isolated,
-      akses_ruangan_otmil_id: item?.akses_ruangan_otmil,
+      akses_ruangan_otmil_id: newAksesRuangOtmil,
       zona_merah: [],
       lokasi_otmil_id: item?.lokasi_otmil_id,
       is_deleted: '0',
