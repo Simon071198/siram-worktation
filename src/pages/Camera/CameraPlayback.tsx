@@ -27,6 +27,7 @@ const CameraPlayback = () => {
   const [pilihKamera, setPilihKamera] = useState('');
   const [selesaiDate, setSelesaiDate] = useState(new Date());
   const [playlistPlayback, setPlaylistPlayback] = useState([]);
+  const [webSocketStatus, setWebSocket] = useState('Menyambungkan...');
   const [date, setDate] = useState(getCurrentDate());
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [currentRecordingIndex, setCurrentRecordingIndex] = useState(-1);
@@ -54,8 +55,11 @@ const CameraPlayback = () => {
   const [columns, setColumns] = useState(2);
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cannotConnect, setCannotConnect] = useState(false);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+  const [message, setMessage] = useState('');
+  const [ws, setWs] = useState(null);
   const camerasPerPage = columns * rows;
   function extractTimeFromURL(url) {
     const regex = /\/(\d{2})(\d{2})(\d{2})\.mp4$/;
@@ -112,9 +116,35 @@ const CameraPlayback = () => {
   };
 
   useEffect(() => {
+    let reconnectInterval: any;
+    console.log('messageStatus', webSocketStatus);
+    const connectToWebsocket = () => {
+      console.log('MasukBOyy');
+      const connectWebsocket = new W3CWebSocket('ws://192.168.1.111:4007');
+      connectWebsocket.onopen = () => {
+        setWs(connectWebsocket);
+        // clearInterval(reconnectInterval);
+        console.log('WebSocket Client Connected');
+        setWebSocket('Terhubung');
+        console.log('messageStatus', webSocketStatus);
+      };
+      connectWebsocket.onclose = () => {
+        setWebSocket('Terputus');
+        reconnectInterval = setInterval(connectToWebsocket, 2000);
+        console.log('messageStatus', webSocketStatus);
+        console.log('Terputus dari server WebSocket');
+      };
+    };
+
+    connectToWebsocket();
+
+    console.log('masukSini');
+    console.log('clientSini', client.current);
+
     client.current.onopen = () => {
+      console.log('clientSiniBoy', client.current);
+      setCannotConnect(false);
       console.log('WebSocket Client Connected');
-      // No need to send a request here; it will be sent when the camera is selected.
     };
 
     // Handle WebSocket messages (response from the server)
@@ -151,6 +181,7 @@ const CameraPlayback = () => {
         setCurrentRecordingIndex(0);
         setForurl(playlist[0]);
       } else if (dataFromServer.message === 'FILE FROM DIRECTORY EMPTY') {
+        console.log('kuyhaaa');
         console.log('Got reply from the server:', dataFromServer);
         setPlaylistPlayback([]);
         setSelectedData(true);
@@ -163,9 +194,31 @@ const CameraPlayback = () => {
     };
 
     client.current.onerror = (error) => {
-      console.error('WebSocket Error:', error);
+      // setCannotConnect(true);
+      console.error('WebSocket_Error:', error);
+    };
+
+    // if (client.current.readyState === 0) {
+    //   setWebSocket('Menyambungkan...');
+    // } else if (
+    //   client.current.readyState === 2 ||
+    //   client.current.readyState === 3
+    // ) {
+    //   setWebSocket('Terputus');
+    // } else {
+    //   setWebSocket('Terhubung');
+    // }
+
+    return () => {
+      if (ws) {
+        ws.close();
+      } else {
+        clearInterval(reconnectInterval);
+      }
+      // client.current.close();
     };
   }, []);
+
   function getCurrentDate() {
     const now = new Date();
     const year = now.getFullYear();
@@ -197,12 +250,18 @@ const CameraPlayback = () => {
 
   const handleSubmitCamera = async () => {
     //cek dahulu apakah data kamera sudah dipilih atau belum
-
     if (!selectedCamera) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: 'Pilih Kamera Terlebih Dahulu!',
+      });
+      return;
+    } else if (cannotConnect) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Koneksi ke server gagal!',
       });
       return;
     }
@@ -572,14 +631,28 @@ const CameraPlayback = () => {
   console.log('buid', buildings);
   return (
     <>
-      <div className="w-full ml-1 flex gap-5  px-7 mt-4 items-center justify-between">
-        <div className="flex items-center justify-between w-9/12 gap-2">
+      <div className="w-full ml-1 flex gap-5  px-7 mt-4 items-center justify-between ">
+        <div className="flex items-center justify-between gap-2 ">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 border border-white rounded-md px-4 py-2 text-white hover:bg-meta-4 hover:text-white transition duration-300 ease-in-out"
           >
             <IoMdArrowRoundBack /> Kembali
           </button>
+        </div>
+        <div className="text-xl">
+          Status Koneksi:{' '}
+          <span
+            className={
+              webSocketStatus === 'Terhubung'
+                ? 'text-green-500'
+                : webSocketStatus === 'Terputus'
+                  ? 'text-red-500'
+                  : 'text-white'
+            }
+          >
+            {webSocketStatus}
+          </span>
         </div>
         <div className="flex gap-2">
           <select
@@ -601,69 +674,77 @@ const CameraPlayback = () => {
           </select>
 
           {selectedBuilding && (
-            <select
-              value={selectedFloor}
-              onChange={handleSelectFloor}
-              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
-            >
-              <option disabled value="">
-                Pilih Lantai
-              </option>
-              {buildings?.data?.records?.gedung
-                ?.find(
-                  (building) => building.gedung_otmil_id === selectedBuilding,
-                )
-                ?.lantai.map((floor) => (
-                  <option
-                    key={floor.lantai_otmil_id}
-                    value={floor.lantai_otmil_id}
-                  >
-                    {floor.nama_lantai}
+            <>
+              {buildings?.data?.records?.gedung?.find(
+                (building) => building.gedung_otmil_id === selectedBuilding,
+              )?.lantai.length > 0 && (
+                <select
+                  value={selectedFloor}
+                  onChange={handleSelectFloor}
+                  className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+                >
+                  <option disabled value="">
+                    Pilih Lantai
                   </option>
-                ))}
-            </select>
+                  {buildings?.data?.records?.gedung
+                    ?.find(
+                      (building) =>
+                        building.gedung_otmil_id === selectedBuilding,
+                    )
+                    ?.lantai.map((floor) => (
+                      <option
+                        key={floor.lantai_otmil_id}
+                        value={floor.lantai_otmil_id}
+                      >
+                        {floor.nama_lantai}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </>
           )}
 
           {selectedFloor && (
-            <select
-              value={selectedRoom}
-              onChange={(e) => setSelectedRoom(e.target.value)}
-              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
-            >
-              <option disabled value="">
-                Pilih Ruangan
-              </option>
+            <>
               {buildings?.data?.records?.gedung
                 ?.find(
                   (building) => building.gedung_otmil_id === selectedBuilding,
                 )
                 ?.lantai.find(
                   (floor) => floor.lantai_otmil_id === selectedFloor,
-                )
-                ?.ruangan.map((room) => (
-                  <option
-                    key={room.ruangan_otmil_id}
-                    value={room.ruangan_otmil_id}
-                    onClick={() => handleClickRoom(room.ruangan_otmil_id)}
-                  >
-                    {room.nama_ruangan_otmil}
+                )?.ruangan.length > 0 && (
+                <select
+                  value={selectedRoom}
+                  onChange={(e) => setSelectedRoom(e.target.value)}
+                  className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+                >
+                  <option disabled value="">
+                    Pilih Ruangan
                   </option>
-                ))}
-            </select>
+                  {buildings?.data?.records?.gedung
+                    ?.find(
+                      (building) =>
+                        building.gedung_otmil_id === selectedBuilding,
+                    )
+                    ?.lantai.find(
+                      (floor) => floor.lantai_otmil_id === selectedFloor,
+                    )
+                    ?.ruangan.map((room) => (
+                      <option
+                        key={room.ruangan_otmil_id}
+                        value={room.ruangan_otmil_id}
+                        onClick={() => handleClickRoom(room.ruangan_otmil_id)}
+                      >
+                        {room.nama_ruangan_otmil}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </>
           )}
+
           {selectedRoom && (
-            <select
-              value={pilihKamera}
-              onChange={(e) => {
-                handleClickKamera(e.target.value);
-                setPilihKamera(e.target.value);
-                // console.log('eTargetValue', e.target.value);
-              }}
-              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
-            >
-              <option disabled value="">
-                Pilih Kamera
-              </option>
+            <>
               {buildings?.data?.records?.gedung
                 ?.find(
                   (building) => building.gedung_otmil_id === selectedBuilding,
@@ -672,21 +753,47 @@ const CameraPlayback = () => {
                   (floor) => floor.lantai_otmil_id === selectedFloor,
                 )
                 ?.ruangan.find((room) => room.ruangan_otmil_id === selectedRoom)
-                ?.kamera.map((cam) => (
-                  <option
-                    key={cam.kamera_id}
-                    value={JSON.stringify(cam)}
-                    onClick={() => handleClickKamera(cam)}
-                  >
-                    {cam.nama_kamera}
+                ?.kamera.length > 0 && (
+                <select
+                  value={pilihKamera}
+                  onChange={(e) => {
+                    handleClickKamera(e.target.value);
+                    setPilihKamera(e.target.value);
+                    // console.log('eTargetValue', e.target.value);
+                  }}
+                  className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+                >
+                  <option disabled value="">
+                    Pilih Kamera
                   </option>
-                ))}
-            </select>
+                  {buildings?.data?.records?.gedung
+                    ?.find(
+                      (building) =>
+                        building.gedung_otmil_id === selectedBuilding,
+                    )
+                    ?.lantai.find(
+                      (floor) => floor.lantai_otmil_id === selectedFloor,
+                    )
+                    ?.ruangan.find(
+                      (room) => room.ruangan_otmil_id === selectedRoom,
+                    )
+                    ?.kamera.map((cam) => (
+                      <option
+                        key={cam.kamera_id}
+                        value={JSON.stringify(cam)}
+                        onClick={() => handleClickKamera(cam)}
+                      >
+                        {cam.nama_kamera}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      <div className=" flex py-4 justify-center items-center  gap-6">
+      <div className=" flex pt-8 justify-center items-center  gap-6">
         <label className="text-md font-semibold tracking-wider">
           {' '}
           Pilih Waktu Mulai
@@ -714,8 +821,14 @@ const CameraPlayback = () => {
           className="w-[100%] text-center text-slate-950"
         />
         <div
-          className="bg-green-400 py-2 px-5 text-white rounded-lg hover:cursor-pointer"
-          onClick={handleSubmitCamera}
+          className={
+            webSocketStatus !== 'Terhubung'
+              ? 'bg-slate-400 py-2 px-5 text-white rounded-lg cursor-not-allowed'
+              : 'bg-green-400 py-2 px-5 text-white rounded-lg hover:cursor-pointer'
+          }
+          onClick={
+            webSocketStatus !== 'Terhubung' ? () => {} : handleSubmitCamera
+          }
         >
           Submit
         </div>
