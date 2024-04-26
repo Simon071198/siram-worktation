@@ -60,6 +60,7 @@ const SidangList = () => {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+
   const handleChagePage = (pageNumber: any) => {
     console.log(currentPage, 'currentPage');
     console.log(pageNumber, 'pageNumber');
@@ -83,6 +84,8 @@ const SidangList = () => {
     const newArraySaksi: any = [];
     const newArrayPengacara: any = [];
     const newArrayHakim: any = [];
+    const newArrayWbp: any = [];
+
     item?.sidang_oditur?.map((item: any) =>
       newArrayJaksa?.push({
         oditur_penuntut_id: item?.oditur_penuntut_id,
@@ -112,11 +115,36 @@ const SidangList = () => {
       }),
     );
 
+    item?.sidang_kasus_wbp.map((item: any) =>
+      newArrayWbp.push({
+        wbp_profile_id: item?.wbp_profile_id ?? '',
+        nama: item?.nama ?? '',
+      }),
+    );
+
+    // Assuming newArrayWbp is defined somewhere before this code block
+
+    // item?.sidang_wbp?.forEach((sidangItem: any) => {
+    //   // Check if sidangItem is defined and contains the expected properties
+    //   if (sidangItem && sidangItem.wbp_profile_id && sidangItem.nama) {
+    //     newArrayWbp.push({
+    //       wbp_profile_id: sidangItem.wbp_profile_id,
+    //       nama: sidangItem.nama,
+    //     });
+    //   } else {
+    //     // Handle the case where sidangItem is not defined or does not contain the expected properties
+    //     console.error(
+    //       'sidangItem is undefined or does not contain the expected properties:',
+    //       sidangItem,
+    //     );
+    //   }
+    // });
+
     const hakimKetua = item?.sidang_hakim.find(
       (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.ketua_oditur === '1',
+      (item: any) => item.role_ketua === '1',
     );
 
     const detailItem: any = {
@@ -132,8 +160,6 @@ const SidangList = () => {
       masa_tahanan_bulan: item?.masa_tahanan_bulan,
       masa_tahanan_hari: item?.masa_tahanan_hari,
       nama_sidang: item?.nama_sidang,
-      nama_wbp: item?.nama_wbp,
-      wbp_profile_id_kasus: item?.wbp_profile_id_kasus,
       juru_sita: item?.juru_sita,
       pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
       jenis_persidangan_id: item?.jenis_persidangan_id,
@@ -149,6 +175,7 @@ const SidangList = () => {
         (item: any) => item?.nama_pengacara,
       ),
       hakimHolder: newArrayHakim,
+      wbpHolder: newArrayWbp,
       oditurHolder: newArrayJaksa,
       hasil_keputusan_sidang: item?.hasil_keputusan_sidang,
       role_ketua_oditur_holder: {
@@ -213,6 +240,8 @@ const SidangList = () => {
     const newArraySaksi: any = [];
     const newArrayPengacara: any = [];
     const newArrayHakim: any = [];
+    const newArrayWbp: any = [];
+
     item?.sidang_oditur?.map((item: any) =>
       newArrayJaksa?.push({
         oditur_penuntut_id: item?.oditur_penuntut_id,
@@ -246,11 +275,35 @@ const SidangList = () => {
       }),
     );
 
+    item?.sidang_kasus_wbp.map((item: any) =>
+      newArrayWbp.push({
+        wbp_profile_id: item?.wbp_profile_id,
+        nama: item?.nama,
+      }),
+    );
+
+    // Assuming newArrayWbp is defined somewhere before this code block
+    // item?.sidang_wbp?.forEach((sidangItem: any) => {
+    //   // Check if sidangItem is defined and contains the expected properties
+    //   if (sidangItem && sidangItem.wbp_profile_id && sidangItem.nama) {
+    //     newArrayWbp.push({
+    //       wbp_profile_id: sidangItem.wbp_profile_id,
+    //       nama: sidangItem.nama,
+    //     });
+    //   } else {
+    //     // Handle the case where sidangItem is not defined or does not contain the expected properties
+    //     console.error(
+    //       'sidangItem is undefined or does not contain the expected properties:',
+    //       sidangItem,
+    //     );
+    //   }
+    // });
+
     const hakimKetua = item?.sidang_hakim.find(
       (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.ketua_oditur === '1',
+      (item: any) => item.role_ketua === '1',
     );
     // console.log('HAKIM KETUA', hakimKetua);
 
@@ -269,8 +322,6 @@ const SidangList = () => {
       masa_tahanan_bulan: item?.masa_tahanan_bulan,
       masa_tahanan_hari: item?.masa_tahanan_hari,
       nama_sidang: item?.nama_sidang,
-      nama_wbp: item?.nama_wbp,
-      wbp_profile_id_kasus: item?.wbp_profile_id_kasus,
       juru_sita: item?.juru_sita,
       pengawas_peradilan_militer: item?.pengawas_peradilan_militer,
       jenis_persidangan_id: item?.jenis_persidangan_id,
@@ -284,6 +335,8 @@ const SidangList = () => {
       agenda_sidang: item?.agenda_sidang,
       saksiHolder: newArraySaksi,
       saksi: newArraySaksi?.map((item: any) => item?.saksi_id),
+      wbpHolder: newArrayWbp,
+      wbp_profile: newArrayWbp?.map((item: any) => item?.wbp_profile_id),
       pengacara: newArrayPengacara,
       hakimHolder: newArrayHakim,
       oditur_penuntut_id: newArrayJaksa?.map(
@@ -438,6 +491,7 @@ const SidangList = () => {
       document.removeEventListener('keypress', handleEnterKeyPress);
     };
   }, [searchData]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
+
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
@@ -449,6 +503,7 @@ const SidangList = () => {
       const response = await apiSidangRead(params, token);
       if (response.data.status === 'OK') {
         setData(response.data.records);
+        console.log(response.data.records, 'dataa');
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
@@ -791,7 +846,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.ketua_oditur === '1',
+                                  (item: any) => item.role_ketua === '1',
                                 )?.nama_oditur || ''
                               : ''}
                           </p>
@@ -834,7 +889,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.ketua_oditur === '1',
+                                  (item: any) => item.role_ketua === '1',
                                 )?.nama_oditur || ''
                               : ''}
                           </p>
@@ -886,8 +941,8 @@ const SidangList = () => {
               defaultValue={editData}
               isEdit={true}
               token={token}
-            />
-          )}
+              />
+            )}
           {modalAddOpen && (
             <AddSidangModal
               closeModal={handleCloseAddModal}

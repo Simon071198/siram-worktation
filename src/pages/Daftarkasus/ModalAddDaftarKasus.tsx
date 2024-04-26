@@ -55,6 +55,7 @@ export const AddDaftarKasusModal = ({
     saksi_id: [],
     keteranganSaksis: [],
     zona_waktu: '',
+    tanggal_pelimpahan_kasus: ''
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -128,7 +129,25 @@ export const AddDaftarKasusModal = ({
     return true;
   };
   
+
+  //Handle Max Date
   
+  const [maxDate, setMaxDate] = useState(formatDate(new Date()));
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -230,7 +249,6 @@ export const AddDaftarKasusModal = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
     if (!validateForm()) return;
     setButtonLoad(true);
 
@@ -989,6 +1007,31 @@ export const AddDaftarKasusModal = ({
                           'Masukan Tanggal Pelaporan Kasus'}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="form-group w-full ">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Tanggal Pelimpahan Kasus
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
+                      name="tanggal_pelimpahan_kasus"
+                      placeholder="Tanggal Pelimpahan Kasus"
+                      onChange={handleChange}
+                      disabled={isDetail}
+                      max={maxDate}
+                    />
+                    <p className='error-text'>
+                      {errors.map((item) =>
+                        item === 'tanggal_pelimpahan_kasus'
+                          ? 'Masukan Tanggal Pelimpahan Kasus'
+                          : '',
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className={`${isDetail ? 'block mt-4' : 'hidden'}`}>

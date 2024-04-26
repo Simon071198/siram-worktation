@@ -79,7 +79,7 @@ const InmateList = () => {
 
     const newAksesRuangOtmil: any = [];
     item?.akses_ruangan_otmil.map((item: any) =>
-      newAksesRuangOtmil.push(item?.ruangan_otmil_id),
+      newAksesRuangOtmil.push({id: item?.ruangan_otmil_id, isPermitted: item?.isPermitted}),
     );
     console.log(item, "item edit")
     const newEditItem: any = {
@@ -141,6 +141,7 @@ const InmateList = () => {
       nama_kasus: item?.nama_kasus,
       is_new_kasus: 'false',
       existing_kasus_id: item.kasus_id,
+      // akses_ruangan_otmil: item.akses_ruangan_otmil,
 
 
       // Form State Kasus

@@ -179,37 +179,83 @@ export const AddPenyidikanModal = ({
     label: defaultValue?.nama_saksi || defaultValue?.nama_wbp,
   };
 
-  const handleSelectPihakTerlibat = (e: any) => {
-    const selectedOption = terlibatOptions.find(
-      (option) => option.value === e.value,
-    );
-
-    if (selectedOption?.label.includes('(saksi)')) {
+  interface Option {
+    value: string;
+    label: string;
+  }
+  
+  const handleSelectPihakTerlibat = (selectedOptions:any) => {
+    if (selectedOptions && selectedOptions.length > 0) {
+      let saksiCount = 0;
+      let tersangkaCount = 0;
+  
+      // Iterasi melalui opsi yang dipilih untuk menghitung jumlah saksi dan tersangka yang dipilih
+      selectedOptions.forEach(option => {
+        if (option.label.includes('(saksi)')) {
+          saksiCount++;
+        }
+        if (option.label.includes('(tersangka)')) {
+          tersangkaCount++;
+        }
+      });
+  
+      // Jika jumlah saksi atau tersangka yang dipilih melebihi 1, batalkan pemilihan terakhir
+      if (saksiCount > 1 || tersangkaCount > 1) {
+        // Menghapus opsi terakhir dari yang dipilih
+        selectedOptions.pop();
+      }
+  
+      // Setel form state dengan nilai yang ditemukan
       setFormState({
         ...formState,
-        saksi_id: e.value,
-        wbp_profile_id: null,
-        nrp: '',
+        saksi_id: selectedOptions.find(option => option.label.includes('(saksi)'))?.value || null,
+        wbp_profile_id: selectedOptions.find(option => option.label.includes('(tersangka)'))?.value || null,
+        // Sesuaikan dengan cara Anda mendapatkan nilai nrp
+        nrp: '', 
       });
     } else {
+      // Reset form state jika tidak ada opsi yang dipilih
       setFormState({
         ...formState,
-        wbp_profile_id: e.value,
         saksi_id: null,
-        nrp: selectedOption?.nrp,
+        wbp_profile_id: null,
+        // Reset nilai nrp jika tidak ada opsi yang dipilih
+        nrp: '', 
       });
     }
-
-    console.log('selectedOption', selectedOption);
-
-    console.log('formState', formState);
-
-    console.log('e', e);
-
-    console.log('terlibatOptions', terlibatOptions);
-
-    console.log('terlibatOptionsValue', terlibatOptionsValue);
   };
+  
+  // const handleSelectPihakTerlibat = (e: any) => {
+  //   const selectedOption = terlibatOptions.find(
+  //     (option) => option.value === e.value,
+  //   );
+
+  //   if (selectedOption?.label.includes('(saksi)')) {
+  //     setFormState({
+  //       ...formState,
+  //       saksi_id: e.value,
+  //       wbp_profile_id: null,
+  //       nrp: '',
+  //     });
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       wbp_profile_id: e.value,
+  //       saksi_id: null,
+  //       nrp: selectedOption?.nrp,
+  //     });
+  //   }
+
+  //   console.log('selectedOption', selectedOption);
+
+  //   console.log('formState', formState);
+
+  //   console.log('e', e);
+
+  //   console.log('terlibatOptions', terlibatOptions);
+
+  //   console.log('terlibatOptionsValue', terlibatOptionsValue);
+  // };
 
   //select kasus
   const kasusOptions = dataKasus?.map((item: any) => ({
@@ -388,12 +434,14 @@ export const AddPenyidikanModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    setButtonLoad(true);
-    onSubmit(formState).then(() => 
-      setButtonLoad(false),
-      setFormSubmitted(true)
-    );
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
+    // onSubmit(formState).then(() => 
+    //   setButtonLoad(false),
+    //   setFormSubmitted(true)
+    // );
+
+    console.log(formState, 'HAHA BYE');
   };
 
   const modalStyles: any = {
@@ -695,7 +743,7 @@ export const AddPenyidikanModal = ({
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="form-group w-full h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -704,10 +752,11 @@ export const AddPenyidikanModal = ({
                       Pihak Terlibat
                     </label>
                       <Select
+                        isMulti
                         className="capitalize"
                         options={terlibatOptions}
                         isDisabled={isDetail}
-                        defaultValue={terlibatOptionsValue}
+                        defaultValue={isDetail || isEdit ? terlibatOptionsValue : ''}
                         onChange={handleSelectPihakTerlibat}
                         placeholder="Pihak Terlibat"
                         styles={customStyles}
@@ -717,7 +766,7 @@ export const AddPenyidikanModal = ({
                             <p className="error-text">Pilih salah satu pihak terlibat.</p>
                         )}
                   </div>
-                  <div className="form-group w-full h-22">
+                  {/* <div className="form-group w-full h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -738,7 +787,7 @@ export const AddPenyidikanModal = ({
                         item === 'nrp' ? 'Masukan NRP' : '',
                       )}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="form-group w-full h-22">
                   <label

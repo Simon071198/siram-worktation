@@ -173,7 +173,7 @@ export const AddInmateModal = ({
       tanggal_penetapan_terpidana: '',
       zat_adiktif: '',
       jenis_olahraga: '',
-
+      akses_wbp_otmil: [],
       // Form State Kasus
       kasus_id : '',
       is_new_kasus: 'false',
@@ -927,36 +927,56 @@ export const AddInmateModal = ({
       };
       reader.readAsDataURL(file);
     }
+
   };
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async(e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
     if (!validateForm()) return;
     setButtonLoad(true);
+    // console.log(combineZona, "combined")
+    if (!validateForm()) return;
+    // setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
-    console.log(formState, 'formstateSuccesValidate');
+    // console.log(formState, 'formstateSuccesValidate');
 
     // closeModal();
   };
 
   // Function to handle adding a "zona" to a specific input
-  const handleAddZona = (zonaId: any, inputField: any) => {
-    console.log('ZONA', zonaId, 'INPUT', inputField);
+  const handleAddZona = (zonaId: number, isPermitted: number) => {
+    console.log('ZONA', zonaId, 'INPUT', isPermitted);
 
-    if (formState[inputField].includes(zonaId)) {
+    if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
       // Check if the "zona" is already added to any input
 
       // If it's already added, show an error or handle it as needed
       setErrors([
         ...errors,
-        `Zona ${zonaId} is already assigned to ${inputField}.`,
+        `Zona ${zonaId} is already assigned.`,
       ]);
     } else {
       // If it's not added to any input, assign it to the specified input
+      let objectZona = {};
+      if(isPermitted  == 1) {
+        objectZona = {
+          id: zonaId,
+          isPermitted: 1
+        }
+      }else{
+        objectZona = {
+          id: zonaId,
+          isPermitted: 0
+        }
+      }
       setFormState({
         ...formState,
-        [inputField]: [...formState[inputField], zonaId],
+        akses_ruangan_otmil_id: [...formState.akses_ruangan_otmil_id, objectZona],
       });
+
+      // combine state
+      // const combineZona = [...formState.akses_ruangan_otmil_id, ...formState.zona_merah]
+      // setFormState({...formState, akses_wbp_otmil: combineZona})
 
       // Remove the selected zona from the autocomplete data
       setAutocompleteDataZona((prevData: any) =>
@@ -965,24 +985,24 @@ export const AddInmateModal = ({
         ),
       );
     }
-  };
 
+  };
   // Function to handle removing a "zona" from the selected chips
   const handleRemoveZona = (zonaId: any, inputField: any) => {
     // Remove the zona from the selected input field
     setFormState({
       ...formState,
-      [inputField]: formState[inputField].filter((id: any) => id !== zonaId),
+      akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter((id: any) => id.id !== zonaId),
     });
 
     // Add the removed zona back to the autocomplete data
 
-    if (!isEdit) {
+    // if (!isEdit) {
       setAutocompleteDataZona((prevData: any) => [
         ...prevData,
         zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
       ]);
-    }
+    // }
   };
 
   useEffect(() => {
@@ -1882,6 +1902,8 @@ export const AddInmateModal = ({
 
     driverObj.drive();
   };
+  const mikir = isEdit && formState.akses_ruangan_otmil?.filter((data: any) => data.isPermitted == 1)
+  console.log(mikir, "mikir")
   return (
     // <div
     //   ref={modalContainerRef}
@@ -4131,9 +4153,7 @@ export const AddInmateModal = ({
                                 ? autocompleteDataZona
                                     ?.filter(
                                       (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.includes(
-                                          item.ruangan_otmil_id,
-                                        ),
+                                        !formState.akses_ruangan_otmil_id.some((data) =>  item.ruangan_otmil_id == data.id),
                                     )
                                     .map((zonaItem: any) => (
                                       <div
@@ -4159,7 +4179,7 @@ export const AddInmateModal = ({
                                             e.preventDefault(); // Prevent page reload
                                             handleAddZona(
                                               zonaItem.ruangan_otmil_id,
-                                              'akses_ruangan_otmil_id',
+                                             1,
                                             );
                                           }}
                                         >
@@ -4171,7 +4191,7 @@ export const AddInmateModal = ({
                                             e.preventDefault(); // Prevent page reload
                                             handleAddZona(
                                               zonaItem.ruangan_otmil_id,
-                                              'zona_merah',
+                                              0,
                                             );
                                           }}
                                         >
@@ -4203,7 +4223,7 @@ export const AddInmateModal = ({
                                           e.preventDefault();
                                           handleAddZona(
                                             zonaItem.ruangan_otmil_id,
-                                            'akses_ruangan_otmil_id',
+                                            1,
                                           );
                                         }}
                                       >
@@ -4216,7 +4236,7 @@ export const AddInmateModal = ({
                                           e.preventDefault();
                                           handleAddZona(
                                             zonaItem.ruangan_otmil_id,
-                                            'zona_merah',
+                                           0,
                                           );
                                         }}
                                       >
@@ -4242,18 +4262,8 @@ export const AddInmateModal = ({
                         </h3>
 
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                          {isDetail
-                            ? formState.akses_ruangan_otmil.map((item: any) => (
-                                <div
-                                  className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                  data-te-ripple-color="dark"
-                                >
-                                  <p className="capitalize text-center">
-                                    {item.nama_ruangan_otmil}
-                                  </p>
-                                </div>
-                              ))
-                            : formState.akses_ruangan_otmil_id?.map(
+                          {!isDetail &&
+                            formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
                                 (zonaId: any) => (
                                   <div
                                     key={zonaId}
@@ -4264,8 +4274,7 @@ export const AddInmateModal = ({
                                       {
                                         zona.find(
                                           (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id ===
-                                            zonaId,
+                                            zonaItem.ruangan_otmil_id == zonaId.id,
                                         )?.nama_ruangan_otmil
                                       }
                                     </p>
@@ -4273,7 +4282,7 @@ export const AddInmateModal = ({
                                       data-te-chip-close
                                       onClick={() =>
                                         handleRemoveZona(
-                                          zonaId,
+                                          zonaId.id,
                                           'akses_ruangan_otmil_id',
                                         )
                                       }
@@ -4297,6 +4306,63 @@ export const AddInmateModal = ({
                                   </div>
                                 ),
                               )}
+                          {/* {isEdit &&
+                            formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
+                                (zonaId: any) => (
+                                  <div
+                                    key={zonaId}
+                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                                    data-te-ripple-color="dark"
+                                  >
+                                    <p className="capitalize text-center">
+                                      {
+                                        zona.find(
+                                          (zonaItem: any) =>
+                                            zonaItem.ruangan_otmil_id ==
+                                            isEdit ? zonaId : zonaId.id,
+                                        )?.nama_ruangan_otmil
+                                      }
+                                    </p>
+                                    <span
+                                      data-te-chip-close
+                                      onClick={() =>
+                                        handleRemoveZona(
+                                          zonaId.id,
+                                          'akses_ruangan_otmil_id',
+                                        )
+                                      }
+                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="1.5"
+                                        stroke="currentColor"
+                                        className="h-3 w-3"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          d="M6 18L18 6M6 6l12 12"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </div>
+                                ),
+                              )} */}
+                          {
+                        isDetail && formState.akses_ruangan_otmil?.filter((data: any) => data.isPermitted == 1).map((zona: any, index: number) => (
+                          <div key={index} className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                          data-te-ripple-color="dark">
+                              <p className="capitalize text-center">
+                            {
+                              zona.nama_ruangan_otmil
+                            }
+                          </p>
+                          </div>
+                        ))
+                      }
                         </div>
                       </div>
 
@@ -4305,7 +4371,7 @@ export const AddInmateModal = ({
                           Zona Merah
                         </h3>
                         <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                          {formState.zona_merah?.map((zonaId: any) => (
+                          {!isDetail && formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 0).map((zonaId: any) => (
                             <div
                               key={zonaId}
                               className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
@@ -4315,14 +4381,14 @@ export const AddInmateModal = ({
                                 {
                                   zona.find(
                                     (zonaItem: any) =>
-                                      zonaItem.ruangan_otmil_id === zonaId,
+                                      zonaItem.ruangan_otmil_id === zonaId.id,
                                   )?.nama_ruangan_otmil
                                 }
                               </p>
                               <span
                                 data-te-chip-close
                                 onClick={() =>
-                                  handleRemoveZona(zonaId, 'zona_merah')
+                                  handleRemoveZona(zonaId.id, 'zona_merah')
                                 }
                                 className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                               >
@@ -4343,6 +4409,18 @@ export const AddInmateModal = ({
                               </span>
                             </div>
                           ))}
+                          {
+                            isDetail && formState.akses_ruangan_otmil?.filter((data: any) => data.isPermitted == 0).map((zona: any, index: number) => (
+                              <div key={index} className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                              data-te-ripple-color="dark">
+                                  <p className="capitalize text-center">
+                                {
+                                  zona.nama_ruangan_otmil
+                                }
+                              </p>
+                              </div>
+                            ))
+                          }
                         </div>
                       </div>
                     </div>
