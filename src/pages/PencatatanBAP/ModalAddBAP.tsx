@@ -692,7 +692,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                         placeholder="NRP"
                         name="nrp_wbp"
                         onChange={handleChange}
-                        value={formState.nama_saksi ? '' : formState.nrp_wbp}
+                        value={formState.nrp_wbp ? formState.nrp_wbp : ''}
                         disabled
                       />
                       {/* <p className="error-text">
