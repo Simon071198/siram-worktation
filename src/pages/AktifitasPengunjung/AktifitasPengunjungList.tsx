@@ -179,6 +179,12 @@ const AktifitasPengunjungList = () => {
     setCurrentPage(1);
   };
 
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-GB', options);
+  };
+
   // useEffect untuk fetch data dari API
   useEffect(() => {
     fetchData();
@@ -577,7 +583,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black text-center dark:text-white">
-                          {item.waktu_mulai_kunjungan}
+                          {formatDate(item.waktu_mulai_kunjungan)}
                         </p>
                       </div>
                       <div
@@ -585,7 +591,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black dark:text-white">
-                          {item.waktu_selesai_kunjungan}
+                          {formatDate(item.waktu_selesai_kunjungan)}
                         </p>
                       </div>
                       <div

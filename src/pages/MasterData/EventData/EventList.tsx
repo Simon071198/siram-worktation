@@ -692,7 +692,8 @@ const EventList = () => {
                             className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
                           >
                             <p className="text-black dark:text-white">
-                              {item.peserta.length}
+                              {/* {item.peserta.length} */}
+                              {item.peserta.length > 0 && `${item.peserta.length} Peserta`}
                             </p>
                           </div>
                           {/* <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
