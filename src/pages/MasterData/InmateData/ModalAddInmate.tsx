@@ -716,7 +716,9 @@ export const AddInmateModal = ({
           }
         }
 
-        if(formState.is_new_kasus == 'true'){
+        if(key !== 'jenis_olahraga') // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
+
+        if(formState.is_new_kasus == 'true'){ // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
           const ignoredFields = [
             "kasus_id",
           ];
@@ -929,8 +931,8 @@ export const AddInmateModal = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
-    // if (!validateForm()) return;
-    // setButtonLoad(true);
+    if (!validateForm()) return;
+    setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
@@ -3607,11 +3609,11 @@ export const AddInmateModal = ({
                             value={formState.DMAC}
                             disabled
                           />
-                          <p className="error-text">
+                          {/* <p className="error-text">
                             {errors.map((item) =>
                               item === 'DMAC' ? 'Pilih gelang dulu' : '',
                             )}
-                          </p>
+                          </p> */}
                         </div>
 
                         {/* Residivis */}
