@@ -103,6 +103,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [ahli, setAhli] = useState([]);
   const [saksi, setSaksi] = useState([]);
   const [wbp, setWbp] = useState([]);
+  const [getWbp, setGetWbp] = useState([]);
   const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
@@ -382,7 +383,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const jaksaMap = formState?.oditurHolder?.map(
         (item: any) => item?.oditur_penuntut_id,
       );
-      const wbpMap = formState?.wbpHolder?.map((item: any) => item?.wbp_profile_id);
+      const wbpMap = formState.wbpHolder.map((item: any) => item.wbp_profile_id);
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
       // const pengacaraMap = formState.sidang_pengacara.map(
@@ -407,22 +408,41 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (getSaksi.length > 0) {
+    if (getSaksi.length > 0 && getWbp.length > 0) {
       const saksiValues = getSaksi.map((item: any) => item.value);
+      const wbpValues = getWbp.map((item: any) => item.value);
+
       setFormState((prevFormState: any) => ({
         ...prevFormState,
         saksi: saksiValues,
+        wbp: wbpValues,
       }));
     }
-  }, [getSaksi]);
+  }, [getSaksi, getWbp]);
 
   const handleSelectWbp = (e: any) => {
-    let arrayTemp: any = [];
-    for (let i = 0; i < e.length; i++) {
-      arrayTemp.push(e[i].value);
-    }
+    // let arrayTemp: any = [];
+    // for (let i = 0; i < e.length; i++) {
+    //   arrayTemp.push(e[i].value);
+    // }
 
-    setFormState({ ...formState, wbp_profile: arrayTemp });
+    // setFormState({ ...formState, wbp_profile: arrayTemp });
+
+    const selectedValues = e.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    }));
+
+    setFormState((prevFormState: any) => ({
+      ...prevFormState,
+      wbp: selectedValues.map((valueItem: any) => valueItem.value),
+      wbpHolder: selectedValues.map((valueItem: any) => ({
+        wbp_profile_id: valueItem.value,
+        nama: valueItem.label,
+      })),
+    }));
+
+    setGetWbp(selectedValues);
   };
 
   const handleSelectSaksi = (e: any) => {
@@ -620,7 +640,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const saksiFilter = kasus.filter(
         (item: any) => item.kasus_id === selectedOption.value,
       )[0];
+
+      const wbpFilter = kasus.filter(
+        (item: any) => item.kasus_id === selectedOption.value,
+      )[0];
+
       console.log(saksiFilter, 'saksiFilter');
+      console.log(wbpFilter, 'wbp filter');
+
       if (saksiFilter) {
         const saksiMap = saksiFilter.saksi.map((item: any) => ({
           label: item.nama_saksi,
@@ -634,15 +661,55 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           kasus_id: saksiFilter.kasus_id,
           nama_kasus: saksiFilter.nama_kasus,
         });
+        
+        // setFormState({
+        //   ...formState,
+        //   nomor_kasus: {
+        //     saksi: saksiFilter.nomor_kasus,
+        //     wbp: wbpFilter.nomor_kasus
+        //   },
+        //   kasus_id: {
+        //     saksi: saksiFilter.kasus_id,
+        //     wbp: wbpFilter.kasus_id
+        //   },
+        //   nama_kasus: {
+        //     saksi: saksiFilter.nama_kasus,
+        //     wbp: wbpFilter.nama_kasus
+        //   }
+        // });
+
         console.log('getSaksi', getSaksi);
       } else {
         setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
       }
+
+      if(wbpFilter){
+        const wbpMap = wbpFilter.wbp_profile.map((item: any) => ({
+          label: item.nama,
+          value: item.wbp_profile_id,
+        }));
+        console.log('wbpsMap', wbpMap)
+        setGetWbp(wbpMap);
+
+        setFormState({
+          ...formState,
+          nomor_kasus: wbpFilter.nomor_kasus,
+          kasus_id: wbpFilter.kasus_id,
+          nama_kasus: wbpFilter.nama_kasus,
+        });
+
+        console.log('getWbp', getWbp);
+      }else{
+        setGetWbp([]);
+      }
+
     } else {
       setFormState({ ...formState, kasus_id: '' });
       setGetSaksi([]);
+      setGetWbp([]);
     }
   };
+console.log(getWbp, 'get wbp')
 
   const handleJadwalSidang = (e: any) => {
     console.log('1213', e);
@@ -1966,6 +2033,17 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               label: item.nama,
                             }))
                           : formState.wbp_profile_id
+                      }
+                      value={
+                        isEdit || isDetail
+                        ? formState.wbpHolder.map((item: any) => ({
+                          value: item.wbp_profile_id,
+                          label: item.nama,
+                        }))
+                        : getWbp.map((item: any) => ({
+                          value: item.value,
+                          label: item.label,
+                        }))
                       }
                       placeholder={'Pilih wbp'}
                       isClearable={true}
