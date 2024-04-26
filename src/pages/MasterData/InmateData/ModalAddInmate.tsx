@@ -931,9 +931,9 @@ export const AddInmateModal = ({
     e.preventDefault();
     console.log(formState, 'received values');
     // console.log(combineZona, "combined")
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
     // setButtonLoad(true);
-    onSubmit(formState).then(() => setButtonLoad(false));
+    // onSubmit(formState).then(() => setButtonLoad(false));
     // console.log(formState, 'formstateSuccesValidate');
 
     // closeModal();
@@ -983,7 +983,6 @@ export const AddInmateModal = ({
     }
 
   };
-  console.log(zona, "zonanya")
   // Function to handle removing a "zona" from the selected chips
   const handleRemoveZona = (zonaId: any, inputField: any) => {
     // Remove the zona from the selected input field
@@ -994,12 +993,12 @@ export const AddInmateModal = ({
 
     // Add the removed zona back to the autocomplete data
 
-    if (!isEdit) {
+    // if (!isEdit) {
       setAutocompleteDataZona((prevData: any) => [
         ...prevData,
         zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
       ]);
-    }
+    // }
   };
 
   useEffect(() => {
@@ -4150,9 +4149,7 @@ export const AddInmateModal = ({
                                 ? autocompleteDataZona
                                     ?.filter(
                                       (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.includes(
-                                          item.ruangan_otmil_id,
-                                        ),
+                                        !formState.akses_ruangan_otmil_id.some((data) =>  item.ruangan_otmil_id == data.id),
                                     )
                                     .map((zonaItem: any) => (
                                       <div
@@ -4261,7 +4258,7 @@ export const AddInmateModal = ({
                         </h3>
 
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                          {!isDetail && !isEdit &&
+                          {!isDetail &&
                             formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
                                 (zonaId: any) => (
                                   <div
@@ -4273,8 +4270,7 @@ export const AddInmateModal = ({
                                       {
                                         zona.find(
                                           (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id ==
-                                            isEdit ? zonaId : zonaId.id,
+                                            zonaItem.ruangan_otmil_id == zonaId.id,
                                         )?.nama_ruangan_otmil
                                       }
                                     </p>

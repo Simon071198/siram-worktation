@@ -141,7 +141,7 @@ const InmateList = () => {
       nama_kasus: item?.nama_kasus,
       is_new_kasus: 'false',
       existing_kasus_id: item.kasus_id,
-      akses_ruangan_otmil: item.akses_ruangan_otmil,
+      // akses_ruangan_otmil: item.akses_ruangan_otmil,
 
 
       // Form State Kasus
