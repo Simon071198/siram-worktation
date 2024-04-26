@@ -62,6 +62,7 @@ const EventList = () => {
   const [dataExcel, setDataExcel] = useState([]);
   const [isOperator, setIsOperator] = useState<boolean>();
   const [pageSize, setPageSize] = useState(10);
+  const [totalPeserta, setTotalPeserta] = useState(0);
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -161,6 +162,12 @@ const EventList = () => {
     }
   };
 
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-GB', options);
+  };
+
   const handleChangePageSize = async (e: any) => {
     const size = e.target.value;
     setPageSize(size);
@@ -189,36 +196,74 @@ const EventList = () => {
   }, [currentPage]); // Anda juga dapat menambahkan dependencies jika diperlukan
   const fetchData = async () => {
     let params = {
-      filter: {
-        nama_lokasi_otmil: 'Cimahi',
-      },
-      page: currentPage,
-      pageSize: pageSize,
+        filter: {
+            nama_lokasi_otmil: 'Cimahi',
+        },
+        page: currentPage,
+        pageSize: pageSize,
     };
     setIsLoading(true);
     try {
-      const response = await apiReadAllEvent(params, token);
-      console.log('response :', response);
-      if (response.data.status !== 'OK') {
-        throw new Error(response.data.message);
-      }
-      const result = response.data.records;
-      setData(result);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-      setIsLoading(false);
+        const response = await apiReadAllEvent(params, token);
+        console.log('response :', response);
+        if (response.data.status !== 'OK') {
+            throw new Error(response.data.message);
+        }
+        const result = response.data.records;
+        // Menghitung jumlah peserta dari data yang diterima
+        let totalPeserta = result.reduce((total: number, event: any) => {
+            return total + event.peserta.length;
+        }, 0);
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+        setTotalPeserta(totalPeserta); // Menyimpan total peserta dalam state jika diperlukan
+        setIsLoading(false);
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
+        if (e.response.status === 403) {
+            navigate('/auth/signin', {
+                state: { forceLogout: true, lastPage: location.pathname },
+            });
+        }
+        Alerts.fire({
+            icon: e.response.status === 403 ? 'warning' : 'error',
+            title: e.response.status === 403 ? Error403Message : e.message,
         });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
     }
-  };
+};
+
+  // const fetchData = async () => {
+  //   let params = {
+  //     filter: {
+  //       nama_lokasi_otmil: 'Cimahi',
+  //     },
+  //     page: currentPage,
+  //     pageSize: pageSize,
+  //   };
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await apiReadAllEvent(params, token);
+  //     console.log('response :', response);
+  //     if (response.data.status !== 'OK') {
+  //       throw new Error(response.data.message);
+  //     }
+  //     const result = response.data.records;
+  //     setData(result);
+  //     setPages(response.data.pagination.totalPages);
+  //     setRows(response.data.pagination.totalRecords);
+  //     setIsLoading(false);
+  //   } catch (e: any) {
+  //     if (e.response.status === 403) {
+  //       navigate('/auth/signin', {
+  //         state: { forceLogout: true, lastPage: location.pathname },
+  //       });
+  //     }
+  //     Alerts.fire({
+  //       icon: e.response.status === 403 ? 'warning' : 'error',
+  //       title: e.response.status === 403 ? Error403Message : e.message,
+  //     });
+  //   }
+  // };
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
     setDetailData(item);
@@ -489,11 +534,6 @@ const EventList = () => {
                   Selesai Kegiatan
                 </h5>
               </div>
-              <div className="p-2.5 text-center xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama Ruangan
-                </h5>
-              </div>
               {/* <div className="p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Zona
@@ -501,7 +541,7 @@ const EventList = () => {
           </div> */}
             </div>
           ) : (
-            <div className="grid grid-cols-6 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-6">
+            <div className="grid grid-cols-7 rounded-t-md bg-gray-2 dark:bg-slate-600 sm:grid-cols-7">
               <div className="p-2.5 text-center xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Nama Kegiatan
@@ -525,6 +565,11 @@ const EventList = () => {
               <div className="p-2.5 text-center xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Nama Ruangan
+                </h5>
+              </div>
+              <div className="p-2.5 text-center xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  Total Peserta
                 </h5>
               </div>
               {/* <div className="p-2.5 text-center xl:p-5">
@@ -574,7 +619,7 @@ const EventList = () => {
                             className="flex cursor-pointer items-center justify-center p-2.5 xl:p-5"
                           >
                             <p className="text-black dark:text-white">
-                              {item.waktu_mulai_kegiatan}
+                            {formatDate(item.waktu_mulai_kegiatan)}
                             </p>
                           </div>
                           <div
@@ -582,7 +627,7 @@ const EventList = () => {
                             className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
                           >
                             <p className="text-black dark:text-white">
-                              {item.waktu_selesai_kegiatan}
+                            {formatDate(item.waktu_selesai_kegiatan)}
                             </p>
                           </div>
                           <div
@@ -599,7 +644,7 @@ const EventList = () => {
                     ) : (
                       <>
                         <div
-                          className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
+                          className="grid grid-cols-7 rounded-sm bg-gray-2 dark:bg-meta-4 capitalize"
                           key={item.nama_jaksa}
                         >
                           <div
@@ -623,7 +668,7 @@ const EventList = () => {
                             className="flex cursor-pointer items-center justify-center p-2.5 xl:p-5"
                           >
                             <p className="text-black dark:text-white">
-                              {item.waktu_mulai_kegiatan}
+                            {formatDate(item.waktu_mulai_kegiatan)}
                             </p>
                           </div>
                           <div
@@ -631,7 +676,7 @@ const EventList = () => {
                             className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
                           >
                             <p className="text-black dark:text-white">
-                              {item.waktu_selesai_kegiatan}
+                              {formatDate(item.waktu_selesai_kegiatan)}
                             </p>
                           </div>
                           <div
@@ -640,6 +685,14 @@ const EventList = () => {
                           >
                             <p className="text-black dark:text-white">
                               {item.nama_ruangan_otmil}
+                            </p>
+                          </div>
+                          <div
+                            onClick={() => handleDetailClick(item)}
+                            className="hidden cursor-pointer items-center justify-center p-2.5 sm:flex xl:p-5"
+                          >
+                            <p className="text-black dark:text-white">
+                              {item.peserta.length}
                             </p>
                           </div>
                           {/* <div onClick={() => handleDetailClick(item)} className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5">
