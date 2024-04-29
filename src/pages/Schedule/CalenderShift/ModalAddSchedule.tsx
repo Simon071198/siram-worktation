@@ -29,7 +29,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
   // //DatePicker
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
   const [selectedEndDate, setSelectedEndDate] = useState(
-    dayjs(new Date()).add(4, 'day'),
+    dayjs(new Date()),
   );
 
   registerLocale('id', id);
@@ -97,7 +97,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
       bulan: parseInt(dayjs(date).format('M')),
       tahun: parseInt(dayjs(date).format('YYYY')),
     });
-    setSelectedEndDate(dayjs(date).add(4, 'day'));
+    setSelectedEndDate(dayjs(date));
     setEndDate({
       ...endDate,
       tanggal: parseInt(dayjs(end).format('D')),
@@ -314,21 +314,27 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
   };
 
   const handleChangeShift = (e: any) => {
-    const filterShift = shiftData?.find(
-      (item: any) => item.shift_id === e.target.value,
+    const filteredShift = shiftData?.find(
+      (item: any) => item.shift_id === e.target.value
     );
-    setSchedule({
-      ...schedule,
-      shift_id: e.target.value,
-      nama_shift: filterShift?.nama_shift,
-    });
-    setJamShift({
-      ...jamShift,
-      waktu_mulai: filterShift?.waktu_mulai,
-      waktu_selesai: filterShift?.waktu_selesai,
-    });
+  
+    if (filteredShift) {
+      setSchedule({
+        ...schedule,
+        shift_id: e.target.value,
+        nama_shift: filteredShift.nama_shift,
+      });
+      setJamShift({
+        ...jamShift,
+        waktu_mulai: filteredShift.waktu_mulai,
+        waktu_selesai: filteredShift.waktu_selesai,
+      });
+    } else {
+      // Handle case when no shift is found
+      console.log("No shift found for the given shift_id");
+    }
   };
-
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formstate = Adddata?.map((item: any) => ({
@@ -342,6 +348,11 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
     setButtonLoad(true);
     onSubmit(formstate).then(() => setButtonLoad(false));
   };
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1); // Set the date to the first day of the current month
+  const endOfMonth = new Date();
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
 
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
@@ -414,6 +425,8 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
                       dateFormat="dd MMMM yyyy"
                       placeholderText="Pilih tanggal"
                       locale="id"
+                      minDate={dayjs(selectedDate).startOf('month').toDate()}
+                      maxDate={dayjs(selectedDate).endOf('month').toDate()}
                     />
                     <h1>s/d</h1>
                     <DatePicker
