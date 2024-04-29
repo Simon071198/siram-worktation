@@ -940,14 +940,14 @@ const DaftarKasus = () => {
             token={token}
           />
         )}
-        {modalAddOpen && (
+        {/* {modalAddOpen && (
           <DetailKasus
             closeModal={handleCloseModal}
             onSubmit={handleSubmitAdd}
             defaultValue={nomorKasus}
             token={token}
           />
-        )}
+        )} */}
         {modalDeleteOpen && (
           <DeleteDaftarKasusModal
             closeModal={handleCloseModal}
