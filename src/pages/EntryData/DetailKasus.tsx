@@ -87,6 +87,8 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     },
   ]);
 
+  console.log(formState, 'formstate');
+
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
 
