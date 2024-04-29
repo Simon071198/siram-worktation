@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading } from 'react-icons/ai';
 import Select from 'react-select';
-import { apiReadKasus } from '../../../services/api';
+import { apiReadKasus, apiReadPenyidikan } from '../../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -57,52 +57,71 @@ export const AddPenyidikanModal = ({
 
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  const getAllPenyidikan = async () => {
+    try {
+      const params = { filter: ' ', page: 1, pageSize: 10000 };
+      const response = await apiReadPenyidikan(params, token);
+      // if (response.data.status !== 'OK') throw new Error(response.data.message);
+      // const result = response.data.records;
+      // const filter = dataKasus.filter(data => !result.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      // setDataKasus(filter);
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  };
+  
+  const fetchData = async () => {
+    try {
+      const params = { pageSize: Number.MAX_SAFE_INTEGER };
+      const paramsPenyidikan = { filter: ' ', page: 1, pageSize: 10000 };
+      const kasus = await apiReadKasus(params, token);
+      const penyidikan = await apiReadPenyidikan(paramsPenyidikan, token);
+      console.log(kasus, penyidikan, "dapet cok")
+      if (penyidikan.data.status !== 'OK') throw new Error(penyidikan.data.message);
+      if (kasus.data.status !== 'OK') throw new Error(kasus.data.message);
+      const resultPenyidikan = penyidikan.data.records;
+      const resultKasus = kasus.data.records;
+      const filter = resultKasus.filter(data => !resultPenyidikan.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      console.log(filter, "dapet coy")
+      setDataKasus(filter);
+      handleTimeZone();
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  };
+  
+  const handleErrorResponse = error => {
+    setIsLoading(false);
+    const errorMessage = error.response.status === 403 ? Error403Message : error.message;
+    navigate('/auth/signin', {
+      state: { forceLogout: error.response.status === 403, lastPage: location.pathname },
+    });
+    Alerts.fire({ icon: error.response.status === 403 ? 'warning' : 'error', title: errorMessage });
+  };
+  
+  const handleTimeZone = () => {
+    setIsLoading(false);
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB'; break;
+      case '+08:00':
+        zonaWaktu = 'WITA'; break;
+      case '+09:00':
+        zonaWaktu = 'WIT'; break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({ ...formState, zona_waktu: zonaWaktu });
+    }
+  };
+  
   useEffect(() => {
-    const params = {
-      pageSize: Number.MAX_SAFE_INTEGER,
-    };
-    const fetchData = async () => {
-      try {
-        const kasus = await apiReadKasus(params, token);
-        setDataKasus(kasus.data.records);
-        setIsLoading(false);
-        const timeZone = dayjs().format('Z');
-        let zonaWaktu;
-        switch (timeZone) {
-          case '+07:00':
-            zonaWaktu = 'WIB';
-            break;
-          case '+08:00':
-            zonaWaktu = 'WITA';
-            break;
-          case '+09:00':
-            zonaWaktu = 'WIT';
-            break;
-          default:
-            zonaWaktu = 'Zona Waktu Tidak Dikenal';
-        }
-        if (!formState?.zona_waktu) {
-          setFormState({
-            ...formState,
-            zona_waktu: zonaWaktu,
-          });
-        }
-      } catch (e: any) {
-        setIsLoading(false);
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
-      }
-    };
     fetchData();
   }, []);
-
+  
   const timezone = dayjs();
   console.log('timezone', timezone.format('Z'));
 
