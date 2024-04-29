@@ -936,11 +936,11 @@ export const AddInmateModal = ({
     setButtonLoad(true);
     // console.log(combineZona, "combined")
     if (!validateForm()) return;
-    // setButtonLoad(true);
+    setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
     // console.log(formState, 'formstateSuccesValidate');
 
-    // closeModal();
+    closeModal();
   };
 
   // Function to handle adding a "zona" to a specific input
