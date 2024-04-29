@@ -531,7 +531,7 @@ const coreRoutes = [
     component: MapSetting,
   },
   {
-    path: '/kamera-live/:id',
+    path: '/kamera-live/:nama_kamera',
     title: 'CameraDetail',
     component: CameraDetail,
   },

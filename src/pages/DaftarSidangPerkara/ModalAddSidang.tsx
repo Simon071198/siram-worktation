@@ -483,10 +483,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     // console.log(formState, 'formState');
     console.log('SUBMIT', e);
 
-    if (!validateForm()) return;
-    setButtonLoad(true);
-    console.log('formstateValidate', formState);
-    onSubmit(formState).then(() => setButtonLoad(false));
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
+    // console.log('formstateValidate', formState);
+    // onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState);
   };
 
   //pengacara

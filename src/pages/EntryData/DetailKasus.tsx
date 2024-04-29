@@ -35,24 +35,42 @@ interface WBP {
 // }
 
 const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
-  const [formState, setFormState] = useState({
-    nama_kasus: '',
-    nomor_kasus: '',
-    lokasi_kasus: '',
-    jenis_perkara_id: '',
-    jenis_pidana_id: '',
-    kategori_perkara_id: '',
-    waktu_kejadian: '',
-    waktu_pelaporan_kasus: '',
-    wbp_profile_ids: [],
-    keterangans: [],
-    role_ketua_oditur_ids: '',
-    oditur_penyidik_id: [],
-    nama_jenis_perkara: '',
-    nama_jenis_pidana: '',
-    saksi_id: [],
-    keteranganSaksis: [],
-    zona_waktu: '',
+
+  interface type {
+    [key: string]: any;
+  }
+  interface oditur {
+    oditur_penyidik_id: string;
+    nama_oditur: string;
+  }
+
+  let dataAdmin = JSON.parse(localStorage.getItem('formState') || '{}');
+
+  const [formState, setFormState] = useState<type>(() => {
+    const savedFormState = localStorage.getItem('formState');
+    return savedFormState ? JSON.parse(savedFormState) : {
+      nomor_kasus: '',
+      nama_kasus: '',
+      jenis_perkara_id: '',
+      kategori_perkara_id: '',
+      jenis_pidana_id: '',
+      nama_jenis_perkara: '',
+      nama_jenis_pidana: '',
+      lokasi_kasus: '',
+      waktu_kejadian: '',
+      zona_waktu: '',
+      waktu_pelaporan_kasus: '',
+      oditur: dataAdmin.oditur || '',
+      oditur_penyidik_id: [],
+      ketuaOditur: dataAdmin.ketuaOditur || '',
+      role_ketua_oditur_ids: '',
+      wbpProfile: dataAdmin.wbpProfile || '',
+      wbp_profile_ids: [],
+      saksi: dataAdmin.saksi || '',
+      saksi_id: [],
+      keterangans: [],
+      keteranganSaksis: [],
+    };
   });
 
   const navigate = useNavigate();
@@ -71,7 +89,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
 
   const [DataWBP, setDataWBP] = useState<WBP[]>([]);
   const [dataStatusWBP, setDataStatusWBP] = useState([]);
-  const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
+  const [dataOditurPenyidik, setDataOditurPenyidik] = useState<oditur[]>([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
   const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
   const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
@@ -91,6 +109,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
 
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
+
 
   const customStyles = {
     container: (provided: any) => ({
@@ -188,7 +207,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
 
   const handleWaktuKejadian = (e: any) => {
     console.log('1213', e);
-
+  
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
     switch (timeZone) {
@@ -204,14 +223,19 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
-
-    setFormState({
+  
+    const updatedFormState = {
       ...formState,
       waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
-    });
+    };
+  
+    setFormState(updatedFormState);
+  
+    // Simpan data ke localStorage
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
-
+  
   const handleWaktuPelaporan = (e: any) => {
     console.log('1213', e);
 
@@ -230,11 +254,16 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
-    setFormState({
+    const updatedFormState = {
       ...formState,
       waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
       zona_waktu: zonaWaktu,
-    });
+    };
+  
+    setFormState(updatedFormState);
+  
+    // Simpan data ke localStorage
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
 
   const getTimeZone = () => {
@@ -491,8 +520,21 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   };
 
   const handleChange = (e: any) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const updatedFormState = { ...formState, [name]: value };
+    
+    // Update form state and save to localStorage
+    setFormState(updatedFormState);
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
+  
+
+  useEffect(() => {
+    const savedFormState = JSON.parse(localStorage.getItem('formState'));
+    if (savedFormState) {
+      setFormState(savedFormState);
+    }
+  }, []);
 
   const jenisPerkaraOptions = dataJenisPerkara?.map((item: any) => ({
     value: item.jenis_perkara_id,
@@ -504,7 +546,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       (item: any) => item.jenis_perkara_id === e?.value,
     );
     setDataJenisPerkaraSelect(kategoriPerkara);
-    setFormState({
+    const updatedFormState = {
       ...formState,
       jenis_perkara_id: e.value,
       kategori_perkara_id: kategoriPerkara
@@ -517,51 +559,101 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       nama_jenis_pidana: kategoriPerkara
         ? kategoriPerkara.nama_jenis_pidana
         : '',
-    });
+    };
+    setFormState(updatedFormState);
+  
+    // Simpan data ke localStorage
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
+  
 
   const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
     value: item.oditur_penyidik_id,
     label: item.nama_oditur,
   }));
-
-  const handleSelectOditurPenyidik = (e: any) => {
+  const handleSelectOditurPenyidik = (selectedOptions: any) => {
+    // Membuat array untuk menyimpan nilai yang dipilih
     let arrayTemp: any = [];
     let arrayAnggota: any = [];
-    for (let i = 0; i < e?.length; i++) {
-      arrayTemp.push(e[i].value);
-      arrayAnggota.push(e[i]);
+    
+    // Mengisi array dengan nilai yang dipilih
+    for (let i = 0; i < selectedOptions?.length; i++) {
+      arrayTemp.push(selectedOptions[i].value);
+      arrayAnggota.push(selectedOptions[i]);
     }
-    setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
+    
+    // Mengupdate state form dan state array anggota
+    const updatedFormState = {
+      ...formState,
+      oditur_penyidik_id: arrayTemp,
+      oditur: selectedOptions // Menyimpan opsi yang dipilih ke dalam formState.oditur
+    };
+    setFormState(updatedFormState);
     setKetuaOditurPenyidik(arrayAnggota);
+  
+    // Simpan data ke localStorage
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
+  };
+  
+  
+  
+
+  const handleSelectKetuaOditur = (selectedOption: any) => {
+    // Mengupdate state form
+    const updatedFormState = {
+      ...formState,
+      role_ketua_oditur_ids: selectedOption.value,
+      ketuaOditur: selectedOption,
+    };
+    setFormState(updatedFormState);
+  
+    // Simpan data ke localStorage
+    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
 
-  const handleSelectKetuaOditur = (e: any) => {
-    setFormState({ ...formState, role_ketua_oditur_ids: e.value });
-  };
-
-  const handleSelectPihakTerlibat = (e: any) => {
+  const handleSelectPihakTerlibat = async (selectedOptions: any) => {
+    console.log('123456',selectedOptions);
+    
     let arrayTersangka: any = [];
     let arraySaksi: any = [];
     let arraySaksiOptions: any = [];
     let arrayTersangkaOptions: any = [];
-    for (let i = 0; i < e?.length; i++) {
-      if (e[i].label.includes('(Tersangka)')) {
-        arrayTersangka.push(e[i].value);
-        arrayTersangkaOptions.push(e[i]);
-      } else if (e[i].label.includes('(Saksi)')) {
-        arraySaksi.push(e[i].value);
-        arraySaksiOptions.push(e[i]);
-      }
+  
+    for (let i = 0; i < selectedOptions?.length; i++) {
+        if (selectedOptions[i].label.includes('(Tersangka)')) {
+            arrayTersangka.push(selectedOptions[i].value);
+            arrayTersangkaOptions.push(selectedOptions[i]);
+        } else if (selectedOptions[i].label.includes('(Saksi)')) {
+            arraySaksi.push(selectedOptions[i].value);
+            arraySaksiOptions.push(selectedOptions[i]);
+        }
     }
-    setFormState({
-      ...formState,
-      wbp_profile_ids: arrayTersangka,
-      saksi_id: arraySaksi,
-    });
+  
+    const updatedFormState = {
+        ...formState,
+        wbp_profile_ids: arrayTersangka,
+        saksi_id: arraySaksi,
+        wbpProfile:arrayTersangkaOptions,
+        saksi: arraySaksiOptions,
+    };
+
+    // Set form state
+    setFormState(updatedFormState);
     setSelectSaksi(arraySaksiOptions);
     setSelectTersangka(arrayTersangkaOptions);
-  };
+  
+    // Save data to localStorage
+    await localStorage.setItem('formState', JSON.stringify(updatedFormState));
+
+    console.log(arrayTersangkaOptions, 'qwertyui arrayTersangka');
+    console.log(arraySaksiOptions, 'qwertyui arraySaksi');
+    console.log('qwertyui updatedFormState', localStorage.getItem('formState'));
+};
+
+
+  const defaultOptions9 = {
+    ...formState.wbpProfile
+  }
 
   const handleChangeKeteranganTersangka = (e: any, index: any) => {
     const newKeteranganSaksi = [...formState.keterangans]; // Salin array keterangan yang ada
@@ -573,17 +665,15 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   };
 
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
-    newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
     setFormState({
       ...formState,
-      keteranganSaksis: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keteranganSaksis: newKeteranganSaksi, 
     });
-  };
 
-  // const [nomorKasus, setNomorKasus] = useState({
-  //   nomor_kasus: '',
-  // });
+    localStorage.setItem('formState', JSON.stringify(formState));
+  };
 
   const handleModalAddOpen = () => {
     function convertToRoman(num: number) {
@@ -658,6 +748,31 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     handleModalAddOpen();
   }, []);
 
+  // const selectedIds = new Set([...formState.wbp_profile_ids, ...formState.saksi_id]);
+  // const uniqueIds = [...new Set([...formState.wbp_profile_ids, ...formState.saksi_id])];
+
+//   const defaultOptions = uniqueIds.map(id => {
+//     const option = pihakTerlibat.find(opt => opt.value === id);
+//     console.log('12345',id);
+    
+//     return option || { 
+//         value: id, 
+//         label: id.label
+//     }; // Default label if option is not found
+// });
+//   console.log('12345',defaultOptions);
+  
+//   // Add wbpProfile and saksi to the default options
+//   defaultOptions.unshift(dataAdmin.wbpProfile ?? { value: '', label: '' });
+//   defaultOptions.unshift(dataAdmin.saksi ?? { value: '', label: '' });
+
+  const uniqueArray = Array.from(new Set([...formState?.saksi, ...formState?.wbpProfile].map(item => item.value)))
+    .map(value => {
+        return [...formState?.saksi, ...formState?.wbpProfile].find(item => item.value === value);
+    });
+    console.log('99999',uniqueArray);
+    
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -698,6 +813,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               name="nama_kasus"
               onChange={handleChange}
               disabled={isDetail}
+              value={formState.nama_kasus || ''}
             />
             <div className="h-2">
               <p className="error-text">
@@ -722,11 +838,12 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               options={jenisPerkaraOptions}
               isDisabled={isDetail}
               onChange={handleSelectPerkara}
+              defaultInputValue={formState.nama_jenis_perkara}
             />
             <div className="h-2">
               <p className="error-text">
                 {errors.map((item) =>
-                  item === 'jenis_perkara_id' ? 'Masukan Jenis Perkara' : '',
+                  item === 'jenis_perkara_id' ? 'Pilih Jenis Perkara' : '',
                 )}
               </p>
             </div>
@@ -749,11 +866,6 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             />
             <div className="h-2">
               <p className="error-text">
-                {errors.map((item) =>
-                  item === 'nama_jenis_pidana'
-                    ? 'Masukan Nama Jenis Pidana'
-                    : '',
-                )}
               </p>
             </div>
           </div>
@@ -771,6 +883,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               name="lokasi_kasus"
               onChange={handleChange}
               disabled={isDetail}
+              value={formState.lokasi_kasus || ''}
             />
             <div className="h-2">
               <p className="error-text">
@@ -805,6 +918,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                 name="waktu_kejadian"
                 disabled={false}
                 locale="id"
+                // value={formState.waktu_kejadian || ''}
               />
               <input
                 type="text"
@@ -909,6 +1023,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               isDisabled={isDetail}
               options={oditurPenyidikOptions}
               onChange={handleSelectOditurPenyidik}
+              defaultValue={formState.oditur}
             />
             <div className="h-2">
               <p className="error-text">
@@ -933,6 +1048,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               styles={customStyles}
               options={ketuaOditurPenyidik}
               onChange={handleSelectKetuaOditur}
+              defaultValue={formState.ketuaOditur}
             />
             <div className="h-2">
               <p className="error-text">
@@ -960,6 +1076,16 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               styles={customStyles}
               options={pihakTerlibat}
               onChange={handleSelectPihakTerlibat}
+              defaultValue={uniqueArray }
+              // defaultValue={pihakTerlibat.filter(option => uniqueIds.includes(option.value))}
+              // value={
+              //   pihakTerlibat.filter(option => formState.wbp_profile_ids.includes(option.value) || 
+              //   formState.saksi_id.includes(option.value))
+              // }
+              
+              // value={pihakTerlibat.filter(option => selectedIds.has(option.value))}
+              
+
             />
             <div className="h-2">
               <p className="error-text">
@@ -1088,6 +1214,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                             placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
                             onChange={(e) => handleChangeKeterangan(e, index)}
                             disabled={isDetail}
+                            value={formState.keteranganSaksis[index]}
                           />
                         </div>
                       </div>

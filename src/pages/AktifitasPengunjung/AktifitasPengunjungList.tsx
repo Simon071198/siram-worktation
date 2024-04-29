@@ -134,7 +134,7 @@ const AktifitasPengunjungList = () => {
       //   pageSize: 3,
       // },
       filter: {
-        nama_aktivitas_pengunjung: filter,
+        nama_wbp: filter,
         nama_lokasi_otmil: 'Cimahi',
         waktu_mulai_kunjungan: selectedMonth ? selectedMonth : null,
       },
@@ -177,6 +177,12 @@ const AktifitasPengunjungList = () => {
     const size = e.target.value;
     setPageSize(size);
     setCurrentPage(1);
+  };
+
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-GB', options);
   };
 
   // useEffect untuk fetch data dari API
@@ -414,7 +420,7 @@ const AktifitasPengunjungList = () => {
             <div className="flex items-center w-full search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama Aktivitas"
+                placehorder="Cari nama WBP"
                 onChange={handleFilterChange}
 
                 // onClick={handleSearchClick}
@@ -577,10 +583,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black text-center dark:text-white">
-                          {/* {item.waktu_mulai_kunjungan} */}
-                          {dayjs(item.waktu_mulai_kunjungan).format(
-                            'YYYY-MMM-DD HH:mm',
-                          )}
+                          {formatDate(item.waktu_mulai_kunjungan)}
                         </p>
                       </div>
                       <div
@@ -588,8 +591,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black dark:text-white">
-                          {/* {item.waktu_selesai_kunjungan} */}
-                          {dayjs(item.waktu_selesai_kunjungan).format('YYYY-MMM-DD HH:mm',)}
+                          {formatDate(item.waktu_selesai_kunjungan)}
                         </p>
                       </div>
                       <div

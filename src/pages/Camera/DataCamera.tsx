@@ -265,10 +265,14 @@ const DataCamera = (props) => {
     (row) => row.visitor_name !== 'unrecognized',
   );
 
+  const urlBaru = window.location.href.replace(/%20/g, '-');
+  console.log('path 1', location);
+  console.log('path 2', urlBaru);
+
   return (
     <div>
       <div className="pl-6 py-4">
-        <Breadcrumbs url={window.location.href} />
+        <Breadcrumbs url={urlBaru} />
       </div>
       <div className="flex justify-between items-center px-6">
         <div
@@ -316,7 +320,7 @@ const DataCamera = (props) => {
           )}
         </div>
       </div>
-      <div className="flex h-[52vh] justify-between">
+      <div className="flex gap-5 h-[52vh] justify-between p-4">
         <div
           className={`w-[${cameraSize}] h-full transition-width duration-1000 ease-in-out`}
         >
@@ -325,28 +329,31 @@ const DataCamera = (props) => {
           ))}
         </div>
         <div
-          className={`w-[20%] h-[87vh] ml-auto ${cameraSize === '100%' ? 'hidden' : 'block'}`}
+          className={`w-[20%] h-[91vh] ml-auto ${cameraSize === '100%' ? 'hidden' : 'block'} mt-1`}
         >
-          <div className="w-full h-[93.3%] ">
+          <div className="w-full h-full bg-gray-100 rounded-lg shadow-lg overflow-scroll backdrop-brightness-125 pl-1">
             <div className="container">
-              <p className="font-semibold text-center">
-                Kemiripan Terdeteksi: {faceDetectionRows.length}
+              <p className="font-semibold text-center py-4">
+                Jumlah Terdeteksi: {faceDetectionRows.length}
               </p>
             </div>
             <div className="h-full overflow-y-auto">
               <table className="w-full">
                 <tbody>
                   {faceDetectionRows?.map((row, index) => (
-                    <tr key={index} className="flex items-center">
+                    <tr
+                      key={index}
+                      className="flex items-center border-b mb-1 border-gray-200"
+                    >
                       <td className="w-1/4 flex items-center">
                         <img
                           src={`https://dev.transforme.co.id/siram_admin_api${row.image}`}
                           alt="Person"
-                          className="w-16 h-16 rounded-5 mr-2"
+                          className="w-16 h-16 mr-2 object-cover mb-1"
                         />
                       </td>
-                      <td className="w-3/4 flex flex-col items-end">
-                        <p className="text-xs font-semibold">
+                      <td className="w-3/4 flex flex-col items-start pl-4">
+                        <p className="text-sm font-semibold">
                           {row.nama_wbp ? row.nama_wbp : row.keterangan}
                         </p>
                         <p className="text-xs">{row.nationality}</p>

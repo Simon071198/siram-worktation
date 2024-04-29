@@ -1,8 +1,25 @@
-import {React, useState} from "react";
+import {React, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from 'react-datepicker';
 import dayjs from "dayjs";
+import { Alerts } from '../../pages/DaftarSidangPerkara/AlertSidang';
+import { Error403Message } from '../../utils/constants';
+import {
+  apiAhliRead,
+  apiHakimRead,
+  apiJaksaRead,
+  apiJenisSidangRead,
+  apiKasusRead,
+  apiPengadilanMiliterRead,
+  apiReadAllRole,
+  apiReadAllStaff,
+  apiReadAllUser,
+  apiReadAllWBP,
+  apiReadJaksapenuntut,
+  apiReadSaksi,
+} from '../../services/api';
+import { set } from "react-hook-form";
 
 
 interface AddSidangProps {
@@ -12,94 +29,523 @@ interface AddSidangProps {
   }
 
 const AddSidang = () => {
-     const navigate = useNavigate();
+  const [formState, setFormState] = useState({
+      waktu_mulai_sidang: '',
+      waktu_selesai_sidang: '',
+      jadwal_sidang: '',
+      perubahan_jadwal_sidang: '',
+      kasus_id: '',
+      nama_kasus: '',
+      nomor_kasus: '',
+      masa_tahanan_tahun: '',
+      masa_tahanan_bulan: '',
+      masa_tahanan_hari: '',
+      nama_sidang: '',
+      nama_oditur: '',
+      wbp_profile_id_kasus: '',
+      wbp: [],
+      juru_sita: '',
+      nama_jenis_persidangan: '',
+      hasil_keputusan_sidang: '',
+      pengawas_peradilan_militer: '',
+      jenis_persidangan_id: '',
+      pengadilan_militer_id: '',
+      nama_pengadilan_militer: '',
+      nama_dokumen_persidangan: '',
+      pdf_file_base64: '',
+      hasil_vonis: '',
+      // nama_ahli: '',
+      ahli: [],
+      // ahli_id: null,
+      nama_ahli: '',
+      agenda_sidang: '',
+      saksi: [],
+      pengacara: [],
+      // link_dokumen_persidangan: defaultValue.link_dokumen_persidangan,
+      // hakim_id: [],
+      // role_ketua_hakim: '',
+      // oditur_penuntut_id: [],
+      oditur_penuntut_id: null,
+      role_ketua_oditur: {},
+      zona_waktu: '',
+  });
 
-     const [pengacaraEror, setPengacaraEror] = useState(false);
+    const tokenItem = localStorage.getItem('token');
+    const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+    const token = dataToken.token;
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [pengacaraEror, setPengacaraEror] = useState(false);
+    const [jenisSidang, setJenisSidang] = useState([]);
+    const [jaksa, setJaksa] = useState([]);
+    const [pengadilanMiliter, setPengadilanMiliter] = useState([]);
+    const [ahli, setAhli] = useState([]);
+    const [saksi, setSaksi] = useState([]);
+    const [kasus, setKasus] = useState([]);
+    const [getSaksi, setGetSaksi] = useState([]);
 
-     const customStyles = {
-      container: (provided: any) => ({
-        ...provided,
-        width: '100%',
-      }),
-      control: (provided: any, state: any) => ({
-        ...provided,
-        backgroundColor: 'rgb(30 41 59)',
-        borderColor: 'rgb(30 41 59)',
-        color: 'white',
-        paddingTop: 3,
-        paddingBottom: 3,
-        paddingLeft: 3,
-        paddingRight: 4.5,
-        borderRadius: 5,
+    const getAllJenisSidang = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      };
+      try {
+        const response = await apiJenisSidangRead(params, token);
+        const data = response.data.data;
+        const uniqueData: any[] = [];
+        const trackedNames: any[] = [];
   
-        '&:hover': {
-          borderColor: 'rgb(30 41 59)',
-        },
-        '&:active': {
-          borderColor: 'rgb(30 41 59)',
-        },
-        '&:focus': {
-          borderColor: 'rgb(30 41 59)',
-        },
-      }),
-      input: (provided: any) => ({
-        ...provided,
-        color: 'white',
-      }),
-      menu: (provided: any) => ({
-        ...provided,
-        color: 'white',
-        paddingLeft: '5px',
-        paddingRight: '5px',
-        backgroundColor: 'rgb(30 41 59)',
-      }),
-      option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
-        return {
-          ...styles,
-          borderRadius: '6px',
-  
-          backgroundColor: isDisabled
-            ? undefined
-            : isSelected
-              ? ''
-              : isFocused
-                ? 'rgb(51, 133, 255)'
-                : undefined,
-  
-          ':active': {
-            ...styles[':active'],
-            backgroundColor: !isDisabled,
-          },
-        };
-      },
-      placeholder: (provided: any) => ({
-        ...provided,
-        color: 'white',
-      }),
-  
-      dropdownIndicator: (provided: any) => ({
-        ...provided,
-        color: 'white',
-      }),
-      clearIndicator: (provided: any) => ({
-        ...provided,
-        color: 'white',
-      }),
-      singleValue: (provided: any) => ({
-        ...provided,
-        color: 'white',
-      }),
-      multiValue: (styles: any) => {
-        return {
-          ...styles,
-          backgroundColor: 'rgb(51, 133, 255)',
-        };
-      },
-      multiValueLabel: (styles: any) => ({
-        ...styles,
-        color: 'white',
-      }),
+        data.forEach((item: any) => {
+          if (!trackedNames.includes(item.nama_jenis_persidangan)) {
+            trackedNames.push(item.nama_jenis_persidangan);
+            uniqueData.push(item);
+          }
+        });
+        setJenisSidang(uniqueData);
+        console.log('uniq', uniqueData);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
     };
+
+    const getAllJaksaPenuntut = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      };
+  
+      try {
+        const response = await apiReadJaksapenuntut(params, token);
+        setJaksa(response.data.records);
+        // console.log('JAKSA', response.data.records);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    };
+
+    const getAllPengadilanMiliter = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      };
+      try {
+        const response = await apiPengadilanMiliterRead(params, token);
+        setPengadilanMiliter(response.data.records);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    };
+
+    const getAllAhli = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      };
+      try {
+        const response = await apiAhliRead(params, token);
+        console.log('ahli', response.data.records);
+        setAhli(response.data.records);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    };
+
+    const getAllSaksi = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      }
+      try {
+        const response = await apiReadSaksi(params, token);
+        setSaksi(response.data.records);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname},
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    }
+
+    const getAllKasus = async () => {
+      let params = {
+        filter: '',
+        pageSize: 1000,
+      }
+      try {
+        const response = await apiKasusRead(params, token);
+        setKasus(response.data.records);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname},
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      }
+    }
+
+    const handleChange = (e: any) => {
+      setFormState({ ...formState, [e.target.name]: e.target.value });
+    };
+
+    const handleJenisPersidangan = (e: any) => {
+      setFormState({ ...formState, jenis_persidangan_id: e?.value });
+    };
+
+    const handleSelectJaksa = (e: any) => {
+      console.log('jaksa', e);
+      let arrayTemp: any = [];
+      for (let i = 0; i < e.length; i++) {
+        arrayTemp.push(e[i].value);
+      }
+  
+      setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
+    };
+
+    const handleSelectKetuaJaksa = (e: any) => {
+      setFormState({ ...formState, role_ketua_oditur: e?.value });
+    };
+
+    const handleKasus = async (selectedOption: any) => {
+      if (selectedOption) {
+        setFormState({ ...formState, kasus_id: selectedOption.value });
+        const saksiFilter = kasus.filter(
+          (item: any) => item.kasus_id === selectedOption.value,
+        )[0];
+        console.log(saksiFilter, 'saksiFilter');
+        if (saksiFilter) {
+          const saksiMap = saksiFilter.saksi.map((item: any) => ({
+            label: item.nama_saksi,
+            value: item.saksi_id,
+          }));
+          setGetSaksi(saksiMap);
+  
+          setFormState({
+            ...formState,
+            nomor_kasus: saksiFilter.nomor_kasus,
+            kasus_id: saksiFilter.kasus_id,
+            nama_kasus: saksiFilter.nama_kasus,
+          });
+          console.log('getSaksi', getSaksi);
+        } else {
+          setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+        }
+      } else {
+        setFormState({ ...formState, kasus_id: '' });
+        setGetSaksi([]);
+      }
+    };
+
+    const handlePengadilanMiliter = (e: any) => {
+      setFormState({ ...formState, pengadilan_militer_id: e?.value });
+    };
+
+    const handleSelectAhli = (e: any) => {
+      let arrayTemp = [];
+      for (let i = 0; i < e.length; i++) {
+          arrayTemp.push(e[i].value);
+      }
+      setFormState({ ...formState, ahli: arrayTemp });
+    };
+
+    const handleSelectSaksi = (e:any) => {
+      let arrayTemp = [];
+      for (let i = 0; i < e.length; i++) {
+        arrayTemp.push(e[i].value);
+      }
+
+      setFormState({ ...formState, saksi: arrayTemp });
+    }
+    
+    useEffect(() => {
+      setFormState({
+        ...formState,
+        role_ketua_oditur: 
+          formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+      })
+    })
+
+    // useEffect(() => {
+    //   console.log('holder', jaksa);
+    //   // console.log('jaksa filter', jaksa.filter((item) => formState.oditur_penuntut_id.includes(item.oditur_penuntut_id)));
+    //   // console.log("jaksa", formState.oditur_penuntut_id)
+    //   // const jaksaMap = formState.oditur_penuntut_id.map((item: any) => item.oditur_penuntut_id);
+    //   const ahliMap = formState.ahli.map((item: any) => item.ahli_id);
+    //   // const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
+    //   // const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
+    //   setFormState({
+    //       ...formState,
+    //       // hakim_id: hakimMap,
+    //       // oditur_penuntut_id: jaksaMap,
+    //       // role_ketua_oditur:
+    //       //     formState?.role_ketua_oditur_holder?.oditur_penuntut_id,x
+    //       ahli: ahliMap
+    //       // saksi: saksiMap,
+    //   });
+    // }, []);
+
+    const handleJadwalSidang = (e: any) => {
+      console.log('1213', e);
+  
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      setFormState({
+        ...formState,
+        jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+        zona_waktu: zonaWaktu,
+      });
+    };
+
+    const handlePerubahanJadwal = (e: any) => {
+      console.log('1213', e);
+  
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      setFormState({
+        ...formState,
+        perubahan_jadwal_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+        zona_waktu: zonaWaktu,
+      });
+    };
+
+    const handleWaktuMulai = (e: any) => {
+      console.log('1213', e);
+  
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      setFormState({
+        ...formState,
+        waktu_mulai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+        zona_waktu: zonaWaktu,
+      });
+    };
+
+    const handleWaktuSelesai = (e: any) => {
+      console.log('1213', e);
+  
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      setFormState({
+        ...formState,
+        waktu_selesai_sidang: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+        zona_waktu: zonaWaktu,
+      });
+    };
+  
+    const getTimeZone = () => {
+      const timeZone = dayjs().format('Z');
+      let zonaWaktu;
+      switch (timeZone) {
+        case '+07:00':
+          zonaWaktu = 'WIB';
+          break;
+        case '+08:00':
+          zonaWaktu = 'WITA';
+          break;
+        case '+09:00':
+          zonaWaktu = 'WIT';
+          break;
+        default:
+          zonaWaktu = 'Zona Waktu Tidak Dikenal';
+      }
+      if (!formState?.zona_waktu) {
+        setFormState({
+          ...formState,
+          zona_waktu: zonaWaktu,
+        });
+      }
+    };
+
+    useEffect(() => {
+      Promise.all([
+          getTimeZone(),
+          getAllJenisSidang(),
+          getAllJaksaPenuntut(),
+          getAllPengadilanMiliter(),
+          getAllAhli(),
+          getAllSaksi(),
+          getAllKasus(),
+          ]).then(()=> setIsLoading(false));
+      }, []);
+
+  
+
+      const customStyles = {
+        container: (provided: any) => ({
+          ...provided,
+          width: '100%',
+        }),
+        control: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: 'rgb(30 41 59)',
+          borderColor: 'rgb(30 41 59)',
+          color: 'white',
+          paddingTop: 3,
+          paddingBottom: 3,
+          paddingLeft: 3,
+          paddingRight: 4.5,
+          borderRadius: 5,
+    
+          '&:hover': {
+            borderColor: 'rgb(30 41 59)',
+          },
+          '&:active': {
+            borderColor: 'rgb(30 41 59)',
+          },
+          '&:focus': {
+            borderColor: 'rgb(30 41 59)',
+          },
+        }),
+        input: (provided: any) => ({
+          ...provided,
+          color: 'white',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          color: 'white',
+          paddingLeft: '5px',
+          paddingRight: '5px',
+          backgroundColor: 'rgb(30 41 59)',
+        }),
+        option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+          return {
+            ...styles,
+            borderRadius: '6px',
+    
+            backgroundColor: isDisabled
+              ? undefined
+              : isSelected
+                ? ''
+                : isFocused
+                  ? 'rgb(51, 133, 255)'
+                  : undefined,
+    
+            ':active': {
+              ...styles[':active'],
+              backgroundColor: !isDisabled,
+            },
+          };
+        },
+        placeholder: (provided: any) => ({
+          ...provided,
+          color: 'white',
+        }),
+    
+        dropdownIndicator: (provided: any) => ({
+          ...provided,
+          color: 'white',
+        }),
+        clearIndicator: (provided: any) => ({
+          ...provided,
+          color: 'white',
+        }),
+        singleValue: (provided: any) => ({
+          ...provided,
+          color: 'white',
+        }),
+        multiValue: (styles: any) => {
+          return {
+            ...styles,
+            backgroundColor: 'rgb(51, 133, 255)',
+          };
+        },
+        multiValueLabel: (styles: any) => ({
+          ...styles,
+          color: 'white',
+        }),
+      };
      
      return (
       <div className="px-10">
@@ -132,17 +578,30 @@ const AddSidang = () => {
                       htmlFor="id">
                         Pilih Jenis Sidang
                     </label>
-                    <select 
-                      className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary p-nama"
-                      name="" 
-                      id=""
-                    >
-                      <option value="">
-                        Pilih jenis sidang{" "}
-                      </option>
-                    </select>
+                    <Select 
+                    className="basic-single p-jenis"
+                    name="jenis_persidangan_id"
+                    isClearable={true}
+                    isSearchable={true}
+                    placeholder="Pilih jenis sidang"
+                    styles={customStyles}
+                    defaultValue={
+                      formState.jenis_persidangan_id
+                        ? {
+                            value: formState.jenis_persidangan_id,
+                            label: formState.nama_jenis_persidangan,
+                          }
+                        : ''
+                    }
+                    options={jenisSidang.map((item: any) => ({
+                      value: item.jenis_persidangan_id,
+                      label: item.nama_jenis_persidangan,
+                    }))}
+                    onChange={handleJenisPersidangan}
+                    />
                   </div>
                 </div>
+                {/* oditur */}
                 <div className="form-group w-full ">
                     <label
                       className="block mb-1 text-base font-medium text-black dark:text-white"
@@ -154,25 +613,24 @@ const AddSidang = () => {
                       className="basic-multi-select p-anggota"
                       isMulti
                       classNamePrefix="select"
-                      // defaultValue={
-                      //   isEdit || isDetail
-                      //     ? formState?.oditurHolder?.map((item: any) => ({
-                      //         value: item.oditur_penuntut_id,
-                      //         label: item.nama_oditur,
-                      //       }))
-                      //     : ''
-                      // }
+                      defaultValue = {
+                        formState.oditur_penuntut_id
+                        ? {
+                            value: formState.oditur_penuntut_id,
+                            label: formState.nama_oditur,
+                        }
+                        : formState.oditur_penuntut_id
+                      }
                       placeholder={'Pilih oditur penuntut'}
                       isClearable={true}
                       isSearchable={true}
-                      // isDisabled={isDetail}
                       name="oditur_penuntut_id"
                       styles={customStyles}
-                      // options={jaksa?.map((item: any) => ({
-                      //   value: item.oditur_penuntut_id,
-                      //   label: item.nama_oditur,
-                      // }))}
-                      // onChange={handleSelectJaksa}
+                      options={jaksa.map((item: any) => ({
+                        value: item.oditur_penuntut_id,
+                        label: item.nama_oditur,
+                      }))}
+                      onChange={handleSelectJaksa}
                     />
                     <p className="error-text">
                       {/* {errors.map((item) => */}
@@ -189,38 +647,36 @@ const AddSidang = () => {
                         Ketua Oditur
                       </label>
                       <Select
-                        className="basic-select p-ketua"
+                        className="basic-multi-select p-anggota"
+                        // isMulti
                         classNamePrefix="select"
-                        // defaultValue={
-                        //   isEdit || isDetail
-                        //     ? {
-                        //         value:
-                        //           formState.role_ketua_oditur_holder
-                        //             ?.oditur_penuntut_id,
-                        //         label:
-                        //           formState.role_ketua_oditur_holder
-                        //             ?.nama_oditur,
-                        //       }
-                        //     : formState.oditur_penuntut_id
-                        // }
-                        placeholder={'Pilih ketua oditur'}
+                        defaultValue={
+                          formState.role_ketua_oditur
+                          ? {
+                              value: formState.role_ketua_oditur,
+                              label: formState.nama_oditur,
+                          }
+                          : formState.role_ketua_oditur
+                        }
+                        placeholder={'Pilih oditur penuntut'}
                         isClearable={true}
                         isSearchable={true}
-                        // isDisabled={isDetail}
                         name="oditur_penuntut_id"
                         styles={customStyles}
-                        // options={jaksa
-                        //   .filter((item) =>
-                        //     formState?.oditur_penuntut_id?.includes(
-                        //       item.oditur_penuntut_id,
-                        //     ),
-                        //   )
-                        //   .map((item: any) => ({
-                        //     value: item.oditur_penuntut_id,
-                        //     label: item.nama_oditur,
-                        //   }))}
-                        // onChange={handleSelectKetuaHakim}
+                        options={jaksa
+                          .filter((item) =>
+                            formState?.oditur_penuntut_id?.includes(
+                              item.oditur_penuntut_id,
+                            ),
+                          )
+                          
+                          .map((item: any) => ({
+                          value: item.oditur_penuntut_id,
+                          label: item.nama_oditur,
+                        }))}
+                          onChange={handleSelectKetuaJaksa}
                       />
+
                       <p className="error-text">
                         {/* {errors.map((item) =>
                           item === 'role_ketua_jaksa'
@@ -239,25 +695,25 @@ const AddSidang = () => {
                       <Select
                         className="basic-single p-kasus"
                         classNamePrefix="select"
-                        // defaultValue={
-                        //   isEdit || isDetail
-                        //     ? {
-                        //         value: formState.kasus_id,
-                        //         label: formState.nama_kasus,
-                        //       }
-                        //     : formState.kasus_id
-                        // }
+                        defaultValue={
+                          formState.kasus_id
+                          ? {
+                              value: formState.kasus_id,
+                              label: formState.nama_kasus,
+                          }
+                          : formState.kasus_id
+                        }
                         placeholder={'Pilih kasus'}
                         isClearable={true}
                         isSearchable={true}
                         // isDisabled={isDetail}
                         name="kasus_id"
                         styles={customStyles}
-                        // options={kasus.map((item: any) => ({
-                        //   value: item.kasus_id,
-                        //   label: item.nama_kasus,
-                        // }))}
-                        // onChange={handleKasus}
+                        options={kasus.map((item: any) => ({
+                          value: item.kasus_id,
+                          label: item.nama_kasus,
+                        }))}
+                        onChange={handleKasus}
                       />
                       {/* <p className="error-text">
                         {errors.map((item) =>
@@ -276,10 +732,10 @@ const AddSidang = () => {
                       </label>
                       <input
                         className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2.5 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nomor"
-                        // onChange={handleChange}
+                        onChange={handleChange}
                         placeholder="Nomor kasus"
                         name="nomor_kasus"
-                        // value={formState?.nomor_kasus}
+                        value={formState?.nomor_kasus}
                         disabled
                       />
                       <p className="error-text">
@@ -300,25 +756,24 @@ const AddSidang = () => {
                       <Select
                         className="basic-single p-kasus"
                         classNamePrefix="select"
-                        // defaultValue={
-                        //   isEdit || isDetail
-                        //     ? {
-                        //         value: formState.kasus_id,
-                        //         label: formState.nama_kasus,
-                        //       }
-                        //     : formState.kasus_id
-                        // }
+                        defaultValue = {
+                          formState.pengadilan_militer_id
+                          ? {
+                              value: formState.pengadilan_militer_id,
+                              label: formState.nama_pengadilan_militer,
+                          }
+                          : formState.pengadilan_militer_id
+                        }
                         placeholder={'Pilih pengadilan militer'}
                         isClearable={true}
                         isSearchable={true}
-                        // isDisabled={isDetail}
-                        name="kasus_id"
+                        name="pengadilan_militer_id"
                         styles={customStyles}
-                        // options={kasus.map((item: any) => ({
-                        //   value: item.kasus_id,
-                        //   label: item.nama_kasus,
-                        // }))}
-                        // onChange={handleKasus}
+                        options={pengadilanMiliter.map((item: any) => ({
+                          value: item.pengadilan_militer_id,
+                          label: item.nama_pengadilan_militer,
+                        }))}
+                        onChange={handlePengadilanMiliter}
                       />
                       {/* <p className="error-text">
                         {errors.map((item) =>
@@ -337,11 +792,10 @@ const AddSidang = () => {
                     </label>
                     <input
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2.5 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nomor"
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       placeholder="Juru sita"
                       name="juru_sita"
-                       // value={formState?.juru_sita}
-                      disabled
+                      value={formState?.juru_sita}
                     />
                     <p className="error-text">
                       {/* {errors.map((item) =>
@@ -360,11 +814,10 @@ const AddSidang = () => {
                     </label>
                     <input
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2.5 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-nomor"
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       placeholder="Pengawas peradilan militer"
                       name="pengawas_peradilan_militer"
-                       // value={formState?.pengawas_peradilan_militer}
-                      disabled
+                      value={formState.pengawas_peradilan_militer}
                     />
                     <p className="error-text">
                       {/* {errors.map((item) =>
@@ -384,11 +837,10 @@ const AddSidang = () => {
                     </label>
                     <input
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2.5 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       placeholder="Agenda sidang"
                       name="agenda_sidang"
-                      // value={formState.agenda_sidang}
-                      // disabled={isDetail}
+                      value={formState.agenda_sidang}
                     />
                     <p className="error-text">
                       {/* {errors.map((item) =>
@@ -405,11 +857,10 @@ const AddSidang = () => {
                     </label>
                     <input
                       className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2.5 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
-                      // onChange={handleChange}
+                      onChange={handleChange}
                       placeholder="Hasil keputusan sidang"
                       name="hasil_keputusan_sidang"
-                      // value={formState.hasil_keputusan_sidang}
-                      // disabled={isDetail}
+                      value={formState.hasil_keputusan_sidang}
                     />
                     <p className="error-text">
                       {/* {errors.map((item) =>
@@ -428,12 +879,12 @@ const AddSidang = () => {
                       </label>
                       <div className="flex flex-row">
                         <DatePicker
-                          // selected={
-                          //   formState.jadwal_sidang
-                          //     ? dayjs(formState.jadwal_sidang).toDate()
-                          //     : dayjs().toDate()
-                          // }
-                          // onChange={handleJadwalSidang}
+                          selected={
+                            formState.jadwal_sidang
+                              ? dayjs(formState.jadwal_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleJadwalSidang}
                           showTimeSelect
                           timeFormat="HH:mm"
                           timeCaption="Pilih Waktu"
@@ -448,7 +899,7 @@ const AddSidang = () => {
                           type="text"
                           className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                           name="zona_waktu"
-                          // value={formState.zona_waktu}
+                          value={formState.zona_waktu}
                           disabled
                         />
                         <p className="error-text">
@@ -470,12 +921,12 @@ const AddSidang = () => {
                       </label>
                       <div className="flex flex-row">
                         <DatePicker
-                          // selected={
-                          //   formState.perubahan_jadwal_sidang
-                          //     ? dayjs(formState.perubahan_jadwal_sidang).toDate()
-                          //     : dayjs().toDate()
-                          // }
-                          // onChange={handleJadwalSidang}
+                          selected={
+                            formState.perubahan_jadwal_sidang
+                              ? dayjs(formState.perubahan_jadwal_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handlePerubahanJadwal}
                           showTimeSelect
                           timeFormat="HH:mm"
                           timeCaption="Pilih Waktu"
@@ -490,7 +941,7 @@ const AddSidang = () => {
                           type="text"
                           className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                           name="zona_waktu"
-                          // value={formState.zona_waktu}
+                          value={formState.zona_waktu}
                           disabled
                         />
                         <p className="error-text">
@@ -512,19 +963,19 @@ const AddSidang = () => {
                       </label>
                       <div className="flex flex-row">
                         <DatePicker
-                          // selected={
-                          //   formState.waktu_mulai
-                          //     ? dayjs(formState.waktu_mulai).toDate()
-                          //     : dayjs().toDate()
-                          // }
-                          // onChange={handleJadwalSidang}
+                          selected={
+                            formState.waktu_mulai_sidang
+                              ? dayjs(formState.waktu_mulai_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleWaktuMulai}
                           showTimeSelect
                           timeFormat="HH:mm"
                           timeCaption="Pilih Waktu"
                           dateFormat="dd/MM/yyyy HH:mm"
                           // customInput={<ExampleCustomTimeInput />}
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
-                          name="waktu_mulai"
+                          name="waktu_mulai_sidang"
                           disabled={false}
                           locale="id"
                         />
@@ -532,7 +983,7 @@ const AddSidang = () => {
                           type="text"
                           className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                           name="zona_waktu"
-                          // value={formState.zona_waktu}
+                          value={formState.zona_waktu}
                           disabled
                         />
                         <p className="error-text">
@@ -554,19 +1005,19 @@ const AddSidang = () => {
                       </label>
                       <div className="flex flex-row">
                         <DatePicker
-                          // selected={
-                          //   formState.waktu_selesai
-                          //     ? dayjs(formState.waktu_selesai).toDate()
-                          //     : dayjs().toDate()
-                          // }
-                          // onChange={handleJadwalSidang}
+                          selected={
+                            formState.waktu_selesai_sidang
+                              ? dayjs(formState.waktu_selesai_sidang).toDate()
+                              : dayjs().toDate()
+                          }
+                          onChange={handleWaktuSelesai}
                           showTimeSelect
                           timeFormat="HH:mm"
                           timeCaption="Pilih Waktu"
                           dateFormat="dd/MM/yyyy HH:mm"
                           // customInput={<ExampleCustomTimeInput />}
                           className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
-                          name="waktu_selesai"
+                          name="waktu_selesai_sidang"
                           disabled={false}
                           locale="id"
                         />
@@ -574,7 +1025,7 @@ const AddSidang = () => {
                           type="text"
                           className="w-1/4 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
                           name="zona_waktu"
-                          // value={formState.zona_waktu}
+                          value={formState.zona_waktu}
                           disabled
                         />
                         <p className="error-text">
@@ -590,46 +1041,35 @@ const AddSidang = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4 justify-normal">
                 <div className="form-group w-full ">
-                      <label
-                        className="block mb-1 text-base font-medium text-black dark:text-white"
-                        htmlFor="id"
-                      >
-                        Ahli
-                      </label>
-                      <Select
-                        className="basic-select p-ketua"
-                        classNamePrefix="select"
-                        // defaultValue={
-                        //   isEdit || isDetail
-                        //     ? {
-                        //         value:
-                        //           formState.role_ketua_oditur_holder
-                        //             ?.oditur_penuntut_id,
-                        //         label:
-                        //           formState.role_ketua_oditur_holder
-                        //             ?.nama_oditur,
-                        //       }
-                        //     : formState.oditur_penuntut_id
-                        // }
-                        placeholder={'Pilih ahli'}
-                        isClearable={true}
-                        isSearchable={true}
-                        // isDisabled={isDetail}
-                        name="ahli_id"
-                        styles={customStyles}
-                        // options={jaksa
-                        //   .filter((item) =>
-                        //     formState?.oditur_penuntut_id?.includes(
-                        //       item.oditur_penuntut_id,
-                        //     ),
-                        //   )
-                        //   .map((item: any) => ({
-                        //     value: item.oditur_penuntut_id,
-                        //     label: item.nama_oditur,
-                        //   }))}
-                        // onChange={handleSelectKetuaHakim}
-                      />
-                      <p className="error-text">
+                  <label
+                    className="block mb-1 text-base font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    Ahli
+                  </label>
+                    <Select
+                      className="basic-select p-ketua"
+                      classNamePrefix="select"
+                      placeholder={'Pilih ahli'}
+                      isClearable={true}
+                      isSearchable={true}
+                      defaultValue={
+                        formState.ahli.map((item: any) => ({
+                          value: item.ahli_id,
+                           label: item.nama_ahli + ' ' + '(' + item.bidang_ahli + ')',
+                        }))
+                      }
+                      onChange={handleSelectAhli}
+                      name="ahli_id"
+                      styles={customStyles}
+                      options={ahli.map((item: any) => ({
+                        value: item.ahli_id,
+                        label:
+                          item.nama_ahli + ' ' + '(' + item.bidang_ahli + ')',
+                      }))}
+                      isMulti
+                    />
+                    <p className="error-text">
                         {/* {errors.map((item) =>
                           item === 'role_ketua_jaksa'
                             ? 'Pilih ketua oditur'
@@ -647,25 +1087,23 @@ const AddSidang = () => {
                       <Select
                         className="basic-single p-kasus"
                         classNamePrefix="select"
-                        // defaultValue={
-                        //   isEdit || isDetail
-                        //     ? {
-                        //         value: formState.saksi_id,
-                        //         label: formState.nama_saksi,
-                        //       }
-                        //     : formState.saksi_id
-                        // }
+                        defaultValue={
+                          formState.ahli.map((item: any) => ({
+                            value: item.saksi_id,
+                            label: item.nama_saksi,
+                          }))
+                        }
                         placeholder={'Pilih saksi'}
                         isClearable={true}
                         isSearchable={true}
-                        // isDisabled={isDetail}
+                        isMulti
                         name="saksi_id"
                         styles={customStyles}
-                        // options={kasus.map((item: any) => ({
-                        //   value: item.saksi_id,
-                        //   label: item.nama_saksi,
-                        // }))}
-                        // onChange={handleKasus}
+                        options={saksi.map((item: any) => ({
+                          value: item.saksi_id,
+                          label: item.nama_saksi,
+                        }))}
+                        onChange={handleSelectSaksi}
                       />
                       {/* <p className="error-text">
                         {errors.map((item) =>

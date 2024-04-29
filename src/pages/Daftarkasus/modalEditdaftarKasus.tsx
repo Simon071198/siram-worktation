@@ -136,6 +136,24 @@ export const EditDaftarKasusModal = ({
       return true;
     };
 
+  //Handle Max Date
+  const [maxDate, setMaxDate] = useState(formatDate(new Date()));
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
+
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -1015,10 +1033,11 @@ export const EditDaftarKasusModal = ({
                       type="date"
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
                       name="tanggal_pelimpahan_kasus"
-                      placeholder="Tanggal Pelaporan Kasus"
+                      placeholder="Tanggal Pelimpahan Kasus"
                       onChange={handleChange}
                       defaultValue={defaultValue.tanggal_pelimpahan_kasus}
                       disabled={isDetail}
+                      max={maxDate}
                     />
                     <p className='error-text'>
                       {errors.map((item) =>
