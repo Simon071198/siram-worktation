@@ -686,7 +686,7 @@ const InmateList = () => {
               className="kotak-pencarian-ruangan w-full rounded border border-stroke py-1 px-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
             >
               <option value="">Semua ruang</option>
-              {hunian.map((item: any, index) => (
+              {hunian.map((item: any, index: any) => (
                 <option key={index} value={item.hunian_wbp_otmil}>
                   {item.nama_hunian_wbp_otmil}
                 </option>

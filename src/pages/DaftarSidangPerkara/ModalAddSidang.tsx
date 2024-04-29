@@ -143,7 +143,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
         key !== 'nama_kota' && 
-        key != 'nama_pengadilan_militer'
+        key !== 'nama_pengadilan_militer'
 
         // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
         // || key === 'saksi' && Array.isArray(value) && value.length === 0
@@ -155,9 +155,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
             Array.isArray(value) &&
             value.length === 0) ||
           (key === 'oditur_penuntut_id' && Array.isArray(value) && value.length === 0) ||
-          (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
-          (key === 'ahli' && Array.isArray(value) && value.length === 0)||
           (key === 'wbp_profile' && Array.isArray(value) && value.length === 0)||
+          (key === 'ahli' && Array.isArray(value) && value.length === 0)||
+          (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
           (key === 'pengacara' && Array.isArray(value) && value.length === 0)
         ) {
           errorFields.push(key);
@@ -415,7 +415,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       setFormState((prevFormState: any) => ({
         ...prevFormState,
         saksi: saksiValues,
-        wbp: wbpValues,
+        wbp_profile: wbpValues,
       }));
     }
   }, [getSaksi, getWbp]);
@@ -435,7 +435,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
     setFormState((prevFormState: any) => ({
       ...prevFormState,
-      wbp: selectedValues.map((valueItem: any) => valueItem.value),
+      wbp_profile: selectedValues.map((valueItem: any) => valueItem.value),
       wbpHolder: selectedValues.map((valueItem: any) => ({
         wbp_profile_id: valueItem.value,
         nama: valueItem.label,
@@ -661,22 +661,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           kasus_id: saksiFilter.kasus_id,
           nama_kasus: saksiFilter.nama_kasus,
         });
-        
-        // setFormState({
-        //   ...formState,
-        //   nomor_kasus: {
-        //     saksi: saksiFilter.nomor_kasus,
-        //     wbp: wbpFilter.nomor_kasus
-        //   },
-        //   kasus_id: {
-        //     saksi: saksiFilter.kasus_id,
-        //     wbp: wbpFilter.kasus_id
-        //   },
-        //   nama_kasus: {
-        //     saksi: saksiFilter.nama_kasus,
-        //     wbp: wbpFilter.nama_kasus
-        //   }
-        // });
 
         console.log('getSaksi', getSaksi);
       } else {
@@ -2028,7 +2012,7 @@ console.log(getWbp, 'get wbp')
                       classNamePrefix="select"
                       defaultValue={
                         isEdit || isDetail
-                          ? formState?.wbpHolder?.map((item: any) => ({
+                          ? formState.wbpHolder.map((item: any) => ({
                               value: item.wbp_profile_id,
                               label: item.nama,
                             }))
@@ -2049,9 +2033,9 @@ console.log(getWbp, 'get wbp')
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
-                      name="wbp_profile_id"
+                      name="wbp_profile"
                       styles={customStyles}
-                      options={wbp?.map((item: any) => ({
+                      options={wbp.map((item: any) => ({
                         value: item.wbp_profile_id,
                         label: item.nama,
                       }))}
