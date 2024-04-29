@@ -117,8 +117,8 @@ const SidangList = () => {
 
     item?.sidang_kasus_wbp.map((item: any) =>
       newArrayWbp.push({
-        wbp_profile_id: item?.wbp_profile_id ?? '',
-        nama: item?.nama ?? '',
+        wbp_profile_id: item?.wbp_profile_id,
+        nama: item?.nama,
       }),
     );
 
@@ -281,23 +281,6 @@ const SidangList = () => {
         nama: item?.nama,
       }),
     );
-
-    // Assuming newArrayWbp is defined somewhere before this code block
-    // item?.sidang_wbp?.forEach((sidangItem: any) => {
-    //   // Check if sidangItem is defined and contains the expected properties
-    //   if (sidangItem && sidangItem.wbp_profile_id && sidangItem.nama) {
-    //     newArrayWbp.push({
-    //       wbp_profile_id: sidangItem.wbp_profile_id,
-    //       nama: sidangItem.nama,
-    //     });
-    //   } else {
-    //     // Handle the case where sidangItem is not defined or does not contain the expected properties
-    //     console.error(
-    //       'sidangItem is undefined or does not contain the expected properties:',
-    //       sidangItem,
-    //     );
-    //   }
-    // });
 
     const hakimKetua = item?.sidang_hakim.find(
       (item: any) => item.ketua_hakim === '1',
@@ -746,10 +729,16 @@ const SidangList = () => {
 
         <div className="flex flex-col">
           {isOperator ? (
-            <div className="grid grid-cols-4 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+            <div className="grid grid-cols-6 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama WBP
+                  Nama Sidang
+                </h5>
+              </div>
+
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  No Kasus
                 </h5>
               </div>
 
@@ -771,15 +760,21 @@ const SidangList = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-5 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
+            <div className="grid grid-cols-6 text-center  rounded-t-md bg-gray-2 dark:bg-slate-600 ">
               <div className="p-2.5 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
-                  Nama WBP
+                  Nama Sidang
                 </h5>
               </div>
 
               <div className="p-2.5 xl:p-5">
                 <h5 className="text-sm font-medium uppercase xsm:text-base">
+                  No Kasus
+                </h5>
+              </div>
+
+              <div className="p-2.5 xl:p-5">
+                <h5 className="text-sm font-medium uppercase xsm:text-base">  
                   Jenis Sidang
                 </h5>
               </div>
@@ -810,19 +805,28 @@ const SidangList = () => {
                 return (
                   <div key={index}>
                     {isOperator ? (
-                      <div className="grid grid-cols-4 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                      <div className="grid grid-cols-6 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
-                            {item.nama_wbp}
+                            {item.nama_sidang}
                           </p>
                         </div>
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nomor_kasus}
+                          </p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer truncate"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
                             {item.nama_jenis_persidangan}
@@ -831,7 +835,7 @@ const SidangList = () => {
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
                             {item.jadwal_sidang}
@@ -840,7 +844,7 @@ const SidangList = () => {
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer capitalize"
                         >
                           <p className="hidden text-black dark:text-white sm:block text-center">
                             {item?.sidang_oditur &&
@@ -853,19 +857,28 @@ const SidangList = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-5 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
+                      <div className="grid grid-cols-6 rounded-sm  bg-gray-2 dark:bg-meta-4  ">
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
-                            {item.nama_wbp}
+                            {item.nama_sidang}
                           </p>
                         </div>
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer truncate"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
+                        >
+                          <p className="hidden text-black dark:text-white sm:block">
+                            {item.nomor_kasus}
+                          </p>
+                        </div>
+
+                        <div
+                          onClick={() => handleDetailClick(item)}
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer truncate"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
                             {item.nama_jenis_persidangan}
@@ -874,7 +887,7 @@ const SidangList = () => {
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
                             {item.jadwal_sidang}
@@ -883,7 +896,7 @@ const SidangList = () => {
 
                         <div
                           onClick={() => handleDetailClick(item)}
-                          className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer capitalize"
+                          className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer capitalize"
                         >
                           <p className="hidden text-black dark:text-white sm:block text-center">
                             {item?.sidang_oditur &&
@@ -895,7 +908,7 @@ const SidangList = () => {
                           </p>
                         </div>
 
-                        <div className="flex items-center justify-center gap-2 p-2.5 xl:p-5">
+                        <div className="lg:flex-nowrap sm:flex flex-wrap items-center justify-center gap-2 p-2.5 xl:p-5">
                           {/* <button
                         onClick={() => handleEditClick(item)}
                         className="py-1 px-2  text-black rounded-md bg-blue-300"
@@ -941,8 +954,8 @@ const SidangList = () => {
               defaultValue={editData}
               isEdit={true}
               token={token}
-              />
-            )}
+            />
+          )}
           {modalAddOpen && (
             <AddSidangModal
               closeModal={handleCloseAddModal}
