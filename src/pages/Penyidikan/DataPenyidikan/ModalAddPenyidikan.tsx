@@ -194,11 +194,20 @@ export const AddPenyidikanModal = ({
     : [];
   const [terlibatOptionsState, setTerlibatOptionState] = useState([])
     console.log(terlibatOptionsState, "terlibatOptionsState")
-  // console.log(terlibatOptions, "terlibat")
-  const terlibatOptionsValue = {
-    value: defaultValue?.saksi_id || defaultValue?.wbp_profile_id,
-    label: defaultValue?.nama_saksi || defaultValue?.nama_wbp,
-  };
+  console.log(defaultValue, "terlibat defaul")
+  
+  const dataSaksi = {
+    value: defaultValue.saksi_id,
+    label: `${defaultValue.nama_saksi } (saksi)`
+  }
+
+  const dataWbp = {
+    value: defaultValue.wbp_profile_id,
+    label: `${defaultValue.nama_wbp} (tersangka)`
+  }
+
+  const splitData: any = [dataSaksi, dataWbp]
+  const terlibatOptionsValue = splitData;
 
   interface Option {
     value: string;
@@ -800,8 +809,18 @@ export const AddPenyidikanModal = ({
                         className="capitalize"
                         options={terlibatOptions}
                         isDisabled={true}
-                        defaultValue={isDetail || isEdit ? terlibatOptionsValue : ''}
-                        value={terlibatOptionsState.map((data) => (
+                        // defaultValue={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                        //   {
+                        //     label: data.label,
+                        //     value: data.value
+                        //   }
+                        // )) : ''}
+                        value={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                          {
+                            label: data.label,
+                            value: data.value
+                          }
+                        )) : terlibatOptionsState.map((data) => (
                           {
                             label: data.label,
                             value: data.value
