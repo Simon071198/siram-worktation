@@ -929,8 +929,8 @@ export const AddInmateModal = ({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
-    // if (!validateForm()) return;
-    // setButtonLoad(true);
+    if (!validateForm()) return;
+    setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
     console.log(formState, 'formstateSuccesValidate');
 
