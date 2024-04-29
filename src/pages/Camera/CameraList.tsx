@@ -11,13 +11,15 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { RiCameraOffLine } from 'react-icons/ri';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import ReactPlayer from 'react-player';
+import { RiErrorWarningFill } from 'react-icons/ri';
 
 const CameraList = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [errorCam, setErrorCam] = useState(false);
   const [filter, setFilter] = useState('');
   const [dense, setDense] = React.useState(false);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [accordionState, setAccordionState] = useState({
     accordion1: false,
     accordion2: false,
@@ -137,11 +139,61 @@ const CameraList = () => {
       sendRequestOnce();
     }
   }, [buildings]);
-
+  const errorTimeoutRef: any = useRef(null);
   const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    client.current = new WebSocket('ws://192.168.1.111:5000');
+
+    client.current.onopen = () => {
+      setIsWebSocketConnected(true);
+      console.log('WebSocket Client Connected');
+    };
+    client.current.onmessage = (message) => {
+      const data = JSON.parse(message.data);
+      if (data.type === 'error') {
+        // Tangkap pesan error dan tampilkan kepada pengguna
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
+        errorTimeoutRef.current = setTimeout(() => {
+          setErrorCam(true);
+          console.log(data, 'ini data error');
+          console.log('Error from server camera:', data.message);
+        }, 1500); // Setelah 2 detik, tampilkan pesan error
+      }
+      if (data.type === 'info') {
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
+        setErrorCam(false);
+        console.log(data, 'ini data berhasil');
+      }
+    };
+    // client.current.onmessage = (message) => {
+    //   const data = JSON.parse(message.data);
+    //   if (data.type === 'info') {
+    //     // Tangkap pesan error dan tampilkan kepada pengguna
+    //     console.log(data, 'ini data info');
+
+    //     console.log('Error from server camera:', data.message);
+    //   }
+    // };
+    // Cleanup function
+    return () => {
+      setIsWebSocketConnected(false);
+      console.log('WebSocket Client DISConnected');
+      client.current.close(); // Close WebSocket connection when component unmounts
+    };
+  }, []);
+
   const sendRequest = (method, params) => {
-    client.current.send(JSON.stringify({ method: method, params: params }));
+    if (isWebSocketConnected) {
+      client.current.send(JSON.stringify({ method: method, params: params }));
+    } else {
+      console.log('WebSocket connection is not yet established.');
+    }
   };
+  // const sendRequest = (method, params) => {
+  //   client.current.send(JSON.stringify({ method: method, params: params }));
+  // };
 
   const sendRequestOnce = () => {
     let onlineCameras = buildings?.data?.records?.gedung.flatMap(
@@ -323,7 +375,9 @@ const CameraList = () => {
   };
   console.log('cccrrr', currentCamerasOnline);
   const { startPage, endPage } = getPageNumbers();
-
+  const handleBufferChange = (bufferState) => {
+    setIsBuffering(bufferState);
+  };
   const renderThumb = (cam) => {
     const urlStream = `http://192.168.1.111:5000/stream/${cam.ip_address}_.m3u8`;
 
@@ -334,6 +388,8 @@ const CameraList = () => {
         height="100%"
         width="100%"
         muted
+        onBuffer={() => setLoading(true)}
+        onBufferEnd={() => setLoading(false)}
       />
     );
   };
@@ -377,7 +433,7 @@ const CameraList = () => {
                     : columns === 2 && rows === 3
                       ? 'grid-cols-3 grid-rows-2'
                       : columns === 2 && rows === 4
-                        ? 'grid-cols-4 grid-rows-2'
+                        ? 'grid-cols-4 grid-rows-2 h-[80vh]'
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
@@ -392,8 +448,32 @@ const CameraList = () => {
                   >
                     {/* header */}
                     <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
-                      {camera.status_kamera === 'online' ? (
+                      {/* {camera.status_kamera === 'online' ? (
                         renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
+                      {/* {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : client.current.readyState !== WebSocket.OPEN ? (
+                        <RiErrorWarningFill
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
+                      {camera.status_kamera === 'online' ? (
+                        isWebSocketConnected ? (
+                          renderThumb(camera)
+                        ) : (
+                          <RiErrorWarningFill
+                            className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                          />
+                        )
                       ) : (
                         <RiCameraOffLine
                           className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
@@ -502,7 +582,7 @@ const CameraList = () => {
                     : columns === 2 && rows === 3
                       ? 'grid-cols-3 grid-rows-2'
                       : columns === 2 && rows === 4
-                        ? 'grid-cols-4 grid-rows-2'
+                        ? 'grid-cols-4 grid-rows-2 h-[80vh]'
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
@@ -519,7 +599,13 @@ const CameraList = () => {
                     {/* header */}
                     <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
                       {camera.status_kamera === 'online' ? (
-                        renderThumb(camera)
+                        isWebSocketConnected ? (
+                          renderThumb(camera)
+                        ) : (
+                          <RiErrorWarningFill
+                            className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                          />
+                        )
                       ) : (
                         <RiCameraOffLine
                           className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
@@ -530,12 +616,20 @@ const CameraList = () => {
 
                     <div className="absolute top-1 right-2 flex items-center">
                       {camera.status_kamera === 'online' ? (
-                        <>
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
-                          <h5 className="text-green-500 text-center mt-1">
-                            Online
-                          </h5>
-                        </>
+                        isWebSocketConnected ? (
+                          <>
+                            <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
+                            <h5 className="text-green-500 text-center mt-1">
+                              Online
+                            </h5>
+                          </>
+                        ) : (
+                          <>
+                            <h5 className="text-yellow-500 animate-pulse">
+                              Error connection
+                            </h5>
+                          </>
+                        )
                       ) : (
                         <>
                           <h5 className="text-red-500 text-center mt-1">
