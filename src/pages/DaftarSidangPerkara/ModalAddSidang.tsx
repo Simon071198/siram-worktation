@@ -110,6 +110,26 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [filter, setFilter] = useState('');
   const [file, setFile] = useState(null);
 
+  console.log(formState.wbpHolder,'testing')
+
+  useEffect(()=> {
+    if(isEdit || isDetail){
+      setGetWbp(formState.wbpHolder.map((item: any) => ({
+        value: item.wbp_profile_id,
+        label: item.nama,
+      })))
+    }
+  },[])
+
+  useEffect(() => {
+    if(isEdit || isDetail){
+      setGetSaksi(formState.saksiHolder.map((item:any) => ({
+        value: item.saksi_id,
+        label: item.nama_saksi,
+      })))
+    }
+  },[])
+
     useEffect(() => {
       Promise.all([
         getTimeZone(),
@@ -363,6 +383,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     driverObj.drive();
   };
   console.log('ff dan', formState);
+  
   const handleSelectJaksa = (e: any) => {
     console.log('jaksa', e);
     let arrayTemp: any = [];
@@ -421,13 +442,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   }, [getSaksi, getWbp]);
 
   const handleSelectWbp = (e: any) => {
-    // let arrayTemp: any = [];
-    // for (let i = 0; i < e.length; i++) {
-    //   arrayTemp.push(e[i].value);
-    // }
-
-    // setFormState({ ...formState, wbp_profile: arrayTemp });
-
     const selectedValues = e.map((item: any) => ({
       value: item.value,
       label: item.label,
@@ -444,6 +458,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
     setGetWbp(selectedValues);
   };
+
+
+  // const handleSelectWbp = (e: any) => {
+  //   setFormState({
+  //     ...formState,
+  //     [e.target.name]: e.target.value
+  //   });
+  // }
 
   const handleSelectSaksi = (e: any) => {
     console.log(e, 'handleSelectSaksi');
@@ -477,6 +499,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = (e: any) => {
     console.log('forms', formState);
     e.preventDefault();
@@ -2010,21 +2033,27 @@ console.log(getWbp, 'get wbp')
                       className="basic-multi-select s-wbp"
                       isMulti
                       classNamePrefix="select"
-                      defaultValue={
-                        isEdit || isDetail
-                          ? formState.wbpHolder.map((item: any) => ({
-                              value: item.wbp_profile_id,
-                              label: item.nama,
-                            }))
-                          : formState.wbp_profile_id
-                      }
-                      value={
-                        isEdit || isDetail
-                        ? formState.wbpHolder.map((item: any) => ({
-                          value: item.wbp_profile_id,
-                          label: item.nama,
-                        }))
-                        : getWbp.map((item: any) => ({
+                      // defaultValue={
+                      //   isEdit || isDetail
+                      //     ? formState.wbpHolder.map((item: any) => ({
+                      //         value: item.wbp_profile_id,
+                      //         label: item.nama,
+                      //       }))
+                      //     : formState.wbp_profile_id
+                      // }
+                      // value={
+                      //   isEdit || isDetail
+                      //   ? formState.wbpHolder.map((item: any) => ({
+                      //     value: item.wbp_profile_id,
+                      //     label: item.nama,
+                      //   }))
+                      //   : getWbp.map((item: any) => ({
+                      //     value: item.value,
+                      //     label: item.label,
+                      //   }))
+                      // }
+                       value={
+                        getWbp.map((item: any) => ({
                           value: item.value,
                           label: item.label,
                         }))
@@ -2105,21 +2134,27 @@ console.log(getWbp, 'get wbp')
                       className="basic-multi-select p-saksi"
                       isMulti
                       classNamePrefix="select"
-                      defaultValue={
-                        isEdit || isDetail
-                          ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
-                          : formState.saksi_id
-                      }
+                      // defaultValue={
+                      //   isEdit || isDetail
+                      //     ? formState.saksiHolder.map((item: any) => ({
+                      //         value: item.saksi_id,
+                      //         label: item.nama_saksi,
+                      //       }))
+                      //     : formState.saksi_id
+                      // }
+                      // value={
+                      //   isEdit || isDetail
+                      //     ? formState.saksiHolder.map((item: any) => ({
+                      //         value: item.saksi_id,
+                      //         label: item.nama_saksi,
+                      //       }))
+                      //     : getSaksi.map((item: any) => ({
+                      //         value: item.value,
+                      //         label: item.label,
+                      //       }))
+                      // }
                       value={
-                        isEdit || isDetail
-                          ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
-                          : getSaksi.map((item: any) => ({
+                         getSaksi.map((item: any) => ({
                               value: item.value,
                               label: item.label,
                             }))
