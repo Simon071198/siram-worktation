@@ -192,11 +192,22 @@ export const AddPenyidikanModal = ({
         })),
       ]
     : [];
+  const [terlibatOptionsState, setTerlibatOptionState] = useState([])
+    console.log(terlibatOptionsState, "terlibatOptionsState")
+  console.log(defaultValue, "terlibat defaul")
+  
+  const dataSaksi = {
+    value: defaultValue.saksi_id,
+    label: `${defaultValue.nama_saksi } (saksi)`
+  }
 
-  const terlibatOptionsValue = {
-    value: defaultValue?.saksi_id || defaultValue?.wbp_profile_id,
-    label: defaultValue?.nama_saksi || defaultValue?.nama_wbp,
-  };
+  const dataWbp = {
+    value: defaultValue.wbp_profile_id,
+    label: `${defaultValue.nama_wbp} (tersangka)`
+  }
+
+  const splitData: any = [dataSaksi, dataWbp]
+  const terlibatOptionsValue = splitData;
 
   interface Option {
     value: string;
@@ -291,6 +302,27 @@ export const AddPenyidikanModal = ({
     const kasusFilter: any = dataKasus.find(
       (item: any) => item.kasus_id === e?.value,
     );
+    console.log(kasusFilter, "filter")
+    const dataSaksi = {
+      value: kasusFilter?.saksi[0]?.saksi_id,
+      label: `${kasusFilter?.saksi[0]?.nama_saksi } (saksi)`
+    }
+
+    const dataWbp = {
+      value: kasusFilter?.wbp_profile[0]?.wbp_profile_id,
+      label: `${kasusFilter?.wbp_profile[0]?.nama} (tersangka)`
+    }
+
+    const splitData: any = [dataSaksi, dataWbp]
+    // const splitData: any = [ ...kasusFilter?.saksi?.map((item: any) => ({
+    //   value: item.saksi_id,
+    //   label: `${item.nama_saksi} (saksi)`,
+    // })),
+    // ...kasusFilter?.wbp_profile?.map((item: any) => ({
+    //   value: item.wbp_profile_id,
+    //   label: `${item.nama} (tersangka)`,
+    // }))]
+    setTerlibatOptionState(splitData)
     setDataKasusSelect(kasusFilter);
     setFormState({
       ...formState,
@@ -301,6 +333,8 @@ export const AddPenyidikanModal = ({
       nama_kategori_perkara: kasusFilter
         ? kasusFilter.nama_kategori_perkara
         : '',
+      saksi_id: dataSaksi.value,
+      wbp_profile_id: dataWbp.value
     });
   };
 
@@ -454,11 +488,11 @@ export const AddPenyidikanModal = ({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // if (!validateForm()) return;
-    // setButtonLoad(true);
-    // onSubmit(formState).then(() => 
-    //   setButtonLoad(false),
-    //   setFormSubmitted(true)
-    // );
+    setButtonLoad(true);
+    onSubmit(formState).then(() => 
+      setButtonLoad(false),
+      setFormSubmitted(true)
+    );
 
     console.log(formState, 'HAHA BYE');
   };
@@ -774,8 +808,24 @@ export const AddPenyidikanModal = ({
                         isMulti
                         className="capitalize"
                         options={terlibatOptions}
-                        isDisabled={isDetail}
-                        defaultValue={isDetail || isEdit ? terlibatOptionsValue : ''}
+                        isDisabled={true}
+                        // defaultValue={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                        //   {
+                        //     label: data.label,
+                        //     value: data.value
+                        //   }
+                        // )) : ''}
+                        value={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                          {
+                            label: data.label,
+                            value: data.value
+                          }
+                        )) : terlibatOptionsState.map((data) => (
+                          {
+                            label: data.label,
+                            value: data.value
+                          }
+                        ))}
                         onChange={handleSelectPihakTerlibat}
                         placeholder="Pihak Terlibat"
                         styles={customStyles}

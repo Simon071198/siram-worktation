@@ -84,7 +84,7 @@ const AddPetugasShiftGrup = ({
   ).format('YYYY MM DD');
   const [selectedDate, setSelectedDate] = useState(dayjs(tanggal));
   const [selectedEndDate, setSelectedEndDate] = useState(
-    dayjs(tanggal).add(4, 'day'),
+    dayjs(tanggal),
   );
   console.log('time', selectedDate, 'end', selectedEndDate, 'defaul', tanggal);
 
@@ -426,7 +426,7 @@ const AddPetugasShiftGrup = ({
       bulan: parseInt(dayjs(date).format('M')),
       tahun: parseInt(dayjs(date).format('YYYY')),
     });
-    setSelectedEndDate(dayjs(date).add(4, 'day'));
+    setSelectedEndDate(dayjs(date));
     setEndDate({
       ...endDate,
       tanggal: parseInt(dayjs(end).format('D')),
@@ -518,6 +518,8 @@ const AddPetugasShiftGrup = ({
                           dateFormat="dd MMMM yyyy"
                           placeholderText="Pilih tanggal"
                           locale="id"
+                          minDate={dayjs(selectedDate).startOf('month').toDate()}
+                      maxDate={dayjs(selectedDate).endOf('month').toDate()} 
                         />
                       </div>
                       <h1>s/d</h1>

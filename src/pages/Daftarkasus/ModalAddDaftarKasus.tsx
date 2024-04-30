@@ -347,6 +347,7 @@ export const AddDaftarKasusModal = ({
       zona_waktu: zonaWaktu,
     });
   };
+
   const handleWaktuPelaporan = (e: any) => {
     console.log('1213', e);
 
@@ -397,6 +398,7 @@ export const AddDaftarKasusModal = ({
       });
     }
   };
+
   useEffect(() => {
     Promise.all([
       getTimeZone(),
@@ -606,6 +608,7 @@ export const AddDaftarKasusModal = ({
       label: '',
     },
   ]);
+
   const OditurPenyidikOpstions = dataOditurPenyidik.map((item: any) => ({
     value: item.oditur_penyidik_id,
     label: item.nama_oditur,
@@ -670,6 +673,7 @@ export const AddDaftarKasusModal = ({
       keterangans: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
+  
   const handleChangeKeterangan = (e: any, index: any) => {
     const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
