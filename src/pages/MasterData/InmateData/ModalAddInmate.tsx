@@ -744,7 +744,9 @@ export const AddInmateModal = ({
             "waktu_pelaporan_kasus",
             "role_ketua_oditur_ids",
             "nama_jenis_perkara",
-            "nama_jenis_pidana"
+            "nama_jenis_pidana",
+            "zat_adiktif",
+            "jenis_olahraga",
           ];
         
           // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
@@ -809,6 +811,7 @@ export const AddInmateModal = ({
         errorFields.push(key);
       }
     }
+    console.log(errorFields, "errorFields")
     if (errorFields.length > 0) {
       setErrors(errorFields);
       return false;
