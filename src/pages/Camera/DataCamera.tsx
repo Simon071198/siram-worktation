@@ -175,16 +175,16 @@ const DataCamera = (props) => {
           },
         ],
       }));
-      sendRequest('startLiveView', {
-        listViewCameraData: [
-          {
-            IpAddress: res.ip_address,
-            urlRTSP: res.url_rtsp,
-            deviceName: res.nama_kamera,
-            deviceId: res.kamera_id,
-          },
-        ],
-      });
+      // sendRequest('startLiveView', {
+      //   listViewCameraData: [
+      //     {
+      //       IpAddress: res.ip_address,
+      //       urlRTSP: res.url_rtsp,
+      //       deviceName: res.nama_kamera,
+      //       deviceId: res.kamera_id,
+      //     },
+      //   ],
+      // });
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
