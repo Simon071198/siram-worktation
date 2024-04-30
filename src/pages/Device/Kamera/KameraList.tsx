@@ -376,7 +376,7 @@ const KameraList = () => {
         item.deviceName,
         item.urlRTSP,
         item.IpAddress,
-        item.status_kamera === 'tidak' ? 'tidak aktif' : item.status_kamera,
+        item.status_kamera === 'offline' ? 'offline' : item.status_kamera,
         item.merk,
         item.model,
         item.nama_lokasi_otmil,
@@ -431,8 +431,8 @@ const KameraList = () => {
                 onChange={handleFilterChangeStatus}
               >
                 <option value="">Semua Status</option>
-                <option value="aktif">Aktif</option>
-                <option value="tidak">Tidak aktif</option>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
                 <option value="rusak">Rusak</option>
               </select>
             </div>
@@ -561,18 +561,12 @@ const KameraList = () => {
                     onClick={() => handleDetailClick(item)}
                     className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                   >
-                    {item.status_kamera === 'aktif' ? (
+                    {item.status_kamera === 'online' ? (
                       <p className="text-green-500 dark:text-green-300">
-                        Aktif
+                        Online
                       </p>
-                    ) : item.status_kamera === 'tidak' ? (
-                      <p className="text-red-500 dark:text-red-300">
-                        Tidak Aktif
-                      </p>
-                    ) : item.status_kamera === 'rusak' ? (
-                      <p className="text-yellow-500 dark:text-yellow-300">
-                        Rusak
-                      </p>
+                    ) : item.status_kamera === 'offline' ? (
+                      <p className="text-red-500 dark:text-red-300">offline</p>
                     ) : (
                       <p className="text-black dark:text-white">
                         Status Tidak Dikenali
