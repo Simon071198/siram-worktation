@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Loader from '../../../common/Loader';
 import { AddKamera } from './ModalAddKamera';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { DeleteKameraModal } from './ModalDeleteKamera';
 import { Alerts } from './AlertKamera';
 import {
@@ -34,6 +35,7 @@ interface Item {
   ruangan_otmil_id: string;
   jenis_ruangan_otmil: string;
   nama_ruangan_otmil: string;
+  deviceId: string;
 }
 
 const KameraList = () => {
@@ -213,6 +215,7 @@ const KameraList = () => {
       }
       const result = response.data.records;
       setData(result);
+      console.log('result', result);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
@@ -228,7 +231,56 @@ const KameraList = () => {
       });
     }
   };
+  const errorTimeoutRef: any = useRef(null);
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+  const sendRequest = (method, params) => {
+    client.current.send(JSON.stringify({ method: method, params: params }));
+  };
+  client.current = new WebSocket('ws://192.168.1.111:5000');
 
+  client.current.onopen = () => {
+    console.log('WebSocket Client Connected');
+  };
+  client.current.onmessage = (message) => {
+    const data = JSON.parse(message.data);
+    if (data.type === 'error') {
+      // Tangkap pesan error dan tampilkan kepada pengguna
+      clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
+      errorTimeoutRef.current = setTimeout(() => {
+        console.log(data, 'ini data error');
+        console.log('Error from server camera:', data.message);
+      }, 1500); // Setelah 2 detik, tampilkan pesan error
+    }
+    if (data.type === 'info') {
+      clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
+      console.log(data, 'ini data berhasil');
+    }
+  };
+  // client.current.onmessage = (message) => {
+  //   const data = JSON.parse(message.data);
+  //   if (data.type === 'info') {
+  //     // Tangkap pesan error dan tampilkan kepada pengguna
+  //     console.log(data, 'ini data info');
+
+  //     console.log('Error from server camera:', data.message);
+  //   }
+  // };
+  // Cleanup function
+
+  const sendRequestOnce = () => {
+    data.map((item) => {
+      sendRequest('restartLiveCamera', {
+        listViewCameraData: [
+          {
+            IpAddress: item?.ip_address,
+            urlRTSP: item?.url_rtsp,
+            deviceName: item?.nama_kamera,
+            deviceId: item?.deviceId,
+          },
+        ],
+      });
+    });
+  };
   // function untuk menampilkan modal detail
   const handleDetailClick = (item: Item) => {
     setDetailData(item);
@@ -305,6 +357,9 @@ const KameraList = () => {
         });
         setModalAddOpen(false);
         fetchData();
+        setTimeout(() => {
+          sendRequestOnce();
+        }, 1500);
       } else if (responseCreate.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
