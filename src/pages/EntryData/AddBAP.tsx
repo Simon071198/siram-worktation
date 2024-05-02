@@ -32,6 +32,8 @@ export const AddBAP = () => {
     pdf_file_base64: '',
   });
 
+  console.log(formState, 'formstate cuyy');
+
   const [errors, setErrors] = useState<string[]>([]);
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -44,6 +46,8 @@ export const AddBAP = () => {
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
+
+  console.log(token, 'token cuyy');
 
   const validateForm = () => {
     let errorFields = [];

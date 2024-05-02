@@ -45,6 +45,8 @@ export const AddPenyidikanModal = ({
     zona_waktu: defaultValue?.zona_waktu,
   });
 
+  console.log(formState, 'formstate cuyy');
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -604,6 +606,7 @@ export const AddPenyidikanModal = ({
       color: 'white',
     }),
   };
+  
   const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
     <input
       value={value}
