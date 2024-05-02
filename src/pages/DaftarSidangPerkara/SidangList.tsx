@@ -637,6 +637,12 @@ const SidangList = () => {
     }
   };
 
+  const formatDate = (dateString:any) => {
+    const date = new Date(dateString);
+    const options = {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'};
+    return date.toLocaleDateString('en-GB', options);
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -838,7 +844,7 @@ const SidangList = () => {
                           className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
-                            {item.jadwal_sidang}
+                            {formatDate(item.jadwal_sidang)}
                           </p>
                         </div>
 
@@ -890,7 +896,7 @@ const SidangList = () => {
                           className="sm:flex items-center justify-center p-2.5 xl:p-5 cursor-pointer"
                         >
                           <p className="hidden text-black dark:text-white sm:block">
-                            {item.jadwal_sidang}
+                            {formatDate(item.jadwal_sidang)}
                           </p>
                         </div>
 
