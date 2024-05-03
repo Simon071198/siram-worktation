@@ -48,7 +48,7 @@ export const AddKategoriPerkaraModal: React.FC<
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (key !== '') {
+      if (key !== 'jenis_pidana_id') {
         if (!value) {
           errorFields.push(key);
         }

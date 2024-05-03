@@ -106,12 +106,12 @@ export const WbpInsert = () => {
     matra: dataAdmin.matra ?? { value: '', label: 'Pilih Matra' },
     matra_id: '',
     nrp: dataAdmin.nrp ?? '',
-    alamat: '',
+    alamat: dataAdmin.alamat ?? '',
     kesatuan: dataAdmin.kesatuan ?? { value: '', label: 'Pilih Kesatuan' },
     kesatuan_id: '',
-    nama_kontak_keluarga: '',
-    nomor_kontak_keluarga: '',
-    hubungan_kontak_keluarga: '',
+    nama_kontak_keluarga: dataAdmin.nama_kontak_keluarga ?? '',
+    nomor_kontak_keluarga: dataAdmin.nomor_kontak_keluarga ?? '',
+    hubungan_kontak_keluarga: dataAdmin.hubungan_kontak_keluarga ?? '',
     provinsi: dataAdmin.provinsi ?? { value: '', label: 'Pilih Provinsi' },
     provinsi_id: '',
     kota: dataAdmin.kota ?? { value: '', label: 'Pilih Kota' },
@@ -119,7 +119,7 @@ export const WbpInsert = () => {
     jenis_kelamin: dataAdmin.jenis_kelamin ?? '',
     agama: dataAdmin.agama ?? { value: '', label: 'Pilih Agama' },
     agama_id: '',
-    tanggal_lahir: '',
+    tanggal_lahir: dataAdmin.tanggal_lahir ?? '',
     tempat_lahir: dataAdmin.tempat_lahir ?? '',
     status_kawin: dataAdmin.status_kawin ?? {
       value: '',
@@ -131,8 +131,8 @@ export const WbpInsert = () => {
       label: 'Pilih Pendidikan',
     },
     pendidikan_id: '',
-    is_sick: '',
-    wbp_sickness: '',
+    is_sick: dataAdmin.is_sick ?? '0',
+    wbp_sickness: dataAdmin.wbp_sickness ?? '',
     nama_status_wbp_kasus: '',
     jenisPerkara: dataAdmin.jenisPerkara ?? {
       value: '',
@@ -143,8 +143,8 @@ export const WbpInsert = () => {
     vonis_tahun_perkara: '',
     vonis_bulan_perkara: '',
     vonis_hari_perkara: '',
-    tanggal_ditahan_otmil: '',
-    tanggal_masa_penahanan_otmil: '',
+    tanggal_ditahan_otmil: dataAdmin.tanggal_ditahan_otmil ?? '',
+    tanggal_masa_penahanan_otmil: dataAdmin.tanggal_masa_penahanan_otmil ?? '',
     bidang_keahlian: dataAdmin.bidang_keahlian ?? {
       value: '',
       label: 'Pilih Bidang Keahlian',
@@ -153,15 +153,15 @@ export const WbpInsert = () => {
     gelang: dataAdmin.gelang ?? { value: '', label: 'Pilih Gelang' },
     gelang_id: '',
     // dmacGelang: dataAdmin.dmacGelang ?? {value: '', label: 'Pilih DMAC Gelang'},
-    dmac: '',
+    dmac: dataAdmin.dmac ?? '',
     residivis: '',
     hunian_wbp_otmil: dataAdmin.hunian_wbp_otmil ?? {
       value: '',
       label: 'Pilih Hunian WBP OTMIL',
     },
     hunian_wbp_otmil_id: '',
-    nomor_tahanan: '',
-    is_isolated: '',
+    nomor_tahanan: dataAdmin.nomor_tahanan ?? '',
+    is_isolated: '0',
     akses_ruangan_otmil_id: [],
     zona_merah: [],
     // lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
@@ -171,12 +171,14 @@ export const WbpInsert = () => {
       label: 'Pilih Status WBP Kasus',
     },
     status_wbp_kasus_id: '',
-    tanggal_penetapan_tersangka: '',
-    tanggal_penetapan_terdakwa: '',
-    tanggal_penetapan_terpidana: '',
+    tanggal_penetapan_tersangka: dataAdmin.tanggal_penetapan_tersangka ?? '',
+    tanggal_penetapan_terdakwa: dataAdmin.tanggal_penetapan_terdakwa ?? '',
+    tanggal_penetapan_terpidana: dataAdmin.tanggal_penetapan_terpidana ?? '',
     zat_adiktif: '',
     jenis_olahraga: '',
+    kasus: dataAdmin.kasus ?? { value: '', label: 'Pilih Kasus' },
     kasus_id: '',
+    // jenis_kasus_id: dataAdmin.jenis_kasus_id ?? '',
     nama_kasus: '',
     nomor_kasus: '',
     lokasi_kasus: '',
@@ -1349,26 +1351,54 @@ export const WbpInsert = () => {
     });
   };
 
-  const handleSelectJenisKasus = (e: any) => {
-    if (e && e.value) {
-      const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+  // const handleSelectJenisKasus = (e: any) => {
+  //   if (e && e.value) {
+  //     const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+  //     const existingWbpId = filterKasus?.wbp_profile.map(
+  //       (item) => item.wbp_profile_id,
+  //     );
+  //     console.log(filterKasus, 'INI HASIL FILTER');
+  //     console.log(existingWbpId, 'INI HASIL EXISTING');
+  //     console.log(kasusData, 'INI KASUS DATA');
+  //     setFormState({
+  //       ...formState,
+  //       kasus_id: e.value,
+  //     });
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       kasus_id: '',
+  //     });
+  //   }
+  // };
+
+  const handleSelectJenisKasus = (selectedOption: any) => {
+    if (selectedOption && selectedOption.value) {
+      const filterKasus = kasusData.find((item) => item.kasus_id == selectedOption.value);
       const existingWbpId = filterKasus?.wbp_profile.map(
         (item) => item.wbp_profile_id,
       );
       console.log(filterKasus, 'INI HASIL FILTER');
       console.log(existingWbpId, 'INI HASIL EXISTING');
       console.log(kasusData, 'INI KASUS DATA');
-      setFormState({
+      const newFormState = {
         ...formState,
-        kasus_id: e.value,
-      });
+        kasus_id: selectedOption?.value,
+        kasus: {  label: selectedOption?.label, value: selectedOption?.value },
+      };
+      setFormState(newFormState);
+      localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
     } else {
-      setFormState({
+      const newFormState = {
         ...formState,
         kasus_id: '',
-      });
+        kasus: {  label: '', value: '' },
+      };
+      setFormState(newFormState);
+      localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
     }
   };
+
 
   const handleNewKasus = (e: any) => {
     const checked = e.target.value;
@@ -1500,10 +1530,8 @@ export const WbpInsert = () => {
       ...prevData,
       zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
     ]);
-  
-    // Simpan kembali formState yang telah diperbarui ke localStorage
-    localStorage.setItem('formState', JSON.stringify(updatedFormState));
   };
+  
   
   //end handle zona
 
@@ -2650,14 +2678,15 @@ export const WbpInsert = () => {
                             className="basic-single p-gelang"
                             classNamePrefix="select"
                             styles={CustomStyles}
-                            defaultValue={
-                              formState.kasus_id
-                                ? kasusData.find(
-                                    (item: any) =>
-                                      item.kasus_id === formState.kasus_id,
-                                  )
-                                : formState.kasus_id
-                            }
+                            // defaultValue={
+                            //   formState.kasus_id
+                            //     ? kasusData.find(
+                            //         (item: any) =>
+                            //           item.kasus_id === formState.kasus_id,
+                            //       )
+                            //     : formState.kasus_id
+                            // }
+                            defaultValue={formState.kasus}
                             placeholder={'Pilih Jenis Kasus'}
                             isSearchable={true}
                             // isDisabled={isDetail}
@@ -3225,6 +3254,7 @@ export const WbpInsert = () => {
                     <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                       {formState.akses_ruangan_otmil_id?.map((zonaId: any) => (
                         <div
+                        defaultValue={formState.zona_merah}
                           key={zonaId}
                           className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
                           data-te-ripple-color="dark"
@@ -3272,6 +3302,7 @@ export const WbpInsert = () => {
                     <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
                       {formState.zona_merah?.map((zonaId: any) => (
                         <div
+                          defaultValue={formState.zona_merah}
                           key={zonaId}
                           className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
                           data-te-ripple-color="dark"
