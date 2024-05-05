@@ -551,114 +551,64 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
     return `${year}-${month}-${day}`;
   }
 
-  // const handleSubmitAdd = async (params: any) => {
-  //   try {
-  //     const responseCreate = await apiCreateDaftarKasus(params, token);
 
-  //     if (responseCreate.data.status === 'OK') {
-  //       Alerts.fire({
-  //         icon: 'success',
-  //         title: 'Berhasil menambah data',
-  //       });
-  //     } else if (responseCreate.data.status === 'NO') {
-  //       Alerts.fire({
-  //         icon: 'error',
-  //         title: 'Gagal membuat data',
-  //       });
-  //     } else {
-  //       throw new Error(responseCreate.data.message);
-  //     }
-  //   } catch (e: any) {
-  //     if (e.response.status === 403) {
-  //       navigate('/auth/signin', {
-  //         state: { forceLogout: true, lastPage: location.pathname },
-  //       });
-  //     }
-  //     Alerts.fire({
-  //       icon: e.response.status === 403 ? 'warning' : 'error',
-  //       title: e.response.status === 403 ? Error403Message : e.message,
-  //     });
-  //   }
-  // };
 
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log(formState, 'formstate');
-  //   if (!validateForm()) return;
-  //   setButtonLoad(true);
+  const handleSubmitAdd = async (params: any) => {
+    try {
+      const responseCreate = await apiCreateDaftarKasus(params, token);
 
-  //   handleSubmitAdd(formState).then(() => setButtonLoad(false));
-  // };
-
-  // const handleChange = (e: any) => {
-  //   const { name, value } = e.target;
-  //   const updatedFormState = { ...formState, [name]: value };
-    
-  //   // Update form state and save to localStorage
-  //   setFormState(updatedFormState);
-  //   localStorage.setItem('formState', JSON.stringify(updatedFormState));
-  // };
-
+      if (responseCreate.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+      } else if (responseCreate.data.status === 'error') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseCreate.data.message);
+      }
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (!validateForm()) return;
-    setButtonLoad(true);
-
-    onSubmit(formState).then(
-      () => setFormSubmitted(true),
-      setButtonLoad(false),
-    );
+    // setButtonLoad(true);
+    console.log(formState, "formState")
+    handleSubmitAdd(formState)
+    // .then(
+    //   () => setFormSubmitted(true),
+    //   setButtonLoad(false),
+    // );
   };
 
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  // useEffect(() => {
-  //   const savedFormState = JSON.parse(localStorage.getItem('formState'));
-  //   if (savedFormState) {
-  //     setFormState(savedFormState);
-  //   }
-  // }, []);
-
   const jenisPerkaraOptions = dataJenisPerkara?.map((item: any) => ({
     value: item.jenis_perkara_id,
     label: item.nama_jenis_perkara,
   }));
 
-  // const handleSelectPerkara = (e: any) => {
-  //   const kategoriPerkara: any = dataJenisPerkara.find(
-  //     (item: any) => item.jenis_perkara_id === e?.value,
-  //   );
-  //   setDataJenisPerkaraSelect(kategoriPerkara);
-  //   const updatedFormState = {
-  //     ...formState,
-  //     jenis_perkara_id: e.value,
-  //     kategori_perkara_id: kategoriPerkara
-  //       ? kategoriPerkara.kategori_perkara_id
-  //       : '',
-  //     jenis_pidana_id: kategoriPerkara ? kategoriPerkara.jenis_pidana_id : '',
-  //     nama_jenis_perkara: kategoriPerkara
-  //       ? kategoriPerkara.nama_jenis_perkara
-  //       : '',
-  //     nama_jenis_pidana: kategoriPerkara
-  //       ? kategoriPerkara.nama_jenis_pidana
-  //       : '',
-  //   };
-  //   setFormState(updatedFormState);
-  
-  //   // Simpan data ke localStorage
-  //   localStorage.setItem('formState', JSON.stringify(updatedFormState));
-  // };
   
   const handleSelectPerkara = (e: any) => {
     const kategoriPerkara: any = dataJenisPerkara.find(
       (item: any) => item.jenis_perkara_id === e?.value,
     );
-    // const kategoriPerkaraId =
-    //   kategoriPerkara?.length > 0
-    //     ? kategoriPerkara[0]?.kategori_perkara_id
-    //     : '';
+ 
     setDataJenisPerkaraSelect(kategoriPerkara);
     setFormState({
       ...formState,
@@ -680,30 +630,6 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
     value: item.oditur_penyidik_id,
     label: item.nama_oditur,
   }));
-
-  // const handleSelectOditurPenyidik = (selectedOptions: any) => {
-  //   // Membuat array untuk menyimpan nilai yang dipilih
-  //   let arrayTemp: any = [];
-  //   let arrayAnggota: any = [];
-    
-  //   // Mengisi array dengan nilai yang dipilih
-  //   for (let i = 0; i < selectedOptions?.length; i++) {
-  //     arrayTemp.push(selectedOptions[i].value);
-  //     arrayAnggota.push(selectedOptions[i]);
-  //   }
-    
-  //   // Mengupdate state form dan state array anggota
-  //   const updatedFormState = {
-  //     ...formState,
-  //     oditur_penyidik_id: arrayTemp,
-  //     oditur: selectedOptions // Menyimpan opsi yang dipilih ke dalam formState.oditur
-  //   };
-  //   setFormState(updatedFormState);
-  //   setKetuaOditurPenyidik(arrayAnggota);
-  
-  //   // Simpan data ke localStorage
-  //   localStorage.setItem('formState', JSON.stringify(updatedFormState));
-  // };
   
   const handleSelectOditurPenyidik = (e: any) => {
     let arrayTemp: any = [];
@@ -717,61 +643,10 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
   };
   
 
-  // const handleSelectKetuaOditur = (selectedOption: any) => {
-  //   // Mengupdate state form
-  //   const updatedFormState = {
-  //     ...formState,
-  //     role_ketua_oditur_ids: selectedOption.value,
-  //     ketuaOditur: selectedOption,
-  //   };
-  //   setFormState(updatedFormState);
-  
-  //   // Simpan data ke localStorage
-  //   localStorage.setItem('formState', JSON.stringify(updatedFormState));
-  // };
-
   const handleSelectKetuaOditur = (e: any) => {
     setFormState({ ...formState, role_ketua_oditur_ids: e.value });
   };
 
-//   const handleSelectPihakTerlibat = async (selectedOptions: any) => {
-//     console.log('123456',selectedOptions);
-    
-//     let arrayTersangka: any = [];
-//     let arraySaksi: any = [];
-//     let arraySaksiOptions: any = [];
-//     let arrayTersangkaOptions: any = [];
-  
-//     for (let i = 0; i < selectedOptions?.length; i++) {
-//         if (selectedOptions[i].label.includes('(Tersangka)')) {
-//             arrayTersangka.push(selectedOptions[i].value);
-//             arrayTersangkaOptions.push(selectedOptions[i]);
-//         } else if (selectedOptions[i].label.includes('(Saksi)')) {
-//             arraySaksi.push(selectedOptions[i].value);
-//             arraySaksiOptions.push(selectedOptions[i]);
-//         }
-//     }
-  
-//     const updatedFormState = {
-//         ...formState,
-//         wbp_profile_ids: arrayTersangka,
-//         saksi_id: arraySaksi,
-//         wbpProfile:arrayTersangkaOptions,
-//         saksi: arraySaksiOptions,
-//     };
-
-//     // Set form state
-//     setFormState(updatedFormState);
-//     setSelectSaksi(arraySaksiOptions);
-//     setSelectTersangka(arrayTersangkaOptions);
-  
-//     // Save data to localStorage
-//     await localStorage.setItem('formState', JSON.stringify(updatedFormState));
-
-//     console.log(arrayTersangkaOptions, 'qwertyui arrayTersangka');
-//     console.log(arraySaksiOptions, 'qwertyui arraySaksi');
-//     console.log('qwertyui updatedFormState', localStorage.getItem('formState'));
-// };
 
   const handleSelectPihakTerlibat = (e: any) => {
     let arrayTersangka: any = [];
@@ -795,10 +670,6 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
     setSelectSaksi(arraySaksiOptions);
     setSelectTersangka(arrayTersangkaOptions);
   };
-
-  // const defaultOptions9 = {
-  //   ...formState.wbpProfile
-  // }
 
   const handleChangeKeteranganTersangka = (e: any, index: any) => {
     const newKeteranganSaksi = [...formState.keterangans]; // Salin array keterangan yang ada
@@ -893,30 +764,6 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
     handleModalAddOpen();
   }, []);
 
-  // const selectedIds = new Set([...formState.wbp_profile_ids, ...formState.saksi_id]);
-  // const uniqueIds = [...new Set([...formState.wbp_profile_ids, ...formState.saksi_id])];
-
-//   const defaultOptions = uniqueIds.map(id => {
-//     const option = pihakTerlibat.find(opt => opt.value === id);
-//     console.log('12345',id);
-    
-//     return option || { 
-//         value: id, 
-//         label: id.label
-//     }; // Default label if option is not found
-// });
-//   console.log('12345',defaultOptions);
-  
-//   // Add wbpProfile and saksi to the default options
-//   defaultOptions.unshift(dataAdmin.wbpProfile ?? { value: '', label: '' });
-//   defaultOptions.unshift(dataAdmin.saksi ?? { value: '', label: '' });
-
-  // const uniqueArray = Array.from(new Set([...formState?.saksi, ...formState?.wbpProfile].map(item => item.value)))
-  //   .map(value => {
-  //       return [...formState?.saksi, ...formState?.wbpProfile].find(item => item.value === value);
-  //   });
-  //   console.log('99999',uniqueArray);
-    
 
   return (
     <div>
