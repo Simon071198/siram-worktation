@@ -34,10 +34,10 @@ interface WBP {
 //   nama_jenis_pidana: string;
 // }
 
-const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
+const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
   const [formState, setFormState] = useState<any>({
     nama_kasus: '',
-    nomor_kasus: defaultValue?.nomor_kasus,
+    nomor_kasus: nomorKasus,
     lokasi_kasus: '',
     jenis_perkara_id: defaultValue?.jenis_perkara_id,
     jenis_pidana_id: defaultValue?.jenis_pidana_id,
@@ -691,77 +691,8 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail}: any) => {
     // localStorage.setItem('formState', JSON.stringify(formState));
   };
 
-  const handleModalAddOpen = () => {
-    function convertToRoman(num: number) {
-      const romanNumerals = [
-        'M',
-        'CM',
-        'D',
-        'CD',
-        'C',
-        'XC',
-        'L',
-        'XL',
-        'X',
-        'IX',
-        'V',
-        'IV',
-        'I',
-      ];
-      const decimalValues = [
-        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
-      ];
-
-      let result = '';
-
-      for (let i = 0; i < romanNumerals.length; i++) {
-        while (num >= decimalValues[i]) {
-          result += romanNumerals[i];
-          num -= decimalValues[i];
-        }
-      }
-
-      return result;
-    }
-
-    const type = 'Pid.K';
-    const day = dayjs(new Date()).format('DD');
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-    const year = new Date().getFullYear().toString();
-    const location = 'Otmil';
-    const romanNumber = convertToRoman(parseInt(month));
-    const currentDate = `${day}-${romanNumber}/${year}`;
-    let largestNumber = 0;
-
-    data.forEach((item: any) => {
-      if (item.nomor_kasus) {
-        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
-        const number = parseInt(caseNumber, 10);
-
-        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
-          largestNumber = Math.max(largestNumber, number);
-        }
-      }
-    });
-
-    // Increment the largest number by 1 if the date is the same
-    largestNumber += 1;
-
-    // Set the case number with the desired format
-    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
-    console.log(caseNumberFormatted, 'caseNumberFormatted');
-
-    setFormState({
-      ...formState,
-      nomor_kasus: caseNumberFormatted,
-    });
-
-    // setModalAddOpen(true);
-  };
-
   useEffect(() => {
     console.log(formState, 'formState coy');
-    handleModalAddOpen();
   }, []);
 
 
