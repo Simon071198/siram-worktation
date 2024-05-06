@@ -154,7 +154,7 @@ export const WbpInsert = () => {
     gelang_id: '',
     // dmacGelang: dataAdmin.dmacGelang ?? {value: '', label: 'Pilih DMAC Gelang'},
     dmac: dataAdmin.dmac ?? '',
-    residivis: '',
+    residivis: dataAdmin.residivis ?? '0',
     hunian_wbp_otmil: dataAdmin.hunian_wbp_otmil ?? {
       value: '',
       label: 'Pilih Hunian WBP OTMIL',
