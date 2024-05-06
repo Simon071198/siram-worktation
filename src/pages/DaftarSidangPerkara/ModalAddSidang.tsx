@@ -507,8 +507,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     // console.log(formState, 'formState');
     console.log('SUBMIT', e);
 
-    // if (!validateForm()) return;
-    // setButtonLoad(true);
+    if (!validateForm()) return;
+    setButtonLoad(true);
     // console.log('formstateValidate', formState);
     // onSubmit(formState).then(() => setButtonLoad(false));
     onSubmit(formState);
@@ -743,6 +743,27 @@ console.log(getWbp, 'get wbp')
       zona_waktu: zonaWaktu,
     });
   };
+  const handleZonaWaktu = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({...formState,zona_waktu: zonaWaktu })
+  }
+  useEffect(() => {
+    handleZonaWaktu()
+  }, [])
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
 
