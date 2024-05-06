@@ -8,12 +8,13 @@ import AddBAP from './AddBAP';
 import AddPenyidikan from './AddPenyidikan';
 
 import { WbpInsert } from './WbpInsert';
-import { apiReadPenyidikan } from '../../services/api';
+import { apiReadKasus, apiReadPenyidikan } from '../../services/api';
 import dayjs from 'dayjs';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
   const [nomorPenyidikan, setNomorPenyidikan] = useState("")
+  const [nomorKasus, setNomorKasus] = useState("")
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
@@ -84,13 +85,79 @@ const EntryData = () => {
     
    
   };
+
+  const generateNomorKasus = async() => {
+    function convertToRoman(num:number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+    
+      return result;
+    }
+    const type = 'Sp.Kasus';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+    const kasus = await apiReadKasus({}, token);
+    const resultKasus = kasus.data.records;
+    resultKasus.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const nomorKasus = item.nomor_kasus.split('/')[0];
+        const angka = parseInt(nomorKasus, 10);
+
+        if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
+          angkaTerbesar = Math.max(angkaTerbesar, angka);
+        }
+      }
+    });
+
+    if (angkaTerbesar ===0) {
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+    const output =`${angkaTerbesar}/${type}/${currentDate}/${lokasi}`
+    console.log(output, "Nomor kasus")
+    setNomorKasus(output)
+  };
+  
   useEffect(() => {
-    generateNomorPenyidikan()
+    generateNomorPenyidikan(),
+    generateNomorKasus()
     return () => {
       localStorage.removeItem('formState');
     }
   }, [])
-console.log(nomorPenyidikan, "ada nomor gk")
+// console.log(nomorPenyidikan, "ada nomor gk")
+console.log(nomorKasus, "nomor kasusnya")
   const formList = [
     {
       nama: 'Detail Tersangka',
@@ -102,7 +169,7 @@ console.log(nomorPenyidikan, "ada nomor gk")
     },
     {
       nama: 'Detail Kasus',
-      component: <DetailKasus />,
+      component: <DetailKasus nomorKasus = {nomorKasus} />,
     },
     {
       nama: 'Barang Bukti',
