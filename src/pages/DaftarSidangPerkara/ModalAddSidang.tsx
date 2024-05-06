@@ -78,7 +78,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
       role_ketua_oditur: {},
-      zona_waktu: '',
+      // zona_waktu: '',
     },
   );
 
@@ -104,6 +104,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [saksi, setSaksi] = useState([]);
   const [wbp, setWbp] = useState([]);
   const [getWbp, setGetWbp] = useState([]);
+  const [getZona, setGetZona] = useState([]);
   const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
@@ -742,6 +743,7 @@ console.log(getWbp, 'get wbp')
       zona_waktu: zonaWaktu,
     });
   };
+  
   const handleZonaWaktu = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -763,6 +765,7 @@ console.log(getWbp, 'get wbp')
   useEffect(() => {
     handleZonaWaktu()
   }, [])
+
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
 
@@ -2082,7 +2085,8 @@ console.log(getWbp, 'get wbp')
                       placeholder={'Pilih wbp'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
+                      // isDisabled={isDetail}
+                      isDisabled
                       name="wbp_profile"
                       styles={customStyles}
                       options={wbp.map((item: any) => ({
@@ -2091,11 +2095,11 @@ console.log(getWbp, 'get wbp')
                       }))}
                       onChange={handleSelectWbp}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'wbp_profile' ? 'Pilih wbp' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Ahli */}
@@ -2183,7 +2187,8 @@ console.log(getWbp, 'get wbp')
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
+                      // isDisabled={isDetail}
+                      isDisabled
                       name="saksi"
                       styles={customStyles}
                       options={
@@ -2199,11 +2204,11 @@ console.log(getWbp, 'get wbp')
                       }
                       onChange={handleSelectSaksi}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'saksi' ? 'Pilih saksi' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* pengacara */}

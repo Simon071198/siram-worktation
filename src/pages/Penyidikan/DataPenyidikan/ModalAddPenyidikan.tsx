@@ -33,8 +33,10 @@ export const AddPenyidikanModal = ({
     nomor_penyidikan: defaultValue?.nomor_penyidikan,
     nama_kasus: defaultValue?.nama_kasus,
     agenda_penyidikan: defaultValue?.agenda_penyidikan,
-    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
-    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
+    // waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_dimulai_penyidikan: defaultValue?.waktu_dimulai_penyidikan,
+    waktu_selesai_penyidikan: defaultValue?.waktu_selesai_penyidikan,
     wbp_profile_id: defaultValue?.wbp_profile_id,
     nomor_kasus: defaultValue?.no_kasus,
     saksi_id: defaultValue?.saksi_id,
@@ -194,6 +196,7 @@ export const AddPenyidikanModal = ({
         })),
       ]
     : [];
+
   const [terlibatOptionsState, setTerlibatOptionState] = useState([])
     console.log(terlibatOptionsState, "terlibatOptionsState")
   console.log(defaultValue, "terlibat defaul")

@@ -47,7 +47,7 @@ const SidangList = () => {
   const [modalUbahPasswordOpen, setModalUbahPasswordOpen] = useState(false);
   const [deleteData, setDeleteData] = useState(null);
   const [searchData, setSearchData] = useState({
-    namaWBP: '',
+    namaSidang: '',
     jenisSidang: '',
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -598,7 +598,7 @@ const SidangList = () => {
     try {
       let params = {
         filter: {
-          nama_wbp: searchData.namaWBP,
+          nama_sidang: searchData.namaSidang,
           nama_jenis_persidangan: searchData.jenisSidang,
         },
         currentPage: currentPage,
@@ -655,10 +655,10 @@ const SidangList = () => {
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="w-full search">
               <SearchInputButton
-                value={searchData.namaWBP}
-                placehorder="Cari nama binaan"
+                value={searchData.namaSidang}
+                placehorder="Cari nama sidang"
                 onChange={(e) =>
-                  setSearchData({ ...searchData, namaWBP: e.target.value })
+                  setSearchData({ ...searchData, namaSidang: e.target.value })
                 }
               />
             </div>

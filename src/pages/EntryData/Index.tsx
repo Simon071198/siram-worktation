@@ -8,13 +8,15 @@ import AddBAP from './AddBAP';
 import AddPenyidikan from './AddPenyidikan';
 
 import { WbpInsert } from './WbpInsert';
-import { apiReadKasus, apiReadPenyidikan } from '../../services/api';
+import { apiReadKasus } from '../../services/api';
+import { apiReadPenyidikan, apiReadBAP } from '../../services/api';
 import dayjs from 'dayjs';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
   const [nomorPenyidikan, setNomorPenyidikan] = useState("")
   const [nomorKasus, setNomorKasus] = useState("")
+  const [namaDokumenBap, setNamaDokumenBap] = useState("")
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
@@ -158,6 +160,83 @@ const EntryData = () => {
   }, [])
 // console.log(nomorPenyidikan, "ada nomor gk")
 console.log(nomorKasus, "nomor kasusnya")
+console.log(nomorPenyidikan, "ada nomor gk")
+
+  const generateNamaDokumenBap = async () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+    const type = 'BAP';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+    const bap = await apiReadBAP({}, token);
+    const resultBap = bap.data.records;
+
+    resultBap.forEach((item:any) => {
+      if(item.nama_dokumen_bap){
+        const namaDokumenBap = item.nama_dokumen_bap.split('/')[0];
+        const angka = parseInt(namaDokumenBap, 10);
+
+        if(!isNaN(angka) && item.nama_dokumen_bap.includes(currentDate)){
+          angkaTerbesar = Math.max(angkaTerbesar, angka);
+        }
+      }
+    });
+
+    // Increment the largest number by 1 if the date is the same
+    if (angkaTerbesar === 0) {
+      // No matching cases for the current date
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+
+    const output = `${angkaTerbesar}/${type}/${currentDate}/${lokasi}`
+    console.log(output, "output cuyy")
+    setNamaDokumenBap(output);
+  };
+
+  useEffect(() => {
+    generateNamaDokumenBap();
+    return() =>{
+      localStorage.removeItem('formState');
+    }
+  }, [])
+  console.log(namaDokumenBap, 'ada nama gak')
+
   const formList = [
     {
       nama: 'Detail Tersangka',
@@ -185,7 +264,7 @@ console.log(nomorKasus, "nomor kasusnya")
     },
     {
       nama: 'Tambah BAP',
-      component: <AddBAP />,
+      component: <AddBAP namaDokumenBap={namaDokumenBap}/>,
     },
   ];
   function handlePrev() {
