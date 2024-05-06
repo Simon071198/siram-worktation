@@ -21,8 +21,10 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
     nomor_penyidikan: nomorPenyidikan,
     nama_kasus: '',
     agenda_penyidikan: '',
-    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
-    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_dimulai_penyidikan: '',
+    waktu_selesai_penyidikan: '',
     wbp_profile_id: '',
     nomor_kasus: '',
     saksi_id: '',
@@ -88,6 +90,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
       zona_waktu: zonaWaktu,
     });
   };
+
+  console.log(handleChangeWaktu, 'waktu mulai')
 
   const handleChangeWaktuSelesai = (e: any) => {
     try {

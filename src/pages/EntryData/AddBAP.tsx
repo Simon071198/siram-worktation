@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 
-import { apiCreateBAP, apiReadPenyidikan } from '../../services/api';
+import { apiCreateBAP, apiReadPenyidikan, apiReadBAP } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -12,7 +12,7 @@ import { Error403Message } from '../../utils/constants';
 import { Alert } from '@windmill/react-ui';
 import dayjs from 'dayjs';
 
-export const AddBAP = () => {
+export const AddBAP = ({namaDokumenBap}: any) => {
   const [formState, setFormState] = useState({
     // untuk default value dari form ini
     // nama_dokumen_bap: '',
@@ -26,7 +26,7 @@ export const AddBAP = () => {
     // agenda_penyidikan: '',
     // nrp_wbp: '',
     // pdf_file: '',
-    nama_dokumen_bap: '',
+    nama_dokumen_bap: namaDokumenBap,
     link_dokumen_bap: '',
     penyidikan_id: '',
     pdf_file_base64: '',
@@ -46,6 +46,7 @@ export const AddBAP = () => {
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
   const [file, setFile] = useState(null);
+
 
   console.log(token, 'token cuyy');
 
@@ -183,7 +184,14 @@ export const AddBAP = () => {
 
     if (!validateForm()) return;
     // setButtonLoad(true);
-    handleSubmitAdd(formState);
+    handleSubmitAdd(formState).then(() => {
+      setFormState({
+        nama_dokumen_bap: '1/BAP/06-V/2024/Otmil',
+        link_dokumen_bap: '',
+        penyidikan_id: '',
+        pdf_file_base64: '',
+      });
+    });
   };
 
   const handleSubmitAdd = async (params: any) => {
@@ -440,8 +448,8 @@ export const AddBAP = () => {
 
     data.forEach((item: any) => {
       if (item.nama_dokumen_bap) {
-        const dokumenBAP = item.nama_dokumen_bap.split('/')[0]; // Get the first part of the case number
-        const angka = parseInt(dokumenBAP, 10);
+        const namaDokumenBap = item.nama_dokumen_bap.split('/')[0]; // Get the first part of the case number
+        const angka = parseInt(namaDokumenBap, 10);
 
         if (!isNaN(angka) && item.nama_dokumen_bap.includes(currentDate)) {
           angkaTerbesar = Math.max(angkaTerbesar, angka);
@@ -464,11 +472,6 @@ export const AddBAP = () => {
 
     // setModalAddOpen(true);
   };
-
-  useEffect(() => {
-    handleModalAddOpen();
-    fetchData();
-  }, []);
 
   return (
     <div className="px-10">
