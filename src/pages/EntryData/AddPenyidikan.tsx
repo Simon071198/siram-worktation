@@ -21,8 +21,10 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
     nomor_penyidikan: nomorPenyidikan,
     nama_kasus: '',
     agenda_penyidikan: '',
-    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
-    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_dimulai_penyidikan: '',
+    waktu_selesai_penyidikan: '',
     wbp_profile_id: '',
     nomor_kasus: '',
     saksi_id: '',
@@ -61,6 +63,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
 
   console.log(token, 'token cuyy');
 
+  console.log(data, 'data cuyy');
+
   const handleChangeWaktu = (e: any) => {
     console.log('1213', e);
 
@@ -86,6 +90,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
       zona_waktu: zonaWaktu,
     });
   };
+
+  console.log(handleChangeWaktu, 'waktu mulai')
 
   const handleChangeWaktuSelesai = (e: any) => {
     try {
@@ -263,6 +269,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
       label: `${kasusFilter?.saksi[0]?.nama_saksi} (saksi)`,
     };
 
+    console.log(dataSaksi, 'saksi cuyy');
+
     const dataWbp = {
       value: kasusFilter?.wbp_profile[0]?.wbp_profile_id,
       label: `${kasusFilter?.wbp_profile[0]?.nama} (tersangka)`,
@@ -292,12 +300,15 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
           value: item.saksi_id,
           label: `${item.nama_saksi} (saksi)`,
         })),
+
         ...dataKasusSelect?.wbp_profile?.map((item: any) => ({
           value: item.wbp_profile_id,
           label: `${item.nama} (tersangka)`,
         })),
       ]
     : [];
+
+
 
   const [terlibatOptionsState, setTerlibatOptionState] = useState([]);
 
