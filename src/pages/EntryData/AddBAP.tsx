@@ -750,13 +750,13 @@ export const AddBAP = ({namaDokumenBap}: any) => {
                         // }`}
                         className="flex justify-center mt-3"
                       >
-                        <button
+                        {/* <button
                           type="button"
                           onClick={openNewWindow}
                           className="bg-blue-500 px-3 py-1 rounded-xl text-white duration-300 ease-in-out  hover:scale-105 "
                         >
                           Unduh Dokumen
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   ) : (
