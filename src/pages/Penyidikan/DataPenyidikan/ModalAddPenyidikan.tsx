@@ -194,6 +194,7 @@ export const AddPenyidikanModal = ({
         })),
       ]
     : [];
+
   const [terlibatOptionsState, setTerlibatOptionState] = useState([])
     console.log(terlibatOptionsState, "terlibatOptionsState")
   console.log(defaultValue, "terlibat defaul")

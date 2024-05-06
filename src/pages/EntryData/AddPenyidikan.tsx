@@ -61,6 +61,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
 
   console.log(token, 'token cuyy');
 
+  console.log(data, 'data cuyy');
+
   const handleChangeWaktu = (e: any) => {
     console.log('1213', e);
 
@@ -263,6 +265,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
       label: `${kasusFilter?.saksi[0]?.nama_saksi} (saksi)`,
     };
 
+    console.log(dataSaksi, 'saksi cuyy');
+
     const dataWbp = {
       value: kasusFilter?.wbp_profile[0]?.wbp_profile_id,
       label: `${kasusFilter?.wbp_profile[0]?.nama} (tersangka)`,
@@ -281,8 +285,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
       nama_kategori_perkara: kasusFilter
         ? kasusFilter.nama_kategori_perkara
         : '',
-      // saksi_id: dataSaksi.value,
-      // wbp_profile_id: dataWbp.value
+      saksi_id: dataSaksi.value,
+      wbp_profile_id: dataWbp.value,
     });
   };
 
@@ -292,12 +296,15 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
           value: item.saksi_id,
           label: `${item.nama_saksi} (saksi)`,
         })),
+
         ...dataKasusSelect?.wbp_profile?.map((item: any) => ({
           value: item.wbp_profile_id,
           label: `${item.nama} (tersangka)`,
         })),
       ]
     : [];
+
+
 
   const [terlibatOptionsState, setTerlibatOptionState] = useState([]);
 
@@ -314,35 +321,70 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
   // const splitData: any = [dataSaksi, dataWbp];
   // const terlibatOptionsValue = splitData;
 
-  const handleSelectPihakTerlibat = (e: any) => {
-    const selectedOption = terlibatOptions.find(
-      (option) => option.value === e.value,
-    );
+  // const handleSelectPihakTerlibat = (e: any) => {
+  //   const selectedOption = terlibatOptions.find(
+  //     (option) => option.value === e.value,
+  //   );
 
-    if (selectedOption?.label.includes('(saksi)')) {
+  //   if (selectedOption?.label.includes('(saksi)')) {
+  //     setFormState({
+  //       ...formState,
+  //       saksi_id: e.value,
+  //       wbp_profile_id: null,
+  //       nrp_wbp: '',
+  //     });
+  //   } else {
+  //     // Jika yang dipilih adalah tersangka, ambil data terkait
+  //     const tersangkaData = dataKasusSelect?.wbp_profile?.find(
+  //       (tersangka: any) => tersangka.wbp_profile_id === e.value,
+  //     );
+
+  //     if (tersangkaData) {
+  //       setFormState({
+  //         ...formState,
+  //         wbp_profile_id: e.value,
+  //         saksi_id: null,
+  //         nrp_wbp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
+  //       });
+  //     } else {
+  //       // Handle jika data tersangkaData tidak ditemukan
+  //       console.error('Data Tersangka tidak ditemukan.');
+  //     }
+  //   }
+  // };
+
+  const handleSelectPihakTerlibat = (e:any) => {
+    if (e && e.length > 0) {
+      let saksiCount = 0;
+      let tersangkaCount = 0;
+
+      e.forEach(option => {
+        if (option.label.includes('(saksi)')) {
+          saksiCount++;
+        }
+
+        if (option.label.includes('(tersangka)')) {
+          tersangkaCount++;
+        }
+      });
+
+      if (saksiCount > 1 || tersangkaCount > 1) {
+        e.pop();
+      }
+
       setFormState({
         ...formState,
-        saksi_id: e.value,
+        saksi_id: e.find(option => option.label.includes('(saksi)'))?.value || null,
+        wbp_profile_id: e.find(option => option.label.includes('(tersangka)'))?.value || null,
+        nrp_wbp: '',
+      });
+    }else{
+      setFormState({
+        ...formState,
+        saksi_id: null,
         wbp_profile_id: null,
         nrp_wbp: '',
       });
-    } else {
-      // Jika yang dipilih adalah tersangka, ambil data terkait
-      const tersangkaData = dataKasusSelect?.wbp_profile?.find(
-        (tersangka: any) => tersangka.wbp_profile_id === e.value,
-      );
-
-      if (tersangkaData) {
-        setFormState({
-          ...formState,
-          wbp_profile_id: e.value,
-          saksi_id: null,
-          nrp_wbp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
-        });
-      } else {
-        // Handle jika data tersangkaData tidak ditemukan
-        console.error('Data Tersangka tidak ditemukan.');
-      }
     }
   };
 
