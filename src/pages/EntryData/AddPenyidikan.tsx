@@ -14,11 +14,11 @@ dayjs.locale('id');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
+export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) => {
   const [formState, setFormState] = useState({
     penyidikan_id: '',
     kasus_id: '',
-    nomor_penyidikan: '1/Sp.Sidik/02-V/2024/Otmil',
+    nomor_penyidikan: nomorPenyidikan,
     nama_kasus: '',
     agenda_penyidikan: '',
     waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -281,8 +281,8 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
       nama_kategori_perkara: kasusFilter
         ? kasusFilter.nama_kategori_perkara
         : '',
-      // saksi_id: dataSaksi.value,
-      // wbp_profile_id: dataWbp.value
+      saksi_id: dataSaksi.value,
+      wbp_profile_id: dataWbp.value
     });
   };
 
@@ -314,46 +314,56 @@ export const AddPenyidikan = ({defaultValue, onSubmit}: any) => {
   // const splitData: any = [dataSaksi, dataWbp];
   // const terlibatOptionsValue = splitData;
 
-  const handleSelectPihakTerlibat = (e: any) => {
-    const selectedOption = terlibatOptions.find(
-      (option) => option.value === e.value,
-    );
-
-    if (selectedOption?.label.includes('(saksi)')) {
+  const handleSelectPihakTerlibat = (selectedOptions:any) => {
+    if (selectedOptions && selectedOptions.length > 0) {
+      let saksiCount = 0;
+      let tersangkaCount = 0;
+  
+      // Iterasi melalui opsi yang dipilih untuk menghitung jumlah saksi dan tersangka yang dipilih
+      selectedOptions.forEach(option => {
+        if (option.label.includes('(saksi)')) {
+          saksiCount++;
+        }
+        if (option.label.includes('(tersangka)')) {
+          tersangkaCount++;
+        }
+      });
+  
+      // Jika jumlah saksi atau tersangka yang dipilih melebihi 1, batalkan pemilihan terakhir
+      if (saksiCount > 1 || tersangkaCount > 1) {
+        // Menghapus opsi terakhir dari yang dipilih
+        selectedOptions.pop();
+      }
+  
+      // Setel form state dengan nilai yang ditemukan
       setFormState({
         ...formState,
-        saksi_id: e.value,
-        wbp_profile_id: null,
-        nrp_wbp: '',
+        saksi_id: selectedOptions.find(option => option.label.includes('(saksi)'))?.value || null,
+        wbp_profile_id: selectedOptions.find(option => option.label.includes('(tersangka)'))?.value || null,
+        // Sesuaikan dengan cara Anda mendapatkan nilai nrp
+        nrp: '', 
       });
     } else {
-      // Jika yang dipilih adalah tersangka, ambil data terkait
-      const tersangkaData = dataKasusSelect?.wbp_profile?.find(
-        (tersangka: any) => tersangka.wbp_profile_id === e.value,
-      );
-
-      if (tersangkaData) {
-        setFormState({
-          ...formState,
-          wbp_profile_id: e.value,
-          saksi_id: null,
-          nrp_wbp: tersangkaData.nrp || '', // Sesuaikan dengan struktur data yang sesuai
-        });
-      } else {
-        // Handle jika data tersangkaData tidak ditemukan
-        console.error('Data Tersangka tidak ditemukan.');
-      }
+      // Reset form state jika tidak ada opsi yang dipilih
+      setFormState({
+        ...formState,
+        saksi_id: null,
+        wbp_profile_id: null,
+        // Reset nilai nrp jika tidak ada opsi yang dipilih
+        nrp: '', 
+      });
     }
   };
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    console.log(formState, "ada bro")
     if(!validateForm()) return;
-    setButtonLoad(true);
+    // setButtonLoad(true);
 
     handleSubmitAdd(formState).then(() => {
-      setButtonLoad(false);
+      // setButtonLoad(false);
       setFormState({
         penyidikan_id: '',
         kasus_id: '',
