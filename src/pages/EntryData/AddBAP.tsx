@@ -552,7 +552,7 @@ export const AddBAP = ({namaDokumenBap}: any) => {
                   type="text"
                   name="nomor_kasus"
                   onChange={handleChange}
-                  value={formState.nomor_penyidikan}
+                  value={formState.nomor_kasus}
                   placeholder="Nomor kasus"
                   className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary p-nama"
                   disabled
