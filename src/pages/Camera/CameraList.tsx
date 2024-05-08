@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { apiBuilding } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -10,13 +11,15 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { RiCameraOffLine } from 'react-icons/ri';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import ReactPlayer from 'react-player';
+import { RiErrorWarningFill } from 'react-icons/ri';
 
 const CameraList = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [errorCam, setErrorCam] = useState(false);
   const [filter, setFilter] = useState('');
   const [dense, setDense] = React.useState(false);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [accordionState, setAccordionState] = useState({
     accordion1: false,
     accordion2: false,
@@ -35,6 +38,7 @@ const CameraList = () => {
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
+  const [liveViewCalled, setLiveViewCalled] = useState({});
   const camerasPerPage = columns * rows;
   // useEffect(() => {
   //   apiLocationOnlineDeviceList()
@@ -96,6 +100,9 @@ const CameraList = () => {
   useEffect(() => {
     fetchData();
   }, []);
+  let getToken = localStorage.getItem('token');
+  const token = JSON.parse(getToken);
+  console.log('token', token);
   let fetchData = async () => {
     try {
       let dataLocal = localStorage.getItem('dataUser');
@@ -106,7 +113,6 @@ const CameraList = () => {
         nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
         nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
-      console.log('data user', dataUser);
 
       const response = await apiBuilding(dataUser);
       console.log('response from apiBuilding', response);
@@ -129,6 +135,94 @@ const CameraList = () => {
       // });
     }
     // setIsLoading(false);
+  };
+  useEffect(() => {
+    if (buildings) {
+      sendRequestOnce();
+    }
+  }, [buildings]);
+  const errorTimeoutRef: any = useRef(null);
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    client.current = new WebSocket('ws://192.168.1.111:5000');
+
+    client.current.onopen = () => {
+      setIsWebSocketConnected(true);
+      console.log('WebSocket Client Connected');
+    };
+    client.current.onmessage = (message) => {
+      const data = JSON.parse(message.data);
+      if (data.type === 'error') {
+        // Tangkap pesan error dan tampilkan kepada pengguna
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
+        errorTimeoutRef.current = setTimeout(() => {
+          setErrorCam(true);
+          console.log(data, 'ini data error');
+          console.log('Error from server camera:', data.message);
+        }, 1500); // Setelah 2 detik, tampilkan pesan error
+      }
+      if (data.type === 'info') {
+        clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
+        setErrorCam(false);
+        console.log(data, 'ini data berhasil');
+      }
+    };
+    // client.current.onmessage = (message) => {
+    //   const data = JSON.parse(message.data);
+    //   if (data.type === 'info') {
+    //     // Tangkap pesan error dan tampilkan kepada pengguna
+    //     console.log(data, 'ini data info');
+
+    //     console.log('Error from server camera:', data.message);
+    //   }
+    // };
+    // Cleanup function
+    return () => {
+      setIsWebSocketConnected(false);
+      console.log('WebSocket Client DISConnected');
+      client.current.close(); // Close WebSocket connection when component unmounts
+    };
+  }, []);
+
+  const sendRequest = (method, params) => {
+    if (isWebSocketConnected) {
+      client.current.send(JSON.stringify({ method: method, params: params }));
+    } else {
+      console.log('WebSocket connection is not yet established.');
+    }
+  };
+  // const sendRequest = (method, params) => {
+  //   client.current.send(JSON.stringify({ method: method, params: params }));
+  // };
+
+  const sendRequestOnce = () => {
+    let onlineCameras = buildings?.data?.records?.gedung.flatMap(
+      (gedung: any) =>
+        gedung.lantai.flatMap((lantai: any) =>
+          lantai.ruangan.flatMap((ruangan: any) => ruangan.kamera),
+        ),
+    );
+
+    if (onlineCameras && onlineCameras.length > 0) {
+      onlineCameras.forEach((camera) => {
+        // Panggil sendRequest untuk setiap kamera online
+        sendRequest('startLiveView', {
+          listViewCameraData: [
+            {
+              IpAddress: camera?.ip_address,
+              urlRTSP: camera?.url_rtsp,
+              deviceName: camera?.nama_kamera,
+              deviceId: camera?.kamera_id,
+              token: token?.token,
+            },
+          ],
+        });
+      });
+    } else {
+      console.log('Tidak ada kamera online');
+    }
   };
 
   const handleClickTutorial = () => {
@@ -201,9 +295,7 @@ const CameraList = () => {
   const totalCamerasOnline = buildings?.data?.records?.gedung.flatMap(
     (gedung: any) =>
       gedung.lantai.flatMap((lantai: any) =>
-        lantai.ruangan
-          .flatMap((ruangan: any) => ruangan.kamera)
-          .filter((kamera) => kamera.status_kamera === 'online'),
+        lantai.ruangan.flatMap((ruangan: any) => ruangan.kamera),
       ),
   );
   if (!totalCameras || !totalCamerasOnline) {
@@ -284,10 +376,12 @@ const CameraList = () => {
   };
   console.log('cccrrr', currentCamerasOnline);
   const { startPage, endPage } = getPageNumbers();
+  const handleBufferChange = (bufferState) => {
+    setIsBuffering(bufferState);
+  };
   const renderThumb = (cam) => {
-    var urlStream =
-      'http://192.168.1.111:5000/stream/' + cam.ip_address + '_.m3u8';
-    console.log('stream', urlStream);
+    const urlStream = `http://192.168.1.111:5000/stream/${cam.ip_address}_.m3u8`;
+
     return (
       <ReactPlayer
         url={urlStream}
@@ -295,9 +389,12 @@ const CameraList = () => {
         height="100%"
         width="100%"
         muted
+        onBuffer={() => setLoading(true)}
+        onBufferEnd={() => setLoading(false)}
       />
     );
   };
+
   console.log(currentCamerasOnline, 'current page');
   const renderCameraList = () => {
     const selectedRoomData = buildings?.data?.records?.gedung.flatMap(
@@ -311,7 +408,7 @@ const CameraList = () => {
 
     if (!selectedRoomData || selectedRoomData.length === 0) {
       return (
-        <div className="flex justify-center items-center bg-graydark w-11/12 h-5/6">
+        <div className="w-full flex justify-center items-center bg-graydark h-5/6">
           <h1 className="font-semibold text-lg">Data Kamera kosong</h1>
         </div>
       );
@@ -337,7 +434,7 @@ const CameraList = () => {
                     : columns === 2 && rows === 3
                       ? 'grid-cols-3 grid-rows-2'
                       : columns === 2 && rows === 4
-                        ? 'grid-cols-4 grid-rows-2'
+                        ? 'grid-cols-4 grid-rows-2 h-[80vh]'
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
@@ -352,8 +449,32 @@ const CameraList = () => {
                   >
                     {/* header */}
                     <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
-                      {camera.status_kamera === 'online' ? (
+                      {/* {camera.status_kamera === 'online' ? (
                         renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
+                      {/* {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : client.current.readyState !== WebSocket.OPEN ? (
+                        <RiErrorWarningFill
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
+                      {camera.status_kamera === 'online' ? (
+                        isWebSocketConnected ? (
+                          renderThumb(camera)
+                        ) : (
+                          <RiErrorWarningFill
+                            className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                          />
+                        )
                       ) : (
                         <RiCameraOffLine
                           className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
@@ -462,7 +583,7 @@ const CameraList = () => {
                     : columns === 2 && rows === 3
                       ? 'grid-cols-3 grid-rows-2'
                       : columns === 2 && rows === 4
-                        ? 'grid-cols-4 grid-rows-2'
+                        ? 'grid-cols-4 grid-rows-2 h-[80vh]'
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
@@ -472,21 +593,51 @@ const CameraList = () => {
                   className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
                 >
                   <Link
-                    to={camera.kamera_id}
+                    to={camera.nama_kamera}
+                    state={camera?.kamera_id}
                     className="block w-full h-full rounded-lg overflow-hidden relative"
                   >
                     {/* header */}
                     <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
-                      {/* <CiCamera className={`w-3/5 h-3/5 text-white`} /> */}
-                      {renderThumb(camera)}
+                      {camera.status_kamera === 'online' ? (
+                        isWebSocketConnected ? (
+                          renderThumb(camera)
+                        ) : (
+                          <RiErrorWarningFill
+                            className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                          />
+                        )
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )}
                     </div>
                     {/* footer kamera */}
 
                     <div className="absolute top-1 right-2 flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
-                      <h5 className="text-green-500 text-center mt-1">
-                        Online
-                      </h5>
+                      {camera.status_kamera === 'online' ? (
+                        isWebSocketConnected ? (
+                          <>
+                            <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
+                            <h5 className="text-green-500 text-center mt-1">
+                              Online
+                            </h5>
+                          </>
+                        ) : (
+                          <>
+                            <h5 className="text-yellow-500 animate-pulse">
+                              Error connection
+                            </h5>
+                          </>
+                        )
+                      ) : (
+                        <>
+                          <h5 className="text-red-500 text-center mt-1">
+                            Offline
+                          </h5>
+                        </>
+                      )}
                     </div>
                     <div className="absolute bottom-2 left-2 text-white">
                       <h4
@@ -534,24 +685,6 @@ const CameraList = () => {
       </div>
     );
   };
-
-  // const getRoomLocation = () => {
-  //   if (!selectedRoom) return null;
-
-  //   let location = '';
-  //   buildings?.data?.records?.gedung.forEach((gedung) => {
-  //     gedung.lantai.forEach((lantai) => {
-  //       const foundRoom = lantai.ruangan.find(
-  //         (ruangan) => ruangan.ruangan_otmil_id === selectedRoom,
-  //       );
-  //       if (foundRoom) {
-  //         location = `${gedung.nama_gedung_otmil} - ${lantai.nama_lantai} - ${foundRoom.nama_ruangan_otmil}`;
-  //       }
-  //     });
-  //   });
-
-  //   return location;
-  // };
   const getRoomLocationCamOnline = (id: any) => {
     let location = '';
     buildings?.data?.records?.gedung.forEach((gedung) => {
@@ -615,55 +748,73 @@ const CameraList = () => {
           </select>
 
           {selectedBuilding && (
-            <select
-              value={selectedFloor}
-              onChange={handleSelectFloor}
-              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
-            >
-              <option disabled value="">
-                Pilih Lantai
-              </option>
-              {buildings?.data?.records?.gedung
-                ?.find(
-                  (building) => building.gedung_otmil_id === selectedBuilding,
-                )
-                ?.lantai.map((floor) => (
-                  <option
-                    key={floor.lantai_otmil_id}
-                    value={floor.lantai_otmil_id}
-                  >
-                    {floor.nama_lantai}
+            <>
+              {buildings?.data?.records?.gedung?.find(
+                (building) => building.gedung_otmil_id === selectedBuilding,
+              )?.lantai.length > 0 && (
+                <select
+                  value={selectedFloor}
+                  onChange={handleSelectFloor}
+                  className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+                >
+                  <option disabled value="">
+                    Pilih Lantai
                   </option>
-                ))}
-            </select>
+                  {buildings?.data?.records?.gedung
+                    ?.find(
+                      (building) =>
+                        building.gedung_otmil_id === selectedBuilding,
+                    )
+                    ?.lantai.map((floor) => (
+                      <option
+                        key={floor.lantai_otmil_id}
+                        value={floor.lantai_otmil_id}
+                      >
+                        {floor.nama_lantai}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </>
           )}
 
           {selectedFloor && (
-            <select
-              value={selectedRoom}
-              onChange={(e) => setSelectedRoom(e.target.value)}
-              className="p-2 border rounded w-36 bg-meta-4 font-semibold"
-            >
-              <option disabled value="">
-                Pilih Ruangan
-              </option>
+            <>
               {buildings?.data?.records?.gedung
                 ?.find(
                   (building) => building.gedung_otmil_id === selectedBuilding,
                 )
                 ?.lantai.find(
                   (floor) => floor.lantai_otmil_id === selectedFloor,
-                )
-                ?.ruangan.map((room) => (
-                  <option
-                    key={room.ruangan_otmil_id}
-                    value={room.ruangan_otmil_id}
-                    onClick={() => handleClickRoom(room.ruangan_otmil_id)}
-                  >
-                    {room.nama_ruangan_otmil}
+                )?.ruangan.length > 0 && (
+                <select
+                  value={selectedRoom}
+                  onChange={(e) => setSelectedRoom(e.target.value)}
+                  className="p-2 border rounded w-36 bg-meta-4 font-semibold"
+                >
+                  <option disabled value="">
+                    Pilih Ruangan
                   </option>
-                ))}
-            </select>
+                  {buildings?.data?.records?.gedung
+                    ?.find(
+                      (building) =>
+                        building.gedung_otmil_id === selectedBuilding,
+                    )
+                    ?.lantai.find(
+                      (floor) => floor.lantai_otmil_id === selectedFloor,
+                    )
+                    ?.ruangan.map((room) => (
+                      <option
+                        key={room.ruangan_otmil_id}
+                        value={room.ruangan_otmil_id}
+                        onClick={() => handleClickRoom(room.ruangan_otmil_id)}
+                      >
+                        {room.nama_ruangan_otmil}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </>
           )}
         </div>
       </div>

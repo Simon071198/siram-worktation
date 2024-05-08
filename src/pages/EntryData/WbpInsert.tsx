@@ -19,10 +19,22 @@ import {
   apiReadAllWBP,
   apiStatusKawin,
   apiStatusWbp,
+  apiKasusRead,
+  apiReadjenisperkara,
+  apiJenisPidanaRead,
+  apiReadJaksaPenyidik,
+  apiReadSaksi,
 } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../utils/constants';
 import { Alerts } from '../MasterData/InmateData/AlertInmate';
+import 'react-datepicker/dist/react-datepicker.css';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const WbpInsert = () => {
   interface type {
@@ -69,33 +81,46 @@ export const WbpInsert = () => {
     nama_jenis_perkara: string;
   }
 
+  interface KasusData {
+    kasus_id: string;
+    wbp_profile: { wbp_profile_id: string }[];
+  }
+
+  interface JenisPerkara {
+    jenis_perkara_id: string;
+    nama_jenis_perkara: string;
+    vonis_tahun_perkara: string;
+    vonis_bulan_perkara: string;
+    vonis_hari_perkara: string;
+  }
+
   let dataAdmin = JSON.parse(localStorage.getItem('formState') || '{}');
 
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formState, setFormState] = useState<type>({
-    foto_wajah: '',
-    nama: '',
+    foto_wajah: dataAdmin.foto_wajah ?? '',
+    nama: dataAdmin.nama ?? '',
     pangkat: dataAdmin.pangkat ?? { value: '', label: 'Pilih Pangkat' },
     pangkat_id: '',
     matra: dataAdmin.matra ?? { value: '', label: 'Pilih Matra' },
     matra_id: '',
-    nrp: '',
-    alamat: '',
+    nrp: dataAdmin.nrp ?? '',
+    alamat: dataAdmin.alamat ?? '',
     kesatuan: dataAdmin.kesatuan ?? { value: '', label: 'Pilih Kesatuan' },
     kesatuan_id: '',
-    nama_kontak_keluarga: '',
-    nomor_kontak_keluarga: '',
-    hubungan_kontak_keluarga: '',
+    nama_kontak_keluarga: dataAdmin.nama_kontak_keluarga ?? '',
+    nomor_kontak_keluarga: dataAdmin.nomor_kontak_keluarga ?? '',
+    hubungan_kontak_keluarga: dataAdmin.hubungan_kontak_keluarga ?? '',
     provinsi: dataAdmin.provinsi ?? { value: '', label: 'Pilih Provinsi' },
     provinsi_id: '',
     kota: dataAdmin.kota ?? { value: '', label: 'Pilih Kota' },
     kota_id: '',
-    jenis_kelamin: '',
+    jenis_kelamin: dataAdmin.jenis_kelamin ?? '',
     agama: dataAdmin.agama ?? { value: '', label: 'Pilih Agama' },
     agama_id: '',
-    tanggal_lahir: '',
-    tempat_lahir: '',
+    tanggal_lahir: dataAdmin.tanggal_lahir ?? '',
+    tempat_lahir: dataAdmin.tempat_lahir ?? '',
     status_kawin: dataAdmin.status_kawin ?? {
       value: '',
       label: 'Pilih Status Kawin',
@@ -106,20 +131,20 @@ export const WbpInsert = () => {
       label: 'Pilih Pendidikan',
     },
     pendidikan_id: '',
-    is_sick: '',
-    wbp_sickness: '',
+    is_sick: dataAdmin.is_sick ?? '0',
+    wbp_sickness: dataAdmin.wbp_sickness ?? '',
     nama_status_wbp_kasus: '',
     jenisPerkara: dataAdmin.jenisPerkara ?? {
       value: '',
-      label: 'Pilih Jenis Perkara',
+      label: 'Pilih Jenis Kasus',
     },
     jenis_perkara_id: '',
     // vonisTahun: dataAdmin.vonisTahunPerkara ?? {value: '', label: 'Pilih Vonis Tahun Perkara'},
     vonis_tahun_perkara: '',
     vonis_bulan_perkara: '',
     vonis_hari_perkara: '',
-    tanggal_ditahan_otmil: '',
-    tanggal_masa_penahanan_otmil: '',
+    tanggal_ditahan_otmil: dataAdmin.tanggal_ditahan_otmil ?? '',
+    tanggal_masa_penahanan_otmil: dataAdmin.tanggal_masa_penahanan_otmil ?? '',
     bidang_keahlian: dataAdmin.bidang_keahlian ?? {
       value: '',
       label: 'Pilih Bidang Keahlian',
@@ -128,15 +153,15 @@ export const WbpInsert = () => {
     gelang: dataAdmin.gelang ?? { value: '', label: 'Pilih Gelang' },
     gelang_id: '',
     // dmacGelang: dataAdmin.dmacGelang ?? {value: '', label: 'Pilih DMAC Gelang'},
-    dmac: '',
-    residivis: '',
+    dmac: dataAdmin.dmac ?? '',
+    residivis: dataAdmin.residivis ?? '0',
     hunian_wbp_otmil: dataAdmin.hunian_wbp_otmil ?? {
       value: '',
       label: 'Pilih Hunian WBP OTMIL',
     },
     hunian_wbp_otmil_id: '',
-    nomor_tahanan: '',
-    is_isolated: '',
+    nomor_tahanan: dataAdmin.nomor_tahanan ?? '',
+    is_isolated: '0',
     akses_ruangan_otmil_id: [],
     zona_merah: [],
     // lokasi_otmil_id: dataAdmin.lokasi_otmil_id,
@@ -146,11 +171,29 @@ export const WbpInsert = () => {
       label: 'Pilih Status WBP Kasus',
     },
     status_wbp_kasus_id: '',
-    tanggal_penetapan_tersangka: '',
-    tanggal_penetapan_terdakwa: '',
-    tanggal_penetapan_terpidana: '',
+    tanggal_penetapan_tersangka: dataAdmin.tanggal_penetapan_tersangka ?? '',
+    tanggal_penetapan_terdakwa: dataAdmin.tanggal_penetapan_terdakwa ?? '',
+    tanggal_penetapan_terpidana: dataAdmin.tanggal_penetapan_terpidana ?? '',
     zat_adiktif: '',
     jenis_olahraga: '',
+    kasus: dataAdmin.kasus ?? { value: '', label: 'Pilih Kasus' },
+    kasus_id: '',
+    // jenis_kasus_id: dataAdmin.jenis_kasus_id ?? '',
+    nama_kasus: '',
+    nomor_kasus: '',
+    lokasi_kasus: '',
+    is_new_kasus: 'false',
+    jenis_pidana_id: '',
+    kategori_perkara_id: '',
+    waktu_kejadian: '',
+    waktu_pelaporan_kasus: '',
+    keterangans: [],
+    role_ketua_oditur_ids: '',
+    wbp_profile_ids: [],
+    saksi_id: [],
+    keteranganSaksis: [],
+    zona_waktu: '',
+    nama_jenis_pidana: '',
   });
 
   const tokenItem = localStorage.getItem('token');
@@ -174,18 +217,267 @@ export const WbpInsert = () => {
   const [buttonLoad, setButtonLoad] = useState(false);
   const [matra, setMatra] = useState([]);
   const [statusWbp, setStatusWbp] = useState([]);
+  const [kasusData, setKasusData] = useState<KasusData[]>([]);
+  const [buatKasusBaru, setBuatKasusBaru] = useState('false');
+  const [data, setData] = useState([]);
+  const [dataJenisPerkara, setDataJenisPerkara] = useState<any[]>([]);
+  const [dataOditurPenyidik, setDataOditurPenyidik] = useState([]);
+  const [pihakTerlibat, setPihakTerlibat] = useState([]);
+  const [dataWBP, setDataWBP] = useState([]);
+  const [dataSaksi, setDataSaksi] = useState([]);
+  const [ketuaOditurPenyidik, setKetuaOditurPenyidik] = useState([
+    {
+      value: '',
+      label: '',
+    },
+  ]);
+
+  const [selectSaksi, setSelectSaksi] = useState([]);
+  const [selectTersangka, setSelectTersangka] = useState([]);
   //end handle state
+
+  const customStyles = {
+    container: (provided: any) => ({
+      ...provided,
+      width: '100%',
+    }),
+    control: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: 'rgb(30 41 59)',
+      borderColor: 'rgb(30 41 59)',
+      color: 'white',
+      paddingTop: 3,
+      paddingBottom: 3,
+      paddingLeft: 3,
+      paddingRight: 4.5,
+      borderRadius: 5,
+
+      '&:hover': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:active': {
+        borderColor: 'rgb(30 41 59)',
+      },
+      '&:focus': {
+        borderColor: 'rgb(30 41 59)',
+      },
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      color: 'white',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      backgroundColor: 'rgb(30 41 59)',
+    }),
+    option: (styles: any, { isDisabled, isFocused, isSelected }: any) => {
+      return {
+        ...styles,
+        borderRadius: '6px',
+
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
+
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled,
+        },
+      };
+    },
+    placeholder: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: 'white',
+    }),
+    multiValue: (styles: any) => {
+      return {
+        ...styles,
+        backgroundColor: 'rgb(51, 133, 255)',
+      };
+    },
+    multiValueLabel: (styles: any) => ({
+      ...styles,
+      color: 'white',
+    }),
+  };
+
+  const validateForm = () => {
+    let errorFields: any = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (key !== 'lokasi_otmil_id')
+        if (formState.is_sick === '0') {
+          if (key === 'wbp_sickness') {
+            if (!value) {
+              continue;
+            }
+          }
+        }
+      if (
+        (key === 'nama_status_wbp_kasus' ||
+          key === 'zat_adiktif' ||
+          key === 'jenis_olahraga') &&
+        !value
+      ) {
+        continue;
+      }
+
+      // if(key !== 'jenis_olahraga')
+
+      if (formState.is_new_kasus == 'true') {
+        // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
+        const ignoredFields = ['kasus_id'];
+
+        if (ignoredFields.includes(key) && !value) {
+          continue;
+        }
+      }
+
+      if (formState.is_new_kasus == 'false') {
+        // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
+        const ignoredFields = [
+          'vonis_tahun_perkara',
+          'vonis_bulan_perkara',
+          'vonis_hari_perkara',
+          'nama_kasus',
+          'nomor_kasus',
+          'lokasi_kasus',
+          'jenis_perkara_id',
+          'jenis_pidana_id',
+          'kategori_perkara_id',
+          'waktu_kejadian',
+          'waktu_pelaporan_kasus',
+          'role_ketua_oditur_ids',
+          'nama_jenis_perkara',
+          'nama_jenis_pidana',
+          'zat_adiktif',
+          'jenis_olahraga',
+        ];
+
+        // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
+        if (ignoredFields.includes(key) && !value) {
+          continue; // Melanjutkan iterasi ke field selanjutnya.
+        }
+      }
+
+      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
+        console.log('STATUS ADA');
+        continue;
+      }
+
+      if (
+        formState.status_wbp_kasus_id === '' ||
+        formState.status_wbp_kasus_id === null
+      ) {
+        console.log('STATUS KOSONG');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+      ) {
+        //terpidana
+        console.log('STATUS terpidana');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terdakwa'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+      ) {
+        //terdakwa
+        console.log('STATUS terdakwa');
+        if (
+          key === 'tanggal_penetapan_tersangka' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      } else if (
+        formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964'
+      ) {
+        //tersangka
+        console.log('STATUS tersangka');
+        if (
+          key === 'tanggal_penetapan_terdakwa' ||
+          key === 'tanggal_penetapan_terpidana'
+        ) {
+          continue;
+        }
+      }
+
+      if (!value) {
+        errorFields.push(key);
+      }
+    }
+    console.log(errorFields, 'errorFields');
+    if (errorFields.length > 0) {
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
+
+  const getTimeZone = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({
+        ...formState,
+        zona_waktu: zonaWaktu,
+      });
+    }
+  };
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     let updatedFormState;
-    console.log('selectedGelang', e.target);
 
     if (name === 'gelang_id') {
       const selectedGelang = gelang.find(
         (item: any) => item.gelang_id === value,
       );
-      console.log('selectedGelang', selectedGelang);
       updatedFormState = {
         ...formState,
         gelang_id: value,
@@ -202,10 +494,9 @@ export const WbpInsert = () => {
       updatedFormState = { ...formState, [name]: value };
     }
 
-    // Menyimpan nilai formState ke localStorage setiap kali nilai berubah
+    // Simpan formState yang diperbarui ke localStorage
     localStorage.setItem('formState', JSON.stringify(updatedFormState));
 
-    // Memperbarui state formState
     setFormState(updatedFormState);
   };
 
@@ -270,21 +561,132 @@ export const WbpInsert = () => {
     }
   };
 
-  const onSubmit = async (params: any) => {
-    try {
-      const responseAdd = await apiCreateWBP(params, token);
-      if (responseAdd.data[1].status === 'OK') {
+  const fetchJenisPerkara = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadjenisperkara(params, token)
+      .then((res) => {
+        setDataJenisPerkara(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
         Alerts.fire({
-          icon: 'success',
-          title: 'Berhasil membuat data',
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
-      } else if (responseAdd.data.status === 'NO') {
+      });
+  };
+
+  const Oditur = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadJaksaPenyidik(params, token)
+      .then((res) => {
+        setDataOditurPenyidik(res.data.records);
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const tersangka = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadAllWBP(params, token)
+      .then((res) => {
+        setDataWBP(res.data.records);
+        const tersangka = res.data.records?.map((item: any) => ({
+          value: item.wbp_profile_id,
+          label: `${item.nama} (Tersangka)`,
+        }));
+        setPihakTerlibat((prevPihakTerlibat) =>
+          prevPihakTerlibat.concat(tersangka),
+        );
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  const Saksi = async () => {
+    let params = {
+      pageSize: 1000,
+    };
+    await apiReadSaksi(params, token)
+      .then((res) => {
+        setDataSaksi(res.data.records);
+        console.log('responsaksi', res.data.records);
+
+        const Saksi = res.data.records?.map((item: any) => ({
+          value: item.saksi_id,
+          label: `${item.nama_saksi} (Saksi)`,
+        }));
+        setPihakTerlibat((prevPihaklibat) => prevPihaklibat.concat(Saksi));
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
+
+  let fetchData = async () => {
+    setIsLoading(true);
+    try {
+      let params = {
+        //   pagination: {
+        //     currentPage: currentPage,
+        //     pageSize: pageSize,
+        //   },
+      };
+      const responseRead = await apiReadAllWBP(params, token);
+      if (responseRead.data.status === 'OK') {
+        let temp = responseRead.data.records;
+        temp.forEach((obj: any) => {
+          obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
+            (item: any) => item.ruangan_otmil_id,
+          );
+        });
+        // setData(temp);
+        // setPages(responseRead.data.pagination.totalPages);
+        // setRows(responseRead.data.pagination.totalRecords);
+        setIsLoading(false);
+      } else if (responseRead.data.status === 'NO') {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal membuat data',
+          title: 'Data tidak bisa dimuat',
         });
       } else {
-        throw new Error(responseAdd.data.message);
+        throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -299,13 +701,66 @@ export const WbpInsert = () => {
     }
   };
 
-  // const handleSubmit = (e: any) => {
-  //   e.preventDefault();
-  //   onSubmit(formState);
-  //   console.log(formState, 'received values');
-  // };
+  const fecthKasusData = async () => {
+    let params = {
+      pageSize: 1000,
+      page: 1,
+      filter: {},
+    };
+    await apiKasusRead(params, token)
+      .then((res) => {
+        const result = res.data.records;
+        setKasusData(result);
+      }, token)
+      .catch((e: any) => {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
+        });
+      });
+  };
 
-  const handleSubmit = (e: any) => {
+  const onSubmit = async (params: any) => {
+    console.log(params, 'params tersangka');
+    try {
+      const responseAdd = await apiCreateWBP(params, token);
+      if (responseAdd.data[1].status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil membuat data',
+        });
+
+        // setModalAddOpen(false);
+        fetchData();
+      } else if (responseAdd.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseAdd.data.message);
+      }
+
+      // return true
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     console.log(formState, 'formstate');
     if (!validateForm()) return;
@@ -720,7 +1175,7 @@ export const WbpInsert = () => {
 
     localStorage.setItem('formState', JSON.stringify(newFormState));
   };
-
+  console.log(formState, 'formState');
   const handleSelectPendidikan = (selectedOption: any) => {
     // setFormState({ ...formState, pendidikan_id: e?.value });
     let newFormState = {
@@ -812,73 +1267,365 @@ export const WbpInsert = () => {
     localStorage.setItem('formState', JSON.stringify(newFormState));
   };
 
-  const handleSelectJenisPerkara = (selectedOption: any) => {
-    const vonisFilter: any = jenisPerkara.find(
-      (item: any) => item.jenis_perkara_id === selectedOption?.value,
+  const handleSelectJenisPerkara = (e: any) => {
+    const selectedId = e?.value;
+    const vonisFilter = jenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === selectedId,
     );
-
-    const newFormState = {
+    const kategoriPerkara: any = dataJenisPerkara.find(
+      (item: any) => item.jenis_perkara_id === e?.value,
+    );
+    setFormState({
       ...formState,
-      jenis_perkara_id: selectedOption?.value,
-      jenisPerkara: {
-        label: selectedOption?.label,
-        value: selectedOption?.value,
-      },
-      vonis_tahun_perkara: vonisFilter?.vonis_tahun_perkara,
-      vonis_bulan_perkara: vonisFilter?.vonis_bulan_perkara,
-      vonis_hari_perkara: vonisFilter?.vonis_hari_perkara,
-    };
+      jenis_perkara_id: selectedId,
+      vonis_tahun_perkara: vonisFilter ? vonisFilter.vonis_tahun_perkara : '',
+      vonis_bulan_perkara: vonisFilter ? vonisFilter.vonis_bulan_perkara : '',
+      vonis_hari_perkara: vonisFilter ? vonisFilter.vonis_hari_perkara : '',
 
-    setFormState(newFormState); // Update form state with the newFormState
-
-    localStorage.setItem('formState', JSON.stringify(newFormState)); // Save the newFormState to localStorage
+      kategori_perkara_id: kategoriPerkara
+        ? kategoriPerkara.kategori_perkara_id
+        : '',
+      jenis_pidana_id: kategoriPerkara ? kategoriPerkara.jenis_pidana_id : '',
+      nama_jenis_perkara: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_perkara
+        : '',
+      nama_jenis_pidana: kategoriPerkara
+        ? kategoriPerkara.nama_jenis_pidana
+        : '',
+    });
   };
+
+  const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
+    value: item.oditur_penyidik_id,
+    label: item.nama_oditur,
+  }));
+
+  const handleSelectOditurPenyidik = (e: any) => {
+    let arrayTemp: any = [];
+    let arrayAnggota: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      arrayTemp.push(e[i].value);
+      arrayAnggota.push(e[i]);
+    }
+    setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
+    setKetuaOditurPenyidik(arrayAnggota);
+  };
+
+  const handleSelectKetuaOditur = (e: any) => {
+    setFormState({ ...formState, role_ketua_oditur_ids: e.value });
+  };
+
+  const handleSelectPihakTerlibat = (e: any) => {
+    let arrayTersangka: any = [];
+    let arraySaksi: any = [];
+    let arraySaksiOptions: any = [];
+    let arrayTersangkaOptions: any = [];
+    for (let i = 0; i < e?.length; i++) {
+      if (e[i].label.includes('(Tersangka)')) {
+        arrayTersangka.push(e[i].value);
+        arrayTersangkaOptions.push(e[i]);
+      } else if (e[i].label.includes('(Saksi)')) {
+        arraySaksi.push(e[i].value);
+        arraySaksiOptions.push(e[i]);
+      }
+    }
+    setFormState({
+      ...formState,
+      wbp_profile_ids: arrayTersangka,
+      saksi_id: arraySaksi,
+    });
+    setSelectSaksi(arraySaksiOptions);
+    setSelectTersangka(arrayTersangkaOptions);
+  };
+
+  const handleChangeKeteranganTersangka = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keterangans];
+    newKeteranganSaksi[index] = e.target.value;
+    setFormState({
+      ...formState,
+      keterangans: newKeteranganSaksi,
+    });
+  };
+
+  const handleChangeKeterangan = (e: any, index: any) => {
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
+    setFormState({
+      ...formState,
+      keteranganSaksis: newKeteranganSaksi,
+    });
+  };
+
+  // const handleSelectJenisKasus = (e: any) => {
+  //   if (e && e.value) {
+  //     const filterKasus = kasusData.find((item) => item.kasus_id == e.value);
+  //     const existingWbpId = filterKasus?.wbp_profile.map(
+  //       (item) => item.wbp_profile_id,
+  //     );
+  //     console.log(filterKasus, 'INI HASIL FILTER');
+  //     console.log(existingWbpId, 'INI HASIL EXISTING');
+  //     console.log(kasusData, 'INI KASUS DATA');
+  //     setFormState({
+  //       ...formState,
+  //       kasus_id: e.value,
+  //     });
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       kasus_id: '',
+  //     });
+  //   }
+  // };
+
+  const handleSelectJenisKasus = (selectedOption: any) => {
+    if (selectedOption && selectedOption.value) {
+      const filterKasus = kasusData.find(
+        (item) => item.kasus_id == selectedOption.value,
+      );
+      const existingWbpId = filterKasus?.wbp_profile.map(
+        (item) => item.wbp_profile_id,
+      );
+      console.log(filterKasus, 'INI HASIL FILTER');
+      console.log(existingWbpId, 'INI HASIL EXISTING');
+      console.log(kasusData, 'INI KASUS DATA');
+      const newFormState = {
+        ...formState,
+        kasus_id: selectedOption?.value,
+        kasus: { label: selectedOption?.label, value: selectedOption?.value },
+      };
+      setFormState(newFormState);
+      localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
+    } else {
+      const newFormState = {
+        ...formState,
+        kasus_id: '',
+        kasus: { label: '', value: '' },
+      };
+      setFormState(newFormState);
+      localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
+    }
+  };
+
+  const handleNewKasus = (e: any) => {
+    const checked = e.target.value;
+    setBuatKasusBaru(checked);
+    setFormState({
+      ...formState,
+      is_new_kasus: checked,
+      vonis_bulan_perkara: '',
+      vonis_tahun_perkara: '',
+      vonis_hari_perkara: '',
+    });
+  };
+
+  const handleGenerateNomorKasus = () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const location = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let largestNumber = 0;
+
+    data.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
+        const number = parseInt(caseNumber, 10);
+
+        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
+          largestNumber = Math.max(largestNumber, number);
+        }
+      }
+    });
+
+    largestNumber += 1;
+
+    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
+    console.log(caseNumberFormatted, 'caseNumberFormatted');
+
+    setFormState({
+      ...formState,
+      nomor_kasus: caseNumberFormatted,
+    });
+  };
+
+  useEffect(() => {
+    console.log(formState, 'formState coy');
+    handleGenerateNomorKasus();
+  }, [buatKasusBaru]);
 
   //end handle select
 
   //start handle zona
   const [zona, setZona] = useState<any>([]);
-  const modalContainerRef = useRef(null);
   const [autocompleteDataZona, setAutocompleteDataZona]: any[] = useState([
     zona,
   ]);
 
-  const handleAddZona = (zonaId: any, inputField: any) => {
-    if (formState[inputField].includes(zonaId)) {
-      setErrors([
-        ...errors,
-        `Zona ${zonaId} is already assigned to ${inputField}.`,
-      ]);
-    } else {
-      setFormState({
-        ...formState,
-        [inputField]: [...formState[inputField], zonaId],
-      });
+  // const handleAddZona = (zonaId: number, isPermitted: number) => {
+  //   console.log('ZONA', zonaId, 'INPUT', isPermitted);
 
+  //   if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
+  //     // Check if the "zona" is already added to any input
+
+  //     // If it's already added, show an error or handle it as needed
+  //     setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
+  //   } else {
+  //     // If it's not added to any input, assign it to the specified input
+  //     let objectZona = {};
+  //     if (isPermitted == 1) {
+  //       objectZona = {
+  //         id: zonaId,
+  //         isPermitted: 1,
+  //       };
+  //     } else {
+  //       objectZona = {
+  //         id: zonaId,
+  //         isPermitted: 0,
+  //       };
+  //     }
+  //     setFormState({
+  //       ...formState,
+  //       akses_ruangan_otmil_id: [
+  //         ...formState.akses_ruangan_otmil_id,
+  //         objectZona,
+  //       ],
+  //     });
+
+  //     // combine state
+  //     // const combineZona = [...formState.akses_ruangan_otmil_id, ...formState.zona_merah]
+  //     // setFormState({...formState, akses_wbp_otmil: combineZona})
+
+  //     // Remove the selected zona from the autocomplete data
+  //     setAutocompleteDataZona((prevData: any) =>
+  //       prevData.filter(
+  //         (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
+  //       ),
+  //     );
+  //   }
+  // };
+
+  const handleAddZona = (zonaId: number, isPermitted: number) => {
+    console.log('ZONA', zonaId, 'INPUT', isPermitted);
+  
+    if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
+      // Check if the "zona" is already added to any input
+  
+      // If it's already added, show an error or handle it as needed
+      setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
+    } else {
+      // If it's not added to any input, assign it to the specified input
+      let objectZona = {};
+      if (isPermitted == 1) {
+        objectZona = {
+          id: zonaId,
+          isPermitted: 1,
+        };
+      } else {
+        objectZona = {
+          id: zonaId,
+          isPermitted: 0,
+        };
+      }
+      // Update formState
+      const updatedFormState = {
+        ...formState,
+        akses_ruangan_otmil_id: [
+          ...formState.akses_ruangan_otmil_id,
+          objectZona,
+        ],
+      };
+      setFormState(updatedFormState);
+  
+      // Remove the selected zona from the autocomplete data
       setAutocompleteDataZona((prevData: any) =>
         prevData.filter(
           (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
         ),
       );
+  
+      // Simpan data yang diperbarui ke localStorage
+      localStorage.setItem('akses_ruangan_otmil_id', JSON.stringify(updatedFormState.akses_ruangan_otmil_id));
     }
   };
+  
+
+  useEffect(() => {
+    if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
+      localStorage.setItem('formState', JSON.stringify(formState));
+    }
+  }, [formState]);
+  // Function to handle removing a "zona" from the selected chips
+  // const handleRemoveZona = (zonaId: any, inputField: any) => {
+  //   // Remove the zona from the selected input field
+  //   setFormState({
+  //     ...formState,
+  //     akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter(
+  //       (id: any) => id.id !== zonaId,
+  //     ),
+  //   });
+
+  //   setAutocompleteDataZona((prevData: any) => [
+  //     ...prevData,
+  //     zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
+  //   ]);
+  //   // }
+  // };
 
   const handleRemoveZona = (zonaId: any, inputField: any) => {
-    if (
-      inputField === 'akses_ruangan_otmil_id' ||
-      inputField === 'zona_merah'
-    ) {
-      setFormState({
-        ...formState,
-        [inputField]: formState[inputField].filter((id: any) => id !== zonaId),
-      });
-    }
-
+    // Hapus zona dari selected input field
+    const updatedFormState = {
+      ...formState,
+      akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter(
+        (id: any) => id.id !== zonaId,
+      ),
+    };
+    setFormState(updatedFormState);
+  
+    // Tambahkan zona yang dihapus kembali ke data autocomplete
     setAutocompleteDataZona((prevData: any) => [
       ...prevData,
       zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
     ]);
+  
+    // Simpan data yang diperbarui ke localStorage
+    localStorage.setItem('akses_ruangan_otmil_id', JSON.stringify(updatedFormState.akses_ruangan_otmil_id));
   };
+  
+
   //end handle zona
 
   useEffect(() => {
@@ -898,6 +1645,12 @@ export const WbpInsert = () => {
       getAllKategoriPerkara(),
       getAllRuangan(),
       statusWbpData(),
+      fecthKasusData(),
+      fetchJenisPerkara(),
+      getTimeZone(),
+      Oditur(),
+      tersangka(),
+      Saksi(),
     ]).then(() => {
       setIsLoading(false);
     });
@@ -1479,95 +2232,581 @@ export const WbpInsert = () => {
 
           <div className="mt-4">
             <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-4">
-                {/* jenis perkara */}
-                <div className="f-alamat form-group w-full flex flex-col">
+              {/* buat kasus baru */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-group w-full">
                   <label
                     htmlFor="id"
                     className="block text-sm font-medium text-black dark:text-white"
                   >
-                    Jenis Perkara
+                    Buat Kasus Baru (?)
                   </label>
-                  <Select
-                    className="basic-single"
-                    classNamePrefix="select"
-                    styles={CustomStyles}
-                    name="jenis_perkara_id"
-                    isDisabled={false}
-                    isClearable={true}
-                    isSearchable={true}
-                    placeholder="Pilih Jenis Perkara"
-                    options={jenisPerkara.map((item: any) => ({
-                      value: item.jenis_perkara_id,
-                      label: item.nama_jenis_perkara,
-                    }))}
-                    onChange={handleSelectJenisPerkara}
-                    defaultValue={formState.jenisPerkara}
-                  />
+                  <select
+                    name="is_new_kasus"
+                    className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                    onChange={handleNewKasus}
+                    defaultValue={formState.is_new_kasus}
+                  >
+                    <option value="">Silahkan Pilih</option>
+
+                    <option value="false">Tidak</option>
+                    <option value="true">Ya</option>
+                  </select>
                   <p className="error-text">
                     {errors.map((item) =>
-                      item === 'jenis_perkara_id' ? 'Pilih jenis perkara' : '',
+                      item === 'is_new_kasus' ? 'Pilih Ya/Tidak' : '',
                     )}
                   </p>
                 </div>
+              </div>
+              {formState.is_new_kasus == '' ? null : buatKasusBaru ===
+                'true' ? (
+                // Kasus Baru
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nomor Kasus
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nomor Kasus"
+                      name="nomor_kasus"
+                      value={formState.nomor_kasus}
+                    />
+                    <div className="">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nomor_kasus' ? 'Masukan Nomor Kasus' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="">
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Kasus
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nama Kasus"
+                      name="nama_kasus"
+                      onChange={handleChange}
+                      // disabled={isDetail}
+                    />
+                    <div className="">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_kasus' ? 'Masukkan Nama Kasus' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="f-alamat form-group">
                     <label
                       htmlFor="id"
                       className="block text-sm font-medium text-black dark:text-white"
                     >
-                      Vonis Tahun
+                      Jenis Perkara
                     </label>
-                    <input
-                      type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                      name="vonis_tahun_perkara"
-                      onChange={handleChange}
-                      value={formState.vonis_tahun_perkara}
-                      disabled
+                    <Select
+                      className="basic-single p-gelang"
+                      classNamePrefix="select"
+                      styles={CustomStyles}
+                      defaultValue={
+                        formState.jenis_perkara_id
+                          ? jenisPerkara.find(
+                              (item: any) =>
+                                item.jenis_perkara_id ===
+                                formState.jenis_perkara_id,
+                            )
+                          : formState.jenis_perkara_id
+                      }
+                      placeholder={'Pilih Jenis Perkara'}
+                      isSearchable={true}
+                      isClearable={true}
+                      name="jenis_perkara_id"
+                      options={jenisPerkara.map((item: any) => ({
+                        value: item.jenis_perkara_id,
+                        label: item.nama_jenis_perkara,
+                      }))}
+                      onChange={handleSelectJenisPerkara}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'vonis_tahun_perkara'
-                          ? 'Masukan tanggal masa penahanan'
+                        item === 'jenis_perkara_id'
+                          ? 'Pilih jenis perkara'
                           : '',
                       )}
                     </p>
                   </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Tahun
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_tahun_perkara"
+                        value={formState.vonis_tahun_perkara}
+                        disabled
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'vonis_tahun_perkara'
+                            ? 'Masukan tanggal masa penahanan'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Bulan
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_bulan_perkara"
+                        value={formState.vonis_bulan_perkara}
+                        disabled
+                      />
+                    </div>
+
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Hari
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_hari_perkara"
+                        value={formState.vonis_hari_perkara}
+                        disabled
+                      />
+                    </div>
+                  </div>
+
                   <div className="form-group w-full">
                     <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
                       htmlFor="id"
-                      className="block text-sm font-medium text-black dark:text-white"
                     >
-                      Vonis Bulan
+                      Nama Jenis Pidana
                     </label>
                     <input
-                      type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                      name="vonis_bulan_perkara"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nama Jenis Pidana"
+                      name="nama_jenis_pidana"
                       onChange={handleChange}
-                      value={formState.vonis_bulan_perkara}
+                      value={formState.nama_jenis_pidana}
                       disabled
                     />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_jenis_pidana'
+                            ? 'Masukan Nama Jenis Pidana'
+                            : '',
+                        )}
+                      </p>
+                    </div>
                   </div>
+
                   <div className="form-group w-full">
                     <label
-                      htmlFor="id"
                       className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
                     >
-                      Vonis Hari
+                      Lokasi Kasus
                     </label>
                     <input
-                      type="text"
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                      name="vonis_hari_perkara"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Lokasi Kasus"
+                      name="lokasi_kasus"
                       onChange={handleChange}
-                      disabled
-                      value={formState.vonis_hari_perkara}
                     />
+                    <div className="">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                        )}
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="grid grid-cols-2">
+                    <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Kejadian Kasus
+                      </label>
+                      <div className="flex">
+                        <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="waktu_kejadian"
+                          onChange={handleChange}
+                          value={formState.waktu_kejadian}
+                        />
+                        <input
+                          type="text"
+                          className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
+                      </div>
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'waktu_kejadian'
+                            ? 'Masukan waktu kejadian'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Pelaporan Kasus
+                      </label>
+                      <div className="flex">
+                        <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="waktu_pelaporan_kasus"
+                          onChange={handleChange}
+                          value={formState.waktu_pelaporan_kasus}
+                        />
+                        <input
+                          type="text"
+                          className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
+                      </div>
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'waktu_pelaporan_kasus'
+                            ? 'Masukan waktu pelaporan kasus'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={'block mt-4hidden'}>
+                    {/* <div className="form-group w-full">
+                              <label
+                                className="block text-sm font-medium text-black dark:text-white pt-3"
+                                htmlFor="id"
+                              >
+                                Jumlah Penyidikan
+                              </label>
+                              <input
+                                className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                placeholder="Jumlah Penyidikan"
+                                name="waktu_pelaporan_kasus"
+                                onChange={handleChange}
+                                // disabled={isDetail}
+                              />
+                              <p className="error-text">
+                                {errors.map((item) =>
+                                  item === 'waktu_pelaporan_kasus'
+                                    ? 'Masukan Jumlah Penyidikan'
+                                    : '',
+                                )}
+                              </p>
+                            </div> */}
+                  </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Oditur Penyidik
+                    </label>
+                    <Select
+                      className="capitalize text-white"
+                      isMulti
+                      placeholder="Pilih Oditur Penyidik"
+                      styles={customStyles}
+                      options={oditurPenyidikOptions}
+                      onChange={handleSelectOditurPenyidik}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama' ? 'Masukan Tersangka' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Ketua Oditur Penyidik
+                    </label>
+                    <Select
+                      className="capitalize"
+                      placeholder="Pilih Ketua Oditur"
+                      styles={customStyles}
+                      options={ketuaOditurPenyidik}
+                      onChange={handleSelectKetuaOditur}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'role_ketua_oditur_ids'
+                            ? 'Pilih Ketua Oditur Penyidik'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Pihak Terlibat
+                    </label>
+                    <Select
+                      className="capitalize"
+                      isMulti
+                      placeholder="Pihak Terlibat"
+                      styles={customStyles}
+                      options={pihakTerlibat}
+                      onChange={handleSelectPihakTerlibat}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.includes('saksi_id') ||
+                        errors.includes('wbp_profile_ids')
+                          ? `${
+                              errors.includes('wbp_profile_ids')
+                                ? 'Tersangka'
+                                : ''
+                            } ${
+                              errors.includes('saksi_id') &&
+                              errors.includes('wbp_profiles_ids')
+                                ? 'Dan'
+                                : ''
+                            } ${
+                              errors.includes('saksi_id') ? 'Saksi' : ''
+                            } Belum di Pilih`
+                          : ''}
+                      </p>
+                    </div>
+                  </div>
+                  {selectTersangka.length === 0 ? null : (
+                    <>
+                      <div className="grid grid-rows-2">
+                        <label
+                          htmlFor="id"
+                          className="mt-4 block text-sm font-medium text-black dark:text-white"
+                        >
+                          Tersangka
+                        </label>
+
+                        <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                          <div className="form-group w-2/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Nama Tersangka
+                            </label>
+                          </div>
+
+                          <div className="form-group w-4/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Keterangan
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                          {selectTersangka.map((item: any, index: number) => {
+                            return (
+                              <div
+                                className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                key={index}
+                              >
+                                <div className="form-group w-2/6">
+                                  <label
+                                    htmlFor={`keterangans-${index}`}
+                                    className="capitalize block text-sm font-medium text-black dark:text-white"
+                                  >
+                                    {item.label}
+                                  </label>
+                                </div>
+
+                                <div className="form-group w-4/6 flex items-center mr-2">
+                                  <input
+                                    id={`keterangans${index}`}
+                                    className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder={`${
+                                      errors.includes('keterangan')
+                                        ? 'Keterangan Belum Di Isi'
+                                        : 'Keterangan'
+                                    }`}
+                                    onChange={(e) =>
+                                      handleChangeKeteranganTersangka(e, index)
+                                    }
+                                    // disabled={isDetail}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {selectSaksi.length === 0 ? null : (
+                    <>
+                      <div className="grid grid-rows-2">
+                        <label
+                          htmlFor="id"
+                          className="mt-4 block text-sm font-medium text-black dark:text-white"
+                        >
+                          Saksi
+                        </label>
+
+                        <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                          <div className="form-group w-2/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Nama Saksi
+                            </label>
+                          </div>
+
+                          <div className="form-group w-4/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Keterangan Saksi
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                          {selectSaksi.map((item: any, index: number) => {
+                            return (
+                              <div
+                                className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                key={index}
+                              >
+                                <div className="form-group w-2/6">
+                                  <label
+                                    className="capitalize block text-sm font-medium text-black dark:text-white"
+                                    htmlFor={`keterangan-${index}`}
+                                  >
+                                    {item.label}
+                                  </label>
+                                </div>
+
+                                <div className="form-group w-4/6 flex items-center mr-2">
+                                  <input
+                                    id={`keterangan-${index}`}
+                                    className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder={`${
+                                      errors.includes('keteranganSaksis')
+                                        ? 'Keterangan Belum Di Isi'
+                                        : 'Keterangan Saksi'
+                                    }`}
+                                    onChange={(e) =>
+                                      handleChangeKeterangan(e, index)
+                                    }
+                                    // disabled={isDetail}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
+              ) : (
+                // Select Kasus
+                <div className="f-alamat form-group">
+                  <label
+                    htmlFor="id"
+                    className="block text-sm font-medium text-black dark:text-white"
+                  >
+                    Jenis Kasus
+                  </label>
+                  <Select
+                    className="basic-single p-gelang"
+                    classNamePrefix="select"
+                    styles={CustomStyles}
+                    // defaultValue={
+                    //   formState.kasus_id
+                    //     ? kasusData.find(
+                    //         (item: any) =>
+                    //           item.kasus_id === formState.kasus_id,
+                    //       )
+                    //     : formState.kasus_id
+                    // }
+                    defaultValue={formState.kasus}
+                    placeholder={'Pilih Jenis Kasus'}
+                    isSearchable={true}
+                    // isDisabled={isDetail}
+                    name="kasus_id"
+                    // styles={customStyles}
+                    options={kasusData.map((item: any) => ({
+                      value: item.kasus_id,
+                      label: item.nama_kasus,
+                    }))}
+                    onChange={handleSelectJenisKasus}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'kasus_id' ? 'Pilih kasus' : '',
+                    )}
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   {/* Tanggal diTahan */}
                   <div className="f-tanggal-ditahan form-group w-full ">
@@ -1796,7 +3035,12 @@ export const WbpInsert = () => {
                     <>
                       {/* Tanggal Penetapan Terpidana*/}
                       <div
-                        className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-terpidana form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -1822,7 +3066,12 @@ export const WbpInsert = () => {
 
                       {/* Tanggal Penetapan Terdakwa*/}
                       <div
-                        className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-terdakwa form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -1848,7 +3097,12 @@ export const WbpInsert = () => {
 
                       {/* Tanggal Penetapan Tersangka*/}
                       <div
-                        className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-tersangka form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          'e9e467a1-9132-4787-8938-7517da9ba964'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -1969,16 +3223,16 @@ export const WbpInsert = () => {
               </div>
             </div>
 
-            <div className="mt-4">
-              <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+            {/* <div className=""> */}
+            {/* <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                 Data Perilaku
-              </p>
+              </p> */}
 
-              <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Jenis Olahraga */}
-                    <div className="f-jenis-olahraga form-group w-full flex flex-col">
+            {/* <div className="flex flex-col gap-4"> */}
+            {/* <div className="grid grid-cols-1 gap-4"> */}
+            {/* <div className="grid grid-cols-2 gap-4"> */}
+            {/* Jenis Olahraga */}
+            {/* <div className="f-jenis-olahraga form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -2009,10 +3263,10 @@ export const WbpInsert = () => {
                             : '',
                         )}
                       </p>
-                    </div>
+                    </div> */}
 
-                    {/* Konsumsi Zat Adiktif */}
-                    <div className="f-zat-adiktif form-group w-full flex flex-col">
+            {/* Konsumsi Zat Adiktif */}
+            {/* <div className="f-zat-adiktif form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -2043,11 +3297,11 @@ export const WbpInsert = () => {
                             : '',
                         )}
                       </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    </div> */}
+            {/* </div> */}
+            {/* </div> */}
+            {/* </div> */}
+            {/* </div> */}
 
             <div className="mt-4">
               <>
@@ -2066,10 +3320,10 @@ export const WbpInsert = () => {
                             zonaItem.nama_zona === 'Hijau'
                               ? 'border-green-500'
                               : zonaItem.nama_zona === 'Kuning'
-                                ? 'border-yellow-400'
-                                : zonaItem.nama_zona === 'Merah'
-                                  ? 'border-red-500'
-                                  : 'border-slate-500'
+                              ? 'border-yellow-400'
+                              : zonaItem.nama_zona === 'Merah'
+                              ? 'border-red-500'
+                              : 'border-slate-500'
                           } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:!shadow-none dark:text-neutral-200`}
                           data-te-ripple-color="dark"
                         >
@@ -2081,10 +3335,7 @@ export const WbpInsert = () => {
                             className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                             onClick={(e) => {
                               e.preventDefault();
-                              handleAddZona(
-                                zonaItem.ruangan_otmil_id,
-                                'akses_ruangan_otmil_id',
-                              );
+                              handleAddZona(zonaItem.ruangan_otmil_id, 1);
                             }}
                           >
                             Ijinkan
@@ -2093,10 +3344,7 @@ export const WbpInsert = () => {
                             className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                             onClick={(e) => {
                               e.preventDefault();
-                              handleAddZona(
-                                zonaItem.ruangan_otmil_id,
-                                'zona_merah',
-                              );
+                              handleAddZona(zonaItem.ruangan_otmil_id, 0);
                             }}
                           >
                             Larang
@@ -2113,44 +3361,53 @@ export const WbpInsert = () => {
                     <h3 className="text-md font-semibold mb-2">Zona Hijau</h3>
 
                     <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                      {formState.akses_ruangan_otmil_id?.map((zonaId: any) => (
-                        <div
-                          key={zonaId}
-                          className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                          data-te-ripple-color="dark"
-                        >
-                          <p className="capitalize text-center">
-                            {
-                              zona.find(
-                                (zonaItem: any) =>
-                                  zonaItem.ruangan_otmil_id === zonaId,
-                              )?.nama_ruangan_otmil
-                            }
-                          </p>
-                          <span
-                            data-te-chip-close
-                            onClick={() =>
-                              handleRemoveZona(zonaId, 'akses_ruangan_otmil_id')
-                            }
-                            className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                      {formState.akses_ruangan_otmil_id
+                        ?.filter((data) => data.isPermitted == 1)
+                        .map((zonaId: any) => (
+                          <div
+                            defaultValue={formState.akses_ruangan_otmil_id
+                              ?.filter((data: any) => data.isPermitted == 1)
+                              .map((data: any) => data.ruangan_otmil_id)
+                              .includes(zonaId.id)}
+                            key={zonaId}
+                            className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="h-3 w-3"
+                            <p className="capitalize text-center">
+                              {
+                                zona.find(
+                                  (zonaItem: any) =>
+                                    zonaItem.ruangan_otmil_id == zonaId.id,
+                                )?.nama_ruangan_otmil
+                              }
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(
+                                  zonaId.id,
+                                  'akses_ruangan_otmil_id',
+                                )
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      ))}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))}
                     </div>
                     <p className="error-text">
                       {isZonaHijauEmpty ? 'Pilih zona hijau' : ''}
@@ -2160,53 +3417,73 @@ export const WbpInsert = () => {
                   <div className="zona-merah w-full ">
                     <h3 className="text-md font-semibold mb-2">Zona Merah</h3>
                     <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                      {formState.zona_merah?.map((zonaId: any) => (
-                        <div
-                          key={zonaId}
-                          className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                          data-te-ripple-color="dark"
-                        >
-                          <p className="capitalize text-center">
-                            {
-                              zona.find(
-                                (zonaItem: any) =>
-                                  zonaItem.ruangan_otmil_id === zonaId,
-                              )?.nama_ruangan_otmil
-                            }
-                          </p>
-                          <span
-                            data-te-chip-close
-                            onClick={() =>
-                              handleRemoveZona(zonaId, 'zona_merah')
-                            }
-                            className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                      {formState.akses_ruangan_otmil_id
+                        ?.filter((data) => data.isPermitted == 0)
+                        .map((zonaId: any, index: number) => (
+                          <div
+                            defaultValue={formState.zonaId?.includes(zonaId.id)}
+                            key={index}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="h-3 w-3"
+                            <p className="capitalize text-center">
+                              {
+                                zona.find(
+                                  (zonaItem: any) =>
+                                    zonaItem.ruangan_otmil_id === zonaId.id,
+                                )?.nama_ruangan_otmil
+                              }
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(zonaId.id, 'zona_merah')
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      ))}
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))}
                     </div>
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {isZonaMerahEmpty ? 'Pilih zona merah' : ''}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </>
             </div>
           </div>
+          {errors.filter((item: string) => item.startsWith('INVALID_ID'))
+            .length > 0 && (
+            <>
+              <br />
+              <div className="error">
+                {errors
+                  .filter((item: string) => item.startsWith('INVALID_ID'))[0]
+                  .replace('INVALID_ID_', '')}{' '}
+                is not a valid bond
+              </div>
+            </>
+          )}
+          {errors.length > 0 && (
+            <div className="error mt-4">
+              <p className="text-red-400">Ada data yang masih belum terisi !</p>
+            </div>
+          )}
 
           <button
             className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 mt-5`}

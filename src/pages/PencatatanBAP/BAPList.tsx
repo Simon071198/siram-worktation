@@ -205,25 +205,59 @@ const BAPList = () => {
     };
   }, [filter]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
-  const fetchData = async () => {
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   let params = {
+  //     filter: {
+  //       // lokasi_otmil: 'Cimahi',
+  //     },
+  //     page: currentPage,
+  //     pageSize: pageSize,
+  //   };
+
+  //   try {
+  //     const response = await apiReadBAP(params, token);
+  //     if (response.data.status !== 'OK') {
+  //       throw new Error(response.data.message);
+  //     }
+  //     const result = response.data.records;
+  //     setData(result);
+  //     setPages(response.data.pagination.totalPages);
+  //     setRows(response.data.pagination.totalRecords);
+  //   } catch (e: any) {
+  //     if (e.response.status === 403) {
+  //       navigate('/auth/signin', {
+  //         state: { forceLogout: true, lastPage: location.pathname },
+  //       });
+  //     }
+  //     Alerts.fire({
+  //       icon: e.response.status === 403 ? 'warning' : 'error',
+  //       title: e.response.status === 403 ? Error403Message : e.message,
+  //     });
+  //   } 
+    
+  //   finally {
+  //     setIsLoading(false);
+  //     }
+  // };
+
+  let fetchData = async () => {
+    setIsLoading(true);
     let params = {
-      filter: {
-        // lokasi_otmil: 'Cimahi',
-      },
+      filter: '',
       page: currentPage,
       pageSize: pageSize,
     };
-
-    setIsLoading(true);
     try {
       const response = await apiReadBAP(params, token);
-      if (response.data.status !== 'OK') {
+      console.log(response.data, 'RESPONSE')
+      if (response && (response.data?.status === 'OK' || response.data?.status === 'No Data')) {
+        setData(response.data.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else {
         throw new Error(response.data.message);
       }
-      const result = response.data.records;
-      setData(result);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -235,6 +269,7 @@ const BAPList = () => {
         title: e.response.status === 403 ? Error403Message : e.message,
       });
     } finally {
+      // setIsLoading(false);
       setIsLoading(false);
     }
   };

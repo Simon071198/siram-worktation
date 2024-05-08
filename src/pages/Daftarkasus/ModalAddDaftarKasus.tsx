@@ -55,6 +55,7 @@ export const AddDaftarKasusModal = ({
     saksi_id: [],
     keteranganSaksis: [],
     zona_waktu: '',
+    tanggal_pelimpahan_kasus: ''
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -128,7 +129,25 @@ export const AddDaftarKasusModal = ({
     return true;
   };
   
+
+  //Handle Max Date
   
+  const [maxDate, setMaxDate] = useState(formatDate(new Date()));
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -230,7 +249,6 @@ export const AddDaftarKasusModal = ({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
     if (!validateForm()) return;
     setButtonLoad(true);
 
@@ -329,6 +347,7 @@ export const AddDaftarKasusModal = ({
       zona_waktu: zonaWaktu,
     });
   };
+
   const handleWaktuPelaporan = (e: any) => {
     console.log('1213', e);
 
@@ -379,6 +398,7 @@ export const AddDaftarKasusModal = ({
       });
     }
   };
+
   useEffect(() => {
     Promise.all([
       getTimeZone(),
@@ -588,6 +608,7 @@ export const AddDaftarKasusModal = ({
       label: '',
     },
   ]);
+
   const OditurPenyidikOpstions = dataOditurPenyidik.map((item: any) => ({
     value: item.oditur_penyidik_id,
     label: item.nama_oditur,
@@ -652,6 +673,7 @@ export const AddDaftarKasusModal = ({
       keterangans: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
+  
   const handleChangeKeterangan = (e: any, index: any) => {
     const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
@@ -880,40 +902,6 @@ export const AddDaftarKasusModal = ({
                     />
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map(
-                          (item) =>
-                            item === 'nama_jenis_pidana'
-                              ? 'Masukan Nama Jenis Pidana'
-                              : '',
-                          //    )}
-                          // </p>
-                          // </div>
-                          // </div>
-                          // <div className="form-group w-full">
-                          // <label
-                          // className="  block text-sm font-medium text-black dark:text-white"
-                          // htmlFor="id"
-                          // >
-                          // Jenis Pidana
-                          // </label>
-                          // <Select
-                          // className="capitalize p-jenis"
-                          // name='jenis_pidana_id'
-                          // options={jenisPidanaOptions}
-                          // isDisabled={isDetail}
-                          // isDisabled={true}
-                          // onChange={handleSelectPidana}
-                          // onChange={handleChange}
-                          // placeholder="Pilih Jenis Pidana"
-                          // styles={customStyles}
-                          // value={formState.jenis_pidana_id}
-                          // value={jenisPidanaOptions.find(option => option.value === formState.jenis_pidana_id)}
-                          // />
-                          // <div className="h-2">
-                          // <p className="error-text">
-                          // {errors.map((item) =>
-                          //                           item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
-                        )}
                       </p>
                     </div>
                   </div>
@@ -1023,6 +1011,31 @@ export const AddDaftarKasusModal = ({
                           'Masukan Tanggal Pelaporan Kasus'}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="form-group w-full ">
+                    <label
+                      className="  block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Tanggal Pelimpahan Kasus
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
+                      name="tanggal_pelimpahan_kasus"
+                      placeholder="Tanggal Pelimpahan Kasus"
+                      onChange={handleChange}
+                      disabled={isDetail}
+                      max={maxDate}
+                    />
+                    <p className='error-text'>
+                      {errors.map((item) =>
+                        item === 'tanggal_pelimpahan_kasus'
+                          ? 'Masukan Tanggal Pelimpahan Kasus'
+                          : '',
+                      )}
+                    </p>
                   </div>
                 </div>
                 <div className={`${isDetail ? 'block mt-4' : 'hidden'}`}>

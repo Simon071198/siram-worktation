@@ -34,26 +34,70 @@ interface WBP {
 //   nama_jenis_pidana: string;
 // }
 
-const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
-  const [formState, setFormState] = useState({
+const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
+  const [formState, setFormState] = useState<any>({
     nama_kasus: '',
-    nomor_kasus: '',
+    nomor_kasus: nomorKasus,
     lokasi_kasus: '',
-    jenis_perkara_id: '',
-    jenis_pidana_id: '',
+    jenis_perkara_id: defaultValue?.jenis_perkara_id,
+    jenis_pidana_id: defaultValue?.jenis_pidana_id,
     kategori_perkara_id: '',
-    waktu_kejadian: '',
-    waktu_pelaporan_kasus: '',
+    waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
     wbp_profile_ids: [],
     keterangans: [],
     role_ketua_oditur_ids: '',
     oditur_penyidik_id: [],
-    nama_jenis_perkara: '',
-    nama_jenis_pidana: '',
+    nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
+    nama_jenis_pidana: defaultValue?.nama_jenis_pidana,
     saksi_id: [],
     keteranganSaksis: [],
     zona_waktu: '',
+    tanggal_pelimpahan_kasus: '',
   });
+
+  // interface type {
+  //   [key: string]: any;
+  // }
+  // interface oditur {
+  //   oditur_penyidik_id: string;
+  //   nama_oditur: string;
+  // }
+
+  // interface ExampleCustomTimeInputProps {
+  //   date: Date;
+  //   value: string; // Assuming value is a string representing time
+  //   onChange: (value: string) => void;
+  // }
+
+  // let dataAdmin = JSON.parse(localStorage.getItem('formState') || '{}');
+
+  // const [formState, setFormState] = useState<type>(() => {
+  //   const savedFormState = localStorage.getItem('formState');
+  //   return savedFormState ? JSON.parse(savedFormState) : {
+  //     nomor_kasus: '',
+  //     nama_kasus: '',
+  //     jenis_perkara_id: '',
+  //     kategori_perkara_id: '',
+  //     jenis_pidana_id: '',
+  //     nama_jenis_perkara: '',
+  //     nama_jenis_pidana: '',
+  //     lokasi_kasus: '',
+  //     waktu_kejadian: '',
+  //     zona_waktu: '',
+  //     waktu_pelaporan_kasus: '',
+  //     oditur: dataAdmin.oditur || '',
+  //     oditur_penyidik_id: [],
+  //     ketuaOditur: dataAdmin.ketuaOditur || '',
+  //     role_ketua_oditur_ids: '',
+  //     wbpProfile: dataAdmin.wbpProfile || '',
+  //     wbp_profile_ids: [],
+  //     saksi: dataAdmin.saksi || '',
+  //     saksi_id: [],
+  //     keterangans: [],
+  //     keteranganSaksis: [],
+  //   };
+  // });
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,12 +106,12 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
 
   const [errors, setErrors] = useState<string[]>([]);
-  const modalContainerRef = useRef<HTMLDivElement>(null);
 
   const [DataWBP, setDataWBP] = useState<WBP[]>([]);
   const [dataStatusWBP, setDataStatusWBP] = useState([]);
@@ -76,9 +120,9 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   const [dataJenisPidana, setDataJenisPidana] = useState<any[]>([]);
   const [dataJenisPerkaraSelect, setDataJenisPerkaraSelect] = useState<any>();
   const [dataSaksi, setDataSaksi] = useState([]);
-  const [filter, setFilter] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [dateEdited, setDateEdited] = useState(false);
   const [pihakTerlibat, setPihakTerlibat] = useState([]);
-  const [modalAddOpen, setModalAddOpen] = useState(false);
 
   const [ketuaOditurPenyidik, setKetuaOditurPenyidik] = useState([
     {
@@ -87,8 +131,11 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     },
   ]);
 
+  console.log(formState, 'formstate');
+
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
+
 
   const customStyles = {
     container: (provided: any) => ({
@@ -184,9 +231,11 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     />
   );
 
+
+
   const handleWaktuKejadian = (e: any) => {
     console.log('1213', e);
-
+  
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
     switch (timeZone) {
@@ -202,6 +251,17 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
+  
+    // const updatedFormState = {
+    //   ...formState,
+    //   waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+    //   zona_waktu: zonaWaktu,
+    // };
+  
+    // setFormState(updatedFormState);
+  
+    // // Simpan data ke localStorage
+    // localStorage.setItem('formState', JSON.stringify(updatedFormState));
 
     setFormState({
       ...formState,
@@ -209,7 +269,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       zona_waktu: zonaWaktu,
     });
   };
-
+  
   const handleWaktuPelaporan = (e: any) => {
     console.log('1213', e);
 
@@ -228,11 +288,24 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
-    setFormState({
-      ...formState,
-      waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
-      zona_waktu: zonaWaktu,
-    });
+    // const updatedFormState = {
+    //   ...formState,
+    //   waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+    //   zona_waktu: zonaWaktu,
+    // };
+  
+    // setFormState(updatedFormState);
+  
+    // // Simpan data ke localStorage
+    // localStorage.setItem('formState', JSON.stringify(updatedFormState));
+
+     setFormState({
+       ...formState,
+       waktu_pelaporan_kasus: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+       zona_waktu: zonaWaktu,
+     });
+
+     setDateEdited(true);
   };
 
   const getTimeZone = () => {
@@ -415,9 +488,19 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (!value) {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
         errorFields.push(key);
       }
+
+      // Tambahkan validasi khusus untuk oditur_penyidik_id
+      if (
+        key === 'oditur_penyidik_id' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
+      }
+
       if (
         key === 'wbp_profile_ids' &&
         Array.isArray(value) &&
@@ -450,6 +533,26 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     setErrors([]);
     return true;
   };
+
+  const [maxDate, setMaxDate] = useState(formatDate(new Date()));
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
+
+
+
   const handleSubmitAdd = async (params: any) => {
     try {
       const responseCreate = await apiCreateDaftarKasus(params, token);
@@ -459,7 +562,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
           icon: 'success',
           title: 'Berhasil menambah data',
         });
-      } else if (responseCreate.data.status === 'NO') {
+      } else if (responseCreate.data.status === 'error') {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
@@ -479,13 +582,16 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
       });
     }
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log(formState, 'formstate');
     if (!validateForm()) return;
-    setButtonLoad(true);
-
-    handleSubmitAdd(formState).then(() => setButtonLoad(false));
+    // setButtonLoad(true);
+    console.log(formState, "formState")
+    handleSubmitAdd(formState)
+    // .then(
+    //   () => setFormSubmitted(true),
+    //   setButtonLoad(false),
+    // );
   };
 
   const handleChange = (e: any) => {
@@ -497,10 +603,12 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     label: item.nama_jenis_perkara,
   }));
 
+  
   const handleSelectPerkara = (e: any) => {
     const kategoriPerkara: any = dataJenisPerkara.find(
       (item: any) => item.jenis_perkara_id === e?.value,
     );
+ 
     setDataJenisPerkaraSelect(kategoriPerkara);
     setFormState({
       ...formState,
@@ -522,7 +630,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     value: item.oditur_penyidik_id,
     label: item.nama_oditur,
   }));
-
+  
   const handleSelectOditurPenyidik = (e: any) => {
     let arrayTemp: any = [];
     let arrayAnggota: any = [];
@@ -533,14 +641,16 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
     setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
     setKetuaOditurPenyidik(arrayAnggota);
   };
+  
 
   const handleSelectKetuaOditur = (e: any) => {
     setFormState({ ...formState, role_ketua_oditur_ids: e.value });
   };
 
+
   const handleSelectPihakTerlibat = (e: any) => {
     let arrayTersangka: any = [];
-    let arraySaksi: any = [];
+    let arraSaksi: any = [];
     let arraySaksiOptions: any = [];
     let arrayTersangkaOptions: any = [];
     for (let i = 0; i < e?.length; i++) {
@@ -548,14 +658,14 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
         arrayTersangka.push(e[i].value);
         arrayTersangkaOptions.push(e[i]);
       } else if (e[i].label.includes('(Saksi)')) {
-        arraySaksi.push(e[i].value);
+        arraSaksi.push(e[i].value);
         arraySaksiOptions.push(e[i]);
       }
     }
     setFormState({
       ...formState,
       wbp_profile_ids: arrayTersangka,
-      saksi_id: arraySaksi,
+      saksi_id: arraSaksi,
     });
     setSelectSaksi(arraySaksiOptions);
     setSelectTersangka(arrayTersangkaOptions);
@@ -571,90 +681,20 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
   };
 
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
-    newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
+    const newKeteranganSaksi = [...formState.keteranganSaksis];
+    newKeteranganSaksi[index] = e.target.value;
     setFormState({
       ...formState,
-      keteranganSaksis: newKeteranganSaksi, // Set array keterangan yang diperbarui
-    });
-  };
-
-  // const [nomorKasus, setNomorKasus] = useState({
-  //   nomor_kasus: '',
-  // });
-
-  const handleModalAddOpen = () => {
-    function convertToRoman(num: number) {
-      const romanNumerals = [
-        'M',
-        'CM',
-        'D',
-        'CD',
-        'C',
-        'XC',
-        'L',
-        'XL',
-        'X',
-        'IX',
-        'V',
-        'IV',
-        'I',
-      ];
-      const decimalValues = [
-        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
-      ];
-
-      let result = '';
-
-      for (let i = 0; i < romanNumerals.length; i++) {
-        while (num >= decimalValues[i]) {
-          result += romanNumerals[i];
-          num -= decimalValues[i];
-        }
-      }
-
-      return result;
-    }
-
-    const type = 'Pid.K';
-    const day = dayjs(new Date()).format('DD');
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-    const year = new Date().getFullYear().toString();
-    const location = 'Otmil';
-    const romanNumber = convertToRoman(parseInt(month));
-    const currentDate = `${day}-${romanNumber}/${year}`;
-    let largestNumber = 0;
-
-    data.forEach((item: any) => {
-      if (item.nomor_kasus) {
-        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
-        const number = parseInt(caseNumber, 10);
-
-        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
-          largestNumber = Math.max(largestNumber, number);
-        }
-      }
+      keteranganSaksis: newKeteranganSaksi, 
     });
 
-    // Increment the largest number by 1 if the date is the same
-    largestNumber += 1;
-
-    // Set the case number with the desired format
-    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
-    console.log(caseNumberFormatted, 'caseNumberFormatted');
-
-    setFormState({
-      ...formState,
-      nomor_kasus: caseNumberFormatted,
-    });
-
-    // setModalAddOpen(true);
+    // localStorage.setItem('formState', JSON.stringify(formState));
   };
 
   useEffect(() => {
     console.log(formState, 'formState coy');
-    handleModalAddOpen();
   }, []);
+
 
   return (
     <div>
@@ -695,7 +735,8 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               placeholder="Nama Kasus"
               name="nama_kasus"
               onChange={handleChange}
-              disabled={isDetail}
+              // disabled={isDetail}
+              // value={formState.nama_kasus || ''}
             />
             <div className="h-2">
               <p className="error-text">
@@ -718,13 +759,14 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               placeholder="Pilih Jenis Perkara"
               styles={customStyles}
               options={jenisPerkaraOptions}
-              isDisabled={isDetail}
+              // isDisabled={isDetail}
               onChange={handleSelectPerkara}
+              // defaultInputValue={formState.nama_jenis_perkara}
             />
             <div className="h-2">
               <p className="error-text">
                 {errors.map((item) =>
-                  item === 'jenis_perkara_id' ? 'Masukan Jenis Perkara' : '',
+                  item === 'jenis_perkara_id' ? 'Pilih Jenis Perkara' : '',
                 )}
               </p>
             </div>
@@ -746,13 +788,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               disabled
             />
             <div className="h-2">
-              <p className="error-text">
-                {errors.map((item) =>
-                  item === 'nama_jenis_pidana'
-                    ? 'Masukan Nama Jenis Pidana'
-                    : '',
-                )}
-              </p>
+              <p className="error-text"></p>
             </div>
           </div>
 
@@ -768,7 +804,8 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               placeholder="Lokasi Kasus"
               name="lokasi_kasus"
               onChange={handleChange}
-              disabled={isDetail}
+              // disabled={isDetail}
+              // value={formState.lokasi_kasus || ''}
             />
             <div className="h-2">
               <p className="error-text">
@@ -803,6 +840,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                 name="waktu_kejadian"
                 disabled={false}
                 locale="id"
+                // value={formState.waktu_kejadian || ''}
               />
               <input
                 type="text"
@@ -814,11 +852,9 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             </div>
             <div className="h-2">
               <p className="error-text">
-                {errors.map((item) =>
-                  item === 'waktu_kejadian'
-                    ? 'Masukan Tanggal Kejadian Kasus'
-                    : '',
-                )}
+                {formSubmitted &&
+                  errors.includes('waktu_kejadian') &&
+                  'Masukan Tanggal Kejadian Kasus'}
               </p>
             </div>
           </div>
@@ -833,7 +869,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             <div className="flex flex-row">
               <DatePicker
                 selected={
-                  formState.waktu_pelaporan_kasus
+                  dateEdited && formState.waktu_pelaporan_kasus
                     ? dayjs(formState.waktu_pelaporan_kasus).toDate()
                     : dayjs().toDate()
                 }
@@ -858,9 +894,32 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             </div>
             <div className="h-2">
               <p className="error-text">
+                {formSubmitted &&
+                  errors.includes('waktu_pelaporan_kasus') &&
+                  'Masukan Tanggal Pelaporan Kasus'}
+              </p>
+            </div>
+
+            <div className="form-group w-full ">
+              <label
+                className="  block text-sm font-medium text-black dark:text-white"
+                htmlFor="id"
+              >
+                Tanggal Pelimpahan Kasus
+              </label>
+              <input
+                type="date"
+                className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
+                name="tanggal_pelimpahan_kasus"
+                placeholder="Tanggal Pelimpahan Kasus"
+                onChange={handleChange}
+                disabled={isDetail}
+                max={maxDate}
+              />
+              <p className="error-text">
                 {errors.map((item) =>
-                  item === 'waktu_pelaporan_kasus'
-                    ? 'Masukan Tanggal Pelaporan Kasus'
+                  item === 'tanggal_pelimpahan_kasus'
+                    ? 'Masukan Tanggal Pelimpahan Kasus'
                     : '',
                 )}
               </p>
@@ -880,7 +939,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                 placeholder="Jumlah Penyidikan"
                 name="waktu_pelaporan_kasus"
                 onChange={handleChange}
-                disabled={isDetail}
+                // disabled={isDetail}
               />
               <p className="error-text">
                 {errors.map((item) =>
@@ -904,9 +963,12 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
               isMulti
               placeholder="Pilih Oditur Penyidik"
               styles={customStyles}
-              isDisabled={isDetail}
+              // isDisabled={isDetail}
               options={oditurPenyidikOptions}
               onChange={handleSelectOditurPenyidik}
+              defaultValue={formState.oditur}
+              isClearable={true}
+              isSearchable={true}
             />
             <div className="h-2">
               <p className="error-text">
@@ -926,11 +988,12 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             </label>
             <Select
               className="capitalize"
-              isDisabled={isDetail}
+              // isDisabled={isDetail}
               placeholder="Pilih Ketua Oditur"
               styles={customStyles}
               options={ketuaOditurPenyidik}
               onChange={handleSelectKetuaOditur}
+              defaultValue={formState.ketuaOditur}
             />
             <div className="h-2">
               <p className="error-text">
@@ -953,11 +1016,19 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
             <Select
               className="capitalize"
               isMulti
-              isDisabled={isDetail}
+              // isDisabled={isDetail}
               placeholder="Pihak Terlibat"
               styles={customStyles}
               options={pihakTerlibat}
               onChange={handleSelectPihakTerlibat}
+              // defaultValue={uniqueArray}
+              // defaultValue={pihakTerlibat.filter(option => uniqueIds.includes(option.value))}
+              // value={
+              //   pihakTerlibat.filter(option => formState.wbp_profile_ids.includes(option.value) ||
+              //   formState.saksi_id.includes(option.value))
+              // }
+
+              // value={pihakTerlibat.filter(option => selectedIds.has(option.value))}
             />
             <div className="h-2">
               <p className="error-text">
@@ -1022,7 +1093,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                             onChange={(e) =>
                               handleChangeKeteranganTersangka(e, index)
                             }
-                            disabled={isDetail}
+                            // disabled={isDetail}
                           />
                         </div>
                       </div>
@@ -1085,7 +1156,8 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail }: any) => {
                             className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                             placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
                             onChange={(e) => handleChangeKeterangan(e, index)}
-                            disabled={isDetail}
+                            // disabled={isDetail}
+                            // value={formState.keteranganSaksis[index]}
                           />
                         </div>
                       </div>

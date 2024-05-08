@@ -820,7 +820,15 @@ const shiftJaga = () => {
       };
     },
   };
-
+  const timeString = (startTime: string, endTime: string): string => {
+    return  `${startTime
+      .split(':')
+      .slice(0, 2)
+      .join(':')} - ${endTime
+      .split(':')
+      .slice(0, 2)
+      .join(':')}`
+  }
   return (
     <div className="w-full rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="pb-4">
@@ -1116,49 +1124,34 @@ const shiftJaga = () => {
                           waktu_mulai: jadwalPegawai?.waktu_mulai,
                           waktu_selesai: jadwalPegawai?.waktu_selesai,
                         };
-
                         let jam = '';
                         let shiftBackgroundColor = '';
                         let shiftBgList = '';
+                        // console.log(jadwalPegawai?.shift_id, "testing")
+                        console.log(shift, "testing")
                         if (jadwalPegawai) {
-                          switch (jadwalPegawai.nama_shift) {
-                            case shift[0].nama_shift:
-                              shiftBackgroundColor = 'bg-yellow-300';
-                              shiftBgList = 'bg-yellow-500';
-                              jam = `${jadwalPegawai.waktu_mulai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
-                              break;
-                            case shift[1].nama_shift:
-                              shiftBackgroundColor = 'bg-orange-500';
-                              shiftBgList = 'bg-orange-700';
-                              jam = `${jadwalPegawai.waktu_mulai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
-                              break;
-                            case shift[2].nama_shift:
-                              shiftBackgroundColor = 'bg-blue-500';
-                              shiftBgList = 'bg-blue-700';
-                              jam = `${jadwalPegawai.waktu_mulai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')} - ${jadwalPegawai.waktu_selesai
-                                .split(':')
-                                .slice(0, 2)
-                                .join(':')}`;
-                              break;
-                            default:
-                              shiftBackgroundColor = 'bg-red-600';
-                              shiftBgList = 'bg-red-700';
-                              break;
+                          if (jadwalPegawai.shift_id === "i20q8t3b-wy0j-9u0v-b6zl-zpgejzjjvq7s") {
+                            shiftBackgroundColor = 'bg-yellow-300';
+                            shiftBgList = 'bg-yellow-500';
+                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
+                          } else if (jadwalPegawai.shift_id === "u9f28n11-gown-rihg-z4qq-wtugvi6liysb") {
+                            shiftBackgroundColor = 'bg-orange-500';
+                            shiftBgList = 'bg-orange-700';
+                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
+                          } else if (jadwalPegawai.shift_id === "4bb362e5-f9ac-4cdd-ae48-27e6ce348136") {
+                            shiftBackgroundColor = 'bg-blue-500';
+                            shiftBgList = 'bg-blue-700';
+                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
+                          } 
+                          // else if(jadwalPegawai.shift_id != "i20q8t3b-wy0j-9u0v-b6zl-zpgejzjjvq7s" || jadwalPegawai.shift_id != "4bb362e5-f9ac-4cdd-ae48-27e6ce348136" || jadwalPegawai.shift_id != "4bb362e5-f9ac-4cdd-ae48-27e6ce348136"){
+                          //   shiftBackgroundColor = 'bg-orange-500';
+                          //   shiftBgList = 'bg-orange-700';
+                          //   jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
+                          // } 
+                          else {
+                            shiftBackgroundColor = 'bg-orange-500';
+                            shiftBgList = 'bg-orange-700';
+                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
                           }
                         }
                         return (

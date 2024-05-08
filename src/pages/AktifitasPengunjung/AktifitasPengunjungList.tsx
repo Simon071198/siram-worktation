@@ -71,6 +71,11 @@ const AktifitasPengunjungList = () => {
   const dataUserItem = localStorage.getItem('dataUser');
   const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
+  const [searchData, setSearchData] = useState({
+    nama_pengunjung: '',
+    nama_wbp: '',
+  });
+
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
     setFilter(newFilter);
@@ -129,17 +134,23 @@ const AktifitasPengunjungList = () => {
   };
 
   const handleSearchClick = async () => {
-    const params = {
-      // pagination: {
-      //   pageSize: 3,
-      // },
-      filter: {
-        nama_aktivitas_pengunjung: filter,
-        nama_lokasi_otmil: 'Cimahi',
-        waktu_mulai_kunjungan: selectedMonth ? selectedMonth : null,
-      },
-    };
+    // const params = {
+    //   // pagination: {
+    //   //   pageSize: 3,
+    //   // },
+    //   filter: {
+    //     nama_wbp: filter,
+    //     nama_lokasi_otmil: 'Cimahi',
+    //     waktu_mulai_kunjungan: selectedMonth ? selectedMonth : null,
+    //   },
+    // };
     try {
+      let params = {
+        filter: {
+          nama_pengunjung: filter,
+          nama_wbp: searchData.nama_wbp,
+        }
+      };
       const response = await apiReadAktifitasPengunjung(params, token);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
@@ -177,6 +188,12 @@ const AktifitasPengunjungList = () => {
     const size = e.target.value;
     setPageSize(size);
     setCurrentPage(1);
+  };
+
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-GB', options);
   };
 
   // useEffect untuk fetch data dari API
@@ -408,23 +425,31 @@ const AktifitasPengunjungList = () => {
       <div className="pb-4">
         <Breadcrumbs url={window.location.href} />
       </div>
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <div className="rounded-sm border border-stroke bg-white px-6 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="flex items-center w-full search">
+            <div className="flex items-center w-lvw search">
               <SearchInputButton
                 value={filter}
-                placehorder="Cari nama Aktivitas"
-                onChange={handleFilterChange}
-
+                placehorder="Cari nama pengunjung"
+                onChange={
+                  handleFilterChange
+                }
                 // onClick={handleSearchClick}
               />
-              {/* <DatePicker
-              selected={selectedMonth}
-              onChange={(date) => setSelectedMonth(date)}
-              showMonthYearPicker
-              dateFormat="MM/yyyy"
-            /> */}
+            </div>
+            <div className="flex items-center search">
+              <SearchInputButton
+                value={searchData.nama_wbp}
+                placehorder="Cari nama WBP"
+                onChange={
+                  (e) => 
+                    setSearchData({
+                      ...searchData,
+                      nama_wbp: e.target.value,
+                    })
+                }
+              />
             </div>
             <button
               className=" rounded-sm bg-blue-300 px-6 py-1 text-xs font-medium b-search "
@@ -577,7 +602,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black text-center dark:text-white">
-                          {item.waktu_mulai_kunjungan}
+                          {formatDate(item.waktu_mulai_kunjungan)}
                         </p>
                       </div>
                       <div
@@ -585,7 +610,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-2"
                       >
                         <p className="text-black dark:text-white">
-                          {item.waktu_selesai_kunjungan}
+                          {formatDate(item.waktu_selesai_kunjungan)}
                         </p>
                       </div>
                       <div
@@ -601,7 +626,7 @@ const AktifitasPengunjungList = () => {
                         className="cursor-pointer hidden truncate items-center justify-center p-2.5 sm:flex xl:p-5"
                       >
                         <p className="text-black dark:text-white">
-                          {item.nama_petugas}
+                          {item.nama_pengunjung}
                         </p>
                       </div>
                       <div

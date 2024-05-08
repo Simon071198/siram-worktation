@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AiOutlineLoading } from 'react-icons/ai';
 import Select from 'react-select';
-import { apiReadKasus } from '../../../services/api';
+import { apiReadKasus, apiReadPenyidikan } from '../../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -33,8 +33,10 @@ export const AddPenyidikanModal = ({
     nomor_penyidikan: defaultValue?.nomor_penyidikan,
     nama_kasus: defaultValue?.nama_kasus,
     agenda_penyidikan: defaultValue?.agenda_penyidikan,
-    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
-    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
+    // waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_dimulai_penyidikan: defaultValue?.waktu_dimulai_penyidikan,
+    waktu_selesai_penyidikan: defaultValue?.waktu_selesai_penyidikan,
     wbp_profile_id: defaultValue?.wbp_profile_id,
     nomor_kasus: defaultValue?.no_kasus,
     saksi_id: defaultValue?.saksi_id,
@@ -44,6 +46,8 @@ export const AddPenyidikanModal = ({
     nrp: defaultValue?.nrp,
     zona_waktu: defaultValue?.zona_waktu,
   });
+
+  console.log(formState, 'formstate cuyy');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,52 +61,71 @@ export const AddPenyidikanModal = ({
 
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  const getAllPenyidikan = async () => {
+    try {
+      const params = { filter: ' ', page: 1, pageSize: 10000 };
+      const response = await apiReadPenyidikan(params, token);
+      // if (response.data.status !== 'OK') throw new Error(response.data.message);
+      // const result = response.data.records;
+      // const filter = dataKasus.filter(data => !result.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      // setDataKasus(filter);
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  };
+  
+  const fetchData = async () => {
+    try {
+      const params = { pageSize: Number.MAX_SAFE_INTEGER };
+      const paramsPenyidikan = { filter: ' ', page: 1, pageSize: 10000 };
+      const kasus = await apiReadKasus(params, token);
+      const penyidikan = await apiReadPenyidikan(paramsPenyidikan, token);
+      console.log(kasus, penyidikan, "dapet cok")
+      if (penyidikan.data.status !== 'OK') throw new Error(penyidikan.data.message);
+      if (kasus.data.status !== 'OK') throw new Error(kasus.data.message);
+      const resultPenyidikan = penyidikan.data.records;
+      const resultKasus = kasus.data.records;
+      const filter = resultKasus.filter(data => !resultPenyidikan.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      console.log(filter, "dapet coy")
+      setDataKasus(filter);
+      handleTimeZone();
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  };
+  
+  const handleErrorResponse = error => {
+    setIsLoading(false);
+    const errorMessage = error.response.status === 403 ? Error403Message : error.message;
+    navigate('/auth/signin', {
+      state: { forceLogout: error.response.status === 403, lastPage: location.pathname },
+    });
+    Alerts.fire({ icon: error.response.status === 403 ? 'warning' : 'error', title: errorMessage });
+  };
+  
+  const handleTimeZone = () => {
+    setIsLoading(false);
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB'; break;
+      case '+08:00':
+        zonaWaktu = 'WITA'; break;
+      case '+09:00':
+        zonaWaktu = 'WIT'; break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    if (!formState?.zona_waktu) {
+      setFormState({ ...formState, zona_waktu: zonaWaktu });
+    }
+  };
+  
   useEffect(() => {
-    const params = {
-      pageSize: Number.MAX_SAFE_INTEGER,
-    };
-    const fetchData = async () => {
-      try {
-        const kasus = await apiReadKasus(params, token);
-        setDataKasus(kasus.data.records);
-        setIsLoading(false);
-        const timeZone = dayjs().format('Z');
-        let zonaWaktu;
-        switch (timeZone) {
-          case '+07:00':
-            zonaWaktu = 'WIB';
-            break;
-          case '+08:00':
-            zonaWaktu = 'WITA';
-            break;
-          case '+09:00':
-            zonaWaktu = 'WIT';
-            break;
-          default:
-            zonaWaktu = 'Zona Waktu Tidak Dikenal';
-        }
-        if (!formState?.zona_waktu) {
-          setFormState({
-            ...formState,
-            zona_waktu: zonaWaktu,
-          });
-        }
-      } catch (e: any) {
-        setIsLoading(false);
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
-      }
-    };
     fetchData();
   }, []);
-
+  
   const timezone = dayjs();
   console.log('timezone', timezone.format('Z'));
 
@@ -174,42 +197,100 @@ export const AddPenyidikanModal = ({
       ]
     : [];
 
-  const terlibatOptionsValue = {
-    value: defaultValue?.saksi_id || defaultValue?.wbp_profile_id,
-    label: defaultValue?.nama_saksi || defaultValue?.nama_wbp,
-  };
+  const [terlibatOptionsState, setTerlibatOptionState] = useState([])
+    console.log(terlibatOptionsState, "terlibatOptionsState")
+  console.log(defaultValue, "terlibat defaul")
+  
+  const dataSaksi = {
+    value: defaultValue.saksi_id,
+    label: `${defaultValue.nama_saksi } (saksi)`
+  }
 
-  const handleSelectPihakTerlibat = (e: any) => {
-    const selectedOption = terlibatOptions.find(
-      (option) => option.value === e.value,
-    );
+  const dataWbp = {
+    value: defaultValue.wbp_profile_id,
+    label: `${defaultValue.nama_wbp} (tersangka)`
+  }
 
-    if (selectedOption?.label.includes('(saksi)')) {
+  const splitData: any = [dataSaksi, dataWbp]
+  const terlibatOptionsValue = splitData;
+
+  interface Option {
+    value: string;
+    label: string;
+  }
+  
+  const handleSelectPihakTerlibat = (selectedOptions:any) => {
+    if (selectedOptions && selectedOptions.length > 0) {
+      let saksiCount = 0;
+      let tersangkaCount = 0;
+  
+      // Iterasi melalui opsi yang dipilih untuk menghitung jumlah saksi dan tersangka yang dipilih
+      selectedOptions.forEach(option => {
+        if (option.label.includes('(saksi)')) {
+          saksiCount++;
+        }
+        if (option.label.includes('(tersangka)')) {
+          tersangkaCount++;
+        }
+      });
+  
+      // Jika jumlah saksi atau tersangka yang dipilih melebihi 1, batalkan pemilihan terakhir
+      if (saksiCount > 1 || tersangkaCount > 1) {
+        // Menghapus opsi terakhir dari yang dipilih
+        selectedOptions.pop();
+      }
+  
+      // Setel form state dengan nilai yang ditemukan
       setFormState({
         ...formState,
-        saksi_id: e.value,
-        wbp_profile_id: null,
-        nrp: '',
+        saksi_id: selectedOptions.find(option => option.label.includes('(saksi)'))?.value || null,
+        wbp_profile_id: selectedOptions.find(option => option.label.includes('(tersangka)'))?.value || null,
+        // Sesuaikan dengan cara Anda mendapatkan nilai nrp
+        nrp: '', 
       });
     } else {
+      // Reset form state jika tidak ada opsi yang dipilih
       setFormState({
         ...formState,
-        wbp_profile_id: e.value,
         saksi_id: null,
-        nrp: selectedOption?.nrp,
+        wbp_profile_id: null,
+        // Reset nilai nrp jika tidak ada opsi yang dipilih
+        nrp: '', 
       });
     }
-
-    console.log('selectedOption', selectedOption);
-
-    console.log('formState', formState);
-
-    console.log('e', e);
-
-    console.log('terlibatOptions', terlibatOptions);
-
-    console.log('terlibatOptionsValue', terlibatOptionsValue);
   };
+  
+  // const handleSelectPihakTerlibat = (e: any) => {
+  //   const selectedOption = terlibatOptions.find(
+  //     (option) => option.value === e.value,
+  //   );
+
+  //   if (selectedOption?.label.includes('(saksi)')) {
+  //     setFormState({
+  //       ...formState,
+  //       saksi_id: e.value,
+  //       wbp_profile_id: null,
+  //       nrp: '',
+  //     });
+  //   } else {
+  //     setFormState({
+  //       ...formState,
+  //       wbp_profile_id: e.value,
+  //       saksi_id: null,
+  //       nrp: selectedOption?.nrp,
+  //     });
+  //   }
+
+  //   console.log('selectedOption', selectedOption);
+
+  //   console.log('formState', formState);
+
+  //   console.log('e', e);
+
+  //   console.log('terlibatOptions', terlibatOptions);
+
+  //   console.log('terlibatOptionsValue', terlibatOptionsValue);
+  // };
 
   //select kasus
   const kasusOptions = dataKasus?.map((item: any) => ({
@@ -226,6 +307,27 @@ export const AddPenyidikanModal = ({
     const kasusFilter: any = dataKasus.find(
       (item: any) => item.kasus_id === e?.value,
     );
+    console.log(kasusFilter, "filter")
+    const dataSaksi = {
+      value: kasusFilter?.saksi[0]?.saksi_id,
+      label: `${kasusFilter?.saksi[0]?.nama_saksi } (saksi)`
+    }
+
+    const dataWbp = {
+      value: kasusFilter?.wbp_profile[0]?.wbp_profile_id,
+      label: `${kasusFilter?.wbp_profile[0]?.nama} (tersangka)`
+    }
+
+    const splitData: any = [dataSaksi, dataWbp]
+    // const splitData: any = [ ...kasusFilter?.saksi?.map((item: any) => ({
+    //   value: item.saksi_id,
+    //   label: `${item.nama_saksi} (saksi)`,
+    // })),
+    // ...kasusFilter?.wbp_profile?.map((item: any) => ({
+    //   value: item.wbp_profile_id,
+    //   label: `${item.nama} (tersangka)`,
+    // }))]
+    setTerlibatOptionState(splitData)
     setDataKasusSelect(kasusFilter);
     setFormState({
       ...formState,
@@ -236,6 +338,8 @@ export const AddPenyidikanModal = ({
       nama_kategori_perkara: kasusFilter
         ? kasusFilter.nama_kategori_perkara
         : '',
+      saksi_id: dataSaksi.value,
+      wbp_profile_id: dataWbp.value
     });
   };
 
@@ -388,12 +492,14 @@ export const AddPenyidikanModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
     setButtonLoad(true);
     onSubmit(formState).then(() => 
       setButtonLoad(false),
       setFormSubmitted(true)
     );
+
+    console.log(formState, 'HAHA BYE');
   };
 
   const modalStyles: any = {
@@ -503,6 +609,7 @@ export const AddPenyidikanModal = ({
       color: 'white',
     }),
   };
+  
   const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
     <input
       value={value}
@@ -695,7 +802,7 @@ export const AddPenyidikanModal = ({
                     </p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="form-group w-full h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -704,10 +811,27 @@ export const AddPenyidikanModal = ({
                       Pihak Terlibat
                     </label>
                       <Select
+                        isMulti
                         className="capitalize"
                         options={terlibatOptions}
-                        isDisabled={isDetail}
-                        defaultValue={terlibatOptionsValue}
+                        isDisabled={true}
+                        // defaultValue={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                        //   {
+                        //     label: data.label,
+                        //     value: data.value
+                        //   }
+                        // )) : ''}
+                        value={isDetail || isEdit ? terlibatOptionsValue.map((data) => (
+                          {
+                            label: data.label,
+                            value: data.value
+                          }
+                        )) : terlibatOptionsState.map((data) => (
+                          {
+                            label: data.label,
+                            value: data.value
+                          }
+                        ))}
                         onChange={handleSelectPihakTerlibat}
                         placeholder="Pihak Terlibat"
                         styles={customStyles}
@@ -717,7 +841,7 @@ export const AddPenyidikanModal = ({
                             <p className="error-text">Pilih salah satu pihak terlibat.</p>
                         )}
                   </div>
-                  <div className="form-group w-full h-22">
+                  {/* <div className="form-group w-full h-22">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -738,7 +862,7 @@ export const AddPenyidikanModal = ({
                         item === 'nrp' ? 'Masukan NRP' : '',
                       )}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="form-group w-full h-22">
                   <label

@@ -9,13 +9,12 @@ import {
   apiReadAllRole,
   apiReadAllStaff,
   apiReadAllUser,
-  apiReadAllWBP,
+  apiReadAllWBP, 
   apiReadJaksapenuntut,
   apiReadSaksi,
 } from '../../services/api';
 import Select from 'react-select';
 import { Alerts } from './AlertSidang';
-import toast, { Toaster } from 'react-hot-toast';
 import { CiGlass } from 'react-icons/ci';
 import dayjs from 'dayjs';
 // import { ipcRenderer } from 'electron';]
@@ -61,9 +60,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       masa_tahanan_bulan: '',
       masa_tahanan_hari: '',
       nama_sidang: '',
-      nama_wbp: '',
-      wbp_profile_id_kasus: '',
-      wbp: [],
       juru_sita: '',
       hasil_keputusan_sidang: '',
       pengawas_peradilan_militer: '',
@@ -76,12 +72,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       agenda_sidang: '',
       saksi: [],
       pengacara: [],
-      // link_dokumen_persidangan: defaultValue.link_dokumen_persidangan,
+      wbp_profile: [],
+      nama: [],
       // hakim_id: [],
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
       role_ketua_oditur: {},
-      zona_waktu: '',
+      // zona_waktu: '',
     },
   );
 
@@ -106,70 +103,102 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [ahli, setAhli] = useState([]);
   const [saksi, setSaksi] = useState([]);
   const [wbp, setWbp] = useState([]);
+  const [getWbp, setGetWbp] = useState([]);
+  const [getZona, setGetZona] = useState([]);
   const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
-  const [file, setFile] = useState(null);
   const [filter, setFilter] = useState('');
+  const [file, setFile] = useState(null);
 
+  console.log(formState.wbpHolder,'testing')
+
+  useEffect(()=> {
+    if(isEdit || isDetail){
+      setGetWbp(formState.wbpHolder.map((item: any) => ({
+        value: item.wbp_profile_id,
+        label: item.nama,
+      })))
+    }
+  },[])
+
+  useEffect(() => {
+    if(isEdit || isDetail){
+      setGetSaksi(formState.saksiHolder.map((item:any) => ({
+        value: item.saksi_id,
+        label: item.nama_saksi,
+      })))
+    }
+  },[])
+
+    useEffect(() => {
+      Promise.all([
+        getTimeZone(),
+        getAllJenisSidang(),
+        getAllJaksaPenuntut(),
+        getAllHakim(),
+        getAllKasus(),
+        getAllPengadilanMiliter(),
+        getAllWbp(),
+        getAllAhli(),
+        getAllSaksi(),
+      ]).then(() => setIsLoading(false));
+    }, []);
 
   // useEffect untuk mengambil data dari api
-
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-        if (
-            key !== 'lokasi_lemasmil_id' &&
-            key !== 'last_login' &&
-            key !== 'nama_lokasi_lemasmil' &&
-            key !== 'image' &&
-            key !== 'pengacara' &&
-            key !== 'jadwal_sidang' &&
-            key !== 'wbp_profile_id_kasus' &&
-            key !== 'perubahan_jadwal_sidang' &&
-            key !== 'waktu_mulai_sidang' &&
-            key !== 'waktu_selesai_sidang' &&
-            key !== 'provinsi_id' &&
-            key !== 'nama_provinsi' &&
-            key !== 'nama_kota'
-        ) {
-            if (
-                !value ||
-                (key === 'oditur_penuntut_id' && (
-                    value === '' ||
-                    (Array.isArray(value) && value.length === 0)
-                )) ||
-                (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
-                (key === 'pengacara' && Array.isArray(value) && value.length === 0) ||
-                (key === 'wbp' && Array.isArray(value) && value.length === 0) ||
-                (key === 'ahli' && Array.isArray(value) && value.length === 0)
-            ) {
-                errorFields.push(key);
-            }
-        }
-    }
+      if (
+        key !== 'lokasi_lemasmil_id' &&
+        key !== 'last_login' &&
+        key !== 'nama_lokasi_lemasmil' &&
+        key !== 'image' &&
+        // key !== 'pengacara' &&
+        key !== 'jadwal_sidang' &&
+        key !== 'perubahan_jadwal_sidang' &&
+        key !== 'waktu_mulai_sidang' &&
+        key !== 'waktu_selesai_sidang' &&
+        // key !== 'hasil_keputusan_sidang' &&
+        key !== 'provinsi_id' &&
+        key !== 'nama_provinsi' &&
+        key !== 'nama_kota' && 
+        key !== 'nama_pengadilan_militer'
 
-    if (!formState.oditur_penuntut_id) {
-      errorFields.push('role_ketua_oditur') ;
+        // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+        // || key === 'saksi' && Array.isArray(value) && value.length === 0
+      ) {
+        if (
+          !value ||
+          // (key === 'hakim_id' && Array.isArray(value) && value.length === 0) ||
+          (key === 'jaksa_penuntut_id' &&
+            Array.isArray(value) &&
+            value.length === 0) ||
+          (key === 'oditur_penuntut_id' && Array.isArray(value) && value.length === 0) ||
+          (key === 'wbp_profile' && Array.isArray(value) && value.length === 0)||
+          (key === 'ahli' && Array.isArray(value) && value.length === 0)||
+          (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
+          (key === 'pengacara' && Array.isArray(value) && value.length === 0)
+        ) {
+          errorFields.push(key);
+        }
+      }
     }
 
     if (errorFields.length > 0) {
-        console.log(errorFields);
-        setErrors(errorFields);
-        return false;
+      console.log(errorFields);
+      setErrors(errorFields);
+      return false;
     }
 
     setErrors([]);
     return true;
-};
-
+  };
 
   const handleSelectKetuaHakim = (e: any) => {
     setFormState({ ...formState, role_ketua_oditur: e?.value });
   };
-
-
 
   const handleSelectKetuaJaksa = (e: any) => {
     setFormState({ ...formState, role_ketua_oditur: e?.value });
@@ -252,24 +281,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           },
         },
         {
-          element: '.input-wbp',
-          popover: {
-            title: 'Nama WBP',
-            description: 'Isi nama wbp',
-          },
-        },
-        {
           element: '.input-agenda',
           popover: {
             title: 'Agenda Sidang',
             description: 'Isi agenda sidang',
-          },
-        },
-        {
-          element: '.input-hasil',
-          popover: {
-            title: 'Hasil Keputusan Sidang',
-            description: 'Isi hasil keputusan sidang',
           },
         },
         {
@@ -287,7 +302,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           },
         },
         {
-          element: '.input-mulai',
+          element: '.input-waktu',
           popover: {
             title: 'Waktu Mulai',
             description: 'Menentukan tanggal waktu mulai',
@@ -298,6 +313,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           popover: {
             title: 'Waktu Selesai',
             description: 'Menentukan tanggal waktu selesai',
+          },
+        },
+        {
+          element: '.s-wbp',
+          popover: {
+            title: 'WBP',
+            description: 'Pilih wbp yang diinginkan',
           },
         },
         {
@@ -362,6 +384,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     driverObj.drive();
   };
   console.log('ff dan', formState);
+  
   const handleSelectJaksa = (e: any) => {
     console.log('jaksa', e);
     let arrayTemp: any = [];
@@ -373,6 +396,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   };
 
   useEffect(() => {
+    checkFileType(formState.link_dokumen_persidangan)
+
     console.log('jaksa aja', jaksa);
     // console.log('jaksa filter', jaksa.filter((item) => formState.oditur_penuntut_id.includes(item.oditur_penuntut_id)));
     // console.log("jaksa", formState.oditur_penuntut_id)
@@ -380,6 +405,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const jaksaMap = formState?.oditurHolder?.map(
         (item: any) => item?.oditur_penuntut_id,
       );
+      const wbpMap = formState.wbpHolder.map((item: any) => item.wbp_profile_id);
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
       // const pengacaraMap = formState.sidang_pengacara.map(
@@ -387,7 +413,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // );
       // setFormState({ ...formState, jaksa_penuntut_id: jaksaMap });
       const hakimMap = formState.hakimHolder.map((item: any) => item.hakim_id);
-      // const wbpMap = formState.wbpHolder.map((item:any) => item.wbp_profile_id)
       setFormState({
         ...formState,
         hakim_id: hakimMap,
@@ -395,24 +420,53 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         // role_ketua_hakim: formState.role_ketua_hakim_holder.hakim_id,
         role_ketua_oditur:
           formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+        wbp_profile: wbpMap,
         ahli: ahliMap,
         saksi: saksiMap,
-        // wbp: wbpMap,
         // pengacara: pengacaraMap,
-        // pdf_file_base64: formState.link_dokumen_persidangan,
+        pdf_file_base64: formState.link_dokumen_persidangan,
       });
     }
   }, []);
 
   useEffect(() => {
-    if (getSaksi.length > 0) {
+    if (getSaksi.length > 0 && getWbp.length > 0) {
       const saksiValues = getSaksi.map((item: any) => item.value);
+      const wbpValues = getWbp.map((item: any) => item.value);
+
       setFormState((prevFormState: any) => ({
         ...prevFormState,
         saksi: saksiValues,
+        wbp_profile: wbpValues,
       }));
     }
-  }, [getSaksi]);
+  }, [getSaksi, getWbp]);
+
+  const handleSelectWbp = (e: any) => {
+    const selectedValues = e.map((item: any) => ({
+      value: item.value,
+      label: item.label,
+    }));
+
+    setFormState((prevFormState: any) => ({
+      ...prevFormState,
+      wbp_profile: selectedValues.map((valueItem: any) => valueItem.value),
+      wbpHolder: selectedValues.map((valueItem: any) => ({
+        wbp_profile_id: valueItem.value,
+        nama: valueItem.label,
+      })),
+    }));
+
+    setGetWbp(selectedValues);
+  };
+
+
+  // const handleSelectWbp = (e: any) => {
+  //   setFormState({
+  //     ...formState,
+  //     [e.target.name]: e.target.value
+  //   });
+  // }
 
   const handleSelectSaksi = (e: any) => {
     console.log(e, 'handleSelectSaksi');
@@ -443,40 +497,22 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState({ ...formState, ahli: arrayTemp });
   };
 
-  const handleSelectWbp = (e:any) => {
-    let arrayTemp = [];
-    for (let i = 0; i < e.length; i++) {
-      arrayTemp.push(e[i].value);
-    }
-
-    setFormState({...formState, wbp: arrayTemp});
-  }
-
   const handleChange = (e: any) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
-  console.log('forms', formState);
-  // const handleSubmit = (e: any) => {
-  //   e.preventDefault();
-  //   // console.log(formState, 'formState');
-  //   console.log('SUBMIT', e);
-
-  //   if (!validateForm()) return;
-  //   setButtonLoad(true);
-  //   console.log('formstateValidate', formState);
-  //   onSubmit(formState).then(() => setButtonLoad(false));
-  // };
 
   const handleSubmit = (e: any) => {
+    console.log('forms', formState);
     e.preventDefault();
+    // console.log(formState, 'formState');
     console.log('SUBMIT', e);
 
     if (!validateForm()) return;
-
     setButtonLoad(true);
-    console.log('formstateValidate', formState);
-    onSubmit(formState).then(() => setButtonLoad(false));
-}
+    // console.log('formstateValidate', formState);
+    // onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState);
+  };
 
   //pengacara
   const handleInputPengacara = (e: any) => {
@@ -570,6 +606,30 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     });
   };
 
+  const handleUpload = (e: any) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setFormState({ ...formState, pdf_file_base64: reader.result });
+        console.log('Preview:', reader.result);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleRemoveDoc = () => {
+    setFormState({ ...formState, pdf_file_base64: '' });
+    const inputElement = document.getElementById(
+      'fileUpload',
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = '';
+    }
+  };
+
   const handlePenadilanMiliter = (e: any) => {
     setFormState({ ...formState, pengadilan_militer_id: e?.value });
   };
@@ -604,7 +664,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const saksiFilter = kasus.filter(
         (item: any) => item.kasus_id === selectedOption.value,
       )[0];
+
+      const wbpFilter = kasus.filter(
+        (item: any) => item.kasus_id === selectedOption.value,
+      )[0];
+
       console.log(saksiFilter, 'saksiFilter');
+      console.log(wbpFilter, 'wbp filter');
+
       if (saksiFilter) {
         const saksiMap = saksiFilter.saksi.map((item: any) => ({
           label: item.nama_saksi,
@@ -618,15 +685,39 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           kasus_id: saksiFilter.kasus_id,
           nama_kasus: saksiFilter.nama_kasus,
         });
+
         console.log('getSaksi', getSaksi);
       } else {
         setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
       }
+
+      if(wbpFilter){
+        const wbpMap = wbpFilter.wbp_profile.map((item: any) => ({
+          label: item.nama,
+          value: item.wbp_profile_id,
+        }));
+        console.log('wbpsMap', wbpMap)
+        setGetWbp(wbpMap);
+
+        setFormState({
+          ...formState,
+          nomor_kasus: wbpFilter.nomor_kasus,
+          kasus_id: wbpFilter.kasus_id,
+          nama_kasus: wbpFilter.nama_kasus,
+        });
+
+        console.log('getWbp', getWbp);
+      }else{
+        setGetWbp([]);
+      }
+
     } else {
       setFormState({ ...formState, kasus_id: '' });
       setGetSaksi([]);
+      setGetWbp([]);
     }
   };
+console.log(getWbp, 'get wbp')
 
   const handleJadwalSidang = (e: any) => {
     console.log('1213', e);
@@ -652,6 +743,29 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       zona_waktu: zonaWaktu,
     });
   };
+  
+  const handleZonaWaktu = () => {
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({...formState,zona_waktu: zonaWaktu })
+  }
+  useEffect(() => {
+    handleZonaWaktu()
+  }, [])
+
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
 
@@ -749,106 +863,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       });
     }
   };
-  useEffect(() => {
-    Promise.all([
-      getTimeZone(),
-      getAllJenisSidang(),
-      getAllJaksaPenuntut(),
-      getAllHakim(),
-      getAllWbp(),
-      getAllKasus(),
-      getAllPengadilanMiliter(),
-      getAllAhli(),
-      getAllSaksi(),
-    ]).then(() => setIsLoading(false));
-  }, []);
 
-    useEffect(() => {
-      console.log(formState, 'FORMSTATE');
-      checkFileType(formState.link_dokumen_persidangan);
-
-      if (isDetail || isEdit) {
-        setFormState((prevFormState: any) => ({
-          ...prevFormState,
-          pdf_file_base64: prevFormState.link_dokumen_persidangan,
-        }));
-      }
-    }, [formState.link_dokumen_persidangan]);
-
-    const handleUpload = (e: any) => {
-      const file = e.target.files[0];
-      const maxSizeInBytes = 10 * 1024 * 1024;
-
-      if (file) {
-        if (file.size > maxSizeInBytes) {
-          // File size exceeds the limit, handle the error as you wish
-          console.log('File size exceeds the limit.');
-          toast.error(
-            'File size exceeds limit of 10MB. Please reduce file size and try again.',
-          );
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onloadend = async () => {
-          await setFormState({ ...formState, pdf_file_base64: reader.result });
-          console.log('Preview:', reader.result);
-        };
-
-        reader.readAsDataURL(file);
-      }
-    };
-
-    const handleDownloadDoc = () => {
-      // const url = `/proxy?url=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`; // Ganti dengan URL file yang ingin Anda unduh
-
-      // fetch(url)
-      //   .then((response) => response.blob())
-      //   .then((blob) => {
-      //     const blobUrl = URL.createObjectURL(blob);
-      //     const a = document.createElement('a');
-      //     const filename: any = url.split('/').pop();
-      //     a.href = blobUrl;
-      //     a.download = `${formState.nama_dokumen_persidangan}-${filename}`; // Ganti dengan nama file yang Anda inginkan
-      //     a.style.display = 'none';
-      //     document.body.appendChild(a);
-      //     a.click();
-      //     // document.body.removeChild(a);
-      //     window.URL.revokeObjectURL(blobUrl);
-      //   })
-      //   .catch((error) => {
-      //     console.error('Gagal mengunduh file:', error);
-      //   });
-      // window.open(
-      //   `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
-      //   '_blank',
-      // );
-
-      const url = `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`;
-
-      const windowFeatures = 'width=600,height=400';
-
-      window.open(url, '_blank', windowFeatures);
-
-      // const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
-      //   <input
-      //     value={value}
-      //     onChange={(e) => onChange(e.target.value)}
-      //     style={{ border: 'solid 1px pink' }}
-      //   />
-      // );
-    };
-
-    const handleRemoveDoc = () => {
-      setFormState({ ...formState, pdf_file_base64: '' });
-      const inputElement = document.getElementById(
-        'fileUpload',
-      ) as HTMLInputElement;
-      if (inputElement) {
-        inputElement.value = '';
-      }
-    };
 
   const getAllJenisSidang = async () => {
     let params = {
@@ -926,28 +941,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     }
   };
 
-  const getAllWbp = async () => {
-    let params = {
-      filter: '',
-      pageSize: 1000,
-    };
-    try {
-      const response = await apiReadAllWBP(params, token);
-      setWbp(response.data.records);
-    } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
-    }
-  };
-
-
   const getAllKasus = async () => {
     let params = {
       filter: '',
@@ -981,6 +974,27 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     try {
       const response = await apiPengadilanMiliterRead(params, token);
       setPengadilanMiliter(response.data.records);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
+
+  const getAllWbp = async () => {
+    let params = {
+      filter: '',
+      pageSize: 1000,
+    };
+    try {
+      const response = await apiReadAllWBP(params, token);
+      setWbp(response.data.records);
     } catch (e: any) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
@@ -1167,30 +1181,50 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   //   URL.revokeObjectURL(url);
   // };
 
-  
+  const handleDownloadDoc = () => {
+    // const url = `/proxy?url=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`; // Ganti dengan URL file yang ingin Anda unduh
 
-    const checkFileType = (file: any) => {
-      if (file) {
-        console.log(file, 'file');
-        const fileExtension = file.split('.').pop().toLowerCase();
-        console.log(fileExtension, 'file');
-        setFile(fileExtension);
-      } else {
-        console.error('File is undefined or empty.');
-      }
-    };
+    // fetch(url)
+    //   .then((response) => response.blob())
+    //   .then((blob) => {
+    //     const blobUrl = URL.createObjectURL(blob);
+    //     const a = document.createElement('a');
+    //     const filename: any = url.split('/').pop();
+    //     a.href = blobUrl;
+    //     a.download = `${formState.nama_dokumen_persidangan}-${filename}`; // Ganti dengan nama file yang Anda inginkan
+    //     a.style.display = 'none';
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     // document.body.removeChild(a);
+    //     window.URL.revokeObjectURL(blobUrl);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Gagal mengunduh file:', error);
+    //   });
+    window.open(
+      `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
+      '_blank',
+    );
 
-  const [pdfLoaded, setPdfLoaded] = useState(false);
-
-  const handleLoad = () => {
-    console.log('PDF loaded successfully');
-    setPdfLoaded(true);
+    const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{ border: 'solid 1px pink' }}
+      />
+    );
   };
 
-  const handleError = () => {
-    console.error('Failed to load PDF');
-    setPdfLoaded(false);
-  };
+  const checkFileType = (file:any) => {
+    if(file){
+      console.log(file, 'file')
+      const fileExtension = file.split('.').pop().toLowerCase()
+      console.log(fileExtension, 'file')
+      setFile(fileExtension)
+    }else{
+      console.error('File is undefined or empty.')
+    }
+  }
 
   return (
     <div>
@@ -1250,7 +1284,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-100">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -1259,7 +1293,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-100">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -1407,7 +1441,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
-                      name="jaksa_penuntut_id"
+                      name="oditur_penuntut_id"
                       styles={customStyles}
                       options={jaksa?.map((item: any) => ({
                         value: item.oditur_penuntut_id,
@@ -1417,7 +1451,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'oditur_penuntut_id' ? 'Pilih Oditur' : '',
+                        item === 'oditur_penuntut_id' ? 'Pilih oditur penuntut' : '',
                       )}
                     </p>
                   </div>
@@ -1505,6 +1539,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         )}
                       </p>
                     </div> */}
+
                     {/* Ketua Jaksa */}
                     <div className="form-group w-full ">
                       <label
@@ -1532,7 +1567,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         isClearable={true}
                         isSearchable={true}
                         isDisabled={isDetail}
-                        name="odi_penuntut_id"
+                        name="oditur_penuntut_id"
                         styles={customStyles}
                         options={jaksa
                           .filter((item) =>
@@ -1546,15 +1581,48 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           }))}
                         onChange={handleSelectKetuaHakim}
                       />
+                      {/* <Select
+                          className="basic-select"
+                          classNamePrefix="select"
+                          defaultValue={
+                            isEdit || isDetail
+                              ? {
+                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
+                                }
+                              : {
+                                  value: formState?.role_ketua_oditur_holder?.oditur_penuntut_id,
+                                  label: formState?.role_ketua_oditur_holder?.nama_oditur,
+                                }
+                          }
+                          placeholder={'Pilih ketua oditur'}
+                          isClearable={true}
+                          isSearchable={true}
+                          isDisabled={isDetail}
+                          name="role_ketua_jaksa"
+                          styles={customStyles}
+                          options={
+                            jaksa
+                              ?.filter((jaksa: any) =>
+                                formState?.oditur_penuntut_id?.includes(jaksa.oditur_penuntut_id)
+                              )
+                              ?.map((item: any) => ({
+                                value: item.oditur_penuntut_id,
+                                label: item.nama_oditur,
+                              }))
+                          }
+                          onChange={handleSelectKetuaJaksa}
+                        /> */}
 
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'role_ketua_oditur'
+                          item === 'oditur_penuntut_id'
                             ? 'Pilih ketua oditur'
                             : '',
                         )}
                       </p>
                     </div>
+
                     {/* kasus sidang */}
                     <div className="form-group w-full ">
                       <label
@@ -1633,11 +1701,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         value={formState?.nomor_kasus}
                         disabled
                       />
-                      {/* <p className="error-text">
+                      <p className="error-text">
                         {errors.map((item) =>
                           item === 'nomor_kasus' ? 'Masukan nomor kasus' : '',
                         )}
-                      </p> */}
+                      </p>
                     </div>
 
                     {/* pengadilan militer */}
@@ -1761,7 +1829,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       Hasil keputusan sidang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-hasil"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
                       onChange={handleChange}
                       placeholder="hasil keputusan sidang"
                       name="hasil_keputusan_sidang"
@@ -1777,8 +1845,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     </p>
                   </div>
 
+                  {/* jadwal sidang */}
                   <div className="grid grid-cols-2 gap-4 justify-normal">
-                    {/* jadwal sidang */}
                     <div className="form-group w-full ">
                       <label
                         className="  block text-sm font-medium text-black dark:text-white"
@@ -1852,7 +1920,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           timeCaption="Pilih Waktu"
                           dateFormat="dd/MM/yyyy HH:mm"
                           // customInput={<ExampleCustomTimeInput />}
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary "
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
                           name="perubahan_jadwal_sidang"
                           disabled={false}
                           locale="id"
@@ -1882,7 +1950,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       >
                         Waktu mulai
                       </label>
-                      <div className="flex flex-row input-mulai">
+                      <div className="flex flex-row input-waktu">
                         {/* <input
                           type="datetime-local"
                           className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-waktu"
@@ -1903,7 +1971,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           timeCaption="Pilih Waktu"
                           dateFormat="dd/MM/yyyy HH:mm"
                           // customInput={<ExampleCustomTimeInput />}
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary "
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
                           name="waktu_mulai_sidang"
                           disabled={false}
                           locale="id"
@@ -1954,7 +2022,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           timeCaption="Pilih Waktu"
                           dateFormat="dd/MM/yyyy HH:mm"
                           // customInput={<ExampleCustomTimeInput />}
-                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary "
+                          className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
                           name="waktu_selesai_sidang"
                           disabled={false}
                           locale="id"
@@ -1986,36 +2054,52 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       WBP
                     </label>
                     <Select
-                      className="basic-multi-select"
+                      className="basic-multi-select s-wbp"
                       isMulti
                       classNamePrefix="select"
-                      defaultValue={
-                        isEdit || isDetail
-                          ? wbp.map((item: any) => ({
-                              value: item.wbp_profile_id,
-                              label: item.nama,
-                            }))
-                          : formState.wbp_profile_id
+                      // defaultValue={
+                      //   isEdit || isDetail
+                      //     ? formState.wbpHolder.map((item: any) => ({
+                      //         value: item.wbp_profile_id,
+                      //         label: item.nama,
+                      //       }))
+                      //     : formState.wbp_profile_id
+                      // }
+                      // value={
+                      //   isEdit || isDetail
+                      //   ? formState.wbpHolder.map((item: any) => ({
+                      //     value: item.wbp_profile_id,
+                      //     label: item.nama,
+                      //   }))
+                      //   : getWbp.map((item: any) => ({
+                      //     value: item.value,
+                      //     label: item.label,
+                      //   }))
+                      // }
+                       value={
+                        getWbp.map((item: any) => ({
+                          value: item.value,
+                          label: item.label,
+                        }))
                       }
                       placeholder={'Pilih wbp'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
-                      name="wbp"
+                      // isDisabled={isDetail}
+                      isDisabled
+                      name="wbp_profile"
                       styles={customStyles}
                       options={wbp.map((item: any) => ({
                         value: item.wbp_profile_id,
-                        label:
-                          item.nama,
-                          // + ' ' + '(' + item.bidang_ahli + ')',
+                        label: item.nama,
                       }))}
                       onChange={handleSelectWbp}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
-                        item === 'wbp' ? 'Pilih wbp' : '',
+                        item === 'wbp_profile' ? 'Pilih wbp' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Ahli */}
@@ -2075,21 +2159,27 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       className="basic-multi-select p-saksi"
                       isMulti
                       classNamePrefix="select"
-                      defaultValue={
-                        isEdit || isDetail
-                          ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
-                          : formState.saksi_id
-                      }
+                      // defaultValue={
+                      //   isEdit || isDetail
+                      //     ? formState.saksiHolder.map((item: any) => ({
+                      //         value: item.saksi_id,
+                      //         label: item.nama_saksi,
+                      //       }))
+                      //     : formState.saksi_id
+                      // }
+                      // value={
+                      //   isEdit || isDetail
+                      //     ? formState.saksiHolder.map((item: any) => ({
+                      //         value: item.saksi_id,
+                      //         label: item.nama_saksi,
+                      //       }))
+                      //     : getSaksi.map((item: any) => ({
+                      //         value: item.value,
+                      //         label: item.label,
+                      //       }))
+                      // }
                       value={
-                        isEdit || isDetail
-                          ? formState.saksiHolder.map((item: any) => ({
-                              value: item.saksi_id,
-                              label: item.nama_saksi,
-                            }))
-                          : getSaksi.map((item: any) => ({
+                         getSaksi.map((item: any) => ({
                               value: item.value,
                               label: item.label,
                             }))
@@ -2097,7 +2187,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
+                      // isDisabled={isDetail}
+                      isDisabled
                       name="saksi"
                       styles={customStyles}
                       options={
@@ -2113,11 +2204,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       }
                       onChange={handleSelectSaksi}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'saksi' ? 'Pilih saksi' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* pengacara */}
@@ -2133,10 +2224,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       </p>
                     </div>
 
-                    <div
-                      className="border-[1px] border-blue-500 rounded-md p-2"
-                      id="a-pengacara"
-                    >
+                    <div className="border-[1px] border-blue-500 rounded-md p-2" id='a-pengacara'>
                       <div className="flex flex-row gap-2">
                         {!isDetail && (
                           <>
@@ -2175,6 +2263,11 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           </>
                         )}
                       </div>
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'pengacara' ? 'Tambahkan pengacara' : '',
+                        )}
+                      </p>
                       <div
                         className={`mt-2 flex flex-col overflow-hidden gap-2 ${
                           formState.pengacara?.length === 0 ? 'hidden' : 'block'
@@ -2345,13 +2438,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                   <div className="grid grid-cols-1">
                     <div
                       // id="FileUpload"
-                      className="relative  block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
+                      className="relative  block w-full appearance-none overflow-hidden rounded border border-blue-500 bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5 p-unggah"
                     >
                       <input
                         type="file"
                         id="fileUpload"
-                        accept=".pdf"
+                        accept=".pdf, .doc, .docx"
                         onChange={handleUpload}
+                        // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
                       {formState.pdf_file_base64 ? (
@@ -2379,9 +2473,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               </svg>
                             </button>
                           </div>
+                          {/* <div className="flex justify-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              width="50"
+                              height="50"
+                            >
+                              <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
+                              <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
+                            </svg>
+                          </div> */}
                           <div className="">
                             <div style={{ height: '10%' }}>
-                              {/* pdf */}
+                              {/* PDF */}
                               {file && (
                                 <div className="">
                                   {file === 'pdf' ? (
@@ -2389,19 +2495,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                                       src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
                                       title="pdf"
                                       width="100%"
-                                      height="600px" // Adjust the height as per your requirement
+                                      height="600px"
                                       className="border-0 text-center justify-center"
-                                      // scrolling="no"
                                     />
                                   ) : file === 'docx' || file === 'doc' ? (
-                                    // {/* docx */}
                                     <iframe
                                       src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
                                       title="docx"
                                       width="100%"
-                                      height="600px" // Adjust the height as per your requirement
-                                      //
-                                    ></iframe>
+                                      height="600px"
+                                    />
                                   ) : (
                                     <p>Ekstensi file tidak didukung</p>
                                   )}
@@ -2427,7 +2530,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center space-y-3 p-unggah">
+                        <div className="flex flex-col items-center justify-center space-y-3">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                             <svg
                               width="16"
@@ -2465,7 +2568,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                               Klik untuk unggah
                             </span>
                           </label>
-                          <p className="mt-1.5">PDF </p>
+                          <p className="mt-1.5">Pdf,doc dan docx </p>
                         </div>
                       )}
                     </div>
