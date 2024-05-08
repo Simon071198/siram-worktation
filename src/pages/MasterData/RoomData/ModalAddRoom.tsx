@@ -91,10 +91,10 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -138,6 +138,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
       lokasi_otmil_id: '',
       zona_id: '',
       lantai_otmil_id: '',
+      nama_lantai: '',
     },
   );
 
@@ -254,6 +255,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
   }, []);
 
   const validateForm = () => {
+    console.log('FromState', formState);
     const newErrors = {
       nama: '',
       jenis: '',
@@ -286,6 +288,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         posisi_Y: '',
         lantai: '',
       });
+
       return true;
     } else {
       if (!formState.nama_ruangan_otmil) {
@@ -313,6 +316,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         newErrors.posisi_Y = 'Posisi Y harus diisi';
       }
       if (!formState.lantai_otmil_id) {
+        console.log(formState.lantai_otmil_id, 'kondisi_Lantai');
         newErrors.lantai = 'Lantai harus diisi';
       }
       // Mengatur kesalahan sesuai dengan validasi
@@ -333,6 +337,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(formState, 'formState_submit');
     e.preventDefault();
     if (validateForm()) {
       onSubmit(formState);
@@ -395,7 +400,9 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         element: `.b-submit`,
         popover: {
           title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-          description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data ruangan`,
+          description: `Klik untuk ${
+            isEdit ? 'mengubah' : 'menambahkan'
+          } data ruangan`,
         },
       },
     ];
@@ -468,8 +475,8 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                     {isDetail
                       ? 'Detail Data Ruangan'
                       : isEdit
-                        ? 'Edit Data Ruangan'
-                        : 'Tambah Data Ruangan'}
+                      ? 'Edit Data Ruangan'
+                      : 'Tambah Data Ruangan'}
                   </h3>
 
                   {isDetail ? null : isEdit ? (
@@ -768,22 +775,28 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={
+                            (console.log(formState, 'lantaiTesting'),
                             isEdit || isDetail
                               ? {
-                                  value: formState.lantai_otmil_id,
+                                  value: formState.lantai_otmill_id,
                                   label: formState.nama_lantai,
                                 }
-                              : formState.lantai_otmil_id
+                              : formState.lantai_otmil_id)
                           }
                           isDisabled={isDetail}
                           isClearable={true}
                           isSearchable={true}
                           placeholder="Pilih lantai"
                           name="lantai_otmil_id"
-                          options={isLantai.map((item: any) => ({
-                            value: item.lantai_otmil_id,
-                            label: item.nama_lantai,
-                          }))}
+                          options={isLantai.map(
+                            (item: any) => (
+                              console.log(item.lantai_otmil_id, 'lantai2'),
+                              {
+                                value: item.lantai_otmil_id,
+                                label: item.nama_lantai,
+                              }
+                            ),
+                          )}
                           onChange={handleSelectLantaiOtmil}
                         />
                         <p className="error-text">

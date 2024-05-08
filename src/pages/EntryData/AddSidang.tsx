@@ -976,14 +976,14 @@ const AddSidang = () => {
                       <Select
                         className="basic-single p-kasus"
                         classNamePrefix="select"
-                        value = {
-                          formState.pengadilan_militer_id
-                          ? {
-                              value: formState.pengadilan_militer_id,
-                              label: formState.nama_pengadilan_militer,
-                          }
-                          : formState.pengadilan_militer_id
-                        }
+                        // value = {
+                        //   formState.pengadilan_militer_id
+                        //   ? {
+                        //       value: formState.pengadilan_militer_id,
+                        //       label: formState.nama_pengadilan_militer
+                        //   }
+                        //   : formState.pengadilan_militer_id
+                        // }
                         placeholder={'Pilih pengadilan militer'}
                         isClearable={true}
                         isSearchable={true}

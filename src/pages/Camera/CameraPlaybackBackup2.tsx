@@ -48,7 +48,7 @@ const CameraPlayback = () => {
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+  const client = useRef(new W3CWebSocket('ws://192.168.100.111:4007'));
   const camerasPerPage = columns * rows;
   useEffect(() => {
     fetchData();

@@ -232,11 +232,11 @@ const KameraList = () => {
     }
   };
   const errorTimeoutRef: any = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
+  const client = useRef(new W3CWebSocket('ws://192.168.100.111:5000'));
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  client.current = new WebSocket('ws://192.168.1.111:5000');
+  client.current = new WebSocket('ws://192.168.100.111:5000');
 
   client.current.onopen = () => {
     console.log('WebSocket Client Connected');

@@ -974,7 +974,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
-                      disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors.map((item) =>
