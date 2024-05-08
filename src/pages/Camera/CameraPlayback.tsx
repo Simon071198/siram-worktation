@@ -107,7 +107,7 @@ const CameraPlayback = () => {
   }, [forUrl]);
 
   const handleRecordingClick = (recording: any, index: any) => {
-    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    let newUrl = recording.replace('100.81.142.71', '192.168.100.111');
     // console.log('Recording clicked:', newUrl);
     console.log('clicked', recording);
     setForurl(newUrl);

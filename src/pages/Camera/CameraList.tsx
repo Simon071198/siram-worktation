@@ -40,6 +40,13 @@ const CameraList = () => {
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
   const [liveViewCalled, setLiveViewCalled] = useState({});
   const camerasPerPage = columns * rows;
+
+  interface messageCam {
+    kamera_id: any;
+    status_kamera: any;
+  }
+
+  const [messageCamera, setMessageCamera] = useState();
   // useEffect(() => {
   //   apiLocationOnlineDeviceList()
   //     .then((res) => {
@@ -154,20 +161,21 @@ const CameraList = () => {
     };
     client.current.onmessage = (message) => {
       const data = JSON.parse(message.data);
-      if (data.type === 'error') {
-        // Tangkap pesan error dan tampilkan kepada pengguna
-        clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
-        errorTimeoutRef.current = setTimeout(() => {
-          setErrorCam(true);
-          console.log(data, 'ini data error');
-          console.log('Error from server camera:', data.message);
-        }, 1500); // Setelah 2 detik, tampilkan pesan error
-      }
-      if (data.type === 'info') {
-        clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
-        setErrorCam(false);
-        console.log(data, 'ini data berhasil');
-      }
+      setMessageCamera(data);
+      // if (data.type === 'error') {
+      //   // Tangkap pesan error dan tampilkan kepada pengguna
+      //   clearTimeout(errorTimeoutRef.current); // Hapus timeout sebelumnya (jika ada)
+      //   errorTimeoutRef.current = setTimeout(() => {
+      //     setErrorCam(true);
+      //     console.log(data, 'ini data error');
+      //     console.log('Error from server camera:', data.message);
+      //   }, 1500); // Setelah 2 detik, tampilkan pesan error
+      // }
+      // if (data.type === 'info') {
+      //   clearTimeout(errorTimeoutRef.current); // Hapus timeout jika mendapatkan pesan info
+      //   setErrorCam(false);
+      //   console.log(data, 'ini data berhasil');
+      // }
     };
     // client.current.onmessage = (message) => {
     //   const data = JSON.parse(message.data);
@@ -196,7 +204,7 @@ const CameraList = () => {
   // const sendRequest = (method, params) => {
   //   client.current.send(JSON.stringify({ method: method, params: params }));
   // };
-
+  console.log(messageCamera, 'mmmmmmmmm');
   const sendRequestOnce = () => {
     let onlineCameras = buildings?.data?.records?.gedung.flatMap(
       (gedung: any) =>
@@ -380,7 +388,7 @@ const CameraList = () => {
     setIsBuffering(bufferState);
   };
   const renderThumb = (cam) => {
-    const urlStream = `http://192.168.1.111:5000/stream/${cam.ip_address}_.m3u8`;
+    const urlStream = `http://192.168.100.111:5000/stream/${cam.ip_address}_.m3u8`;
 
     return (
       <ReactPlayer
