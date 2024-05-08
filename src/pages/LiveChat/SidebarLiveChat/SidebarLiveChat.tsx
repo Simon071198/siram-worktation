@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+// import iconPicture from '../../../images/icon.png';
 import iconPicture from '../../../images/icon.png';
 import SearchChat from './SearchChat';
 
@@ -68,7 +69,7 @@ function SidebarLiveChat({
                   <div className="px-2 flex items-center ">
                     <img
                       className="w-15 h-15 rounded-full"
-                      src={IconProfile}
+                      src={iconPicture}
                       alt="iconProfile"
                     />
                     <div className="ml-4 items-center">

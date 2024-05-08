@@ -6,7 +6,7 @@ import BeforeActiveChat from './Chat/BeforeActiveChat';
 import LiveChatDisplay from './Chat/LiveChatDisplay';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 
-const socket = io('http://192.168.1.135:4010');
+const socket = io('http://192.168.1.111:4010');
 
 const LiveChatList: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -36,6 +36,7 @@ const LiveChatList: React.FC = () => {
   }, [selectedRoom]);
 
   socket.on('connected', (results) => {
+    console.log("connected to websocket")
     setRoomList(results);
   });
 
