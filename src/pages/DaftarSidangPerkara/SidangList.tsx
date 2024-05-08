@@ -23,13 +23,6 @@ import 'driver.js/dist/driver.css';
 import { Error403Message } from '../../utils/constants';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 
-const tokenItem = localStorage.getItem('token');
-const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-const token = dataToken.token;
-
-const dataUserItem = localStorage.getItem('dataUser');
-const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
-
 const SidangList = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,6 +53,13 @@ const SidangList = () => {
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
+  const dataUserItem = localStorage.getItem('dataUser');
+  const dataAdmin = dataUserItem ? JSON.parse(dataUserItem) : null;
 
   const handleChagePage = (pageNumber: any) => {
     console.log(currentPage, 'currentPage');
@@ -182,7 +182,7 @@ const SidangList = () => {
         oditur_penuntut_id: jaksaKetua?.oditur_penuntut_id,
         nama_oditur: jaksaKetua?.nama_oditur,
       },
-      link_dokumen_persidangan: item.link_dokumen_persidangan,
+      link_dokumen_persidangan: item?.link_dokumen_persidangan,
     };
     setDetailData(detailItem);
     setModalDetailOpen(true);
@@ -332,7 +332,7 @@ const SidangList = () => {
         nama_oditur: jaksaKetua?.nama_oditur,
       },
       role_ketua_oditur: jaksaKetua?.oditur_penuntut_id,
-      link_dokumen_persidangan: item.link_dokumen_persidangan,
+      link_dokumen_persidangan: item?.link_dokumen_persidangan,
     };
     console.log('NEW ITEM EDIT', editItem);
     setEditData(editItem);
@@ -397,7 +397,6 @@ const SidangList = () => {
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
-
         fetchData();
       } else if (responseEdit.data.status === 'error') {
         Alerts.fire({

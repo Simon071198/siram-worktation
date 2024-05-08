@@ -72,6 +72,7 @@ export const AddAktifitasPengunjung: React.FC<
       petugas_id: '',
       // nama_petugas: '',
       pengunjung_id: '',
+      nrp: '',
       // nama_pengunjung: '',
       // wbp_profile_id: '',
       // nama_wbp: '',
@@ -914,24 +915,39 @@ export const AddAktifitasPengunjung: React.FC<
                     <Select
                       className="basic-single p-petugas"
                       classNamePrefix="select"
+                      //   defaultValue={
+                      //     isEdit || isDetail
+                      //     ? {
+                      //         value: formState.petugas_id,
+                      //         label: `${formState.nama_petugas} (${formState.nrp})`,
+                      //       }
+                      //     : formState.petugas_id
+                      // }
                       defaultValue={
                         isEdit || isDetail
-                        ? {
-                            value: formState.petugas_id,
-                            label: `${formState.nama_petugas} (${formState.nrp})`,
-                          }
-                        : formState.petugas_id
-                    }
+                          ? (() => {
+                              const defaultValue = {
+                                value: formState.petugas_id,
+                                label: `${formState.nama_petugas} (${formState.nrp_petugas})`,
+                              };
+                              console.log(formState, 'default cuyy'); // Tambahkan log di sini
+                              return defaultValue;
+                            })
+                          : formState.petugas_id
+                      }
                       placeholder={'Pilih Petugas'}
                       isClearable={true}
                       isSearchable={true}
                       isDisabled={isDetail}
                       name="petugas_id"
                       styles={customStyles}
-                      options={dataPetugas.map((item: any) => ({
-                        value: item.petugas_id,
-                        label: `${item.nama} (${item.nrp})`, // Menggabungkan nama dan nrp
-                    }))}
+                      options={dataPetugas.map((item: any) => {
+                        console.log(item, 'option cuyy');
+                        return {
+                          value: item.petugas_id,
+                          label: `${item.nama} (${item.nrp})`, // Menggabungkan nama dan nrp
+                        };
+                      })}
                       onChange={handleSelectStaff}
                     />
                     <p className="error-text">

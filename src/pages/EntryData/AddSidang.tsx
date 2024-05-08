@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from 'react-datepicker';
@@ -21,6 +21,7 @@ import {
   apiSidangInsert,
 } from '../../services/api';
 import { set } from "react-hook-form";
+import toast from "react-hot-toast";
 
 
 interface AddSidangProps {
@@ -57,13 +58,13 @@ const AddSidang = () => {
       agenda_sidang: '',
       saksi: [],
       pengacara: [],
-      // link_dokumen_persidangan: defaultValue.link_dokumen_persidangan,
+      link_dokumen_persidangan: '',
       // hakim_id: [],
       // role_ketua_hakim: '',
-      // oditur_penuntut_id: [],
-      oditur_penuntut_id: null,
-      role_ketua_oditur: {},
-      zona_waktu: '',
+      oditur_penuntut_id: [],
+      // oditur_penuntut_id: null,
+      // role_ketua_oditur: {},
+      // zona_waktu: '',
   });
 
     const tokenItem = localStorage.getItem('token');
@@ -552,6 +553,7 @@ const AddSidang = () => {
           color: 'white',
         }),
       };
+
       const validateForm = () => {
         let errorFields: any = [];
     
@@ -570,7 +572,9 @@ const AddSidang = () => {
             key !== 'provinsi_id' &&
             key !== 'nama_provinsi' &&
             key !== 'nama_kota' && 
-            key !== 'nama_pengadilan_militer'
+            key !== 'nama_pengadilan_militer' &&
+            // key !== 'link_dokumen_persidangan' &&
+            key !== 'role_ketua_oditur'
     
             // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
             // || key === 'saksi' && Array.isArray(value) && value.length === 0
@@ -601,59 +605,91 @@ const AddSidang = () => {
         setErrors([]);
         return true;
       };
-      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+      const checkFileType = (file:any) => {
+        if(file) {
+          console.log(file, 'file');
+          const fileExtension = file.split('.').pop().toLowerCase();
+          console.log(fileExtension, 'file');
+          setFile(fileExtension);
+        } else{
+          console.error('File is undefined or empty.');
+        }
+      };
+
+      const handleSubmit = (e: any) => {
         e.preventDefault()
         if(!validateForm())return
         handleSubmitAddUser(formState)
         setAhli([])
         setGetWbp([])
         setGetSaksi([])
-        setFormState({
-          ...formState,
-          waktu_mulai_sidang: '',
-      waktu_selesai_sidang: '',
-      jadwal_sidang: '',
-      perubahan_jadwal_sidang: '',
-      kasus_id: '',
-      nama_kasus: '',
-      // nomor_kasus: '',
-      masa_tahanan_tahun: '',
-      masa_tahanan_bulan: '',
-      masa_tahanan_hari: '',
-      nama_sidang: '',
-      wbp_profile: [],
-      juru_sita: '',
-      hasil_keputusan_sidang: '',
-      pengawas_peradilan_militer: '',
-      jenis_persidangan_id: '',
-      pengadilan_militer_id: '',
-      nama_dokumen_persidangan: '',
-      pdf_file_base64: '',
-      hasil_vonis: '',
-      // nama_ahli: '',
-      ahli: [],
-      // ahli_id: null,
-      agenda_sidang: '',
-      saksi: [],
-      pengacara: [],
-      // link_dokumen_persidangan: defaultValue.link_dokumen_persidangan,
-      // hakim_id: [],
-      // role_ketua_hakim: '',
-      // oditur_penuntut_id: [],
-      // nomor_kasus: null,
-      oditur_penuntut_id: null,
-      nama_oditur: null,
-      // role_ketua_oditur: null,
-      // pengadilan_militer_id: null,
+      //   setFormState({
+      //     ...formState,
+      //     waktu_mulai_sidang: '',
+      // waktu_selesai_sidang: '',
+      // jadwal_sidang: '',
+      // perubahan_jadwal_sidang: '',
+      // kasus_id: '',
+      // nama_kasus: '',
+      // // nomor_kasus: '',
+      // masa_tahanan_tahun: '',
+      // masa_tahanan_bulan: '',
+      // masa_tahanan_hari: '',
+      // nama_sidang: '',
+      // wbp_profile: [],
+      // juru_sita: '',
+      // hasil_keputusan_sidang: '',
+      // pengawas_peradilan_militer: '',
+      // jenis_persidangan_id: '',
+      // pengadilan_militer_id: '',
+      // nama_dokumen_persidangan: '',
+      // pdf_file_base64: '',
+      // hasil_vonis: '',
+      // // nama_ahli: '',
+      // ahli: [],
+      // // ahli_id: null,
+      // agenda_sidang: '',
+      // saksi: [],
+      // pengacara: [],
+      // // link_dokumen_persidangan: '',
+      // // hakim_id: [],
+      // // role_ketua_hakim: '',
+      // // oditur_penuntut_id: [],
+      // // nomor_kasus: null,
+      // oditur_penuntut_id: null,
+      // nama_oditur: null,
+      // // role_ketua_oditur: null,
+      // // pengadilan_militer_id: null,
       // role_ketua_oditur: {},
-      zona_waktu: '',
-        })
+      // zona_waktu: '',
+      //   })
         
       }
+
+      useEffect(() => {
+        console.log(formState, 'FORMSTATE');
+        checkFileType(formState.link_dokumen_persidangan);
+
+        if(formState.link_dokumen_persidangan){
+          setFormState({
+            ...formState,
+            pdf_file_base64: formState.link_dokumen_persidangan
+          });
+        }
+      }, []);
+
       const handleUpload = (e: any) => {
         const file = e.target.files[0];
+        // const maxSizeInBytes = 10 * 1024 * 1024;
     
         if (file) {
+          // if (file.size > maxSizeInBytes) {
+          //   console.log('File size exceeds the limit.');
+          //   toast.error('File size exceeds limit of 10MB. Please reduce file size and try again.', );
+          //   return;
+          // }
+
           const reader = new FileReader();
     
           reader.onloadend = () => {
@@ -664,6 +700,7 @@ const AddSidang = () => {
           reader.readAsDataURL(file);
         }
       };
+
       const handleRemoveDoc = () => {
         setFormState({ ...formState, pdf_file_base64: '' });
         const inputElement = document.getElementById(
@@ -693,10 +730,13 @@ const AddSidang = () => {
         //   .catch((error) => {
         //     console.error('Gagal mengunduh file:', error);
         //   });
-        window.open(
-          `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
-          '_blank',
-        );
+        // const url = `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`;
+
+        // const windowFeatures = 'width=600,height=400';
+
+        // window.open(url, '_blank', windowFeatures);
+
+        window.open(`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`, '_blank')
       }
       const handleInputPengacara = (e: any) => {
         const newValue = e.target.value;
@@ -1635,7 +1675,7 @@ const AddSidang = () => {
                           <p className="text-center text-sm text-blue-500">
                             Dokumen terupload !
                           </p>
-                          {/* <div
+                          <div
                             className={`flex justify-center mt-3 block`}
                           >
                             <button
@@ -1645,7 +1685,7 @@ const AddSidang = () => {
                             >
                               Unduh Dokumen
                             </button>
-                          </div> */}
+                          </div>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center space-y-3">
@@ -1690,6 +1730,7 @@ const AddSidang = () => {
                         </div>
                       )}
                   </div>
+
                   {/* hasil vonis */}
                   <div className="">
                       <label

@@ -26,6 +26,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { da } from 'date-fns/locale';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../utils/constants';
+import toast from 'react-hot-toast';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -66,7 +67,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jenis_persidangan_id: '',
       pengadilan_militer_id: '',
       nama_dokumen_persidangan: '',
-      pdf_file_base64: '',
+      // link_dokumen_persidangan: '',
       hasil_vonis: '',
       ahli: [],
       agenda_sidang: '',
@@ -74,6 +75,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       pengacara: [],
       wbp_profile: [],
       nama: [],
+      link_dokumen_persidangan: '',
       // hakim_id: [],
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
@@ -110,6 +112,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [pengacaraField, setPengacaraField] = useState('');
   const [filter, setFilter] = useState('');
   const [file, setFile] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`)
 
   console.log(formState.wbpHolder,'testing')
 
@@ -164,7 +167,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
         key !== 'nama_kota' && 
-        key !== 'nama_pengadilan_militer'
+        key !== 'nama_pengadilan_militer' &&
+        key !== 'link_dokumen_persidangan'
 
         // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
         // || key === 'saksi' && Array.isArray(value) && value.length === 0
@@ -424,7 +428,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         ahli: ahliMap,
         saksi: saksiMap,
         // pengacara: pengacaraMap,
-        pdf_file_base64: formState.link_dokumen_persidangan,
+        link_dokumen_persidangan: formState.link_dokumen_persidangan,
       });
     }
   }, []);
@@ -501,7 +505,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLElement>) => {
     console.log('forms', formState);
     e.preventDefault();
     // console.log(formState, 'formState');
@@ -510,8 +514,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     if (!validateForm()) return;
     setButtonLoad(true);
     // console.log('formstateValidate', formState);
-    // onSubmit(formState).then(() => setButtonLoad(false));
-    onSubmit(formState);
+    onSubmit(formState).then(() => setButtonLoad(false));
+    // onSubmit(formState);
   };
 
   //pengacara
@@ -606,22 +610,45 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     });
   };
 
+  // useEffect(() => {
+  //   checkFileType(formState.link_dokumen_persidangan);
+
+  //   if (isDetail || isEdit) {
+  //     setFormState((prevFormState: any) => ({
+  //       ...prevFormState,
+  //       link_dokumen_persidangan: prevFormState.link_dokumen_persidangan,
+  //     }));
+  //   }
+  // }, [formState.link_dokumen_persidangan]);
+
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
+    const maxSizeInBytes = 10 * 1024 * 1024; // 5 MB, adjust as needed
 
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        // File size exceeds the limit, handle the error as you wish
+        console.log('File size exceeds the limit.');
+        toast.error(
+          'File size exceeds limit of 10MB. Please reduce file size and try again.',
+        );
+        return;
+      }
+
       const reader = new FileReader();
 
-      reader.onloadend = () => {
-        setFormState({ ...formState, pdf_file_base64: reader.result });
+      reader.onloadend = async () => {
+        await setFormState({ ...formState, link_dokumen_persidangan: reader.result });
         console.log('Preview:', reader.result);
+        setPdfUrl(reader.result as string);
       };
+
 
       reader.readAsDataURL(file);
     }
   };
   const handleRemoveDoc = () => {
-    setFormState({ ...formState, pdf_file_base64: '' });
+    setFormState({ ...formState, link_dokumen_persidangan: '' });
     const inputElement = document.getElementById(
       'fileUpload',
     ) as HTMLInputElement;
@@ -1201,18 +1228,24 @@ console.log(getWbp, 'get wbp')
     //   .catch((error) => {
     //     console.error('Gagal mengunduh file:', error);
     //   });
-    window.open(
-      `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
-      '_blank',
-    );
+    // window.open(
+    //   `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
+    //   '_blank',
+    // );
 
-    const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        style={{ border: 'solid 1px pink' }}
-      />
-    );
+    // const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    //   <input
+    //     value={value}
+    //     onChange={(e) => onChange(e.target.value)}
+    //     style={{ border: 'solid 1px pink' }}
+    //   />
+    // );
+
+    const url = `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`
+
+    const windowFeatures = 'width=600,height=400'
+
+    window.open(url, '_blank', windowFeatures)
   };
 
   const checkFileType = (file:any) => {
@@ -2443,12 +2476,12 @@ console.log(getWbp, 'get wbp')
                       <input
                         type="file"
                         id="fileUpload"
-                        accept=".pdf, .doc, .docx"
+                        accept=".pdf"
                         onChange={handleUpload}
                         // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
-                      {formState.pdf_file_base64 ? (
+                      {formState.link_dokumen_persidangan ? (
                         <div className="grid grid-cols-1">
                           <div
                             className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
@@ -2492,10 +2525,11 @@ console.log(getWbp, 'get wbp')
                                 <div className="">
                                   {file === 'pdf' ? (
                                     <iframe
-                                      src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                      // src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                      src={pdfUrl}
                                       title="pdf"
                                       width="100%"
-                                      height="600px"
+                                      height="500px"
                                       className="border-0 text-center justify-center"
                                     />
                                   ) : file === 'docx' || file === 'doc' ? (
@@ -2574,7 +2608,7 @@ console.log(getWbp, 'get wbp')
                     </div>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'pdf_file_base64'
+                        item === 'link_dokumen_persidangan'
                           ? 'Masukan dokumen sidang'
                           : '',
                       )}

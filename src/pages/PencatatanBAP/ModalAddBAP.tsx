@@ -10,6 +10,7 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { Alerts } from './AlertBAP';
 import { Error403Message } from '../../utils/constants';
+import { read } from 'xlsx';
 
 interface AddBAPModalProps {
   closeModal: () => void;
@@ -53,6 +54,11 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const [file, setFile] = useState(null);
   const [filter, setFilter] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(
+    `https://dev.transforme.co.id${formState.link_dokumen_bap}`,
+  );
+
+  console.log(formState, 'formstate cuyy')
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -215,12 +221,14 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       }
 
       const reader = new FileReader();
+      console.log(reader, 'reader cuyy');
 
       reader.onloadend = async () => {
-        await setFormState({ ...formState, pdf_file_base64: reader.result });
+        await setFormState({ ...formState, link_dokumen_bap: file.name, pdf_file_base64: reader.result });
         // console.log(formState.pdf_file_base64, 'Preview');
         // console.log(file, 'Preview');
         // console.log(reader.result, 'Preview');
+        setPdfUrl(reader.result as string)
       };
 
       reader.readAsDataURL(file);
@@ -749,7 +757,6 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       className="hidden"
                     />
                     {formState.pdf_file_base64 ? (
-                      console.log(formState.pdf_file_base64),
                       <div className="grid grid-cols-1">
                         <div
                           className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
@@ -778,7 +785,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                               <div className="">
                                 {file === 'pdf' ? (
                                   <iframe
-                                    src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    // src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    src={pdfUrl}
                                     title="pdf"
                                     width="100%"
                                     height="600px" // Adjust the height as per your requirement
@@ -793,7 +801,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                                     width="100%"
                                     height="600px" // Adjust the height as per your requirement
                                     // className="border-0 text-center justify-center padding-left-10"
-                                  ></iframe>
+                                  />
                                 ) : (
                                   <p>Ekstensi file tidak didukung</p>
                                 )}

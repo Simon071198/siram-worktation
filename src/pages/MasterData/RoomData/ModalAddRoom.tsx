@@ -316,14 +316,16 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         newErrors.lantai = 'Lantai harus diisi';
       }
       // Mengatur kesalahan sesuai dengan validasi
-      setErrors(newErrors);
+      console.log(newErrors, 'errors cuyy');
       if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
         return false;
       }
       return true;
     }
   };
 
+  
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>

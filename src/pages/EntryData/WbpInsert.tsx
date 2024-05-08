@@ -2939,7 +2939,7 @@ export const WbpInsert = () => {
                         label: item.nama_status_wbp_kasus,
                       }))}
                       onChange={handleSelectWbpStatus}
-                      defaultValue={formState.status_wbp_kasus}
+                      // defaultValue={formState.status_wbp_kasus}
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -3243,6 +3243,7 @@ export const WbpInsert = () => {
                                1,
                               );
                             }}
+                            value={formState.akses_ruangan_otmil_id}
                           >
                             Ijinkan
                           </button>
@@ -3255,6 +3256,7 @@ export const WbpInsert = () => {
                                 0,
                               );
                             }}
+                            value={formState.akses_ruangan_otmil_id}
                           >
                             Larang
                           </button>
@@ -3270,7 +3272,7 @@ export const WbpInsert = () => {
                     <h3 className="text-md font-semibold mb-2">Zona Hijau</h3>
 
                     <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                    {formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
+                    {formState.akses_ruangan_otmil_id?.filter((data: any) => data.isPermitted == 1).map(
                                 (zonaId: any) => (
                                   <div
                                     key={zonaId}
@@ -3322,7 +3324,7 @@ export const WbpInsert = () => {
                   <div className="zona-merah w-full ">
                     <h3 className="text-md font-semibold mb-2">Zona Merah</h3>
                     <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                    {formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 0).map((zonaId: any) => (
+                    {formState.akses_ruangan_otmil_id?.filter((data:any) => data.isPermitted == 0).map((zonaId: any) => (
                             <div
                               key={zonaId}
                               className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
