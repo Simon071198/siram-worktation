@@ -100,6 +100,9 @@ const CameraList = () => {
   useEffect(() => {
     fetchData();
   }, []);
+  let getToken = localStorage.getItem('token');
+  const token = JSON.parse(getToken);
+  console.log('token', token);
   let fetchData = async () => {
     try {
       let dataLocal = localStorage.getItem('dataUser');
@@ -110,7 +113,6 @@ const CameraList = () => {
         nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
         nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
-      console.log('data user', dataUser);
 
       const response = await apiBuilding(dataUser);
       console.log('response from apiBuilding', response);
@@ -199,9 +201,7 @@ const CameraList = () => {
     let onlineCameras = buildings?.data?.records?.gedung.flatMap(
       (gedung: any) =>
         gedung.lantai.flatMap((lantai: any) =>
-          lantai.ruangan
-            .flatMap((ruangan: any) => ruangan.kamera)
-            .filter((kamera) => kamera.status_kamera === 'online'),
+          lantai.ruangan.flatMap((ruangan: any) => ruangan.kamera),
         ),
     );
 
@@ -215,6 +215,7 @@ const CameraList = () => {
               urlRTSP: camera?.url_rtsp,
               deviceName: camera?.nama_kamera,
               deviceId: camera?.kamera_id,
+              token: token?.token,
             },
           ],
         });
