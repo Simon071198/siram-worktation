@@ -93,7 +93,7 @@ const CameraPlayback = (props) => {
 
   const videoRef = useRef(null);
   let playerRef = useRef(null);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+  const client = useRef(new W3CWebSocket('ws://192.168.100.111:4007'));
 
   // useEffect(() => {
   //   const getCurrentDateTime = () => {
