@@ -120,7 +120,7 @@ const EntryData = () => {
     
       return result;
     }
-    const type = 'Sp.Kasus';
+    const type = 'Pid.K';
     const day = dayjs(new Date()).format('DD');
     const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
     const year = new Date().getFullYear().toString();
