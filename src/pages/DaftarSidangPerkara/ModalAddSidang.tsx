@@ -66,7 +66,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jenis_persidangan_id: '',
       pengadilan_militer_id: '',
       nama_dokumen_persidangan: '',
-      pdf_file_base64: '',
+      pdf_file_base64: "" ?? defaultValue.link_dokumen_persidangan ,
       hasil_vonis: '',
       ahli: [],
       agenda_sidang: '',
@@ -81,7 +81,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // zona_waktu: '',
     },
   );
-
+  console.log(defaultValue, "defaultValue")
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -2448,7 +2448,7 @@ console.log(getWbp, 'get wbp')
                         // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
-                      {formState.pdf_file_base64 ? (
+                      {formState.pdf_file_base64 != "" ? (
                         <div className="grid grid-cols-1">
                           <div
                             className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
@@ -2473,22 +2473,11 @@ console.log(getWbp, 'get wbp')
                               </svg>
                             </button>
                           </div>
-                          {/* <div className="flex justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              width="50"
-                              height="50"
-                            >
-                              <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
-                              <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
-                            </svg>
-                          </div> */}
+                          
                           <div className="">
                             <div style={{ height: '10%' }}>
                               {/* PDF */}
-                              {file && (
+                              {file && !isEdit && (
                                 <div className="">
                                   {file === 'pdf' ? (
                                     <iframe
