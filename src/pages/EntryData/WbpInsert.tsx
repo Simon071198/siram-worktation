@@ -32,6 +32,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -320,6 +322,39 @@ export const WbpInsert = ({handleNext}: any) => {
       color: 'white',
     }),
   };
+
+  const handleWaktuKejadian = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
 
   const validateForm = () => {
     let errorFields: any = [];
@@ -2475,13 +2510,30 @@ export const WbpInsert = ({handleNext}: any) => {
                         Tanggal Kejadian Kasus
                       </label>
                       <div className="flex">
-                        <input
+                        {/* <input
                           type="datetime-local"
                           className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
                           name="waktu_kejadian"
                           onChange={handleChange}
                           value={formState.waktu_kejadian}
-                        />
+                        /> */}
+                        <DatePicker
+                        selected={
+                          formState.waktu_kejadian
+                            ? dayjs(formState.waktu_kejadian).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        onChange={handleWaktuKejadian}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
+                        name="waktu_kejadian"
+                        disabled={false}
+                        locale="id"
+                      />
                         <input
                           type="text"
                           className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
