@@ -53,6 +53,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   const [file, setFile] = useState(null);
   const [filter, setFilter] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [pdf, setPdf] = useState(`https://dev.transforme.co.id${formState.link_dokumen_bap}`)
 
   // useEffect untuk mengambil data dari api
   useEffect(() => {
@@ -218,6 +219,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
 
       reader.onloadend = async () => {
         await setFormState({ ...formState, pdf_file_base64: reader.result });
+        setPdf(reader.result as string)
         // console.log(formState.pdf_file_base64, 'Preview');
         // console.log(file, 'Preview');
         // console.log(reader.result, 'Preview');
@@ -778,7 +780,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                               <div className="">
                                 {file === 'pdf' ? (
                                   <iframe
-                                    src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    // src={`https://dev.transforme.co.id${formState.link_dokumen_bap}`}
+                                    src={pdf}
                                     title="pdf"
                                     width="100%"
                                     height="600px" // Adjust the height as per your requirement
