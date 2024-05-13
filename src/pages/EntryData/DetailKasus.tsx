@@ -34,7 +34,7 @@ interface WBP {
 //   nama_jenis_pidana: string;
 // }
 
-const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
+const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus, handleNext}: any) => {
   const [formState, setFormState] = useState<any>({
     nama_kasus: '',
     nomor_kasus: nomorKasus,
@@ -562,6 +562,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
           icon: 'success',
           title: 'Berhasil menambah data',
         });
+        handleNext()
       } else if (responseCreate.data.status === 'error') {
         Alerts.fire({
           icon: 'error',

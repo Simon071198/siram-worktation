@@ -9,7 +9,7 @@ import { Alerts } from '../MasterData/BarangBukti/AlertBarangBukti';
 import { Error403Message } from '../../utils/constants';
 import { CustomStyles } from './CustomStyle';
 
-const BarangBukti = () => {
+const BarangBukti = ({handleNext}: any) => {
   const [formState, setFormState] = useState({
     gambar_barang_bukti: '',
     nama_bukti_kasus: '',
@@ -194,6 +194,7 @@ const BarangBukti = () => {
           icon: 'success',
           title: 'Berhasil menambah data',
         });
+        handleNext()
         // setModalAddOpen(false);
         // fetchData();
       } else if (responseCreate.data.status === 'NO') {
