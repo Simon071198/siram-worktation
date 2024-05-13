@@ -38,7 +38,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const WbpInsert = () => {
+export const WbpInsert = ({handleNext}: any) => {
   interface type {
     [key: string]: any;
   }
@@ -769,7 +769,7 @@ export const WbpInsert = () => {
           icon: 'success',
           title: 'Berhasil membuat data',
         });
-
+        handleNext()
         // setModalAddOpen(false);
         fetchData();
       } else if (responseAdd.data.status === 'NO') {
