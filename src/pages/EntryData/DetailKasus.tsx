@@ -836,7 +836,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
                 timeCaption="Time"
                 dateFormat="dd/MM/yyyy HH:mm"
                 customTimeInput={<ExampleCustomTimeInput />}
-                className="w-full rounded border border-stroke py-3 pl-3 pr-[25rem] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                className="w-full rounded border border-stroke py-3 pl-3 pr-[20rem] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                 name="waktu_kejadian"
                 disabled={false}
                 locale="id"
@@ -879,7 +879,7 @@ const DetailKasus = ({ onSubmit, defaultValue, isDetail, nomorKasus}: any) => {
                 timeCaption="Time"
                 dateFormat="dd/MM/yyyy HH:mm"
                 customTimeInput={<ExampleCustomTimeInput />}
-                className="w-full rounded border border-stroke py-3 pl-3 pr-[25rem] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                className="w-full rounded border border-stroke py-3 pl-3 pr-[20rem] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                 name="waktu_kejadian"
                 disabled={false}
                 locale="id"
