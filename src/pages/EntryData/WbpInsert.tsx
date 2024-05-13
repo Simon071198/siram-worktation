@@ -1581,13 +1581,27 @@ export const WbpInsert = () => {
       localStorage.setItem('akses_ruangan_otmil_id', JSON.stringify(updatedFormState.akses_ruangan_otmil_id));
     }
   };
+
+    const savedDataString = localStorage.getItem('akses_ruangan_otmil_id');
+    if (savedDataString) {
+      const savedData = JSON.parse(savedDataString);
+      console.log(savedData);
+    } else {
+      console.log('Data not found in localStorage');
+    }
+
   
 
-  useEffect(() => {
-    if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
-      localStorage.setItem('formState', JSON.stringify(formState));
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   // if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
+  //     localStorage.setItem('formState', JSON.stringify(formState));
+  //   // }
+  // }, [formState]);
+  // useEffect(() => {
+  //   if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
+  //     localStorage.setItem('formState', JSON.stringify(formState));
+  //   }
+  // }, [formState]);
   // Function to handle removing a "zona" from the selected chips
   // const handleRemoveZona = (zonaId: any, inputField: any) => {
   //   // Remove the zona from the selected input field
@@ -3361,32 +3375,31 @@ export const WbpInsert = () => {
                     <h3 className="text-md font-semibold mb-2">Zona Hijau</h3>
 
                     <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                      {formState.akses_ruangan_otmil_id
-                        ?.filter((data) => data.isPermitted == 1)
-                        .map((zonaId: any) => (
+                    {localStorage.getItem('akses_ruangan_otmil_id') && (
+                        JSON.parse(localStorage.getItem('akses_ruangan_otmil_id')).filter(
+                          (data: any) => data.isPermitted === 1
+                        ).map((zonaId: any) => (
                           <div
                             defaultValue={formState.akses_ruangan_otmil_id
-                              ?.filter((data: any) => data.isPermitted == 1)
+                              ?.filter((data: any) => data.isPermitted === 1)
                               .map((data: any) => data.ruangan_otmil_id)
                               .includes(zonaId.id)}
-                            key={zonaId}
-                            className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                            key={zonaId.id}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
                             data-te-ripple-color="dark"
                           >
                             <p className="capitalize text-center">
-                              {
-                                zona.find(
-                                  (zonaItem: any) =>
-                                    zonaItem.ruangan_otmil_id == zonaId.id,
-                                )?.nama_ruangan_otmil
-                              }
+                              {zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId.id
+                              )?.nama_ruangan_otmil}
                             </p>
                             <span
                               data-te-chip-close
                               onClick={() =>
                                 handleRemoveZona(
                                   zonaId.id,
-                                  'akses_ruangan_otmil_id',
+                                  'akses_ruangan_otmil_id'
                                 )
                               }
                               className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
@@ -3407,7 +3420,9 @@ export const WbpInsert = () => {
                               </svg>
                             </span>
                           </div>
-                        ))}
+                        ))
+                      )}
+
                     </div>
                     <p className="error-text">
                       {isZonaHijauEmpty ? 'Pilih zona hijau' : ''}
@@ -3417,7 +3432,7 @@ export const WbpInsert = () => {
                   <div className="zona-merah w-full ">
                     <h3 className="text-md font-semibold mb-2">Zona Merah</h3>
                     <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                      {formState.akses_ruangan_otmil_id
+                      {/* {formState.akses_ruangan_otmil_id
                         ?.filter((data) => data.isPermitted == 0)
                         .map((zonaId: any, index: number) => (
                           <div
@@ -3457,7 +3472,54 @@ export const WbpInsert = () => {
                               </svg>
                             </span>
                           </div>
-                        ))}
+                        ))} */}
+                        {localStorage.getItem('akses_ruangan_otmil_id') && (
+                        JSON.parse(localStorage.getItem('akses_ruangan_otmil_id')).filter(
+                          (data: any) => data.isPermitted === 0
+                        ).map((zonaId: any) => (
+                          <div
+                            defaultValue={formState.akses_ruangan_otmil_id
+                              ?.filter((data: any) => data.isPermitted === 0)
+                              .map((data: any) => data.ruangan_otmil_id)
+                              .includes(zonaId.id)}
+                            key={zonaId.id}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
+                          >
+                            <p className="capitalize text-center">
+                              {zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId.id
+                              )?.nama_ruangan_otmil}
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(
+                                  zonaId.id,
+                                  'akses_ruangan_otmil_id'
+                                )
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))
+                      )}
                     </div>
                     {/* <p className="error-text">
                       {isZonaMerahEmpty ? 'Pilih zona merah' : ''}

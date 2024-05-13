@@ -57,7 +57,7 @@ const CameraPlayback = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [cannotConnect, setCannotConnect] = useState(false);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
-  const client = useRef(new W3CWebSocket('ws://192.168.1.111:4007'));
+  const client = useRef(new W3CWebSocket('ws://192.168.100.111:4007'));
   const [message, setMessage] = useState('');
   const [ws, setWs] = useState(null);
   const camerasPerPage = columns * rows;
@@ -107,7 +107,7 @@ const CameraPlayback = () => {
   }, [forUrl]);
 
   const handleRecordingClick = (recording: any, index: any) => {
-    let newUrl = recording.replace('100.81.142.71', '192.168.1.111');
+    let newUrl = recording.replace('100.81.142.71', '192.168.100.111');
     // console.log('Recording clicked:', newUrl);
     console.log('clicked', recording);
     setForurl(newUrl);
@@ -120,7 +120,7 @@ const CameraPlayback = () => {
     console.log('messageStatus', webSocketStatus);
     const connectToWebsocket = () => {
       console.log('MasukBOyy');
-      const connectWebsocket = new W3CWebSocket('ws://192.168.1.111:4007');
+      const connectWebsocket = new W3CWebSocket('ws://192.168.100.111:4007');
       connectWebsocket.onopen = () => {
         setWs(connectWebsocket);
         // clearInterval(reconnectInterval);

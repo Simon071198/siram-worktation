@@ -716,7 +716,11 @@ export const AddInmateModal = ({
           }
         }
 
-        if(key !== 'jenis_olahraga') // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
+        if((key === 'jenis_olahraga' || key === 'zat_adiktif') && !value) {
+          continue;
+        }
+          
+        // ) // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
 
         if(formState.is_new_kasus == 'true'){ // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
           const ignoredFields = [

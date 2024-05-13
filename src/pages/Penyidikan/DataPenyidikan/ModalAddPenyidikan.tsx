@@ -85,9 +85,10 @@ export const AddPenyidikanModal = ({
       if (kasus.data.status !== 'OK') throw new Error(kasus.data.message);
       const resultPenyidikan = penyidikan.data.records;
       const resultKasus = kasus.data.records;
-      const filter = resultKasus.filter(data => !resultPenyidikan.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      const filter = resultKasus.filter(data => !resultPenyidikan.some((dataresult: any) => dataresult.nomor_kasus === data.nomor_kasus));
       console.log(filter, "dapet coy")
-      setDataKasus(filter);
+      setDataKasus(resultKasus);
+      // setData
       handleTimeZone();
     } catch (error) {
       handleErrorResponse(error);
