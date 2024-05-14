@@ -493,7 +493,7 @@ export const AddPenyidikanModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
     setButtonLoad(true);
     onSubmit(formState).then(() => 
       setButtonLoad(false),
@@ -748,11 +748,11 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_kasus' ? 'Masukan Nama Kasus' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="form-group w-full h-22">
                     <label
@@ -770,13 +770,13 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_jenis_perkara'
                           ? 'Masukan Jenis Perkara'
                           : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="form-group w-full h-22">
                     <label
@@ -794,13 +794,13 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_kategori_perkara'
                           ? 'Masukan Kategori Perkara'
                           : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -838,9 +838,9 @@ export const AddPenyidikanModal = ({
                         styles={customStyles}
                         id="p-terlibat"
                       />
-                        {errors.includes('pihak_terlibat') && (
+                        {/* {errors.includes('pihak_terlibat') && (
                             <p className="error-text">Pilih salah satu pihak terlibat.</p>
-                        )}
+                        )} */}
                   </div>
                   {/* <div className="form-group w-full h-22">
                     <label
@@ -923,10 +923,15 @@ export const AddPenyidikanModal = ({
                         className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       />
                     </div>
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {formSubmitted &&
                         errors.includes('waktu_dimulai_penyidikan') &&
                         'Masukan Waktu Mulai Penyidikan'}
+                    </p> */}
+                    <p className="error-text">
+                      {errors?.map((item) =>
+                        item === 'waktu_dimulai_penyidikan' ? 'Pilih mulai penyidikan' : ''
+                      )}
                     </p>
                   </div>
                   <div className="form-group w-full h-22">
@@ -964,9 +969,9 @@ export const AddPenyidikanModal = ({
                       />
                     </div>
                     <p className="error-text">
-                      {formSubmitted &&
-                        errors.includes('waktu_selesai_penyidikan') &&
-                        'Masukan Waktu Selesai Penyidikan'}
+                      {errors?.map((item) =>
+                        item === 'waktu_selesai_penyidikan' ? 'Pilih mulai penyidikan' : ''
+                      )}
                     </p>
                   </div>
                 </div>
