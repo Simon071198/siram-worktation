@@ -152,8 +152,10 @@ const EntryData = () => {
   };
   
   useEffect(() => {
-    generateNomorPenyidikan(),
-    generateNomorKasus()
+    Promise.all([
+      generateNomorPenyidikan(),
+      generateNomorKasus()
+    ])
     return () => {
       localStorage.removeItem('formState');
     }
@@ -252,7 +254,7 @@ console.log(nomorPenyidikan, "ada nomor gk")
       nama: 'Detail Tersangka',
       component: (
         <div>
-          <WbpInsert handleNext={handleNext} />
+          <WbpInsert handleNext={handleNext} nomorKasus = {nomorKasus} />
         </div>
       ),
     },
