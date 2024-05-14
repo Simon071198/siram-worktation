@@ -12,6 +12,9 @@ import { RiCameraOffLine } from 'react-icons/ri';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import ReactPlayer from 'react-player';
 import { RiErrorWarningFill } from 'react-icons/ri';
+import { HiRefresh } from 'react-icons/hi';
+import ToolsTip from '../../components/ToolsTip';
+import { ChunkGraph } from 'webpack';
 
 const CameraList = () => {
   const navigate = useNavigate();
@@ -107,6 +110,10 @@ const CameraList = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleRefreshClick = () => {
+    fetchData();
+  };
   let getToken = localStorage.getItem('token');
   const token = JSON.parse(getToken);
   console.log('token', token);
@@ -149,8 +156,9 @@ const CameraList = () => {
     }
   }, [buildings]);
   const errorTimeoutRef: any = useRef(null);
-  const client = useRef(new W3CWebSocket('wss://192.168.100.111:5000'));
-
+  const client = useRef(new W3CWebSocket('ws://192.168.100.111:5000'));
+  const [receivedObjects, setReceivedObjects] = useState([]);
+  console.log(receivedObjects, 'ARRAY');
   useEffect(() => {
     // Initialize WebSocket connection
     client.current = new WebSocket('wss://192.168.100.111:5000');
@@ -161,6 +169,9 @@ const CameraList = () => {
     };
     client.current.onmessage = (message) => {
       const data = JSON.parse(message.data);
+
+      setReceivedObjects((prevObjects) => [...prevObjects, data]);
+
       setMessageCamera(data);
       // if (data.type === 'error') {
       //   // Tangkap pesan error dan tampilkan kepada pengguna
@@ -204,7 +215,8 @@ const CameraList = () => {
   // const sendRequest = (method, params) => {
   //   client.current.send(JSON.stringify({ method: method, params: params }));
   // };
-  console.log(messageCamera, 'mmmmmmmmm');
+  console.log(messageCamera, 'DARI WEBSOCK');
+
   const sendRequestOnce = () => {
     let onlineCameras = buildings?.data?.records?.gedung.flatMap(
       (gedung: any) =>
@@ -224,6 +236,7 @@ const CameraList = () => {
               deviceName: camera?.nama_kamera,
               deviceId: camera?.kamera_id,
               token: token?.token,
+              ruangan_otmil_id: camera?.ruangan_otmil_id,
             },
           ],
         });
@@ -384,10 +397,8 @@ const CameraList = () => {
   };
   console.log('cccrrr', currentCamerasOnline);
   const { startPage, endPage } = getPageNumbers();
-  const handleBufferChange = (bufferState) => {
-    setIsBuffering(bufferState);
-  };
-  const renderThumb = (cam) => {
+
+  const renderThumb = (cam: any) => {
     const urlStream = `http://192.168.100.111:5000/stream/${cam.ip_address}_.m3u8`;
 
     return (
@@ -446,13 +457,14 @@ const CameraList = () => {
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
-              {currentCameras.map((camera) => (
+              {newArrayPage.map((camera) => (
                 <div
                   key={camera.kamera_id}
                   className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
                 >
                   <Link
-                    to={camera.kamera_id}
+                    to={camera.nama_kamera}
+                    state={camera?.kamera_id}
                     className="block w-full h-full rounded-lg overflow-hidden relative"
                   >
                     {/* header */}
@@ -553,6 +565,66 @@ const CameraList = () => {
       </div>
     );
   };
+  console.log(currentCamerasOnline, 'ONLINE');
+
+  // console.log(
+  //   currentCamerasOnline.filter((item) =>
+  //     receivedObjects.map((item1) => item1.massage).includes(item?.kamera_id),
+  //   ),
+  //   'TESTING',
+  // );
+
+  // const test1 = receivedObjects.map((item) => item.massage);
+  // const uniqueArray = test1.filter(
+  //   (obj, index, self) =>
+  //     index === self.findIndex((t) => t?.kamera_id === obj?.kamera_id),
+  // );
+  // console.log(test1, 'AA1');
+  // console.log(uniqueArray, 'AA2');
+
+  // console.log(
+  //   uniqueArray.filter((item) =>
+  //     currentCamerasOnline
+  //       .map((item2) => item2?.kamera_id)
+  //       .includes(item?.kamera_id),
+  //   ),
+  //   'BABABABA',
+  // );
+
+  // const newArray = uniqueArray.filter((item) =>
+  //   currentCamerasOnline
+  //     .map((item2) => item2.kamera_id)
+  //     .includes(item.kamera_id),
+  // );
+  // console.log('BABA2', newArray);
+
+  const test1 = receivedObjects.map((item) => item.massage);
+
+  // Reverse the array to prioritize the last occurrence of duplicates
+  const reversedArray = [...test1].reverse();
+
+  const uniqueArray = reversedArray.filter(
+    (obj, index, self) =>
+      index === self.findIndex((t) => t?.kamera_id === obj?.kamera_id),
+  );
+  const uniqueArrayPage = reversedArray.filter(
+    (obj, index, self) =>
+      index === self.findIndex((t) => t?.kamera_id === obj?.kamera_id),
+  );
+
+  uniqueArray.reverse();
+  uniqueArrayPage.reverse();
+
+  const newArray = uniqueArray.filter((item) =>
+    currentCamerasOnline
+      .map((item2) => item2?.kamera_id)
+      .includes(item?.kamera_id),
+  );
+  const newArrayPage = uniqueArrayPage.filter((item) =>
+    currentCameras.map((item2) => item2?.kamera_id).includes(item?.kamera_id),
+  );
+
+  console.log(newArray, 'BABABABA');
 
   const renderCameraOnlineList = () => {
     const onlineCamera = buildings?.data?.records?.gedung.flatMap((gedung) =>
@@ -595,7 +667,10 @@ const CameraList = () => {
                         : 'grid-cols-1 grid-rows-1'
               } gap-4 justify-center w-full`}
             >
-              {currentCamerasOnline.map((camera: any) => (
+              {/* {currentCamerasOnline
+                .filter((item) => receivedObjects.includes(item?.kamera_id))
+                .map((obj) => console.log(obj, 'hasil map'))} */}
+              {newArray.map((camera) => (
                 <div
                   key={camera.kamera_id}
                   className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
@@ -607,6 +682,24 @@ const CameraList = () => {
                   >
                     {/* header */}
                     <div className=" flex h-full w-full items-center justify-center rounded-t-lg bg-meta-4 text-white relative">
+                      {/* {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
+                      {/* {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : client.current.readyState !== WebSocket.OPEN ? (
+                        <RiErrorWarningFill
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
                       {camera.status_kamera === 'online' ? (
                         isWebSocketConnected ? (
                           renderThumb(camera)
@@ -625,20 +718,12 @@ const CameraList = () => {
 
                     <div className="absolute top-1 right-2 flex items-center">
                       {camera.status_kamera === 'online' ? (
-                        isWebSocketConnected ? (
-                          <>
-                            <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
-                            <h5 className="text-green-500 text-center mt-1">
-                              Online
-                            </h5>
-                          </>
-                        ) : (
-                          <>
-                            <h5 className="text-yellow-500 animate-pulse">
-                              Error connection
-                            </h5>
-                          </>
-                        )
+                        <>
+                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2 mt-1 animate-pulse"></div>
+                          <h5 className="text-green-500 text-center mt-1">
+                            Online
+                          </h5>
+                        </>
                       ) : (
                         <>
                           <h5 className="text-red-500 text-center mt-1">
@@ -720,7 +805,14 @@ const CameraList = () => {
             <IoMdArrowRoundBack /> Kembali
           </button>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <ToolsTip text="Refresh">
+            <HiRefresh
+              size={33}
+              className="mr-3 transition-all duration-300 hover:text-slate-100 transform-gpu hover:rotate-180"
+              onClick={handleRefreshClick}
+            />
+          </ToolsTip>
           <>
             <select
               id="layoutSelect"
