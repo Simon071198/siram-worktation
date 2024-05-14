@@ -358,7 +358,7 @@ const DataCamera = (props) => {
                         </p>
                         <p className="text-xs">{row.nationality}</p>
                         <p className="text-xs">
-                          {formatTimestamp(row.timestamp)}
+                          {formatTimestamp(row?.datenow)}
                         </p>
                       </td>
                     </tr>
