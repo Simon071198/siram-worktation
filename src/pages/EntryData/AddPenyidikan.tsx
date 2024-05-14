@@ -14,7 +14,7 @@ dayjs.locale('id');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) => {
+export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan, handleNext}: any) => {
   const [formState, setFormState] = useState({
     penyidikan_id: '',
     kasus_id: '',
@@ -404,6 +404,7 @@ export const AddPenyidikan = ({defaultValue, onSubmit, nomorPenyidikan}: any) =>
           icon: 'success',
           title: 'Berhasil menambah data',
         });
+        handleNext()
         // setModalAddOpen(false);
         // fetchData();
       } else if (responseCreate.data.status === 'NO') {

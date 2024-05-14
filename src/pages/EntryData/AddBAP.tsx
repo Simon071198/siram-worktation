@@ -12,7 +12,7 @@ import { Error403Message } from '../../utils/constants';
 import { Alert } from '@windmill/react-ui';
 import dayjs from 'dayjs';
 
-export const AddBAP = ({namaDokumenBap}: any) => {
+export const AddBAP = ({namaDokumenBap, handleNext}: any) => {
   const [formState, setFormState] = useState({
     // untuk default value dari form ini
     // nama_dokumen_bap: '',
@@ -203,6 +203,7 @@ export const AddBAP = ({namaDokumenBap}: any) => {
           icon: 'success',
           title: 'Berhasil menambah data',
         });
+        handleNext()
         // setModalAddOpen(false);
         // fetchData();
       } else if (responseCreate.data.status === 'NO') {

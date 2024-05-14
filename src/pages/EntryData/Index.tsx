@@ -152,8 +152,10 @@ const EntryData = () => {
   };
   
   useEffect(() => {
-    generateNomorPenyidikan(),
-    generateNomorKasus()
+    Promise.all([
+      generateNomorPenyidikan(),
+      generateNomorKasus()
+    ])
     return () => {
       localStorage.removeItem('formState');
     }
@@ -237,36 +239,6 @@ console.log(nomorPenyidikan, "ada nomor gk")
   }, [])
   console.log(namaDokumenBap, 'ada nama gak')
 
-  const formList = [
-    {
-      nama: 'Detail Tersangka',
-      component: (
-        <div>
-          <WbpInsert />
-        </div>
-      ),
-    },
-    {
-      nama: 'Detail Kasus',
-      component: <DetailKasus nomorKasus = {nomorKasus} />,
-    },
-    {
-      nama: 'Barang Bukti',
-      component: <BarangBukti />,
-    },
-    {
-      nama: 'Detail Penyidikan',
-      component: <AddPenyidikan nomorPenyidikan={nomorPenyidikan}/>,
-    },
-    {
-      nama: 'Detail Sidang',
-      component: <AddSidang />,
-    },
-    {
-      nama: 'Tambah BAP',
-      component: <AddBAP namaDokumenBap={namaDokumenBap}/>,
-    },
-  ];
   function handlePrev() {
     setCurrentForm(currentForm - 1);
   }
@@ -277,6 +249,36 @@ console.log(nomorPenyidikan, "ada nomor gk")
     }
     setCurrentForm(currentForm + 1);
   }
+  const formList = [
+    {
+      nama: 'Detail Tersangka',
+      component: (
+        <div>
+          <WbpInsert handleNext={handleNext} nomorKasus = {nomorKasus} />
+        </div>
+      ),
+    },
+    {
+      nama: 'Detail Kasus',
+      component: <DetailKasus nomorKasus = {nomorKasus} handleNext={handleNext} />,
+    },
+    {
+      nama: 'Barang Bukti',
+      component: <BarangBukti handleNext={handleNext} />,
+    },
+    {
+      nama: 'Detail Penyidikan',
+      component: <AddPenyidikan nomorPenyidikan={nomorPenyidikan} handleNext={handleNext} />,
+    },
+    {
+      nama: 'Detail Sidang',
+      component: <AddSidang handleNext={handleNext} />,
+    },
+    {
+      nama: 'Tambah BAP',
+      component: <AddBAP namaDokumenBap={namaDokumenBap} handleNext={handleNext} />,
+    },
+  ];
   return (
     <div>
       <ProgressBar list={formList} currentForm={currentForm} />

@@ -38,7 +38,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const WbpInsert = () => {
+type WBPProps = {
+  handleNext: () => void;
+  nomorKasus: string;
+}
+export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
   interface type {
     [key: string]: any;
   }
@@ -182,13 +186,13 @@ export const WbpInsert = () => {
     kasus_id: '',
     // jenis_kasus_id: dataAdmin.jenis_kasus_id ?? '',
     nama_kasus: '',
-    nomor_kasus: '',
+    nomor_kasus: nomorKasus ,
     lokasi_kasus: '',
     is_new_kasus: 'false',
-    jenis_pidana_id: '',
+    jenis_pidana_id: '', 
     kategori_perkara_id: '',
-    waktu_kejadian: '',
-    waktu_pelaporan_kasus: '',
+    waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
     keterangans: [],
     role_ketua_oditur_ids: '',
     wbp_profile_ids: [],
@@ -197,6 +201,7 @@ export const WbpInsert = () => {
     zona_waktu: '',
     nama_jenis_pidana: '',
   });
+
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -237,6 +242,22 @@ export const WbpInsert = () => {
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
   //end handle state
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
+  const maxDate= formatDate(new Date());
 
   const customStyles = {
     container: (provided: any) => ({
@@ -769,7 +790,7 @@ export const WbpInsert = () => {
           icon: 'success',
           title: 'Berhasil membuat data',
         });
-
+        handleNext()
         // setModalAddOpen(false);
         fetchData();
       } else if (responseAdd.data.status === 'NO') {
@@ -801,7 +822,8 @@ export const WbpInsert = () => {
     if (!validateForm()) return;
     setButtonLoad(true);
 
-    onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState);
+    setButtonLoad(false)
   };
 
   //start api select
@@ -1452,75 +1474,6 @@ export const WbpInsert = () => {
       vonis_hari_perkara: '',
     });
   };
-
-  const handleGenerateNomorKasus = () => {
-    function convertToRoman(num: number) {
-      const romanNumerals = [
-        'M',
-        'CM',
-        'D',
-        'CD',
-        'C',
-        'XC',
-        'L',
-        'XL',
-        'X',
-        'IX',
-        'V',
-        'IV',
-        'I',
-      ];
-      const decimalValues = [
-        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
-      ];
-
-      let result = '';
-
-      for (let i = 0; i < romanNumerals.length; i++) {
-        while (num >= decimalValues[i]) {
-          result += romanNumerals[i];
-          num -= decimalValues[i];
-        }
-      }
-
-      return result;
-    }
-
-    const type = 'Pid.K';
-    const day = dayjs(new Date()).format('DD');
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-    const year = new Date().getFullYear().toString();
-    const location = 'Otmil';
-    const romanNumber = convertToRoman(parseInt(month));
-    const currentDate = `${day}-${romanNumber}/${year}`;
-    let largestNumber = 0;
-
-    data.forEach((item: any) => {
-      if (item.nomor_kasus) {
-        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
-        const number = parseInt(caseNumber, 10);
-
-        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
-          largestNumber = Math.max(largestNumber, number);
-        }
-      }
-    });
-
-    largestNumber += 1;
-
-    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
-    console.log(caseNumberFormatted, 'caseNumberFormatted');
-
-    setFormState({
-      ...formState,
-      nomor_kasus: caseNumberFormatted,
-    });
-  };
-
-  useEffect(() => {
-    console.log(formState, 'formState coy');
-    handleGenerateNomorKasus();
-  }, [buatKasusBaru]);
 
   //end handle select
 
@@ -2312,7 +2265,7 @@ export const WbpInsert = () => {
                 'true' ? (
                 // Kasus Baru
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="form-group w-full">
+                  <div className="form-group w-full ">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -2551,7 +2504,7 @@ export const WbpInsert = () => {
                       </p>
                     </div>
 
-                    <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                    <div className="f-tanggal-lahir form-group w-full flex flex-col mb-5">
                       <label
                         className="  block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -2578,6 +2531,31 @@ export const WbpInsert = () => {
                         {errors.map((item) =>
                           item === 'waktu_pelaporan_kasus'
                             ? 'Masukan waktu pelaporan kasus'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="form-group w-full ">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Pelimpahan Kasus
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
+                        name="tanggal_pelimpahan_kasus"
+                        placeholder="Tanggal Pelimpahan Kasus"
+                        onChange={handleChange}
+                        // disabled={isDetail}
+                        max={maxDate}
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'tanggal_pelimpahan_kasus'
+                            ? 'Masukan Tanggal Pelimpahan Kasus'
                             : '',
                         )}
                       </p>
@@ -3476,9 +3454,9 @@ export const WbpInsert = () => {
                       )}
 
                     </div>
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {isZonaHijauEmpty ? 'Pilih zona hijau' : ''}
-                    </p>
+                    </p> */}
                   </div>
 
                   <div className="zona-merah w-full ">

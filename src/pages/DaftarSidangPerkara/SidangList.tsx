@@ -332,7 +332,7 @@ const SidangList = () => {
         nama_oditur: jaksaKetua?.nama_oditur,
       },
       role_ketua_oditur: jaksaKetua?.oditur_penuntut_id,
-      link_dokumen_persidangan: item.link_dokumen_persidangan,
+      link_dokumen_persidangan: item?.link_dokumen_persidangan,
     };
     console.log('NEW ITEM EDIT', editItem);
     setEditData(editItem);
