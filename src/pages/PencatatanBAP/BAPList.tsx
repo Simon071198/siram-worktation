@@ -182,7 +182,7 @@ const BAPList = () => {
   };
 
   const handleChagePage = (pageNumber: any) => {
-    pageNumber;
+    setCurrentPage(pageNumber);
   };
 
   const handleChangePageSize = async (e: any) => {

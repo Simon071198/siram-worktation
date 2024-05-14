@@ -44,8 +44,10 @@ export const AddDaftarKasusModal = ({
     jenis_perkara_id: defaultValue?.jenis_perkara_id,
     jenis_pidana_id: defaultValue?.jenis_pidana_id,
     kategori_perkara_id: '',
-    waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
-    waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_kejadian: '',
+    waktu_pelaporan_kasus: '',
     wbp_profile_ids: [],
     keterangans: [],
     role_ketua_oditur_ids: '',
@@ -963,9 +965,10 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {formSubmitted &&
-                          errors.includes('waktu_kejadian') &&
-                          'Masukan Tanggal Kejadian Kasus'}
+                        {
+                          errors.map((item) => 
+                          item === "waktu_kejadian" ? "Masukan tanggal kejadian" : ""
+                        )}
                       </p>
                     </div>
                   </div>
@@ -1006,9 +1009,7 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {formSubmitted &&
-                          errors.includes('waktu_pelaporan_kasus') &&
-                          'Masukan Tanggal Pelaporan Kasus'}
+                        {errors.map((item) => item === 'waktu_pelaporan_kasus' ? 'Masukan tanggal pelaporan kasus' : '')}
                       </p>
                     </div>
                   </div>

@@ -286,17 +286,10 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
           },
         },
         {
-          element: '.d-peserta',
+          element: '.p-peserta',
           popover: {
             title: 'Pilih Peserta',
             description: 'Pilih peserta yang diinginkan',
-          },
-        },
-        {
-          element: '.d-ikut',
-          popover: {
-            title: 'Peserta Ikut',
-            description: 'Menampilkan peserta ikut',
           },
         },
         {
@@ -1026,7 +1019,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </div>
                   <div className="w-full mt-5">
                     <Select
-                      className="basic-multi-select p-anggota w-full"
+                      className="basic-multi-select p-peserta w-full"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={
