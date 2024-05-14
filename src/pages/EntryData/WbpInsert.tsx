@@ -172,7 +172,7 @@ export const WbpInsert = () => {
       value: '',
       label: 'Pilih Status WBP Kasus',
     },
-    status_wbp_kasus_id: '',
+    status_wbp_kasus_id: dataAdmin.status_wbp_kasus_id ?? '',
     tanggal_penetapan_tersangka: dataAdmin.tanggal_penetapan_tersangka ?? '',
     tanggal_penetapan_terdakwa: dataAdmin.tanggal_penetapan_terdakwa ?? '',
     tanggal_penetapan_terpidana: dataAdmin.tanggal_penetapan_terpidana ?? '',

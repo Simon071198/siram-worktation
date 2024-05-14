@@ -288,6 +288,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           },
         },
         {
+          element: '.input-keputusan',
+          popover: {
+            title: 'Hasil Keputusan Sidang',
+            description: 'Isi hasil keputusan sidang',
+          },
+        },
+        {
           element: '.input-jadwal',
           popover: {
             title: 'Jadwal Sidang',
@@ -1829,7 +1836,7 @@ console.log(getWbp, 'get wbp')
                       Hasil keputusan sidang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-keputusan"
                       onChange={handleChange}
                       placeholder="hasil keputusan sidang"
                       name="hasil_keputusan_sidang"
