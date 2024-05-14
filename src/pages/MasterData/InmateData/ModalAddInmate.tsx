@@ -4157,7 +4157,7 @@ export const AddInmateModal = ({
                                 ? autocompleteDataZona
                                     ?.filter(
                                       (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.some((data) =>  item.ruangan_otmil_id == data.id),
+                                        !formState.akses_ruangan_otmil_id.some((data: any) =>  item.ruangan_otmil_id == data.id),
                                     )
                                     .map((zonaItem: any) => (
                                       <div
