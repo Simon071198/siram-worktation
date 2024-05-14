@@ -918,7 +918,7 @@ export const AddAktifitasPengunjung: React.FC<
                         isEdit || isDetail
                         ? {
                             value: formState.petugas_id,
-                            label: `${formState.nama_petugas} (${formState.nrp})`,
+                            label: `${formState.nama_petugas} (${formState.nrp_petugas})`,
                           }
                         : formState.petugas_id
                     }

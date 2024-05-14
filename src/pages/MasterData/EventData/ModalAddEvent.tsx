@@ -286,17 +286,10 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
           },
         },
         {
-          element: '.d-peserta',
+          element: '.p-peserta',
           popover: {
             title: 'Pilih Peserta',
             description: 'Pilih peserta yang diinginkan',
-          },
-        },
-        {
-          element: '.d-ikut',
-          popover: {
-            title: 'Peserta Ikut',
-            description: 'Menampilkan peserta ikut',
           },
         },
         {
@@ -974,7 +967,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                       className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-jenis"
                       name="jenis_ruangan_otmil"
                       value={formState.jenis_ruangan_otmil}
-                      disabled={isDetail}
+                      disabled
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1026,7 +1019,7 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                 </div>
                   <div className="w-full mt-5">
                     <Select
-                      className="basic-multi-select p-anggota w-full"
+                      className="basic-multi-select p-peserta w-full"
                       isMulti
                       classNamePrefix="select"
                       defaultValue={

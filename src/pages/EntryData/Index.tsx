@@ -8,12 +8,15 @@ import AddBAP from './AddBAP';
 import AddPenyidikan from './AddPenyidikan';
 
 import { WbpInsert } from './WbpInsert';
-import { apiReadPenyidikan } from '../../services/api';
+import { apiReadKasus } from '../../services/api';
+import { apiReadPenyidikan, apiReadBAP } from '../../services/api';
 import dayjs from 'dayjs';
 const EntryData = () => {
   const navigate = useNavigate();
   const [currentForm, setCurrentForm] = useState(0);
   const [nomorPenyidikan, setNomorPenyidikan] = useState("")
+  const [nomorKasus, setNomorKasus] = useState("")
+  const [namaDokumenBap, setNamaDokumenBap] = useState("")
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   const token = dataToken.token;
@@ -84,43 +87,158 @@ const EntryData = () => {
     
    
   };
+
+  const generateNomorKasus = async() => {
+    function convertToRoman(num:number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+    
+      return result;
+    }
+    const type = 'Pid.K';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+    const kasus = await apiReadKasus({}, token);
+    const resultKasus = kasus.data.records;
+    resultKasus.forEach((item: any) => {
+      if (item.nomor_kasus) {
+        const nomorKasus = item.nomor_kasus.split('/')[0];
+        const angka = parseInt(nomorKasus, 10);
+
+        if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
+          angkaTerbesar = Math.max(angkaTerbesar, angka);
+        }
+      }
+    });
+
+    if (angkaTerbesar ===0) {
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+    const output =`${angkaTerbesar}/${type}/${currentDate}/${lokasi}`
+    console.log(output, "Nomor kasus")
+    setNomorKasus(output)
+  };
+  
   useEffect(() => {
-    generateNomorPenyidikan()
+    Promise.all([
+      generateNomorPenyidikan(),
+      generateNomorKasus()
+    ])
     return () => {
       localStorage.removeItem('formState');
     }
   }, [])
+// console.log(nomorPenyidikan, "ada nomor gk")
+console.log(nomorKasus, "nomor kasusnya")
 console.log(nomorPenyidikan, "ada nomor gk")
-  const formList = [
-    {
-      nama: 'Detail Tersangka',
-      component: (
-        <div>
-          <WbpInsert />
-        </div>
-      ),
-    },
-    {
-      nama: 'Detail Kasus',
-      component: <DetailKasus />,
-    },
-    {
-      nama: 'Barang Bukti',
-      component: <BarangBukti />,
-    },
-    {
-      nama: 'Detail Penyidikan',
-      component: <AddPenyidikan nomorPenyidikan={nomorPenyidikan}/>,
-    },
-    {
-      nama: 'Detail Sidang',
-      component: <AddSidang />,
-    },
-    {
-      nama: 'Tambah BAP',
-      component: <AddBAP />,
-    },
-  ];
+
+  const generateNamaDokumenBap = async () => {
+    function convertToRoman(num: number) {
+      const romanNumerals = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+      ];
+      const decimalValues = [
+        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
+      ];
+
+      let result = '';
+
+      for (let i = 0; i < romanNumerals.length; i++) {
+        while (num >= decimalValues[i]) {
+          result += romanNumerals[i];
+          num -= decimalValues[i];
+        }
+      }
+
+      return result;
+    }
+    const type = 'BAP';
+    const day = dayjs(new Date()).format('DD');
+    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+    const year = new Date().getFullYear().toString();
+    const lokasi = 'Otmil';
+    const romanNumber = convertToRoman(parseInt(month));
+    const currentDate = `${day}-${romanNumber}/${year}`;
+    let angkaTerbesar = 0;
+    const bap = await apiReadBAP({}, token);
+    const resultBap = bap.data.records;
+
+    resultBap.forEach((item:any) => {
+      if(item.nama_dokumen_bap){
+        const namaDokumenBap = item.nama_dokumen_bap.split('/')[0];
+        const angka = parseInt(namaDokumenBap, 10);
+
+        if(!isNaN(angka) && item.nama_dokumen_bap.includes(currentDate)){
+          angkaTerbesar = Math.max(angkaTerbesar, angka);
+        }
+      }
+    });
+
+    // Increment the largest number by 1 if the date is the same
+    if (angkaTerbesar === 0) {
+      // No matching cases for the current date
+      angkaTerbesar = 1;
+    } else {
+      angkaTerbesar += 1;
+    }
+
+    const output = `${angkaTerbesar}/${type}/${currentDate}/${lokasi}`
+    console.log(output, "output cuyy")
+    setNamaDokumenBap(output);
+  };
+
+  useEffect(() => {
+    generateNamaDokumenBap();
+    return() =>{
+      localStorage.removeItem('formState');
+    }
+  }, [])
+  console.log(namaDokumenBap, 'ada nama gak')
+
   function handlePrev() {
     setCurrentForm(currentForm - 1);
   }
@@ -131,6 +249,36 @@ console.log(nomorPenyidikan, "ada nomor gk")
     }
     setCurrentForm(currentForm + 1);
   }
+  const formList = [
+    {
+      nama: 'Detail Tersangka',
+      component: (
+        <div>
+          <WbpInsert handleNext={handleNext} nomorKasus = {nomorKasus} />
+        </div>
+      ),
+    },
+    {
+      nama: 'Detail Kasus',
+      component: <DetailKasus nomorKasus = {nomorKasus} handleNext={handleNext} />,
+    },
+    {
+      nama: 'Barang Bukti',
+      component: <BarangBukti handleNext={handleNext} />,
+    },
+    {
+      nama: 'Detail Penyidikan',
+      component: <AddPenyidikan nomorPenyidikan={nomorPenyidikan} handleNext={handleNext} />,
+    },
+    {
+      nama: 'Detail Sidang',
+      component: <AddSidang handleNext={handleNext} />,
+    },
+    {
+      nama: 'Tambah BAP',
+      component: <AddBAP namaDokumenBap={namaDokumenBap} handleNext={handleNext} />,
+    },
+  ];
   return (
     <div>
       <ProgressBar list={formList} currentForm={currentForm} />

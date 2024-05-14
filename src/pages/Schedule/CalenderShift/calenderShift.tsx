@@ -233,64 +233,152 @@ const shiftJaga = () => {
     setOpenFilter(false);
   };
 
-  const handleClickTutorial = () => {
-    const driverObj = driver({
-      showProgress: true,
-      steps: [
-        {
-          element: '.p-grup',
-          popover: {
-            title: 'Grup',
-            description: 'Pilih grup yang diinginkan',
-          },
-        },
-        {
-          element: '.p-semua',
-          popover: {
-            title: 'Semua Grup',
-            description: 'Pilih semua grup yang diinginkan',
-          },
-        },
-        {
-          element: '.p-tanggal',
-          popover: {
-            title: 'Pilih Tanggal',
-            description: 'Pilih tanggal yang diinginkan',
-          },
-        },
-        {
-          element: '.b-jadwal',
-          popover: {
-            title: 'Buat Jadwal',
-            description: 'Klik untuk membuat jadwal',
-          },
-        },
-        {
-          element: '#b-ubah',
-          popover: {
-            title: 'Ubah Jadwal',
-            description: `Klik untuk mengubah jadwal`,
-          },
-        },
-        {
-          element: '#b-hapus',
-          popover: {
-            title: 'Hapus Jadwal',
-            description: `Klik untuk menghapus jadwal`,
-          },
-        },
-        {
-          element: '.b-excel',
-          popover: {
-            title: 'Export Excel',
-            description: `Klik untuk mengexport excel`,
-          },
-        },
-      ],
-    });
+  // const handleClickTutorial = () => {
+  //   const driverObj = driver({
+  //     showProgress: true,
+  //     steps: [
+  //       {
+  //         element: '.p-grup',
+  //         popover: {
+  //           title: 'Grup',
+  //           description: 'Pilih grup yang diinginkan',
+  //         },
+  //       },
+  //       {
+  //         element: '.p-semua',
+  //         popover: {
+  //           title: 'Semua Grup',
+  //           description: 'Pilih semua grup yang diinginkan',
+  //         },
+  //       },
+  //       {
+  //         element: '.p-tanggal',
+  //         popover: {
+  //           title: 'Pilih Tanggal',
+  //           description: 'Pilih tanggal yang diinginkan',
+  //         },
+  //       },
+  //       {
+  //         element: '.b-jadwal',
+  //         popover: {
+  //           title: 'Buat Jadwal',
+  //           description: 'Klik untuk membuat jadwal',
+  //         },
+  //       },
+  //       {
+  //         element: '#b-ubah',
+  //         popover: {
+  //           title: 'Ubah Jadwal',
+  //           description: `Klik untuk mengubah jadwal`,
+  //         },
+  //       },
+  //       {
+  //         element: '#b-hapus',
+  //         popover: {
+  //           title: 'Hapus Jadwal',
+  //           description: `Klik untuk menghapus jadwal`,
+  //         },
+  //       },
+  //       {
+  //         element: '.b-excel',
+  //         popover: {
+  //           title: 'Export Excel',
+  //           description: `Klik untuk mengexport excel`,
+  //         },
+  //       },
+  //     ],
+  //   });
 
-    driverObj.drive();
+  //   driverObj.drive();
+  // };
+
+const handleClickTutorial = () => {
+  const steps = [
+    {
+      element: '.p-grup',
+      popover: {
+        title: 'Grup',
+        description: 'Pilih grup yang diinginkan',
+      },
+    },
+    {
+      element: '.p-semua',
+      popover: {
+        title: 'Semua Grup',
+        description: 'Pilih semua grup yang diinginkan',
+      },
+    },
+    {
+      element: '.p-tanggal',
+      popover: {
+        title: 'Pilih Tanggal',
+        description: 'Pilih tanggal yang diinginkan',
+      },
+    },
+    {
+      element: '.b-jadwal',
+      popover: {
+        title: 'Buat Jadwal',
+        description: 'Klik untuk membuat jadwal',
+      },
+    },
+  ];
+
+  const isElementVisible = (selector: any) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      return (
+        rect.width > 0 &&
+        rect.height > 0 &&
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <=
+          (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <=
+          (window.innerWidth || document.documentElement.clientWidth)
+      );
+    }
+    return false;
   };
+
+  if (isElementVisible('#b-ubah')) {
+    steps.push({
+      element: '#b-ubah',
+      popover: {
+        title: 'Ubah Jadwal',
+        description: 'Klik untuk mengubah jadwal',
+      },
+    });
+  }
+
+  if (isElementVisible('#b-hapus')) {
+    steps.push({
+      element: '#b-hapus',
+      popover: {
+        title: 'Hapus Jadwal',
+        description: 'Klik untuk menghapus jadwal',
+      },
+    });
+  }
+
+  steps.push({
+    element: '.b-excel',
+    popover: {
+      title: 'Export Excel',
+      description: 'Klik untuk mengexport excel',
+    },
+  });
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: steps,
+  });
+
+  driverObj.drive();
+};
+
+
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
   //useEffect untuk menambahkan event listener  ke elemen dokumen

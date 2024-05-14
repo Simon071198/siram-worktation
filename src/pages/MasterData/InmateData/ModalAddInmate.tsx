@@ -716,7 +716,11 @@ export const AddInmateModal = ({
           }
         }
 
-        if(key !== 'jenis_olahraga') // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
+        if((key === 'jenis_olahraga' || key === 'zat_adiktif') && !value) {
+          continue;
+        }
+          
+        // ) // jika field saat ini bukan field jenis_olahraga, maka abaikan validasi untuk field jenis_olahraga.
 
         if(formState.is_new_kasus == 'true'){ // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
           const ignoredFields = [
@@ -4153,7 +4157,7 @@ export const AddInmateModal = ({
                                 ? autocompleteDataZona
                                     ?.filter(
                                       (item: any) =>
-                                        !formState.akses_ruangan_otmil_id.some((data) =>  item.ruangan_otmil_id == data.id),
+                                        !formState.akses_ruangan_otmil_id.some((data: any) =>  item.ruangan_otmil_id == data.id),
                                     )
                                     .map((zonaItem: any) => (
                                       <div
@@ -4353,7 +4357,7 @@ export const AddInmateModal = ({
                               )} */}
                           {
                         isDetail && formState.akses_ruangan_otmil?.filter((data: any) => data.isPermitted == 1).map((zona: any, index: number) => (
-                          <div key={index} className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                          <div key={index} className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
                           data-te-ripple-color="dark">
                               <p className="capitalize text-center">
                             {

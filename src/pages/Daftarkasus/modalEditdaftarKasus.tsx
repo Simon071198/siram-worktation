@@ -7,6 +7,7 @@ import {
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
+  apiJenisPidanaRead
 } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';

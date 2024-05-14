@@ -32,11 +32,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const WbpInsert = () => {
+type WBPProps = {
+  handleNext: () => void;
+  nomorKasus: string;
+}
+export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
   interface type {
     [key: string]: any;
   }
@@ -100,7 +106,7 @@ export const WbpInsert = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [formState, setFormState] = useState<type>({
     foto_wajah: dataAdmin.foto_wajah ?? '',
-    nama:  dataAdmin.nama ?? '',
+    nama: dataAdmin.nama ?? '',
     pangkat: dataAdmin.pangkat ?? { value: '', label: 'Pilih Pangkat' },
     pangkat_id: '',
     matra: dataAdmin.matra ?? { value: '', label: 'Pilih Matra' },
@@ -154,7 +160,7 @@ export const WbpInsert = () => {
     gelang_id: '',
     // dmacGelang: dataAdmin.dmacGelang ?? {value: '', label: 'Pilih DMAC Gelang'},
     dmac: dataAdmin.dmac ?? '',
-    residivis: '',
+    residivis: dataAdmin.residivis ?? '0',
     hunian_wbp_otmil: dataAdmin.hunian_wbp_otmil ?? {
       value: '',
       label: 'Pilih Hunian WBP OTMIL',
@@ -170,7 +176,7 @@ export const WbpInsert = () => {
       value: '',
       label: 'Pilih Status WBP Kasus',
     },
-    status_wbp_kasus_id: '',
+    status_wbp_kasus_id: dataAdmin.status_wbp_kasus_id ?? '',
     tanggal_penetapan_tersangka: dataAdmin.tanggal_penetapan_tersangka ?? '',
     tanggal_penetapan_terdakwa: dataAdmin.tanggal_penetapan_terdakwa ?? '',
     tanggal_penetapan_terpidana: dataAdmin.tanggal_penetapan_terpidana ?? '',
@@ -180,13 +186,13 @@ export const WbpInsert = () => {
     kasus_id: '',
     // jenis_kasus_id: dataAdmin.jenis_kasus_id ?? '',
     nama_kasus: '',
-    nomor_kasus: '',
+    nomor_kasus: nomorKasus ,
     lokasi_kasus: '',
     is_new_kasus: 'false',
-    jenis_pidana_id: '',
+    jenis_pidana_id: '', 
     kategori_perkara_id: '',
-    waktu_kejadian: '',
-    waktu_pelaporan_kasus: '',
+    waktu_kejadian: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
     keterangans: [],
     role_ketua_oditur_ids: '',
     wbp_profile_ids: [],
@@ -195,6 +201,7 @@ export const WbpInsert = () => {
     zona_waktu: '',
     nama_jenis_pidana: '',
   });
+
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -235,6 +242,22 @@ export const WbpInsert = () => {
   const [selectSaksi, setSelectSaksi] = useState([]);
   const [selectTersangka, setSelectTersangka] = useState([]);
   //end handle state
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+      month = '0' + month;
+    }
+    if (day < 10) {
+      day = '0' + day;
+    }
+
+    return `${year}-${month}-${day}`;
+  }
+  const maxDate= formatDate(new Date());
 
   const customStyles = {
     container: (provided: any) => ({
@@ -281,10 +304,10 @@ export const WbpInsert = () => {
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -321,6 +344,39 @@ export const WbpInsert = () => {
     }),
   };
 
+  const handleWaktuKejadian = (e: any) => {
+    console.log('1213', e);
+
+    const timeZone = dayjs().format('Z');
+    let zonaWaktu;
+    switch (timeZone) {
+      case '+07:00':
+        zonaWaktu = 'WIB';
+        break;
+      case '+08:00':
+        zonaWaktu = 'WITA';
+        break;
+      case '+09:00':
+        zonaWaktu = 'WIT';
+        break;
+      default:
+        zonaWaktu = 'Zona Waktu Tidak Dikenal';
+    }
+    setFormState({
+      ...formState,
+      waktu_kejadian: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      zona_waktu: zonaWaktu,
+    });
+  };
+
+  const ExampleCustomTimeInput = ({ date, value, onChange }: any) => (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ border: 'solid 1px pink' }}
+    />
+  );
+
   const validateForm = () => {
     let errorFields: any = [];
 
@@ -333,48 +389,52 @@ export const WbpInsert = () => {
             }
           }
         }
-        if ((key === 'nama_status_wbp_kasus' || key === 'zat_adiktif' || key === 'jenis_olahraga') && !value) {
+      if (
+        (key === 'nama_status_wbp_kasus' ||
+          key === 'zat_adiktif' ||
+          key === 'jenis_olahraga') &&
+        !value
+      ) {
+        continue;
+      }
+
+      // if(key !== 'jenis_olahraga')
+
+      if (formState.is_new_kasus == 'true') {
+        // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
+        const ignoredFields = ['kasus_id'];
+
+        if (ignoredFields.includes(key) && !value) {
           continue;
         }
+      }
 
-        // if(key !== 'jenis_olahraga')
+      if (formState.is_new_kasus == 'false') {
+        // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
+        const ignoredFields = [
+          'vonis_tahun_perkara',
+          'vonis_bulan_perkara',
+          'vonis_hari_perkara',
+          'nama_kasus',
+          'nomor_kasus',
+          'lokasi_kasus',
+          'jenis_perkara_id',
+          'jenis_pidana_id',
+          'kategori_perkara_id',
+          'waktu_kejadian',
+          'waktu_pelaporan_kasus',
+          'role_ketua_oditur_ids',
+          'nama_jenis_perkara',
+          'nama_jenis_pidana',
+          'zat_adiktif',
+          'jenis_olahraga',
+        ];
 
-        if(formState.is_new_kasus == 'true'){ // jika is_new_kasus adalah 'true', maka abaikan validasi untuk field-field berikut.
-          const ignoredFields = [
-            "kasus_id",
-          ];
-          
-          if(ignoredFields.includes(key) && !value){
-            continue;
-          }
+        // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
+        if (ignoredFields.includes(key) && !value) {
+          continue; // Melanjutkan iterasi ke field selanjutnya.
         }
-
-        if (formState.is_new_kasus == 'false') {
-          // Jika is_new_kasus adalah 'false', maka abaikan validasi untuk field-field berikut.
-          const ignoredFields = [
-            "vonis_tahun_perkara",
-            "vonis_bulan_perkara",
-            "vonis_hari_perkara",
-            "nama_kasus",
-            "nomor_kasus",
-            "lokasi_kasus",
-            "jenis_perkara_id",
-            "jenis_pidana_id",
-            "kategori_perkara_id",
-            "waktu_kejadian",
-            "waktu_pelaporan_kasus",
-            "role_ketua_oditur_ids",
-            "nama_jenis_perkara",
-            "nama_jenis_pidana",
-            "zat_adiktif",
-            "jenis_olahraga",
-          ];
-        
-          // Jika field saat ini merupakan salah satu dari field yang diabaikan, dan value-nya kosong, maka abaikan validasi untuk field tersebut.
-          if (ignoredFields.includes(key) && !value) {
-            continue; // Melanjutkan iterasi ke field selanjutnya.
-          }
-        }
+      }
 
       if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
         console.log('STATUS ADA');
@@ -432,7 +492,7 @@ export const WbpInsert = () => {
         errorFields.push(key);
       }
     }
-    console.log(errorFields, "errorFields")
+    console.log(errorFields, 'errorFields');
     if (errorFields.length > 0) {
       setErrors(errorFields);
       return false;
@@ -469,9 +529,11 @@ export const WbpInsert = () => {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     let updatedFormState;
-  
+
     if (name === 'gelang_id') {
-      const selectedGelang = gelang.find((item: any) => item.gelang_id === value);
+      const selectedGelang = gelang.find(
+        (item: any) => item.gelang_id === value,
+      );
       updatedFormState = {
         ...formState,
         gelang_id: value,
@@ -487,13 +549,12 @@ export const WbpInsert = () => {
     } else {
       updatedFormState = { ...formState, [name]: value };
     }
-  
+
     // Simpan formState yang diperbarui ke localStorage
     localStorage.setItem('formState', JSON.stringify(updatedFormState));
-  
+
     setFormState(updatedFormState);
   };
-  
 
   useEffect(() => {
     // Memeriksa apakah ada nilai formState yang disimpan di localStorage saat komponen dimuat
@@ -658,10 +719,10 @@ export const WbpInsert = () => {
     setIsLoading(true);
     try {
       let params = {
-      //   pagination: {
-      //     currentPage: currentPage,
-      //     pageSize: pageSize,
-      //   },
+        //   pagination: {
+        //     currentPage: currentPage,
+        //     pageSize: pageSize,
+        //   },
       };
       const responseRead = await apiReadAllWBP(params, token);
       if (responseRead.data.status === 'OK') {
@@ -729,7 +790,7 @@ export const WbpInsert = () => {
           icon: 'success',
           title: 'Berhasil membuat data',
         });
-
+        handleNext()
         // setModalAddOpen(false);
         fetchData();
       } else if (responseAdd.data.status === 'NO') {
@@ -755,13 +816,14 @@ export const WbpInsert = () => {
     }
   };
 
-  const handleSubmit = async(e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     console.log(formState, 'formstate');
     if (!validateForm()) return;
     setButtonLoad(true);
 
-    onSubmit(formState).then(() => setButtonLoad(false));
+    onSubmit(formState);
+    setButtonLoad(false)
   };
 
   //start api select
@@ -1170,7 +1232,7 @@ export const WbpInsert = () => {
 
     localStorage.setItem('formState', JSON.stringify(newFormState));
   };
-
+  console.log(formState, 'formState');
   const handleSelectPendidikan = (selectedOption: any) => {
     // setFormState({ ...formState, pendidikan_id: e?.value });
     let newFormState = {
@@ -1374,7 +1436,9 @@ export const WbpInsert = () => {
 
   const handleSelectJenisKasus = (selectedOption: any) => {
     if (selectedOption && selectedOption.value) {
-      const filterKasus = kasusData.find((item) => item.kasus_id == selectedOption.value);
+      const filterKasus = kasusData.find(
+        (item) => item.kasus_id == selectedOption.value,
+      );
       const existingWbpId = filterKasus?.wbp_profile.map(
         (item) => item.wbp_profile_id,
       );
@@ -1384,7 +1448,7 @@ export const WbpInsert = () => {
       const newFormState = {
         ...formState,
         kasus_id: selectedOption?.value,
-        kasus: {  label: selectedOption?.label, value: selectedOption?.value },
+        kasus: { label: selectedOption?.label, value: selectedOption?.value },
       };
       setFormState(newFormState);
       localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
@@ -1392,13 +1456,12 @@ export const WbpInsert = () => {
       const newFormState = {
         ...formState,
         kasus_id: '',
-        kasus: {  label: '', value: '' },
+        kasus: { label: '', value: '' },
       };
       setFormState(newFormState);
       localStorage.setItem('formState', JSON.stringify(newFormState)); // Simpan data di localStorage
     }
   };
-
 
   const handleNewKasus = (e: any) => {
     const checked = e.target.value;
@@ -1412,76 +1475,6 @@ export const WbpInsert = () => {
     });
   };
 
-  const handleGenerateNomorKasus = () => {
-    function convertToRoman(num: number) {
-      const romanNumerals = [
-        'M',
-        'CM',
-        'D',
-        'CD',
-        'C',
-        'XC',
-        'L',
-        'XL',
-        'X',
-        'IX',
-        'V',
-        'IV',
-        'I',
-      ];
-      const decimalValues = [
-        1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1,
-      ];
-
-      let result = '';
-
-      for (let i = 0; i < romanNumerals.length; i++) {
-        while (num >= decimalValues[i]) {
-          result += romanNumerals[i];
-          num -= decimalValues[i];
-        }
-      }
-
-      return result;
-    }
-
-    const type = 'Pid.K';
-    const day = dayjs(new Date()).format('DD');
-    const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-    const year = new Date().getFullYear().toString();
-    const location = 'Otmil';
-    const romanNumber = convertToRoman(parseInt(month));
-    const currentDate = `${day}-${romanNumber}/${year}`;
-    let largestNumber = 0;
-
-    data.forEach((item: any) => {
-      if (item.nomor_kasus) {
-        const caseNumber = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
-        const number = parseInt(caseNumber, 10);
-
-        if (!isNaN(number) && item.nomor_kasus.includes(currentDate)) {
-          largestNumber = Math.max(largestNumber, number);
-        }
-      }
-    });
-
-    largestNumber += 1;
-
-    const caseNumberFormatted = `${largestNumber}/${type}/${currentDate}/${location}`;
-    console.log(caseNumberFormatted, 'caseNumberFormatted');
-
-    setFormState({
-      ...formState,
-      nomor_kasus: caseNumberFormatted,
-    });
-  };
-
-  useEffect(() => {
-    console.log(formState, 'formState coy');
-    handleGenerateNomorKasus();
-  }, [buatKasusBaru]);
-  
-
   //end handle select
 
   //start handle zona
@@ -1490,67 +1483,151 @@ export const WbpInsert = () => {
     zona,
   ]);
 
+  // const handleAddZona = (zonaId: number, isPermitted: number) => {
+  //   console.log('ZONA', zonaId, 'INPUT', isPermitted);
+
+  //   if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
+  //     // Check if the "zona" is already added to any input
+
+  //     // If it's already added, show an error or handle it as needed
+  //     setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
+  //   } else {
+  //     // If it's not added to any input, assign it to the specified input
+  //     let objectZona = {};
+  //     if (isPermitted == 1) {
+  //       objectZona = {
+  //         id: zonaId,
+  //         isPermitted: 1,
+  //       };
+  //     } else {
+  //       objectZona = {
+  //         id: zonaId,
+  //         isPermitted: 0,
+  //       };
+  //     }
+  //     setFormState({
+  //       ...formState,
+  //       akses_ruangan_otmil_id: [
+  //         ...formState.akses_ruangan_otmil_id,
+  //         objectZona,
+  //       ],
+  //     });
+
+  //     // combine state
+  //     // const combineZona = [...formState.akses_ruangan_otmil_id, ...formState.zona_merah]
+  //     // setFormState({...formState, akses_wbp_otmil: combineZona})
+
+  //     // Remove the selected zona from the autocomplete data
+  //     setAutocompleteDataZona((prevData: any) =>
+  //       prevData.filter(
+  //         (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
+  //       ),
+  //     );
+  //   }
+  // };
+
   const handleAddZona = (zonaId: number, isPermitted: number) => {
     console.log('ZONA', zonaId, 'INPUT', isPermitted);
-
+  
     if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
       // Check if the "zona" is already added to any input
-
+  
       // If it's already added, show an error or handle it as needed
-      setErrors([
-        ...errors,
-        `Zona ${zonaId} is already assigned.`,
-      ]);
+      setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
     } else {
       // If it's not added to any input, assign it to the specified input
       let objectZona = {};
-      if(isPermitted  == 1) {
+      if (isPermitted == 1) {
         objectZona = {
           id: zonaId,
-          isPermitted: 1
-        }
-      }else{
+          isPermitted: 1,
+        };
+      } else {
         objectZona = {
           id: zonaId,
-          isPermitted: 0
-        }
+          isPermitted: 0,
+        };
       }
-      setFormState({
+      // Update formState
+      const updatedFormState = {
         ...formState,
-        akses_ruangan_otmil_id: [...formState.akses_ruangan_otmil_id, objectZona],
-      });
-
-      // combine state
-      // const combineZona = [...formState.akses_ruangan_otmil_id, ...formState.zona_merah]
-      // setFormState({...formState, akses_wbp_otmil: combineZona})
-
+        akses_ruangan_otmil_id: [
+          ...formState.akses_ruangan_otmil_id,
+          objectZona,
+        ],
+      };
+      setFormState(updatedFormState);
+  
       // Remove the selected zona from the autocomplete data
       setAutocompleteDataZona((prevData: any) =>
         prevData.filter(
           (zonaItem: any) => zonaItem.ruangan_otmil_id !== zonaId,
         ),
       );
+  
+      // Simpan data yang diperbarui ke localStorage
+      localStorage.setItem('akses_ruangan_otmil_id', JSON.stringify(updatedFormState.akses_ruangan_otmil_id));
     }
   };
+
+    const savedDataString = localStorage.getItem('akses_ruangan_otmil_id');
+    if (savedDataString) {
+      const savedData = JSON.parse(savedDataString);
+      console.log(savedData);
+    } else {
+      console.log('Data not found in localStorage');
+    }
+
+  
+
+  // useEffect(() => {
+  //   // if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
+  //     localStorage.setItem('formState', JSON.stringify(formState));
+  //   // }
+  // }, [formState]);
+  // useEffect(() => {
+  //   if (dataAdmin?.akses_ruangan_otmil_id?.length === 0) {
+  //     localStorage.setItem('formState', JSON.stringify(formState));
+  //   }
+  // }, [formState]);
   // Function to handle removing a "zona" from the selected chips
+  // const handleRemoveZona = (zonaId: any, inputField: any) => {
+  //   // Remove the zona from the selected input field
+  //   setFormState({
+  //     ...formState,
+  //     akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter(
+  //       (id: any) => id.id !== zonaId,
+  //     ),
+  //   });
+
+  //   setAutocompleteDataZona((prevData: any) => [
+  //     ...prevData,
+  //     zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
+  //   ]);
+  //   // }
+  // };
+
   const handleRemoveZona = (zonaId: any, inputField: any) => {
-    // Remove the zona from the selected input field
-    setFormState({
+    // Hapus zona dari selected input field
+    const updatedFormState = {
       ...formState,
-      akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter((id: any) => id.id !== zonaId),
-    });
-
-    // Add the removed zona back to the autocomplete data
-
-    // if (!isEdit) {
-      setAutocompleteDataZona((prevData: any) => [
-        ...prevData,
-        zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
-      ]);
-    // }
+      akses_ruangan_otmil_id: formState.akses_ruangan_otmil_id.filter(
+        (id: any) => id.id !== zonaId,
+      ),
+    };
+    setFormState(updatedFormState);
+  
+    // Tambahkan zona yang dihapus kembali ke data autocomplete
+    setAutocompleteDataZona((prevData: any) => [
+      ...prevData,
+      zona.find((zonaItem: any) => zonaItem.ruangan_otmil_id === zonaId),
+    ]);
+  
+    // Simpan data yang diperbarui ke localStorage
+    localStorage.setItem('akses_ruangan_otmil_id', JSON.stringify(updatedFormState.akses_ruangan_otmil_id));
   };
   
-  
+
   //end handle zona
 
   useEffect(() => {
@@ -2158,298 +2235,335 @@ export const WbpInsert = () => {
           <div className="mt-4">
             <div className="flex flex-col gap-4">
               {/* buat kasus baru */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-group w-full">
-                    <label htmlFor="id" className="block text-sm font-medium text-black dark:text-white">
-                      Buat Kasus Baru (?)
-                    </label>
-                    <select 
-                      name="is_new_kasus" 
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                      onChange={handleNewKasus}
-                      defaultValue={formState.is_new_kasus}
-                      >
-                      <option value="">Silahkan Pilih</option>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-group w-full">
+                  <label
+                    htmlFor="id"
+                    className="block text-sm font-medium text-black dark:text-white"
+                  >
+                    Buat Kasus Baru (?)
+                  </label>
+                  <select
+                    name="is_new_kasus"
+                    className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                    onChange={handleNewKasus}
+                    defaultValue={formState.is_new_kasus}
+                  >
+                    <option value="">Silahkan Pilih</option>
 
-                      <option value="false">Tidak</option>
-                      <option value="true">Ya</option>
-                      </select>
+                    <option value="false">Tidak</option>
+                    <option value="true">Ya</option>
+                  </select>
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'is_new_kasus' ? 'Pilih Ya/Tidak' : '',
+                    )}
+                  </p>
+                </div>
+              </div>
+              {formState.is_new_kasus == '' ? null : buatKasusBaru ===
+                'true' ? (
+                // Kasus Baru
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="form-group w-full ">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nomor Kasus
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nomor Kasus"
+                      name="nomor_kasus"
+                      value={formState.nomor_kasus}
+                    />
+                    <div className="">
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'is_new_kasus' ? 'Pilih Ya/Tidak' : '',
-                       )}
-                        </p>
+                          item === 'nomor_kasus' ? 'Masukan Nomor Kasus' : '',
+                        )}
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Nama Kasus
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nama Kasus"
+                      name="nama_kasus"
+                      onChange={handleChange}
+                      // disabled={isDetail}
+                    />
+                    <div className="">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_kasus' ? 'Masukkan Nama Kasus' : '',
+                        )}
+                      </p>
+                    </div>
                   </div>
-                  {formState.is_new_kasus == '' ? null : buatKasusBaru ===
-                        'true' ? (
-                        // Kasus Baru
-                        <div className="grid grid-cols-1 gap-4">
-                          <div className="form-group w-full">
-                            <label
-                              className="block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Nomor Kasus
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                              placeholder="Nomor Kasus"
-                              name="nomor_kasus"
-                              value={formState.nomor_kasus}
-                            />
-                            <div className="">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'nomor_kasus'
-                                    ? 'Masukan Nomor Kasus'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>
 
-                          <div className="form-group w-full">
-                            <label
-                              className="block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Nama Kasus
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                              placeholder="Nama Kasus"
-                              name="nama_kasus"
-                              onChange={handleChange}
-                              // disabled={isDetail}
-                            />
-                            <div className="">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'nama_kasus'
-                                    ? 'Masukkan Nama Kasus'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>
+                  <div className="f-alamat form-group">
+                    <label
+                      htmlFor="id"
+                      className="block text-sm font-medium text-black dark:text-white"
+                    >
+                      Jenis Perkara
+                    </label>
+                    <Select
+                      className="basic-single p-gelang"
+                      classNamePrefix="select"
+                      styles={CustomStyles}
+                      defaultValue={
+                        formState.jenis_perkara_id
+                          ? jenisPerkara.find(
+                              (item: any) =>
+                                item.jenis_perkara_id ===
+                                formState.jenis_perkara_id,
+                            )
+                          : formState.jenis_perkara_id
+                      }
+                      placeholder={'Pilih Jenis Perkara'}
+                      isSearchable={true}
+                      isClearable={true}
+                      name="jenis_perkara_id"
+                      options={jenisPerkara.map((item: any) => ({
+                        value: item.jenis_perkara_id,
+                        label: item.nama_jenis_perkara,
+                      }))}
+                      onChange={handleSelectJenisPerkara}
+                    />
+                    <p className="error-text">
+                      {errors.map((item) =>
+                        item === 'jenis_perkara_id'
+                          ? 'Pilih jenis perkara'
+                          : '',
+                      )}
+                    </p>
+                  </div>
 
-                          <div className="f-alamat form-group">
-                            <label
-                              htmlFor="id"
-                              className="block text-sm font-medium text-black dark:text-white"
-                            >
-                              Jenis Perkara
-                            </label>
-                            <Select
-                              className="basic-single p-gelang"
-                              classNamePrefix="select"
-                              styles={CustomStyles}
-                              defaultValue={
-                                formState.jenis_perkara_id
-                                  ? jenisPerkara.find(
-                                      (item: any) =>
-                                        item.jenis_perkara_id ===
-                                        formState.jenis_perkara_id,
-                                    )
-                                  : formState.jenis_perkara_id
-                              }
-                              placeholder={'Pilih Jenis Perkara'}
-                              isSearchable={true}
-                              isClearable={true}
-                              name="jenis_perkara_id"
-                              options={jenisPerkara.map((item: any) => ({
-                                value: item.jenis_perkara_id,
-                                label: item.nama_jenis_perkara,
-                              }))}
-                              onChange={handleSelectJenisPerkara}
-                            />
-                            <p className="error-text">
-                              {errors.map((item) =>
-                                item === 'jenis_perkara_id'
-                                  ? 'Pilih jenis perkara'
-                                  : '',
-                              )}
-                            </p>
-                          </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Tahun
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_tahun_perkara"
+                        value={formState.vonis_tahun_perkara}
+                        disabled
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'vonis_tahun_perkara'
+                            ? 'Masukan tanggal masa penahanan'
+                            : '',
+                        )}
+                      </p>
+                    </div>
 
-                          <div className="grid grid-cols-3 gap-4">
-                            <div className="f-alamat form-group">
-                              <label
-                                htmlFor="id"
-                                className="block text-sm font-medium text-black dark:text-white"
-                              >
-                                Vonis Tahun
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="vonis_tahun_perkara"
-                                value={formState.vonis_tahun_perkara}
-                                disabled
-                              />
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'vonis_tahun_perkara'
-                                    ? 'Masukan tanggal masa penahanan'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Bulan
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_bulan_perkara"
+                        value={formState.vonis_bulan_perkara}
+                        disabled
+                      />
+                    </div>
 
-                            <div className="f-alamat form-group">
-                              <label
-                                htmlFor="id"
-                                className="block text-sm font-medium text-black dark:text-white"
-                              >
-                                Vonis Bulan
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="vonis_bulan_perkara"
-                                value={formState.vonis_bulan_perkara}
-                                disabled
-                              />
-                            </div>
+                    <div className="f-alamat form-group">
+                      <label
+                        htmlFor="id"
+                        className="block text-sm font-medium text-black dark:text-white"
+                      >
+                        Vonis Hari
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        name="vonis_hari_perkara"
+                        value={formState.vonis_hari_perkara}
+                        disabled
+                      />
+                    </div>
+                  </div>
 
-                            <div className="f-alamat form-group">
-                              <label
-                                htmlFor="id"
-                                className="block text-sm font-medium text-black dark:text-white"
-                              >
-                                Vonis Hari
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full rounded border border-stroke dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="vonis_hari_perkara"
-                                value={formState.vonis_hari_perkara}
-                                disabled
-                              />
-                            </div>
-                          </div>
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Nama Jenis Pidana
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Nama Jenis Pidana"
+                      name="nama_jenis_pidana"
+                      onChange={handleChange}
+                      value={formState.nama_jenis_pidana}
+                      disabled
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama_jenis_pidana'
+                            ? 'Masukan Nama Jenis Pidana'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
 
-                          <div className="form-group w-full">
-                            <label
-                              className="block text-sm font-medium text-black dark:text-white pt-3"
-                              htmlFor="id"
-                            >
-                              Nama Jenis Pidana
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                              placeholder="Nama Jenis Pidana"
-                              name="nama_jenis_pidana"
-                              onChange={handleChange}
-                              value={formState.nama_jenis_pidana}
-                              disabled
-                            />
-                            <div className="h-2">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'nama_jenis_pidana'
-                                    ? 'Masukan Nama Jenis Pidana'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white"
+                      htmlFor="id"
+                    >
+                      Lokasi Kasus
+                    </label>
+                    <input
+                      className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                      placeholder="Lokasi Kasus"
+                      name="lokasi_kasus"
+                      onChange={handleChange}
+                    />
+                    <div className="">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'lokasi_kasus' ? 'Masukan Lokasi Kasus' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
 
-                          <div className="form-group w-full">
-                            <label
-                              className="block text-sm font-medium text-black dark:text-white"
-                              htmlFor="id"
-                            >
-                              Lokasi Kasus
-                            </label>
-                            <input
-                              className="w-full rounded border border-stroke py-3 pl-3 pr-4 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                              placeholder="Lokasi Kasus"
-                              name="lokasi_kasus"
-                              onChange={handleChange}
-                            />
-                            <div className="">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'lokasi_kasus'
-                                    ? 'Masukan Lokasi Kasus'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>
+                  <div className="grid grid-cols-2">
+                    <div className="f-tanggal-lahir form-group w-full flex flex-col">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Kejadian Kasus
+                      </label>
+                      <div className="flex">
+                        {/* <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="waktu_kejadian"
+                          onChange={handleChange}
+                          value={formState.waktu_kejadian}
+                        /> */}
+                        <DatePicker
+                        selected={
+                          formState.waktu_kejadian
+                            ? dayjs(formState.waktu_kejadian).toDate()
+                            : dayjs().toDate()
+                        }
+                        showTimeInput
+                        timeFormat="HH:mm"
+                        onChange={handleWaktuKejadian}
+                        timeCaption="Time"
+                        dateFormat="dd/MM/yyyy HH:mm"
+                        customTimeInput={<ExampleCustomTimeInput />}
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-15.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
+                        name="waktu_kejadian"
+                        disabled={false}
+                        locale="id"
+                      />
+                        <input
+                          type="text"
+                          className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
+                      </div>
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'waktu_kejadian'
+                            ? 'Masukan waktu kejadian'
+                            : '',
+                        )}
+                      </p>
+                    </div>
 
-                          <div className="grid grid-cols-2">
-                          <div className="f-tanggal-lahir form-group w-full flex flex-col">
-                              <label
-                                className="  block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Tanggal Kejadian Kasus
-                              </label>
-                              <div className='flex'>
-                              <input
-                                type="datetime-local"
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="waktu_kejadian"
-                                onChange={handleChange}
-                                value={formState.waktu_kejadian}
-                              />
-                              <input
-                                  type="text"
-                                  className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                                  name="zona_waktu"
-                                  value={formState.zona_waktu}
-                                  disabled
-                              />
-                              </div>
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'waktu_kejadian'
-                                    ? 'Masukan waktu kejadian'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                            
-                            <div className="f-tanggal-lahir form-group w-full flex flex-col">
-                              <label
-                                className="  block text-sm font-medium text-black dark:text-white"
-                                htmlFor="id"
-                              >
-                                Tanggal Pelaporan Kasus
-                              </label>
-                              <div className='flex'>
-                              <input
-                                type="datetime-local"
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
-                                name="waktu_pelaporan_kasus"
-                                onChange={handleChange}
-                                value={formState.waktu_pelaporan_kasus}
-                              />
-                              <input
-                                type="text"
-                                className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
-                                name="zona_waktu"
-                                value={formState.zona_waktu}
-                                disabled
-                              />
-                              </div>
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'waktu_pelaporan_kasus'
-                                    ? 'Masukan waktu pelaporan kasus'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
-                          </div>      
+                    <div className="f-tanggal-lahir form-group w-full flex flex-col mb-5">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Pelaporan Kasus
+                      </label>
+                      <div className="flex">
+                        <input
+                          type="datetime-local"
+                          className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                          name="waktu_pelaporan_kasus"
+                          onChange={handleChange}
+                          value={formState.waktu_pelaporan_kasus}
+                        />
+                        <input
+                          type="text"
+                          className="w-[5rem] mx-1 rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[9px] text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary text-center"
+                          name="zona_waktu"
+                          value={formState.zona_waktu}
+                          disabled
+                        />
+                      </div>
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'waktu_pelaporan_kasus'
+                            ? 'Masukan waktu pelaporan kasus'
+                            : '',
+                        )}
+                      </p>
+                    </div>
 
-                          <div
-                            className={'block mt-4hidden'}
-                          >
-                            {/* <div className="form-group w-full">
+                    <div className="form-group w-full ">
+                      <label
+                        className="  block text-sm font-medium text-black dark:text-white"
+                        htmlFor="id"
+                      >
+                        Tanggal Pelimpahan Kasus
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelimpahan"
+                        name="tanggal_pelimpahan_kasus"
+                        placeholder="Tanggal Pelimpahan Kasus"
+                        onChange={handleChange}
+                        // disabled={isDetail}
+                        max={maxDate}
+                      />
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'tanggal_pelimpahan_kasus'
+                            ? 'Masukan Tanggal Pelimpahan Kasus'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={'block mt-4hidden'}>
+                    {/* <div className="form-group w-full">
                               <label
                                 className="block text-sm font-medium text-black dark:text-white pt-3"
                                 htmlFor="id"
@@ -2471,258 +2585,270 @@ export const WbpInsert = () => {
                                 )}
                               </p>
                             </div> */}
-                          </div>
+                  </div>
 
-                          <div className="form-group w-full">
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Oditur Penyidik
+                    </label>
+                    <Select
+                      className="capitalize text-white"
+                      isMulti
+                      placeholder="Pilih Oditur Penyidik"
+                      styles={customStyles}
+                      options={oditurPenyidikOptions}
+                      onChange={handleSelectOditurPenyidik}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'nama' ? 'Masukan Tersangka' : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Ketua Oditur Penyidik
+                    </label>
+                    <Select
+                      className="capitalize"
+                      placeholder="Pilih Ketua Oditur"
+                      styles={customStyles}
+                      options={ketuaOditurPenyidik}
+                      onChange={handleSelectKetuaOditur}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.map((item) =>
+                          item === 'role_ketua_oditur_ids'
+                            ? 'Pilih Ketua Oditur Penyidik'
+                            : '',
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="form-group w-full">
+                    <label
+                      className="block text-sm font-medium text-black dark:text-white pt-3"
+                      htmlFor="id"
+                    >
+                      Pihak Terlibat
+                    </label>
+                    <Select
+                      className="capitalize"
+                      isMulti
+                      placeholder="Pihak Terlibat"
+                      styles={customStyles}
+                      options={pihakTerlibat}
+                      onChange={handleSelectPihakTerlibat}
+                    />
+                    <div className="h-2">
+                      <p className="error-text">
+                        {errors.includes('saksi_id') ||
+                        errors.includes('wbp_profile_ids')
+                          ? `${
+                              errors.includes('wbp_profile_ids')
+                                ? 'Tersangka'
+                                : ''
+                            } ${
+                              errors.includes('saksi_id') &&
+                              errors.includes('wbp_profiles_ids')
+                                ? 'Dan'
+                                : ''
+                            } ${
+                              errors.includes('saksi_id') ? 'Saksi' : ''
+                            } Belum di Pilih`
+                          : ''}
+                      </p>
+                    </div>
+                  </div>
+                  {selectTersangka.length === 0 ? null : (
+                    <>
+                      <div className="grid grid-rows-2">
+                        <label
+                          htmlFor="id"
+                          className="mt-4 block text-sm font-medium text-black dark:text-white"
+                        >
+                          Tersangka
+                        </label>
+
+                        <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                          <div className="form-group w-2/6">
                             <label
-                              className="block text-sm font-medium text-black dark:text-white pt-3"
                               htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
                             >
-                              Oditur Penyidik
+                              Nama Tersangka
                             </label>
-                            <Select
-                              className="capitalize text-white"
-                              isMulti
-                              placeholder="Pilih Oditur Penyidik"
-                              styles={customStyles}
-                              options={oditurPenyidikOptions}
-                              onChange={handleSelectOditurPenyidik}
-                            />
-                            <div className="h-2">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'nama' ? 'Masukan Tersangka' : '',
-                                )}
-                              </p>
-                            </div>
                           </div>
 
-                          <div className="form-group w-full">
+                          <div className="form-group w-4/6">
                             <label
-                              className="block text-sm font-medium text-black dark:text-white pt-3"
                               htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
                             >
-                              Ketua Oditur Penyidik
+                              Keterangan
                             </label>
-                            <Select
-                              className="capitalize"
-                              placeholder="Pilih Ketua Oditur"
-                              styles={customStyles}
-                              options={ketuaOditurPenyidik}
-                              onChange={handleSelectKetuaOditur}
-                            />
-                            <div className="h-2">
-                              <p className="error-text">
-                                {errors.map((item) =>
-                                  item === 'role_ketua_oditur_ids'
-                                    ? 'Pilih Ketua Oditur Penyidik'
-                                    : '',
-                                )}
-                              </p>
-                            </div>
                           </div>
+                        </div>
 
-                          <div className="form-group w-full">
-                            <label
-                              className="block text-sm font-medium text-black dark:text-white pt-3"
-                              htmlFor="id"
-                            >
-                              Pihak Terlibat
-                            </label>
-                            <Select
-                              className="capitalize"
-                              isMulti
-                              placeholder="Pihak Terlibat"
-                              styles={customStyles}
-                              options={pihakTerlibat}
-                              onChange={handleSelectPihakTerlibat}
-                            />
-                            <div className="h-2">
-                              <p className="error-text">
-                                {errors.includes('saksi_id') ||
-                                errors.includes('wbp_profile_ids')
-                                  ? `${errors.includes('wbp_profile_ids') ? 'Tersangka' : ''} ${errors.includes('saksi_id') && errors.includes('wbp_profiles_ids') ? 'Dan' : ''} ${errors.includes('saksi_id') ? 'Saksi' : ''} Belum di Pilih`
-                                  : ''}
-                              </p>
-                            </div>
-                          </div>
-                          {selectTersangka.length === 0 ? null : (
-                            <>
-                              <div className="grid grid-rows-2">
-                                <label
-                                  htmlFor="id"
-                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
-                                >
-                                  Tersangka
-                                </label>
-
-                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
-                                  <div className="form-group w-2/6">
-                                    <label
-                                      htmlFor="id"
-                                      className="block text-sm font-medium text-black dark:text-white"
-                                    >
-                                      Nama Tersangka
-                                    </label>
-                                  </div>
-
-                                  <div className="form-group w-4/6">
-                                    <label
-                                      htmlFor="id"
-                                      className="block text-sm font-medium text-black dark:text-white"
-                                    >
-                                      Keterangan
-                                    </label>
-                                  </div>
+                        <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                          {selectTersangka.map((item: any, index: number) => {
+                            return (
+                              <div
+                                className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                key={index}
+                              >
+                                <div className="form-group w-2/6">
+                                  <label
+                                    htmlFor={`keterangans-${index}`}
+                                    className="capitalize block text-sm font-medium text-black dark:text-white"
+                                  >
+                                    {item.label}
+                                  </label>
                                 </div>
 
-                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
-                                  {selectTersangka.map(
-                                    (item: any, index: number) => {
-                                      return (
-                                        <div
-                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
-                                          key={index}
-                                        >
-                                          <div className="form-group w-2/6">
-                                            <label
-                                              htmlFor={`keterangans-${index}`}
-                                              className="capitalize block text-sm font-medium text-black dark:text-white"
-                                            >
-                                              {item.label}
-                                            </label>
-                                          </div>
-
-                                          <div className="form-group w-4/6 flex items-center mr-2">
-                                            <input
-                                              id={`keterangans${index}`}
-                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                              placeholder={`${errors.includes('keterangan') ? 'Keterangan Belum Di Isi' : 'Keterangan'}`}
-                                              onChange={(e) =>
-                                                handleChangeKeteranganTersangka(
-                                                  e,
-                                                  index,
-                                                )
-                                              }
-                                              // disabled={isDetail}
-                                            />
-                                          </div>
-                                        </div>
-                                      );
-                                    },
-                                  )}
+                                <div className="form-group w-4/6 flex items-center mr-2">
+                                  <input
+                                    id={`keterangans${index}`}
+                                    className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder={`${
+                                      errors.includes('keterangan')
+                                        ? 'Keterangan Belum Di Isi'
+                                        : 'Keterangan'
+                                    }`}
+                                    onChange={(e) =>
+                                      handleChangeKeteranganTersangka(e, index)
+                                    }
+                                    // disabled={isDetail}
+                                  />
                                 </div>
                               </div>
-                            </>
-                          )}
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                          {selectSaksi.length === 0 ? null : (
-                            <>
-                              <div className="grid grid-rows-2">
-                                <label
-                                  htmlFor="id"
-                                  className="mt-4 block text-sm font-medium text-black dark:text-white"
-                                >
-                                  Saksi
-                                </label>
+                  {selectSaksi.length === 0 ? null : (
+                    <>
+                      <div className="grid grid-rows-2">
+                        <label
+                          htmlFor="id"
+                          className="mt-4 block text-sm font-medium text-black dark:text-white"
+                        >
+                          Saksi
+                        </label>
 
-                                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
-                                  <div className="form-group w-2/6">
-                                    <label
-                                      htmlFor="id"
-                                      className="block text-sm font-medium text-black dark:text-white"
-                                    >
-                                      Nama Saksi
-                                    </label>
-                                  </div>
+                        <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t">
+                          <div className="form-group w-2/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Nama Saksi
+                            </label>
+                          </div>
 
-                                  <div className="form-group w-4/6">
-                                    <label
-                                      htmlFor="id"
-                                      className="block text-sm font-medium text-black dark:text-white"
-                                    >
-                                      Keterangan Saksi
-                                    </label>
-                                  </div>
+                          <div className="form-group w-4/6">
+                            <label
+                              htmlFor="id"
+                              className="block text-sm font-medium text-black dark:text-white"
+                            >
+                              Keterangan Saksi
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
+                          {selectSaksi.map((item: any, index: number) => {
+                            return (
+                              <div
+                                className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
+                                key={index}
+                              >
+                                <div className="form-group w-2/6">
+                                  <label
+                                    className="capitalize block text-sm font-medium text-black dark:text-white"
+                                    htmlFor={`keterangan-${index}`}
+                                  >
+                                    {item.label}
+                                  </label>
                                 </div>
 
-                                <div className="h-32 overflow-y-auto bg-slate-800 rounded-b">
-                                  {selectSaksi.map(
-                                    (item: any, index: number) => {
-                                      return (
-                                        <div
-                                          className="flex items-center mt-2 bg-slate-800 py-2 pl-4"
-                                          key={index}
-                                        >
-                                          <div className="form-group w-2/6">
-                                            <label
-                                              className="capitalize block text-sm font-medium text-black dark:text-white"
-                                              htmlFor={`keterangan-${index}`}
-                                            >
-                                              {item.label}
-                                            </label>
-                                          </div>
-
-                                          <div className="form-group w-4/6 flex items-center mr-2">
-                                            <input
-                                              id={`keterangan-${index}`}
-                                              className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                                              placeholder={`${errors.includes('keteranganSaksis') ? 'Keterangan Belum Di Isi' : 'Keterangan Saksi'}`}
-                                              onChange={(e) =>
-                                                handleChangeKeterangan(e, index)
-                                              }
-                                              // disabled={isDetail}
-                                            />
-                                          </div>
-                                        </div>
-                                      );
-                                    },
-                                  )}
+                                <div className="form-group w-4/6 flex items-center mr-2">
+                                  <input
+                                    id={`keterangan-${index}`}
+                                    className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
+                                    placeholder={`${
+                                      errors.includes('keteranganSaksis')
+                                        ? 'Keterangan Belum Di Isi'
+                                        : 'Keterangan Saksi'
+                                    }`}
+                                    onChange={(e) =>
+                                      handleChangeKeterangan(e, index)
+                                    }
+                                    // disabled={isDetail}
+                                  />
                                 </div>
                               </div>
-                            </>
-                          )}
+                            );
+                          })}
                         </div>
-                      ) : (
-                        // Select Kasus
-                        <div className="f-alamat form-group">
-                          <label
-                            htmlFor="id"
-                            className="block text-sm font-medium text-black dark:text-white"
-                          >
-                            Jenis Kasus
-                          </label>
-                          <Select
-                            className="basic-single p-gelang"
-                            classNamePrefix="select"
-                            styles={CustomStyles}
-                            // defaultValue={
-                            //   formState.kasus_id
-                            //     ? kasusData.find(
-                            //         (item: any) =>
-                            //           item.kasus_id === formState.kasus_id,
-                            //       )
-                            //     : formState.kasus_id
-                            // }
-                            defaultValue={formState.kasus}
-                            placeholder={'Pilih Jenis Kasus'}
-                            isSearchable={true}
-                            // isDisabled={isDetail}
-                            name="kasus_id"
-                            // styles={customStyles}
-                            options={kasusData.map((item: any) => ({
-                              value: item.kasus_id,
-                              label: item.nama_kasus,
-                            }))}
-                            onChange={handleSelectJenisKasus}
-                          />
-                          <p className="error-text">
-                            {errors.map((item) =>
-                              item === 'kasus_id' ? 'Pilih kasus' : '',
-                            )}
-                          </p>
-                        </div>
-                      )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                // Select Kasus
+                <div className="f-alamat form-group">
+                  <label
+                    htmlFor="id"
+                    className="block text-sm font-medium text-black dark:text-white"
+                  >
+                    Jenis Kasus
+                  </label>
+                  <Select
+                    className="basic-single p-gelang"
+                    classNamePrefix="select"
+                    styles={CustomStyles}
+                    // defaultValue={
+                    //   formState.kasus_id
+                    //     ? kasusData.find(
+                    //         (item: any) =>
+                    //           item.kasus_id === formState.kasus_id,
+                    //       )
+                    //     : formState.kasus_id
+                    // }
+                    defaultValue={formState.kasus}
+                    placeholder={'Pilih Jenis Kasus'}
+                    isSearchable={true}
+                    // isDisabled={isDetail}
+                    name="kasus_id"
+                    // styles={customStyles}
+                    options={kasusData.map((item: any) => ({
+                      value: item.kasus_id,
+                      label: item.nama_kasus,
+                    }))}
+                    onChange={handleSelectJenisKasus}
+                  />
+                  <p className="error-text">
+                    {errors.map((item) =>
+                      item === 'kasus_id' ? 'Pilih kasus' : '',
+                    )}
+                  </p>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -2953,7 +3079,12 @@ export const WbpInsert = () => {
                     <>
                       {/* Tanggal Penetapan Terpidana*/}
                       <div
-                        className={`f-tanggal-terpidana form-group w-full  ${formState.status_wbp_kasus_id === '55ae39b7-dbad-4c89-8968-6d1e2450c963' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-terpidana form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          '55ae39b7-dbad-4c89-8968-6d1e2450c963'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -2979,7 +3110,12 @@ export const WbpInsert = () => {
 
                       {/* Tanggal Penetapan Terdakwa*/}
                       <div
-                        className={`f-tanggal-terdakwa form-group w-full  ${formState.status_wbp_kasus_id === 'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-terdakwa form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          'ca91a6a8-4a1e-4bb3-a6bf-7a2e708a2064'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -3005,7 +3141,12 @@ export const WbpInsert = () => {
 
                       {/* Tanggal Penetapan Tersangka*/}
                       <div
-                        className={`f-tanggal-tersangka form-group w-full  ${formState.status_wbp_kasus_id === 'e9e467a1-9132-4787-8938-7517da9ba964' ? 'block' : 'hidden'}`}
+                        className={`f-tanggal-tersangka form-group w-full  ${
+                          formState.status_wbp_kasus_id ===
+                          'e9e467a1-9132-4787-8938-7517da9ba964'
+                            ? 'block'
+                            : 'hidden'
+                        }`}
                       >
                         <label
                           className="  block text-sm font-medium text-black dark:text-white"
@@ -3127,15 +3268,15 @@ export const WbpInsert = () => {
             </div>
 
             {/* <div className=""> */}
-              {/* <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
+            {/* <p className="mt-10 mb-3 text-center bg-slate-500 font-bold text-white rounded-md">
                 Data Perilaku
               </p> */}
 
-              {/* <div className="flex flex-col gap-4"> */}
-                {/* <div className="grid grid-cols-1 gap-4"> */}
-                  {/* <div className="grid grid-cols-2 gap-4"> */}
-                    {/* Jenis Olahraga */}
-                    {/* <div className="f-jenis-olahraga form-group w-full flex flex-col">
+            {/* <div className="flex flex-col gap-4"> */}
+            {/* <div className="grid grid-cols-1 gap-4"> */}
+            {/* <div className="grid grid-cols-2 gap-4"> */}
+            {/* Jenis Olahraga */}
+            {/* <div className="f-jenis-olahraga form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -3168,8 +3309,8 @@ export const WbpInsert = () => {
                       </p>
                     </div> */}
 
-                    {/* Konsumsi Zat Adiktif */}
-                    {/* <div className="f-zat-adiktif form-group w-full flex flex-col">
+            {/* Konsumsi Zat Adiktif */}
+            {/* <div className="f-zat-adiktif form-group w-full flex flex-col">
                       <label
                         className=" block text-sm font-medium text-black dark:text-white"
                         htmlFor="id"
@@ -3201,9 +3342,9 @@ export const WbpInsert = () => {
                         )}
                       </p>
                     </div> */}
-                  {/* </div> */}
-                {/* </div> */}
-              {/* </div> */}
+            {/* </div> */}
+            {/* </div> */}
+            {/* </div> */}
             {/* </div> */}
 
             <div className="mt-4">
@@ -3223,10 +3364,10 @@ export const WbpInsert = () => {
                             zonaItem.nama_zona === 'Hijau'
                               ? 'border-green-500'
                               : zonaItem.nama_zona === 'Kuning'
-                                ? 'border-yellow-400'
-                                : zonaItem.nama_zona === 'Merah'
-                                  ? 'border-red-500'
-                                  : 'border-slate-500'
+                              ? 'border-yellow-400'
+                              : zonaItem.nama_zona === 'Merah'
+                              ? 'border-red-500'
+                              : 'border-slate-500'
                           } bg-slate-500 bg-[transparent] px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:!shadow-none dark:text-neutral-200`}
                           data-te-ripple-color="dark"
                         >
@@ -3238,10 +3379,7 @@ export const WbpInsert = () => {
                             className="text-white w-full bg-green-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                             onClick={(e) => {
                               e.preventDefault();
-                              handleAddZona(
-                                zonaItem.ruangan_otmil_id,
-                               1,
-                              );
+                              handleAddZona(zonaItem.ruangan_otmil_id, 1);
                             }}
                           >
                             Ijinkan
@@ -3250,10 +3388,7 @@ export const WbpInsert = () => {
                             className="text-white w-full bg-red-500 border-white border-[1px] rounded-md font-bold text-[9px]"
                             onClick={(e) => {
                               e.preventDefault();
-                              handleAddZona(
-                                zonaItem.ruangan_otmil_id,
-                                0,
-                              );
+                              handleAddZona(zonaItem.ruangan_otmil_id, 0);
                             }}
                           >
                             Larang
@@ -3270,96 +3405,151 @@ export const WbpInsert = () => {
                     <h3 className="text-md font-semibold mb-2">Zona Hijau</h3>
 
                     <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                    {formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
-                                (zonaId: any) => (
-                                  <div
-                                    key={zonaId}
-                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                    data-te-ripple-color="dark"
-                                  >
-                                    <p className="capitalize text-center">
-                                      {
-                                        zona.find(
-                                          (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id == zonaId.id,
-                                        )?.nama_ruangan_otmil
-                                      }
-                                    </p>
-                                    <span
-                                      data-te-chip-close
-                                      onClick={() =>
-                                        handleRemoveZona(
-                                          zonaId.id,
-                                          'akses_ruangan_otmil_id',
-                                        )
-                                      }
-                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
-                                    >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="h-3 w-3"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="M6 18L18 6M6 6l12 12"
-                                        />
-                                      </svg>
-                                    </span>
-                                  </div>
-                                ),
-                              )}
+                    {localStorage.getItem('akses_ruangan_otmil_id') && (
+                        JSON.parse(localStorage.getItem('akses_ruangan_otmil_id')).filter(
+                          (data: any) => data.isPermitted === 1
+                        ).map((zonaId: any) => (
+                          <div
+                            defaultValue={formState.akses_ruangan_otmil_id
+                              ?.filter((data: any) => data.isPermitted === 1)
+                              .map((data: any) => data.ruangan_otmil_id)
+                              .includes(zonaId.id)}
+                            key={zonaId.id}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
+                          >
+                            <p className="capitalize text-center">
+                              {zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId.id
+                              )?.nama_ruangan_otmil}
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(
+                                  zonaId.id,
+                                  'akses_ruangan_otmil_id'
+                                )
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))
+                      )}
+
                     </div>
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {isZonaHijauEmpty ? 'Pilih zona hijau' : ''}
-                    </p>
+                    </p> */}
                   </div>
 
                   <div className="zona-merah w-full ">
                     <h3 className="text-md font-semibold mb-2">Zona Merah</h3>
                     <div className="border-red-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
-                    {formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 0).map((zonaId: any) => (
-                            <div
-                              key={zonaId}
-                              className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
-                              data-te-ripple-color="dark"
+                      {/* {formState.akses_ruangan_otmil_id
+                        ?.filter((data) => data.isPermitted == 0)
+                        .map((zonaId: any, index: number) => (
+                          <div
+                            defaultValue={formState.zonaId?.includes(zonaId.id)}
+                            key={index}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
+                          >
+                            <p className="capitalize text-center">
+                              {
+                                zona.find(
+                                  (zonaItem: any) =>
+                                    zonaItem.ruangan_otmil_id === zonaId.id,
+                                )?.nama_ruangan_otmil
+                              }
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(zonaId.id, 'zona_merah')
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
                             >
-                              <p className="capitalize text-center">
-                                {
-                                  zona.find(
-                                    (zonaItem: any) =>
-                                      zonaItem.ruangan_otmil_id === zonaId.id,
-                                  )?.nama_ruangan_otmil
-                                }
-                              </p>
-                              <span
-                                data-te-chip-close
-                                onClick={() =>
-                                  handleRemoveZona(zonaId.id, 'zona_merah')
-                                }
-                                className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth="1.5"
-                                  stroke="currentColor"
-                                  className="h-3 w-3"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                  />
-                                </svg>
-                              </span>
-                            </div>
-                          ))}
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))} */}
+                        {localStorage.getItem('akses_ruangan_otmil_id') && (
+                        JSON.parse(localStorage.getItem('akses_ruangan_otmil_id')).filter(
+                          (data: any) => data.isPermitted === 0
+                        ).map((zonaId: any) => (
+                          <div
+                            defaultValue={formState.akses_ruangan_otmil_id
+                              ?.filter((data: any) => data.isPermitted === 0)
+                              .map((data: any) => data.ruangan_otmil_id)
+                              .includes(zonaId.id)}
+                            key={zonaId.id}
+                            className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-red-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                            data-te-ripple-color="dark"
+                          >
+                            <p className="capitalize text-center">
+                              {zona.find(
+                                (zonaItem: any) =>
+                                  zonaItem.ruangan_otmil_id === zonaId.id
+                              )?.nama_ruangan_otmil}
+                            </p>
+                            <span
+                              data-te-chip-close
+                              onClick={() =>
+                                handleRemoveZona(
+                                  zonaId.id,
+                                  'akses_ruangan_otmil_id'
+                                )
+                              }
+                              className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-3 w-3"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        ))
+                      )}
                     </div>
                     {/* <p className="error-text">
                       {isZonaMerahEmpty ? 'Pilih zona merah' : ''}
@@ -3370,26 +3560,22 @@ export const WbpInsert = () => {
             </div>
           </div>
           {errors.filter((item: string) => item.startsWith('INVALID_ID'))
-                  .length > 0 && (
-                  <>
-                    <br />
-                    <div className="error">
-                      {errors
-                        .filter((item: string) =>
-                          item.startsWith('INVALID_ID'),
-                        )[0]
-                        .replace('INVALID_ID_', '')}{' '}
-                      is not a valid bond
-                    </div>
-                  </>
-                )}
-                {errors.length > 0 && (
-                  <div className="error mt-4">
-                    <p className="text-red-400">
-                      Ada data yang masih belum terisi !
-                    </p>
-                  </div>
-                )}
+            .length > 0 && (
+            <>
+              <br />
+              <div className="error">
+                {errors
+                  .filter((item: string) => item.startsWith('INVALID_ID'))[0]
+                  .replace('INVALID_ID_', '')}{' '}
+                is not a valid bond
+              </div>
+            </>
+          )}
+          {errors.length > 0 && (
+            <div className="error mt-4">
+              <p className="text-red-400">Ada data yang masih belum terisi !</p>
+            </div>
+          )}
 
           <button
             className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 mt-5`}

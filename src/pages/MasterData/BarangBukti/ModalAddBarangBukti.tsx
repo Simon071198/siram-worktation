@@ -30,7 +30,7 @@ export const AddBarangBuktiModal = ({
       nama_bukti_kasus: defaultValue.nama_bukti_kasus,
       nomor_barang_bukti: defaultValue.nomor_barang_bukti,
       dokumen_barang_bukti: '',
-      gambar_barang_bukti: '',
+      gambar_barang_bukti: defaultValue.gambar_barang_bukti,
       keterangan: defaultValue.keterangan,
       pdf_file_base64: '',
       tanggal_diambil: defaultValue.tanggal_diambil,

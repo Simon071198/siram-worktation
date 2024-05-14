@@ -78,10 +78,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
       role_ketua_oditur: {},
-      zona_waktu: '',
+      // zona_waktu: '',
     },
   );
-
+  console.log(defaultValue, "defaultValue")
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -104,11 +104,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [saksi, setSaksi] = useState([]);
   const [wbp, setWbp] = useState([]);
   const [getWbp, setGetWbp] = useState([]);
+  const [getZona, setGetZona] = useState([]);
   const [getSaksi, setGetSaksi] = useState([]);
   const [saksiField, setSaksiField] = useState('');
   const [pengacaraField, setPengacaraField] = useState('');
   const [filter, setFilter] = useState('');
   const [file, setFile] = useState(null);
+  // const [pdfUrl, setPdftUrl] = useState(``)
 
   console.log(formState.wbpHolder,'testing')
 
@@ -287,6 +289,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           },
         },
         {
+          element: '.input-keputusan',
+          popover: {
+            title: 'Hasil Keputusan Sidang',
+            description: 'Isi hasil keputusan sidang',
+          },
+        },
+        {
           element: '.input-jadwal',
           popover: {
             title: 'Jadwal Sidang',
@@ -423,7 +432,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         ahli: ahliMap,
         saksi: saksiMap,
         // pengacara: pengacaraMap,
-        pdf_file_base64: formState.link_dokumen_persidangan,
+        link_dokumen_persidangan: formState.link_dokumen_persidangan,
       });
     }
   }, []);
@@ -509,8 +518,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     if (!validateForm()) return;
     setButtonLoad(true);
     // console.log('formstateValidate', formState);
-    // onSubmit(formState).then(() => setButtonLoad(false));
-    onSubmit(formState);
+    onSubmit(formState).then(() => setButtonLoad(false));
+    // onSubmit(formState);
   };
 
   //pengacara
@@ -612,15 +621,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        setFormState({ ...formState, pdf_file_base64: reader.result });
+        setFormState({ ...formState, link_dokumen_persidangan: reader.result });
         console.log('Preview:', reader.result);
+        // setPdftUrl(reader.result as string)
       };
 
       reader.readAsDataURL(file);
     }
   };
   const handleRemoveDoc = () => {
-    setFormState({ ...formState, pdf_file_base64: '' });
+    setFormState({ ...formState, link_dokumen_persidangan: '' });
     const inputElement = document.getElementById(
       'fileUpload',
     ) as HTMLInputElement;
@@ -742,6 +752,7 @@ console.log(getWbp, 'get wbp')
       zona_waktu: zonaWaktu,
     });
   };
+  
   const handleZonaWaktu = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -763,6 +774,7 @@ console.log(getWbp, 'get wbp')
   useEffect(() => {
     handleZonaWaktu()
   }, [])
+
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
 
@@ -1826,7 +1838,7 @@ console.log(getWbp, 'get wbp')
                       Hasil keputusan sidang
                     </label>
                     <input
-                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-agenda"
+                      className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary input-keputusan"
                       onChange={handleChange}
                       placeholder="hasil keputusan sidang"
                       name="hasil_keputusan_sidang"
@@ -2082,7 +2094,8 @@ console.log(getWbp, 'get wbp')
                       placeholder={'Pilih wbp'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
+                      // isDisabled={isDetail}
+                      isDisabled
                       name="wbp_profile"
                       styles={customStyles}
                       options={wbp.map((item: any) => ({
@@ -2091,11 +2104,11 @@ console.log(getWbp, 'get wbp')
                       }))}
                       onChange={handleSelectWbp}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'wbp_profile' ? 'Pilih wbp' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Ahli */}
@@ -2183,7 +2196,8 @@ console.log(getWbp, 'get wbp')
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
-                      isDisabled={isDetail}
+                      // isDisabled={isDetail}
+                      isDisabled
                       name="saksi"
                       styles={customStyles}
                       options={
@@ -2199,11 +2213,11 @@ console.log(getWbp, 'get wbp')
                       }
                       onChange={handleSelectSaksi}
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors.map((item) =>
                         item === 'saksi' ? 'Pilih saksi' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* pengacara */}
@@ -2468,22 +2482,11 @@ console.log(getWbp, 'get wbp')
                               </svg>
                             </button>
                           </div>
-                          {/* <div className="flex justify-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              width="50"
-                              height="50"
-                            >
-                              <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
-                              <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
-                            </svg>
-                          </div> */}
+                          
                           <div className="">
                             <div style={{ height: '10%' }}>
                               {/* PDF */}
-                              {file && (
+                              {file && !isEdit && (
                                 <div className="">
                                   {file === 'pdf' ? (
                                     <iframe
@@ -2569,7 +2572,7 @@ console.log(getWbp, 'get wbp')
                     </div>
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'pdf_file_base64'
+                        item === 'link_dokumen_persidangan'
                           ? 'Masukan dokumen sidang'
                           : '',
                       )}

@@ -33,8 +33,10 @@ export const AddPenyidikanModal = ({
     nomor_penyidikan: defaultValue?.nomor_penyidikan,
     nama_kasus: defaultValue?.nama_kasus,
     agenda_penyidikan: defaultValue?.agenda_penyidikan,
-    waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
-    waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    // waktu_dimulai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'), 
+    // waktu_selesai_penyidikan: dayjs().format('YYYY-MM-DDTHH:mm'),
+    waktu_dimulai_penyidikan: defaultValue?.waktu_dimulai_penyidikan,
+    waktu_selesai_penyidikan: defaultValue?.waktu_selesai_penyidikan,
     wbp_profile_id: defaultValue?.wbp_profile_id,
     nomor_kasus: defaultValue?.no_kasus,
     saksi_id: defaultValue?.saksi_id,
@@ -83,9 +85,10 @@ export const AddPenyidikanModal = ({
       if (kasus.data.status !== 'OK') throw new Error(kasus.data.message);
       const resultPenyidikan = penyidikan.data.records;
       const resultKasus = kasus.data.records;
-      const filter = resultKasus.filter(data => !resultPenyidikan.some(dataresult => dataresult.nomor_kasus === data.nomor_kasus));
+      const filter = resultKasus.filter(data => !resultPenyidikan.some((dataresult: any) => dataresult.nomor_kasus === data.nomor_kasus));
       console.log(filter, "dapet coy")
-      setDataKasus(filter);
+      setDataKasus(resultKasus);
+      // setData
       handleTimeZone();
     } catch (error) {
       handleErrorResponse(error);
@@ -194,6 +197,7 @@ export const AddPenyidikanModal = ({
         })),
       ]
     : [];
+
   const [terlibatOptionsState, setTerlibatOptionState] = useState([])
     console.log(terlibatOptionsState, "terlibatOptionsState")
   console.log(defaultValue, "terlibat defaul")
@@ -489,7 +493,7 @@ export const AddPenyidikanModal = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (!validateForm()) return;
+    if (!validateForm()) return;
     setButtonLoad(true);
     onSubmit(formState).then(() => 
       setButtonLoad(false),
@@ -744,11 +748,11 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_kasus' ? 'Masukan Nama Kasus' : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="form-group w-full h-22">
                     <label
@@ -766,13 +770,13 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_jenis_perkara'
                           ? 'Masukan Jenis Perkara'
                           : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="form-group w-full h-22">
                     <label
@@ -790,13 +794,13 @@ export const AddPenyidikanModal = ({
                       // disabled={isDetail}
                       disabled
                     />
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {errors?.map((item) =>
                         item === 'nama_kategori_perkara'
                           ? 'Masukan Kategori Perkara'
                           : '',
                       )}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4">
@@ -834,9 +838,9 @@ export const AddPenyidikanModal = ({
                         styles={customStyles}
                         id="p-terlibat"
                       />
-                        {errors.includes('pihak_terlibat') && (
+                        {/* {errors.includes('pihak_terlibat') && (
                             <p className="error-text">Pilih salah satu pihak terlibat.</p>
-                        )}
+                        )} */}
                   </div>
                   {/* <div className="form-group w-full h-22">
                     <label
@@ -919,10 +923,15 @@ export const AddPenyidikanModal = ({
                         className="w-1/4 flex justify-center capitalize rounded border border-stroke p-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                       />
                     </div>
-                    <p className="error-text">
+                    {/* <p className="error-text">
                       {formSubmitted &&
                         errors.includes('waktu_dimulai_penyidikan') &&
                         'Masukan Waktu Mulai Penyidikan'}
+                    </p> */}
+                    <p className="error-text">
+                      {errors?.map((item) =>
+                        item === 'waktu_dimulai_penyidikan' ? 'Pilih mulai penyidikan' : ''
+                      )}
                     </p>
                   </div>
                   <div className="form-group w-full h-22">
@@ -960,9 +969,9 @@ export const AddPenyidikanModal = ({
                       />
                     </div>
                     <p className="error-text">
-                      {formSubmitted &&
-                        errors.includes('waktu_selesai_penyidikan') &&
-                        'Masukan Waktu Selesai Penyidikan'}
+                      {errors?.map((item) =>
+                        item === 'waktu_selesai_penyidikan' ? 'Pilih mulai penyidikan' : ''
+                      )}
                     </p>
                   </div>
                 </div>

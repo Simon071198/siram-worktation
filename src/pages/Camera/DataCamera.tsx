@@ -56,10 +56,10 @@ const DataCamera = (props) => {
   const playerRef = useRef(null);
   const errorTimeoutRef: any = useRef(null);
 
-  const client = useRef(new W3CWebSocket('ws://192.168.100.111:5000'));
+  const client = useRef(new W3CWebSocket('wss://192.168.100.111:5000'));
   useEffect(() => {
     // Initialize WebSocket connection
-    client.current = new WebSocket('ws://192.168.100.111:5000');
+    client.current = new WebSocket('wss://192.168.100.111:5000');
 
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
@@ -80,6 +80,29 @@ const DataCamera = (props) => {
         setErrorCam(false);
         console.log(data, 'ini data berhasil');
       }
+
+      //! disini ditambah if data type == 'camera_error' (misalnya)
+      //! misal data error dari server camera, seperti ini : {
+      //!   type: 'camera_error',
+      //!   message: [
+      //!     {
+      //!       camera_id: 1,
+      //!       cameraID : abcde,
+      //!       error: 'Camera is not connected',
+      //!      },
+      //!     {
+      //!       camera_id: 2,
+      //!       cameraID : defghi,
+      //!       error: 'Camera is not connected'
+      //!      },
+      //!             ]
+      //! }
+      //! maka kita filter data camera di page ini yang selain data error dari server camera tersebut
+
+      //! masalahnya bagaimana jika kamera error nya kembali bisa hidup ? agar supaya data nya dinamis ke FE juga ?
+      //! sementara kasih tombol refresh page aja ya, atau refresh data camera nya aja
+      
+
     };
     // client.current.onmessage = (message) => {
     //   const data = JSON.parse(message.data);

@@ -29,7 +29,7 @@ interface AddSidangProps {
     // onSubmit : (params)
   }
 
-const AddSidang = () => {
+const AddSidang = ({handleNext}: any) => {
   const [formState, setFormState] = useState({
       waktu_mulai_sidang: '',
       waktu_selesai_sidang: '',
@@ -736,6 +736,7 @@ const AddSidang = () => {
               icon: 'success',
               title: 'Berhasil menambah data',
             });
+            handleNext()
           } else if (responseCreate.data.status === 'error') {
             const errorCreate = responseCreate.data.message;
             Alerts.fire({
@@ -976,14 +977,14 @@ const AddSidang = () => {
                       <Select
                         className="basic-single p-kasus"
                         classNamePrefix="select"
-                        value = {
-                          formState.pengadilan_militer_id
-                          ? {
-                              value: formState.pengadilan_militer_id,
-                              label: formState.nama_pengadilan_militer,
-                          }
-                          : formState.pengadilan_militer_id
-                        }
+                        // value = {
+                        //   formState.pengadilan_militer_id
+                        //   ? {
+                        //       value: formState.pengadilan_militer_id,
+                        //       label: formState.nama_pengadilan_militer
+                        //   }
+                        //   : formState.pengadilan_militer_id
+                        // }
                         placeholder={'Pilih pengadilan militer'}
                         isClearable={true}
                         isSearchable={true}

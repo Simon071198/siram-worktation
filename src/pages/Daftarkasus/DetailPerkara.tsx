@@ -22,7 +22,7 @@ const DetailPerkara = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const dataPerkara = state.data;
 

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface Item {
@@ -7,12 +7,32 @@ interface Item {
   nama_jenis_perkara: string;
   nama_jenis_pidana: string;
 }
+interface Item {
+  nama: string;
+}
+
 
 const DataUmum = ({ dataperkara }) => {
   const [states, setState] = useState<Item[]>([]);
+  const [pihakTerlibat, setPihakTerlibat] = useState<Item[]>([]);
+  const handlePihatTerlibat = () => {
+    const saksi = dataperkara.saksi.map((data: { nama_saksi: string }) => ({
+      nama: `${data.nama_saksi} (Saksi)`
+    }));
 
-  console.log(dataperkara, 'location');
+    const wbp = dataperkara.wbp_profile.map((data: {nama: string}) => ({
+      nama: `${data.nama} (Tersangka)`
+    }));
 
+    const combined = [...saksi, ...wbp];
+    setPihakTerlibat(combined);
+  }
+
+  useEffect(() => {
+    handlePihatTerlibat();
+  }, [dataperkara]);
+  // console.log(pihakTerlibat, "pihakTerlibat")
+  // console.log(dataperkara.wbp_profile.map((data) => data.nama), "dataperkara.wbp_profile")
   return (
     <div className="grid grid-rows-3 grid-flow-col bg-slate-200">
       <div className="row-span-3 rounded m-3">
@@ -153,21 +173,13 @@ const DataUmum = ({ dataperkara }) => {
                 </tr>
               </thead>
               <tbody className="text-center items-center">
-                <tr>
+              {pihakTerlibat.map((data: { nama: string }, index: number) => (
+                <tr key={index}>
                   <td className="bg-gray-3 dark:bg-slate-300 p-2 border-b">
-                    Pajar Bayu (Saksi)
+                    {data.nama}
                   </td>
                 </tr>
-                <tr>
-                  <td className="bg-gray-3 dark:bg-slate-300 p-2 border-b">
-                    Dany (Saksi)
-                  </td>
-                </tr>
-                <tr>
-                  <td className="bg-gray-3 dark:bg-slate-300 p-2">
-                    Nano(Tersangka)
-                  </td>
-                </tr>
+              ))}
               </tbody>
             </table>
           </div>
