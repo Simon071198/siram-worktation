@@ -28,6 +28,7 @@ const Statistic = lazy(() => import('../pages/Statistic/Statistic'));
 import CameraDetail from '../pages/Camera/CameraDetail';
 import GedungList from '../pages/MasterData/GedungData/GedungList';
 const CameraList = lazy(() => import('../pages/Camera/CameraList'));
+const CameraSave = lazy(() => import('../pages/Camera/CameraSave'));
 // const CameraDetail = lazy(() => import('../pages/Camera/CameraDetail'));
 const Map = lazy(() => import('../pages/Map/Map'));
 const MapSetting = lazy(() => import('../pages/SettingPage/MapSetting'));
@@ -541,6 +542,11 @@ const coreRoutes = [
     component: CameraList,
   },
 
+  {
+    path: '/kamera-tersimpan',
+    title: 'CameraSave',
+    component: CameraSave,
+  },
   {
     path: '/profile',
     title: 'Profile',
