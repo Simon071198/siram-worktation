@@ -9,7 +9,7 @@ import {
   apiReadAllRole,
   apiReadAllStaff,
   apiReadAllUser,
-  apiReadAllWBP, 
+  apiReadAllWBP,
   apiReadJaksapenuntut,
   apiReadSaksi,
 } from '../../services/api';
@@ -26,6 +26,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { da } from 'date-fns/locale';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../utils/constants';
+import { set } from 'react-hook-form';
 
 interface AddSidangModalProps {
   closeModal: () => void;
@@ -67,6 +68,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       pengadilan_militer_id: '',
       nama_dokumen_persidangan: '',
       pdf_file_base64: '',
+      link_dokumen_persidangan: '',
       hasil_vonis: '',
       ahli: [],
       agenda_sidang: '',
@@ -81,7 +83,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       // zona_waktu: '',
     },
   );
-  console.log(defaultValue, "defaultValue")
+  console.log(defaultValue, 'defaultValue');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -110,41 +112,45 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [pengacaraField, setPengacaraField] = useState('');
   const [filter, setFilter] = useState('');
   const [file, setFile] = useState(null);
-  // const [pdfUrl, setPdftUrl] = useState(``)
+  const [pdfUrl, setPdftUrl] = useState(`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`);
 
-  console.log(formState.wbpHolder,'testing')
-
-  useEffect(()=> {
-    if(isEdit || isDetail){
-      setGetWbp(formState.wbpHolder.map((item: any) => ({
-        value: item.wbp_profile_id,
-        label: item.nama,
-      })))
-    }
-  },[])
+  console.log(formState.wbpHolder, 'testing');
 
   useEffect(() => {
-    if(isEdit || isDetail){
-      setGetSaksi(formState.saksiHolder.map((item:any) => ({
-        value: item.saksi_id,
-        label: item.nama_saksi,
-      })))
+    if (isEdit || isDetail) {
+      setGetWbp(
+        formState.wbpHolder.map((item: any) => ({
+          value: item.wbp_profile_id,
+          label: item.nama,
+        })),
+      );
     }
-  },[])
+  }, []);
 
-    useEffect(() => {
-      Promise.all([
-        getTimeZone(),
-        getAllJenisSidang(),
-        getAllJaksaPenuntut(),
-        getAllHakim(),
-        getAllKasus(),
-        getAllPengadilanMiliter(),
-        getAllWbp(),
-        getAllAhli(),
-        getAllSaksi(),
-      ]).then(() => setIsLoading(false));
-    }, []);
+  useEffect(() => {
+    if (isEdit || isDetail) {
+      setGetSaksi(
+        formState.saksiHolder.map((item: any) => ({
+          value: item.saksi_id,
+          label: item.nama_saksi,
+        })),
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    Promise.all([
+      getTimeZone(),
+      getAllJenisSidang(),
+      getAllJaksaPenuntut(),
+      getAllHakim(),
+      getAllKasus(),
+      getAllPengadilanMiliter(),
+      getAllWbp(),
+      getAllAhli(),
+      getAllSaksi(),
+    ]).then(() => setIsLoading(false));
+  }, []);
 
   // useEffect untuk mengambil data dari api
   const validateForm = () => {
@@ -164,7 +170,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         // key !== 'hasil_keputusan_sidang' &&
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
-        key !== 'nama_kota' && 
+        key !== 'nama_kota' &&
         key !== 'nama_pengadilan_militer'
 
         // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
@@ -176,9 +182,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           (key === 'jaksa_penuntut_id' &&
             Array.isArray(value) &&
             value.length === 0) ||
-          (key === 'oditur_penuntut_id' && Array.isArray(value) && value.length === 0) ||
-          (key === 'wbp_profile' && Array.isArray(value) && value.length === 0)||
-          (key === 'ahli' && Array.isArray(value) && value.length === 0)||
+          (key === 'oditur_penuntut_id' &&
+            Array.isArray(value) &&
+            value.length === 0) ||
+          (key === 'wbp_profile' &&
+            Array.isArray(value) &&
+            value.length === 0) ||
+          (key === 'ahli' && Array.isArray(value) && value.length === 0) ||
           (key === 'saksi' && Array.isArray(value) && value.length === 0) ||
           (key === 'pengacara' && Array.isArray(value) && value.length === 0)
         ) {
@@ -383,7 +393,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data sidang`,
+            description: `Klik untuk ${
+              isEdit ? 'mengubah' : 'menambahkan'
+            } data sidang`,
           },
         },
       ],
@@ -392,7 +404,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     driverObj.drive();
   };
   console.log('ff dan', formState);
-  
+
   const handleSelectJaksa = (e: any) => {
     console.log('jaksa', e);
     let arrayTemp: any = [];
@@ -404,7 +416,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   };
 
   useEffect(() => {
-    checkFileType(formState.link_dokumen_persidangan)
+    checkFileType(formState.link_dokumen_persidangan);
+    if (isDetail || isEdit) {
+      setFormState((prevFormState: any) => ({
+        ...prevFormState,
+        pdf_file_base64: prevFormState.link_dokumen_persidangan,
+        // link_dokumen_persidangan: prevFormState.link_dokumen_persidangan,
+      }));
+    }
 
     console.log('jaksa aja', jaksa);
     // console.log('jaksa filter', jaksa.filter((item) => formState.oditur_penuntut_id.includes(item.oditur_penuntut_id)));
@@ -413,7 +432,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const jaksaMap = formState?.oditurHolder?.map(
         (item: any) => item?.oditur_penuntut_id,
       );
-      const wbpMap = formState.wbpHolder.map((item: any) => item.wbp_profile_id);
+      const wbpMap = formState.wbpHolder.map(
+        (item: any) => item.wbp_profile_id,
+      );
       const ahliMap = formState.ahliHolder.map((item: any) => item.ahli_id);
       const saksiMap = formState.saksiHolder.map((item: any) => item.saksi_id);
       // const pengacaraMap = formState.sidang_pengacara.map(
@@ -435,7 +456,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         link_dokumen_persidangan: formState.link_dokumen_persidangan,
       });
     }
-  }, []);
+  }, [formState.link_dokumen_persidangan]);
 
   useEffect(() => {
     if (getSaksi.length > 0 && getWbp.length > 0) {
@@ -467,7 +488,6 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
     setGetWbp(selectedValues);
   };
-
 
   // const handleSelectWbp = (e: any) => {
   //   setFormState({
@@ -621,16 +641,20 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        setFormState({ ...formState, link_dokumen_persidangan: reader.result });
+        setFormState({ ...formState, pdf_file_base64: reader.result, link_dokumen_persidangan: reader.result});
         console.log('Preview:', reader.result);
-        // setPdftUrl(reader.result as string)
+        setPdftUrl(reader.result as string);
       };
 
       reader.readAsDataURL(file);
     }
   };
   const handleRemoveDoc = () => {
-    setFormState({ ...formState, link_dokumen_persidangan: '' });
+    setFormState({
+      ...formState,
+      link_dokumen_persidangan: '',
+      pdf_file_base64: '',
+    });
     const inputElement = document.getElementById(
       'fileUpload',
     ) as HTMLInputElement;
@@ -700,12 +724,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
       }
 
-      if(wbpFilter){
+      if (wbpFilter) {
         const wbpMap = wbpFilter.wbp_profile.map((item: any) => ({
           label: item.nama,
           value: item.wbp_profile_id,
         }));
-        console.log('wbpsMap', wbpMap)
+        console.log('wbpsMap', wbpMap);
         setGetWbp(wbpMap);
 
         setFormState({
@@ -716,17 +740,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         });
 
         console.log('getWbp', getWbp);
-      }else{
+      } else {
         setGetWbp([]);
       }
-
     } else {
       setFormState({ ...formState, kasus_id: '' });
       setGetSaksi([]);
       setGetWbp([]);
     }
   };
-console.log(getWbp, 'get wbp')
+  console.log(getWbp, 'get wbp');
 
   const handleJadwalSidang = (e: any) => {
     console.log('1213', e);
@@ -752,7 +775,7 @@ console.log(getWbp, 'get wbp')
       zona_waktu: zonaWaktu,
     });
   };
-  
+
   const handleZonaWaktu = () => {
     const timeZone = dayjs().format('Z');
     let zonaWaktu;
@@ -769,11 +792,11 @@ console.log(getWbp, 'get wbp')
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
-    setFormState({...formState,zona_waktu: zonaWaktu })
-  }
+    setFormState({ ...formState, zona_waktu: zonaWaktu });
+  };
   useEffect(() => {
-    handleZonaWaktu()
-  }, [])
+    handleZonaWaktu();
+  }, []);
 
   const handlePerubahanJadwal = (e: any) => {
     console.log('1213', e);
@@ -872,7 +895,6 @@ console.log(getWbp, 'get wbp')
       });
     }
   };
-
 
   const getAllJenisSidang = async () => {
     let params = {
@@ -1131,10 +1153,10 @@ console.log(getWbp, 'get wbp')
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -1224,16 +1246,16 @@ console.log(getWbp, 'get wbp')
     );
   };
 
-  const checkFileType = (file:any) => {
-    if(file){
-      console.log(file, 'file')
-      const fileExtension = file.split('.').pop().toLowerCase()
-      console.log(fileExtension, 'file')
-      setFile(fileExtension)
-    }else{
-      console.error('File is undefined or empty.')
+  const checkFileType = (file: any) => {
+    if (file) {
+      console.log(file, 'file');
+      const fileExtension = file.split('.').pop().toLowerCase();
+      console.log(fileExtension, 'file');
+      setFile(fileExtension);
+    } else {
+      console.error('File is undefined or empty.');
     }
-  }
+  };
 
   return (
     <div>
@@ -1286,8 +1308,8 @@ console.log(getWbp, 'get wbp')
                     {isDetail
                       ? 'Detail Data Sidang'
                       : isEdit
-                        ? 'Edit Data Sidang'
-                        : 'Tambah Data Sidang'}
+                      ? 'Edit Data Sidang'
+                      : 'Tambah Data Sidang'}
                   </h3>
                 </div>
 
@@ -1460,7 +1482,9 @@ console.log(getWbp, 'get wbp')
                     />
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'oditur_penuntut_id' ? 'Pilih oditur penuntut' : '',
+                        item === 'oditur_penuntut_id'
+                          ? 'Pilih oditur penuntut'
+                          : '',
                       )}
                     </p>
                   </div>
@@ -1579,10 +1603,11 @@ console.log(getWbp, 'get wbp')
                         name="oditur_penuntut_id"
                         styles={customStyles}
                         options={jaksa
-                          .filter((item) =>
-                            formState?.oditur_penuntut_id?.includes(
-                              item.oditur_penuntut_id,
-                            ),
+                          .filter(
+                            (item) =>
+                              formState?.oditur_penuntut_id?.includes(
+                                item.oditur_penuntut_id,
+                              ),
                           )
                           .map((item: any) => ({
                             value: item.oditur_penuntut_id,
@@ -2085,12 +2110,10 @@ console.log(getWbp, 'get wbp')
                       //     label: item.label,
                       //   }))
                       // }
-                       value={
-                        getWbp.map((item: any) => ({
-                          value: item.value,
-                          label: item.label,
-                        }))
-                      }
+                      value={getWbp.map((item: any) => ({
+                        value: item.value,
+                        label: item.label,
+                      }))}
                       placeholder={'Pilih wbp'}
                       isClearable={true}
                       isSearchable={true}
@@ -2187,12 +2210,10 @@ console.log(getWbp, 'get wbp')
                       //         label: item.label,
                       //       }))
                       // }
-                      value={
-                         getSaksi.map((item: any) => ({
-                              value: item.value,
-                              label: item.label,
-                            }))
-                      }
+                      value={getSaksi.map((item: any) => ({
+                        value: item.value,
+                        label: item.label,
+                      }))}
                       placeholder={'Pilih saksi'}
                       isClearable={true}
                       isSearchable={true}
@@ -2233,7 +2254,10 @@ console.log(getWbp, 'get wbp')
                       </p>
                     </div>
 
-                    <div className="border-[1px] border-blue-500 rounded-md p-2" id='a-pengacara'>
+                    <div
+                      className="border-[1px] border-blue-500 rounded-md p-2"
+                      id="a-pengacara"
+                    >
                       <div className="flex flex-row gap-2">
                         {!isDetail && (
                           <>
@@ -2457,76 +2481,85 @@ console.log(getWbp, 'get wbp')
                         // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
-                      {formState.pdf_file_base64 ? (
-                        <div className="grid grid-cols-1">
-                          <div
-                            className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
-                              isDetail ? 'hidden' : 'block'
-                            }`}
-                          >
-                            <button
-                              className="p-[2px]"
-                              onClick={handleRemoveDoc}
+                      {formState.link_dokumen_persidangan ? (
+                        (console.log(
+                          formState.pdf_file_base64,
+                          'pdf_file_base64',
+                        ),
+                        (
+                          <div className="grid grid-cols-1">
+                            <div
+                              className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
+                                isDetail ? 'hidden' : 'block'
+                              }`}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                width="20"
+                              <button
+                                className="p-[2px]"
+                                onClick={handleRemoveDoc}
                               >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                          
-                          <div className="">
-                            <div style={{ height: '10%' }}>
-                              {/* PDF */}
-                              {file && !isEdit && (
-                                <div className="">
-                                  {file === 'pdf' ? (
-                                    <iframe
-                                      src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
-                                      title="pdf"
-                                      width="100%"
-                                      height="600px"
-                                      className="border-0 text-center justify-center"
-                                    />
-                                  ) : file === 'docx' || file === 'doc' ? (
-                                    <iframe
-                                      src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
-                                      title="docx"
-                                      width="100%"
-                                      height="600px"
-                                    />
-                                  ) : (
-                                    <p>Ekstensi file tidak didukung</p>
-                                  )}
-                                </div>
-                              )}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  width="20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+
+                            <div className="">
+                              <div style={{ height: '10%' }}>
+                                {/* PDF */}
+                                {file && (
+                                  <div className="">
+                                    {file === 'pdf' ? (
+                                      <iframe
+                                        // src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                        src={pdfUrl}
+                                        title="pdf"
+                                        width="100%"
+                                        height="600px"
+                                        className="border-0 text-center justify-center"
+                                      />
+                                    ) : file === 'docx' || file === 'doc' ? (
+                                      <iframe
+                                        src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                        title="docx"
+                                        width="100%"
+                                        height="600px"
+                                      />
+                                    ) : null
+                                    // : (
+                                    //   <p>Ekstensi file tidak didukung</p>
+                                    // )
+                                    }
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-center text-sm text-blue-500">
+                              Dokumen terupload !
+                            </p>
+                            <div
+                              className={`flex justify-center mt-3 ${
+                                isDetail ? 'block' : 'hidden'
+                              }`}
+                            >
+                              <button
+                                type="button"
+                                onClick={handleDownloadDoc}
+                                className="bg-blue-500 px-3 py-1 rounded-xl text-white duration-300 ease-in-out  hover:scale-105 "
+                              >
+                                Unduh Dokumen
+                              </button>
                             </div>
                           </div>
-                          <p className="text-center text-sm text-blue-500">
-                            Dokumen terupload !
-                          </p>
-                          <div
-                            className={`flex justify-center mt-3 ${
-                              isDetail ? 'block' : 'hidden'
-                            }`}
-                          >
-                            <button
-                              type="button"
-                              onClick={handleDownloadDoc}
-                              className="bg-blue-500 px-3 py-1 rounded-xl text-white duration-300 ease-in-out  hover:scale-105 "
-                            >
-                              Unduh Dokumen
-                            </button>
-                          </div>
-                        </div>
+                        ))
                       ) : (
                         <div className="flex flex-col items-center justify-center space-y-3">
                           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
