@@ -518,7 +518,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
 
                 {/* <div className="w-full"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -527,7 +527,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-70">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

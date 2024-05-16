@@ -362,7 +362,7 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
                   </h3>
                 </div>
                 {!isDetail && (
-                  <button className="pr-[440px]">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       // values={filter}
                       aria-placeholder="Show tutorial"

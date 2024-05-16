@@ -177,6 +177,13 @@ const DaftarKasus = () => {
             description: 'Menambahkan daftar kasus',
           },
         },
+        {
+          element: '.b-penyidikan',
+          popover: {
+            title: 'Penyidikan',
+            description: 'Masuk ke halaman penyidikan',
+          },
+        },
       ],
     });
 
@@ -703,7 +710,7 @@ const DaftarKasus = () => {
           <div className="flex flex-row space-x-4 space-x">
             <div>
               <button
-                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600 b-penyidikan"
                 onClick={() => navigate('/penyidikan')}
               >
                 Penyidikan

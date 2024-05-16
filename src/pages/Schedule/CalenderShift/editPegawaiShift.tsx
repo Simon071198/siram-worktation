@@ -11,6 +11,9 @@ import Select from 'react-select';
 import { BiLoaderAlt } from 'react-icons/bi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface AddRoomModalProps {
   closeModal: () => void;
@@ -35,6 +38,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
   const [buttonLoad, setButtonLoad] = useState(false);
 
   const [kehadiran, setKehadiran] = useState(false);
+  const [filter, setFilter] = useState('');
 
   //data
   const [grupPetugas, setGrupPetugas] = useState([
@@ -260,6 +264,45 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
     onSubmit(dataEdit).then(() => setButtonLoad(false));
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Shift',
+            description: 'Isi nama shift',
+          },
+        },
+        {
+          element: '.i-mulai',
+          popover: {
+            title: 'Waktu Mulai',
+            description: 'Menentukan waktu mulai',
+          },
+        },
+        {
+          element: '.i-selesai',
+          popover: {
+            title: 'Waktu Selesai',
+            description: 'Menentukan waktu selesai',
+          },
+        },
+
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const tanggal = dayjs(
     `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
     {
@@ -309,6 +352,16 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
                 &times;
               </strong>
             </div>
+
+            <button className="pr-55">
+              <HiQuestionMarkCircle
+                values={filter}
+                aria-placeholder="Show tutorial"
+                // onChange={}
+                onClick={handleClickTutorial}
+              />
+            </button>
+
             <div>
               <div className="m-4">
                 <div className="">

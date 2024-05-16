@@ -936,6 +936,16 @@ export const AddInmateModal = ({
     }
 
   };
+
+  // async function handleSetNomorKasus(){
+  //   if(formState.is_new_kasus == "true"){
+  //   await setFormState({...formState, nomor_kasus: nomor_kasus})
+  //   }
+  // }
+  useEffect(() => {
+    handleGenerateNomorKasus()
+  }, [formState.is_new_kasus])
+
   const handleSubmit = async(e: any) => {
     e.preventDefault();
     console.log(formState, 'received values');
@@ -1645,24 +1655,31 @@ export const AddInmateModal = ({
         },
       },
       {
-        element: '.f-penyakit',
-        popover: {
-          title: 'Status penyakit tersangka',
-          description: 'Pilih status penyakit tersangka',
-        },
-      },
-      {
-        element: '.f-tanggal-ditahan',
-        popover: {
-          title: 'Tanggal ditahan tersangka',
-          description: 'Isi tanggal ditahan tersangka',
-        },
-      },
-      {
         element: '.f-keahlian',
         popover: {
           title: 'Keahlian tersangka',
           description: 'Isi keahlian tersangka',
+        },
+      },
+      {
+        element: '.f-baru',
+        popover: {
+          title: 'Buat kasus baru',
+          description: 'Pilih kasus Ya/Tidak',
+        },
+      },
+      {
+        element: '.f-jenis',
+        popover: {
+          title: 'Jenis kasus',
+          description: 'Pilih jenis kasus yang diinginkan',
+        },
+      },
+      {
+        element: '.f-ditahan',
+        popover: {
+          title: 'Tanggal ditahan',
+          description: 'Pilih tanggal ditahan yang diinginkan',
         },
       },
       {
@@ -1722,45 +1739,10 @@ export const AddInmateModal = ({
         },
       },
       {
-        element: '.f-kesehatan-penyakit',
+        element: '.f-penyakit',
         popover: {
-          title: 'Nama penyakit tersangka',
-          description: 'Isi nama penyakit tersangka',
-        },
-      },
-      {
-        element: '.f-berat-badan',
-        popover: {
-          title: 'Berat badan tersangka',
-          description: 'Isi berat badan tersangka',
-        },
-      },
-      {
-        element: '.f-tinggi-badan',
-        popover: {
-          title: 'Tinggi badan tersangka',
-          description: 'Isi tinggi badan tersangka',
-        },
-      },
-      {
-        element: '.f-pola-makan',
-        popover: {
-          title: 'Nama pola makan tersangka',
-          description: 'Isi nama pola makan tersangka',
-        },
-      },
-      {
-        element: '.f-jenis-olahraga',
-        popover: {
-          title: 'Jenis olahraga tersangka',
-          description: 'Pilih jenis olahraga tersangka',
-        },
-      },
-      {
-        element: '.f-zat-adiktif',
-        popover: {
-          title: 'Zat adiktif tersangka',
-          description: 'Pilih zat adiktif tersangka',
+          title: 'Status penyakit tersangka',
+          description: 'Pilih status penyakit tersangka',
         },
       },
       {
@@ -1796,11 +1778,18 @@ export const AddInmateModal = ({
     // Kondisi Status Penyakit Tersangka
 
     if (formState.is_sick === '1') {
-      steps.splice(20, 0, {
+      steps.splice(31, 0, {
         element: '.f-nama-penyakit',
         popover: {
           title: 'Nama penyakit tersangka',
           description: 'Isi nama penyakit tersangka',
+        },
+      });
+      steps.splice(29, 0, {
+        element: '.f-penetapan',
+        popover: {
+          title: 'Tanggal penetapan terpidana',
+          description: 'Pilih tanggal penetapan terpidana yang diinginkan',
         },
       });
     }
@@ -2791,7 +2780,7 @@ export const AddInmateModal = ({
                             Keahlian
                           </label>
                           <Select
-                            className="basic-single"
+                            className="basic-single f-keahlian"
                             classNamePrefix="select"
                             styles={customStyles}
                             name="bidang_keahlian_id"
@@ -2843,7 +2832,7 @@ export const AddInmateModal = ({
                             Buat Kasus Baru (?)
                           </label>
                           <select
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary f-baru"
                             name="is_new_kasus"
                             onChange={handleNewKasus}
                             disabled={isDetail}
@@ -2866,7 +2855,7 @@ export const AddInmateModal = ({
                         'true' ? (
                         // Kasus Baru
                         <div className="grid grid-cols-1 gap-4">
-                          <div className="form-group w-full">
+                          {/* <div className="form-group w-full">
                             <label
                               className="block text-sm font-medium text-black dark:text-white"
                               htmlFor="id"
@@ -2888,7 +2877,7 @@ export const AddInmateModal = ({
                                 )}
                               </p>
                             </div>
-                          </div>
+                          </div> */}
 
                           <div className="form-group w-full">
                             <label
@@ -3473,7 +3462,7 @@ export const AddInmateModal = ({
                             Jenis Kasus
                           </label>
                           <Select
-                            className="basic-single p-gelang"
+                            className="basic-single f-jenis"
                             classNamePrefix="select"
                             defaultValue={
                               isEdit || isDetail
@@ -3513,7 +3502,7 @@ export const AddInmateModal = ({
                           </label>
                           <input
                             type="date"
-                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                            className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary f-ditahan"
                             name="tanggal_ditahan_otmil"
                             onChange={handleChange}
                             value={formState.tanggal_ditahan_otmil}
@@ -3891,7 +3880,7 @@ export const AddInmateModal = ({
                               </label>
                               <input
                                 type="date"
-                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                                className="w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-[11.5px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary f-penetapan"
                                 name="tanggal_penetapan_terpidana"
                                 onChange={handleChange}
                                 value={formState.tanggal_penetapan_terpidana}

@@ -376,6 +376,34 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         },
       },
       {
+        element: '.f-panjang',
+        popover: {
+          title: 'Panjang',
+          description: 'Isi ukuran panjang yang diinginkan',
+        },
+      },
+      {
+        element: '.f-lebar',
+        popover: {
+          title: 'Lebar',
+          description: 'Isi ukuran lebar yang diinginkan',
+        },
+      },
+      {
+        element: '.f-x',
+        popover: {
+          title: 'Posisi X',
+          description: 'Menentukan posisi X yang diinginkan',
+        },
+      },
+      {
+        element: '.f-y',
+        popover: {
+          title: 'Posisi Y',
+          description: 'Menentukan posisi Y yang diinginkan',
+        },
+      },
+      {
         element: '.f-jenis-ruangan-modal',
         popover: {
           title: 'Jenis ruangan ',
@@ -383,7 +411,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         },
       },
       {
-        element: '.f-zona-ruangan',
+        element: '.f-zona',
         popover: {
           title: 'Zona ruangan',
           description: 'Pilih zona ruangan',
@@ -394,6 +422,13 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         popover: {
           title: 'Lokasi',
           description: 'Pilih lokasi',
+        },
+      },
+      {
+        element: '.f-lantai',
+        popover: {
+          title: 'Lantai',
+          description: 'Pilih lantai',
         },
       },
       {
@@ -542,7 +577,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         Panjang
                       </label>
                       <input
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary f-panjang"
                         name="panjang"
                         placeholder="Panjang"
                         onChange={handleChange}
@@ -565,7 +600,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         Lebar
                       </label>
                       <input
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary f-lebar"
                         name="lebar"
                         placeholder="Lebar"
                         onChange={handleChange}
@@ -590,7 +625,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         Posisi X
                       </label>
                       <input
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary f-x"
                         name="posisi_X"
                         placeholder="Posisi X"
                         onChange={handleChange}
@@ -613,7 +648,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                         Posisi Y
                       </label>
                       <input
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:focus:border-primary f-y"
                         name="posisi_Y"
                         placeholder="Posisi Y"
                         onChange={handleChange}
@@ -685,7 +720,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           Zona
                         </label>
                         <Select
-                          className="basic-single "
+                          className="basic-single f-zona"
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={
@@ -728,7 +763,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           Lokasi
                         </label>
                         <Select
-                          className="basic-single "
+                          className="basic-single f-lokasi"
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={
@@ -771,7 +806,7 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
                           Lantai
                         </label>
                         <Select
-                          className="basic-single "
+                          className="basic-single f-lantai"
                           classNamePrefix="select"
                           styles={customStyles}
                           defaultValue={

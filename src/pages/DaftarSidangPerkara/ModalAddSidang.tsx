@@ -1315,7 +1315,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-90">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -1324,7 +1324,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-80">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
