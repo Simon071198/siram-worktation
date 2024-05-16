@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiBuilding } from '../../services/api';
+import { GiCancel } from 'react-icons/gi';
 
 export const ModalAddCameraSave = ({
   closeModal,
@@ -18,12 +19,8 @@ export const ModalAddCameraSave = ({
   const [addCamera, setAddCamera] = useState(false);
   const [pilihKamera, setPilihKamera] = useState('');
   const [cameraList, setCameraList] = useState([]);
+  const [previousSelectedCamera, setPreviousSelectedCamera] = useState('');
   console.log(cameraList);
-  // const DataKamera = [
-  //   { name: 'Favorite 1', img: GambarKamera },
-  //   { name: 'Favorite 2', img: GambarKamera },
-  //   { name: 'Favorite 3', img: GambarKamera },
-  // ];
 
   const modalStyles: any = {
     backdrop: {
@@ -45,28 +42,6 @@ export const ModalAddCameraSave = ({
   };
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  // const handleAddCamera = () => {
-  //   setAddCamera(true);
-  //   console.log('Add Camera');
-  // };
-
-  // const handleAddCamera = () => {
-  //   if (selectedBuilding && selectedFloor && selectedRoom && selectedCamera) {
-  //     const newCamera = {
-  //       building: selectedBuilding,
-  //       floor: selectedFloor,
-  //       room: selectedRoom,
-  //       camera: selectedCamera,
-  //     };
-  //     setCameraList((prevList) => [...prevList, newCamera]);
-  //     // Clear selections after adding
-  //     setSelectedBuilding('');
-  //     setSelectedFloor('');
-  //     setSelectedRoom('');
-  //     setSelectedCamera('');
-  //     setPilihKamera('');
-  //   }
-  // };
   const handleAddCamera = () => {
     if (selectedBuilding && selectedFloor && selectedRoom && selectedCamera) {
       const selectedBuildingObj = buildings.data.records.gedung.find(
@@ -86,7 +61,6 @@ export const ModalAddCameraSave = ({
         camera: selectedCamera,
       };
       setCameraList((prevList) => [...prevList, newCamera]);
-      // Clear selections after adding
       setSelectedBuilding('');
       setSelectedFloor('');
       setSelectedRoom('');
@@ -140,12 +114,19 @@ export const ModalAddCameraSave = ({
   const handleClickKamera = (cam) => {
     console.log('ini_camera', cam);
     let dataKamera = JSON.parse(cam);
+    setPreviousSelectedCamera(selectedCamera);
     setSelectedCamera(dataKamera);
-    // setPilihKamera(dataKamera.kamera_id);
     console.log('data_kamera1', pilihKamera);
     console.log('data_kamera', dataKamera);
     console.log('data_kamera2', dataKamera.nama_kamera);
   };
+  const handleRemoveCamera = (cameraId) => {
+    const updatedCameraList = cameraList.filter(
+      (item) => item.camera.kamera_id !== cameraId,
+    );
+    setCameraList(updatedCameraList);
+  };
+
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -199,25 +180,6 @@ export const ModalAddCameraSave = ({
                         ? 'Edit Tampilan Kamera'
                         : 'Tambah Tampilan Kamera'}
                   </h3>
-                  {/* 
-              {isDetail ? null : isEdit ? (
-                    <button className="">
-                      <HiQuestionMarkCircle
-                        values={filter}
-                        aria-placeholder="Show tutorial"
-                        onClick={handleClickTutorial}
-                      />
-                    </button>
-                  ) : (
-                    <button className="">
-                      <HiQuestionMarkCircle
-                        values={filter}
-                        aria-placeholder="Show tutorial"
-                        onClick={handleClickTutorial}
-                      />
-                    </button>
-                  )}
-                */}
                 </div>
 
                 <strong
@@ -359,17 +321,19 @@ export const ModalAddCameraSave = ({
                                       room.ruangan_otmil_id === selectedRoom,
                                   )?.kamera.length > 0 && (
                                   <select
-                                    value={pilihKamera}
+                                    value={
+                                      selectedCamera || previousSelectedCamera
+                                    }
                                     onChange={(e) => {
                                       handleClickKamera(e.target.value);
                                       setPilihKamera(e.target.value);
-                                      // console.log('eTargetValue', e.target.value);
                                     }}
                                     className="p-2 border rounded bg-meta-4 font-semibold w-full"
                                   >
                                     <option disabled value="">
                                       Pilih Kamera
                                     </option>
+                                    {/* Filter daftar kamera yang tersedia */}
                                     {buildings?.data?.records?.gedung
                                       ?.find(
                                         (building) =>
@@ -386,11 +350,18 @@ export const ModalAddCameraSave = ({
                                           room.ruangan_otmil_id ===
                                           selectedRoom,
                                       )
-                                      ?.kamera.map((cam) => (
+                                      ?.kamera.filter(
+                                        (cam) =>
+                                          !cameraList.find(
+                                            (item) =>
+                                              item.camera.kamera_id ===
+                                              cam.kamera_id,
+                                          ),
+                                      )
+                                      .map((cam) => (
                                         <option
                                           key={cam.kamera_id}
                                           value={JSON.stringify(cam)}
-                                          // onClick={() => handleClickKamera(cam)}
                                         >
                                           {cam.nama_kamera}
                                         </option>
@@ -411,13 +382,29 @@ export const ModalAddCameraSave = ({
                         )}
                       </div>
                     </div>
-
                     <div className="h-[25rem] w-1/2 bg-slate-500 rounded-2xl flex flex-col items-center pt-10 px-7 flex-wrap">
                       <ul className="list-disc text-white">
-                        {cameraList.map((item, index) => (
-                          <li key={index} className="mb-2 text-sm">
-                            {item?.building} - {item?.floor} - {item?.room} -{' '}
-                            {item?.camera?.nama_kamera}
+                        {cameraList.map((item) => (
+                          <li
+                            key={item.camera.kamera_id}
+                            className="mb-2 text-sm flex items-center"
+                          >
+                            <div className=" flex flex-row text-md ">
+                              <div className="">
+                                {item?.building} - {item?.floor} - {item?.room}{' '}
+                                - {item?.camera?.nama_kamera}
+                              </div>
+                              <div className=" flex justify-center px-2">
+                                <button
+                                  className="text-red-500"
+                                  onClick={() =>
+                                    handleRemoveCamera(item.camera.kamera_id)
+                                  }
+                                >
+                                  <GiCancel className="text-2xl" />
+                                </button>
+                              </div>
+                            </div>
                           </li>
                         ))}
                       </ul>
