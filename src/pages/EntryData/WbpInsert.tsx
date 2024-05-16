@@ -392,7 +392,8 @@ export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
       if (
         (key === 'nama_status_wbp_kasus' ||
           key === 'zat_adiktif' ||
-          key === 'jenis_olahraga') &&
+          key === 'jenis_olahraga' ||
+          key === 'nomor_kasus') &&
         !value
       ) {
         continue;
@@ -816,8 +817,17 @@ export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
     }
   };
 
+  async function handleSetNomorKasus(){
+    if(formState.is_new_kasus == "true"){
+    await setFormState({...formState, nomor_kasus: nomorKasus})
+    }
+  }
+  useEffect(() => {
+    handleSetNomorKasus()
+  }, [formState.is_new_kasus])
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    
     console.log(formState, 'formstate');
     if (!validateForm()) return;
     setButtonLoad(true);
@@ -2265,7 +2275,7 @@ export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
                 'true' ? (
                 // Kasus Baru
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="form-group w-full ">
+                  {/* <div className="form-group w-full ">
                     <label
                       className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -2285,7 +2295,7 @@ export const WbpInsert = ({handleNext, nomorKasus}: WBPProps) => {
                         )}
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="form-group w-full">
                     <label

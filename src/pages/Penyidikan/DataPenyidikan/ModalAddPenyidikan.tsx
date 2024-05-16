@@ -444,13 +444,6 @@ export const AddPenyidikanModal = ({
           },
         },
         {
-          element: '.input-nrp',
-          popover: {
-            title: 'NRP',
-            description: 'Isi NRP',
-          },
-        },
-        {
           element: '#p-penyidikan',
           popover: {
             title: 'Penyidikan',
@@ -458,14 +451,14 @@ export const AddPenyidikanModal = ({
           },
         },
         {
-          element: '.input-waktu',
+          element: '.i-waktu',
           popover: {
             title: 'Waktu Mulai Penyidikan',
             description: 'Menentukan tanggal waktu mulai penyidikan',
           },
         },
         {
-          element: '.input-selesai',
+          element: '.i-selesai',
           popover: {
             title: 'Waktu Selesai Penyidikan',
             description: 'Menentukan tanggal waktu selesai penyidikan',
@@ -658,7 +651,7 @@ export const AddPenyidikanModal = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -667,7 +660,7 @@ export const AddPenyidikanModal = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-70">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -896,7 +889,7 @@ export const AddPenyidikanModal = ({
                       Waktu Mulai Penyidikan
                     </label>
 
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center i-waktu">
                       <DatePicker
                         selected = {
                           formState.waktu_dimulai_penyidikan
@@ -942,7 +935,7 @@ export const AddPenyidikanModal = ({
                       Waktu Selesai Penyidikan
                     </label>
 
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center i-selesai">
                       <DatePicker
                         selected={
                           formState.waktu_selesai_penyidikan

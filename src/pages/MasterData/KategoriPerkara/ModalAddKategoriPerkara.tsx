@@ -198,7 +198,7 @@ export const AddKategoriPerkaraModal: React.FC<
                   </h3>
                 </div>
                 {!isDetail && (
-                  <button className="pr-[430px]">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       // values={filter}
                       aria-placeholder="Show tutorial"

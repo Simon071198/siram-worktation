@@ -626,7 +626,7 @@ export const AddAktifitasPengunjung: React.FC<
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-95">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -635,7 +635,7 @@ export const AddAktifitasPengunjung: React.FC<
                     />
                   </button>
                 ) : (
-                  <button className="pr-75">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -743,7 +743,7 @@ export const AddAktifitasPengunjung: React.FC<
                         timeCaption="Pilih Waktu"
                         dateFormat="dd/MM/yyyy HH:mm"
                         customTimeInput={<ExampleCustomTimeInput />}
-                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-waktu"
+                        className="w-full rounded border border-stroke  py-[11px] pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-selesai"
                         name="waktu_selesai_kunjungan"
                         disabled={false}
                         locale="id"

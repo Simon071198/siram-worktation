@@ -102,7 +102,7 @@ const InventarisList = () => {
       steps: [
         {
           element: '.search',
-          popover: { title: 'Search', description: 'Mencari nama barang' },
+          popover: { title: 'Search', description: 'Mencari nama inventaris' },
         },
         {
           element: '.tipe',
@@ -115,7 +115,7 @@ const InventarisList = () => {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Click button untuk mencari nama barang',
+            description: 'Click button untuk mencari nama inventaris',
           },
         },
         {

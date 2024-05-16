@@ -807,7 +807,7 @@ export const AddStaffModal = ({
 
                 {/* <div className="w-5"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -816,7 +816,7 @@ export const AddStaffModal = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-75">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

@@ -163,6 +163,13 @@ export const ModalAddGedung = ({
           },
         },
         {
+          element: '.i-gedung',
+          popover: {
+            title: 'Gedung otmil',
+            description: 'Pilih gedung otmil yang diinginkan',
+          },
+        },
+        {
           element: '.i-panjang',
           popover: {
             title: 'Panjang',
@@ -374,7 +381,7 @@ export const ModalAddGedung = ({
                       Gedung Otmil
                     </label>
                     <Select
-                      className="basic-single "
+                      className="basic-single i-gedung"
                       classNamePrefix="select"
                       styles={customStyles}
                       defaultValue={
@@ -414,7 +421,7 @@ export const ModalAddGedung = ({
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div className="form-group w-full relative">
                     <label
-                      className="i-panjang block text-sm font-medium text-black dark:text-white"
+                      className="block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
                     >
                       Panjang

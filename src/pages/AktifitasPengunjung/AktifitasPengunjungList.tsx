@@ -103,14 +103,21 @@ const AktifitasPengunjungList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama aktivitas',
+            description: 'Mencari nama pengunjung ',
+          },
+        },
+        {
+          element: '.search-wbp',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama wbp ',
           },
         },
         {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Click button untuk mencari nama aktivitas',
+            description: 'Click button untuk mencari nama pengunjung dan wbp',
           },
         },
         {
@@ -425,10 +432,10 @@ const AktifitasPengunjungList = () => {
       <div className="pb-4">
         <Breadcrumbs url={window.location.href} />
       </div>
-      <div className="rounded-sm border border-stroke bg-white px-6 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-center w-full">
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
-            <div className="flex items-center w-lvw search">
+            <div className="w-full search">
               <SearchInputButton
                 value={filter}
                 placehorder="Cari nama pengunjung"
@@ -438,7 +445,7 @@ const AktifitasPengunjungList = () => {
                 // onClick={handleSearchClick}
               />
             </div>
-            <div className="flex items-center search">
+            <div className="w-full search-wbp">
               <SearchInputButton
                 value={searchData.nama_wbp}
                 placehorder="Cari nama WBP"

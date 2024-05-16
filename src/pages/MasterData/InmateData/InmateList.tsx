@@ -647,6 +647,13 @@ const InmateList = () => {
             description: 'Menambahkan data tersangka',
           },
         },
+        {
+          element: '.b-kasus',
+          popover: {
+            title: 'Daftar Kasus',
+            description: 'Masuk ke halaman daftar kasus',
+          },
+        },
       ],
     });
 
@@ -744,7 +751,7 @@ const InmateList = () => {
           <div className="flex flex-row space-x-4 space-x">
             <div>
               <button
-                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600"
+                className="text-black rounded-md font-semibold py-2 px-3 bg-green-600 b-kasus"
                 onClick={() => navigate('/daftar-kasus')}
               >
                 Daftar Kasus
