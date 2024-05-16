@@ -161,7 +161,7 @@ const CameraList = () => {
   console.log(receivedObjects, 'ARRAY');
   useEffect(() => {
     // Initialize WebSocket connection
-    client.current = new WebSocket('wss://192.168.100.111:5000');
+    client.current = new WebSocket('ws://192.168.100.111:5000');
 
     client.current.onopen = () => {
       setIsWebSocketConnected(true);
