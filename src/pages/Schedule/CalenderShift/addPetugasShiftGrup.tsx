@@ -482,7 +482,7 @@ const AddPetugasShiftGrup = ({
               </h1>
 
               {/* <div className="w-10"> */}
-              <button>
+              <button className='pr-70'>
                 <HiQuestionMarkCircle
                   values={filter}
                   aria-placeholder="Show tutorial"

@@ -138,6 +138,13 @@ const PenyidikanList = () => {
             description: 'Menambahkan data penyidikan',
           },
         },
+        {
+          element: '.b-bap',
+          popover: {
+            title: 'BAP',
+            description: 'Masuk ke halaman BAP',
+          },
+        }
       ],
     });
 
@@ -524,7 +531,7 @@ const PenyidikanList = () => {
 
           <div className="flex gap-3">
             <button
-              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500"
+              className="text-black rounded-md font-semibold py-2 px-3 bg-green-500 b-bap"
               onClick={() => navigate('/pencatatan-bap')}
             >
               BAP

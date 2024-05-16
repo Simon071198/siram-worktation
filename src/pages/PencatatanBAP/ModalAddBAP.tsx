@@ -499,7 +499,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-100">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -508,7 +508,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-95">
+                  <button className="pr-70">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"

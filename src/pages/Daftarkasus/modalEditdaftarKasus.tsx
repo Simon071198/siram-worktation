@@ -181,6 +181,13 @@ export const EditDaftarKasusModal = ({
           },
         },
         {
+          element: '.i-pidana',
+          popover: {
+            title: 'Jenis Pidana',
+            description: 'Isikan jenis pidana yang diinginkan',
+          },
+        },
+        {
           element: '.input-lokasi',
           popover: {
             title: 'Lokasi Kasus',
@@ -244,9 +251,9 @@ export const EditDaftarKasusModal = ({
           },
         },
         {
-          element: '.d-nama',
+          element: '.d-saksi',
           popover: {
-            title: 'Nama Tersangka',
+            title: 'Saksi',
             description: 'Isi dengan lengkap keterangan',
           },
         },
@@ -783,7 +790,7 @@ export const EditDaftarKasusModal = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : (
-                  <button className="pr-75">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -885,7 +892,7 @@ export const EditDaftarKasusModal = ({
                       Nama Jenis Pidana
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pidana"
                       name="nama_jenis_pidana"
                       placeholder="Nama Jenis Pidana"
                       onChange={handleChange}
@@ -944,7 +951,7 @@ export const EditDaftarKasusModal = ({
                         onChange={handleWaktuKejadian}
                         showTimeInput
                         customTimeInput={<ExampleCustomTimeInput />}
-                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-kejadian"
                         timeFormat="HH:mm"
                         timeCaption="time"
                         dateFormat="dd/MM/yyyy HH:mm"
@@ -995,7 +1002,7 @@ export const EditDaftarKasusModal = ({
                         onChange={handleWaktuPelaporan}
                         showTimeInput
                         customTimeInput={<ExampleCustomTimeInput />}
-                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-mulai"
+                        className="w-full rounded border border-stroke py-3 pl-4 pr-14.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pelaporan"
                         timeFormat="HH:mm"
                         timeCaption="time"
                         dateFormat="dd/MM/yyyy HH:mm"
@@ -1229,7 +1236,7 @@ export const EditDaftarKasusModal = ({
                   Saksi
                 </label>
 
-                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t d-nama">
+                <div className="flex items-center mt-2 pl-4 bg-slate-700 rounded-t d-saksi">
                   <div className="form-group w-2/6">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"

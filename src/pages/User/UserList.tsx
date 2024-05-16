@@ -83,7 +83,14 @@ const UserList = () => {
           element: '.b-search',
           popover: {
             title: 'Button Search',
-            description: 'Click button untuk mencari nama pengguna',
+            description: 'Klik button untuk mencari nama pengguna',
+          },
+        },
+        {
+          element: '.b-excel',
+          popover: {
+            title: 'Export Excel',
+            description: 'Klik untuk mendapatkan file excel',
           },
         },
         {
@@ -468,7 +475,7 @@ const UserList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium b-excel"
             >
               Export&nbsp;Excel
             </button>

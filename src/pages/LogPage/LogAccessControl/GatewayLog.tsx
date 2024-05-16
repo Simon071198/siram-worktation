@@ -11,6 +11,9 @@ import dayjs from 'dayjs';
 import { Alerts } from '../AlertLog';
 import { Error403Message } from '../../../utils/constants';
 import { Breadcrumbs } from '../../../components/Breadcrumbs';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
 
 export default function GatewayLog() {
   const navigate = useNavigate();
@@ -38,6 +41,7 @@ export default function GatewayLog() {
   const [selectedGender, setSelectedGender] = useState('');
   const [jsonData, setJsonData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
@@ -234,6 +238,79 @@ export default function GatewayLog() {
     }
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.p-analitik',
+          popover: {
+            title: 'Pilih Analitik',
+            description: 'Pilih analitik yang diinginkan',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama',
+            description: 'Isi nama',
+          },
+        },
+        {
+          element: '.i-usia',
+          popover: {
+            title: 'Usia',
+            description: 'Isi usia',
+          },
+        },
+        {
+          element: '.p-gender',
+          popover: {
+            title: 'Pilih Gender',
+            description: 'Pilih gender yang diinginkan',
+          },
+        },
+        {
+          element: '.p-lokasi',
+          popover: {
+            title: 'Pilih Lokasi',
+            description: 'Pilih lokasi yang diinginkan',
+          },
+        },
+        {
+          element: '.p-kamera',
+          popover: {
+            title: 'Pilih Kamera',
+            description: 'Pilih kamera yang diinginkan',
+          },
+        },
+        {
+          element: '.i-awal',
+          popover: {
+            title: 'Tanggal Awal',
+            description: 'Pilih tanggal awal yang diinginkan',
+          },
+        },
+        {
+          element: '.i-akhir',
+          popover: {
+            title: 'Tanggal Akhir',
+            description: 'Pilih tanggal akhir yang diinginkan',
+          },
+        },
+        {
+          element: '.excel',
+          popover: {
+            title: 'Export Excel',
+            description: 'Klik untuk mendapatkan file excel',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -242,7 +319,19 @@ export default function GatewayLog() {
         <Breadcrumbs url={window.location.href} />
       </div>
       <div>
+        <div className='w-full flex justify-between'>
         <h3 className="text-2xl font-semibold"> Gateway Log</h3>
+        
+        <button>
+          <HiQuestionMarkCircle
+            values={filter}
+            aria-placeholder="Show tutorial"
+            // onChange={}
+            onClick={handleClickTutorial}
+          />
+        </button>
+        </div>
+
         <div className="mt-5 mb-5">
           <form>
             <div className="space-y-3 ">
@@ -253,7 +342,7 @@ export default function GatewayLog() {
                     <select
                       name="Select Analytics"
                       value={selectedAnalytics}
-                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary p-analitik"
                       onChange={handleAnalyticsChange}
                     >
                       <option value="">Semua Analitik</option>
@@ -268,7 +357,7 @@ export default function GatewayLog() {
                         <label className="text-white">Nama</label>
                         <input
                           name="Name"
-                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary i-nama"
                           // value={selectedName}
                           // onChange={(e) => setSelectedName(e.target.value)}
                         />
@@ -279,7 +368,7 @@ export default function GatewayLog() {
                         <input
                           type="number"
                           name="Age"
-                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary i-usia"
                           // value={selectedAge}
                           // onChange={(e) => setSelectedAge(e.target.value)}
                         />
@@ -289,7 +378,7 @@ export default function GatewayLog() {
                         <label className="text-white">Pilih Gender</label>
                         <select
                           name="Select Gender"
-                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary p-gender"
                           // value={selectedGender}
                           // onChange={(e) => setSelectedGender(e.target.value)}
                         >
@@ -311,7 +400,7 @@ export default function GatewayLog() {
                       name="Select Location"
                       // value={selectedLocation}
                       // onChange={handleLocationChange}
-                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary p-lokasi"
                     >
                       <option value="">Semua Lokasi</option>
                       {/* {jsonData.map((entry) => (
@@ -329,7 +418,7 @@ export default function GatewayLog() {
                     <select
                       name="Select Device"
                       // value={selectedDevice}
-                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-[5.5px] px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary p-kamera"
                       // onChange={handleDeviceChange}
                     >
                       <option value="">Semua Perangkat</option>
@@ -347,7 +436,7 @@ export default function GatewayLog() {
                     <input
                       type="date"
                       // value={startDate}
-                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary i-awal"
                       // onChange={handleStartDateChange}
                     />
                   </div>
@@ -357,7 +446,7 @@ export default function GatewayLog() {
                     <input
                       type="date"
                       // value={endDate}
-                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary"
+                      className="w-full rounded border border-stroke  dark:bg-slate-800 py-1 px-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark  dark:text-white dark:focus:border-primary i-akhir"
                       // onChange={handleEndDateChange}
                     />
                   </div>
@@ -365,7 +454,7 @@ export default function GatewayLog() {
               </div>
               <div className="text-right">
                 <button
-                  className="bg-blue-500 text-white px-2 rounded-md py-1"
+                  className="bg-blue-500 text-white px-2 rounded-md py-1 excel"
                   type="button"
                   onClick={handleExportClick}
                 >

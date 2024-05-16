@@ -84,7 +84,21 @@ const AhliList = () => {
           element: '.search',
           popover: {
             title: 'Search',
-            description: 'Mencari nama barang bukti',
+            description: 'Mencari nama barang',
+          },
+        },
+        {
+          element: '.s-kasus',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama kasus',
+          },
+        },
+        {
+          element: '.s-perkara',
+          popover: {
+            title: 'Search',
+            description: 'Mencari nama perkara',
           },
         },
         {
@@ -412,14 +426,14 @@ const AhliList = () => {
                 onChange={handleFilterChange}
               />
             </div>
-            <div className="w-full">
+            <div className="w-full s-kasus">
               <SearchInputButton
                 value={filterKasus}
                 placehorder="Cari Nama kasus"
                 onChange={handleFilterKasusChange}
               />
             </div>
-            <div className="w-full">
+            <div className="w-full s-perkara">
               <SearchInputButton
                 value={filterPerkara}
                 placehorder="Cari Nama Perkara"

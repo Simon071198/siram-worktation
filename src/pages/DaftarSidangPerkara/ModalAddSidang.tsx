@@ -66,7 +66,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jenis_persidangan_id: '',
       pengadilan_militer_id: '',
       nama_dokumen_persidangan: '',
-      pdf_file_base64: '',
+      link_dokumen_persidangan: '',
       hasil_vonis: '',
       ahli: [],
       agenda_sidang: '',
@@ -1293,7 +1293,7 @@ console.log(getWbp, 'get wbp')
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-90">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -1302,7 +1302,7 @@ console.log(getWbp, 'get wbp')
                     />
                   </button>
                 ) : (
-                  <button className="pr-80">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -2457,7 +2457,7 @@ console.log(getWbp, 'get wbp')
                         // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                         className="hidden"
                       />
-                      {formState.pdf_file_base64 ? (
+                      {formState.link_dokumen_persidangan ? (
                         <div className="grid grid-cols-1">
                           <div
                             className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${

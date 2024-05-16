@@ -173,6 +173,13 @@ export const AddDaftarKasusModal = ({
           element: '.p-jenis',
           popover: {
             title: 'Jenis Perkara',
+            description: 'Isikan jenis perkara yang diinginkan',
+          },
+        },
+        {
+          element: '.i-pidana',
+          popover: {
+            title: 'Jenis Pidana',
             description: 'Pilih jenis perkara yang diinginkan',
           },
         },
@@ -198,10 +205,10 @@ export const AddDaftarKasusModal = ({
           },
         },
         {
-          element: '.i-jumlah',
+          element: '.i-pelimpahan',
           popover: {
-            title: 'Jumlah Penyidikan',
-            description: 'Isi jumlah penyidikan',
+            title: 'Tanggal Pelimpahan Kasus',
+            description: 'Menentukan tanggal pelimpahan kasus',
           },
         },
         {
@@ -223,13 +230,6 @@ export const AddDaftarKasusModal = ({
           popover: {
             title: 'Pihak Terlibat',
             description: 'Pilih pihak terlibat yang diinginkan',
-          },
-        },
-        {
-          element: '.d-nama',
-          popover: {
-            title: 'Nama Tersangka',
-            description: 'Isi dengan lengkap keterangan',
           },
         },
         {
@@ -794,7 +794,7 @@ export const AddDaftarKasusModal = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : (
-                  <button className="pr-65">
+                  <button className="pr-75">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -894,7 +894,7 @@ export const AddDaftarKasusModal = ({
                       Nama Jenis Pidana
                     </label>
                     <input
-                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary input-lokasi"
+                      className="w-full capitalize rounded border border-stroke py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary i-pidana"
                       name="nama_jenis_pidana"
                       placeholder="Nama Jenis Pidana"
                       onChange={handleChange}

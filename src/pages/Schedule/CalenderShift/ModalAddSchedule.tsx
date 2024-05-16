@@ -391,7 +391,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
               </h1>
 
               {/* <div className="w-10"> */}
-              <button>
+              <button className='pr-30'>
                 <HiQuestionMarkCircle
                   values={filter}
                   aria-placeholder="Show tutorial"

@@ -13,6 +13,9 @@ import { Alerts } from '../GrupShift/Alert';
 import { BiLoaderAlt } from 'react-icons/bi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Error403Message } from '../../../utils/constants';
+import { HiQuestionMarkCircle } from 'react-icons/hi2';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 interface Schedule {
   schedule_id: any;
@@ -60,6 +63,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     },
   ]);
   const [staff, setStaff] = useState<Staff[]>([]);
+  const [filter, setFilter] = useState('');
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
@@ -260,6 +264,73 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     setPetugasShiftAdd(updatedPetugasShiftAdd);
   };
 
+  const handleClickTutorial = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '.i-tanggal',
+          popover: {
+            title: 'Tanggal',
+            description: 'Pilih tanggal yang diinginkan',
+          },
+        },
+        {
+          element: '.i-jadwal',
+          popover: {
+            title: 'Jadwal Shift',
+            description: 'Pilih jadwal shift yang diinginkan',
+          },
+        },
+        {
+          element: '.i-mulai',
+          popover: {
+            title: 'Waktu Mulai',
+            description: 'Menentukan waktu mulai',
+          },
+        },
+        {
+          element: '.i-selesai',
+          popover: {
+            title: 'Waktu Selesai',
+            description: 'Menentukan waktu selesai',
+          },
+        },
+        {
+          element: '.i-nama',
+          popover: {
+            title: 'Nama Grup',
+            description: 'Isi nama grup yang diinginkan',
+          },
+        },
+        {
+          element: '.i-ketua',
+          popover: {
+            title: 'Ketua Grup',
+            description: 'Isi ketua grup yang diinginkan',
+          },
+        },
+        {
+          element: '.i-anggota',
+          popover: {
+            title: 'Anggota Grup',
+            description: 'Pilih penugasan yang diinginkan',
+          },
+        },
+
+        {
+          element: '.b-submit',
+          popover: {
+            title: 'Submit',
+            description: 'Klik submit',
+          },
+        },
+      ],
+    });
+
+    driverObj.drive();
+  };
+
   const handleSubmit = () => {
     setButtonLoad(true);
     onSubmit(petugasShiftAdd).then(() => setButtonLoad(false));
@@ -302,6 +373,16 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
               <h1 className="text-xl font-semibold text-black dark:text-white">
                 Ubah Data Jadwal Shift Kerja
               </h1>
+
+              <button className="pr-55">
+                <HiQuestionMarkCircle
+                  values={filter}
+                  aria-placeholder="Show tutorial"
+                  // onChange={}
+                  onClick={handleClickTutorial}
+                />
+              </button>
+
               <strong
                 className="text-xl align-center cursor-pointer "
                 onClick={closeModal}
@@ -324,7 +405,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                         disabled
                         value={tanggal}
                         name="nama_grup_petugas"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-tanggal"
                       />
                     </div>
                     <div className="form-group w-1/2">
@@ -338,7 +419,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                         name="shift_id"
                         onChange={handleChangeShift}
                         value={addShift.shift_id}
-                        className="capitalize w-full rounded  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:focus-border-primary"
+                        className="capitalize w-full rounded  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-stroke dark dark-bg-meta-4 dark:focus-border-primary i-jadwal"
                       >
                         <option value="" disabled>
                           Pilih Shift
@@ -371,7 +452,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                         disabled
                         value={waktu.waktu_mulai}
                         name="nama_grup_petugas"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-mulai"
                       />
                     </div>
                     <div className="form-group w-1/2 ">
@@ -385,7 +466,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                         disabled
                         value={waktu.waktu_selesai}
                         name="nama_grup_petugas"
-                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                        className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-selesai"
                       />
                     </div>
                   </div>
@@ -399,7 +480,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     <input
                       value={defaultValue.nama_grup_petugas}
                       name="grup_petuas_id"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nama"
                     />
                   </div>
                   <div className="form-group w-full mt-2">
@@ -412,7 +493,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     <input
                       value={defaultValue.nama_ketua_grup}
                       name="nama_ketua_grup"
-                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary"
+                      className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-ketua"
                     />
                   </div>
                   <label
@@ -439,7 +520,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full h-48 overflow-y-auto">
+                  <div className="w-full h-48 overflow-y-auto i-anggota">
                     {staff.map((item: any) => {
                       const penugasanId = dataPetugasShift.find(
                         (itemNa: any) => itemNa.petugas_id === item.petugas_id,
@@ -484,7 +565,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                   <div className="flex space-x-4">
                     <button
                       onClick={handleSubmit}
-                      className={`items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
+                      className={`b-submit items-center btn flex w-full justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1 ${
                         buttonLoad ? 'bg-slate-400' : ''
                       }`}
                       type="submit"
