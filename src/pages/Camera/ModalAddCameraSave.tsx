@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiBuilding } from '../../services/api';
 import { GiCancel } from 'react-icons/gi';
+import Swal from 'sweetalert2';
 
 export const ModalAddCameraSave = ({
   closeModal,
@@ -42,32 +43,36 @@ export const ModalAddCameraSave = ({
   };
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  const handleAddCamera = () => {
-    if (selectedBuilding && selectedFloor && selectedRoom && selectedCamera) {
-      const selectedBuildingObj = buildings.data.records.gedung.find(
-        (building) => building.gedung_otmil_id === selectedBuilding,
-      );
-      const selectedFloorObj = selectedBuildingObj.lantai.find(
-        (floor) => floor.lantai_otmil_id === selectedFloor,
-      );
-      const selectedRoomObj = selectedFloorObj.ruangan.find(
-        (room) => room.ruangan_otmil_id === selectedRoom,
-      );
+  // const handleAddCamera = (e) => {
+  //   e.preventDefault();
+  //   if (selectedBuilding && selectedFloor && selectedRoom && selectedCamera) {
+  //     const selectedBuildingObj = buildings.data.records.gedung.find(
+  //       (building) => building.gedung_otmil_id === selectedBuilding,
+  //     );
+  //     const selectedFloorObj = selectedBuildingObj.lantai.find(
+  //       (floor) => floor.lantai_otmil_id === selectedFloor,
+  //     );
+  //     const selectedRoomObj = selectedFloorObj.ruangan.find(
+  //       (room) => room.ruangan_otmil_id === selectedRoom,
+  //     );
 
-      const newCamera = {
-        building: selectedBuildingObj.nama_gedung_otmil,
-        floor: selectedFloorObj.nama_lantai,
-        room: selectedRoomObj.nama_ruangan_otmil,
-        camera: selectedCamera,
-      };
-      setCameraList((prevList) => [...prevList, newCamera]);
-      setSelectedBuilding('');
-      setSelectedFloor('');
-      setSelectedRoom('');
-      setSelectedCamera('');
-      setPilihKamera('');
-    }
-  };
+  //     const newCamera = {
+  //       building: selectedBuildingObj.nama_gedung_otmil,
+  //       floor: selectedFloorObj.nama_lantai,
+  //       room: selectedRoomObj.nama_ruangan_otmil,
+  //       camera: selectedCamera,
+  //     };
+  //     setCameraList((prevList) => [...prevList, newCamera]);
+  //     setPilihKamera('');
+  //     setPreviousSelectedCamera('');
+  //     setSelectedCamera('');
+  //     // setSelectedBuilding('');
+  //     // setSelectedFloor('');
+  //     // setSelectedRoom('');
+  //     // setSelectedCamera('');
+  //     // setPilihKamera('');
+  //   }
+  // };
   const fetchData = async () => {
     try {
       let dataLocal = localStorage.getItem('dataUser');
@@ -114,12 +119,53 @@ export const ModalAddCameraSave = ({
   const handleClickKamera = (cam) => {
     console.log('ini_camera', cam);
     let dataKamera = JSON.parse(cam);
-    setPreviousSelectedCamera(selectedCamera);
-    setSelectedCamera(dataKamera);
-    console.log('data_kamera1', pilihKamera);
-    console.log('data_kamera', dataKamera);
-    console.log('data_kamera2', dataKamera.nama_kamera);
+    const isAlreadySelected = cameraList.some(
+      (item) => item.camera.kamera_id === dataKamera.kamera_id,
+    );
+    if (!isAlreadySelected) {
+      setPreviousSelectedCamera(selectedCamera);
+      setSelectedCamera(dataKamera);
+
+      const selectedBuildingObj = buildings.data.records.gedung.find(
+        (building) => building.gedung_otmil_id === selectedBuilding,
+      );
+      const selectedFloorObj = selectedBuildingObj.lantai.find(
+        (floor) => floor.lantai_otmil_id === selectedFloor,
+      );
+      const selectedRoomObj = selectedFloorObj.ruangan.find(
+        (room) => room.ruangan_otmil_id === selectedRoom,
+      );
+
+      const newCamera = {
+        building: selectedBuildingObj.nama_gedung_otmil,
+        floor: selectedFloorObj.nama_lantai,
+        room: selectedRoomObj.nama_ruangan_otmil,
+        camera: dataKamera,
+      };
+      Swal.fire({
+        icon: 'success',
+        title: 'Kamera ditambahkan',
+        position: 'bottom-end',
+        toast: true,
+        showConfirmButton: false,
+        timer: 1500, // Sesuaikan durasi sesuai kebutuhan
+      });
+
+      setCameraList((prevList) => [...prevList, newCamera]);
+      setPilihKamera('');
+      setPreviousSelectedCamera('');
+      setSelectedCamera('');
+    }
   };
+  // const handleClickKamera = (cam) => {
+  //   console.log('ini_camera', cam);
+  //   let dataKamera = JSON.parse(cam);
+  //   setPreviousSelectedCamera(selectedCamera);
+  //   setSelectedCamera(dataKamera);
+  //   console.log('data_kamera1', pilihKamera);
+  //   console.log('data_kamera', dataKamera);
+  //   console.log('data_kamera2', dataKamera.nama_kamera);
+  // };
   const handleRemoveCamera = (cameraId) => {
     const updatedCameraList = cameraList.filter(
       (item) => item.camera.kamera_id !== cameraId,
@@ -370,14 +416,14 @@ export const ModalAddCameraSave = ({
                                 )}
                               </>
                             )}
-                            {selectedCamera && (
+                            {/* {selectedCamera && (
                               <button
                                 onClick={handleAddCamera}
                                 className="p-2 border rounded bg-meta-4 font-semibold w-full"
                               >
                                 Tambahkan
                               </button>
-                            )}
+                            )} */}
                           </>
                         )}
                       </div>
@@ -412,7 +458,7 @@ export const ModalAddCameraSave = ({
                   </div>
 
                   <div className="flex  flex-row gap-3 w-full text-xl rounded-xl justify-end mt-15 ">
-                    <button className="rounded-lg bg-slate-500 w-30 h-10 border">
+                    <button className="rounded-lg bg-slate-600 w-30 h-10 border hover:bg-slate-700">
                       Simpan
                     </button>
                   </div>
