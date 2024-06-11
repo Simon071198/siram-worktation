@@ -2830,9 +2830,8 @@ export async function apiBuilding(params) {
     const response = await axios({
       method: 'post',
       url: newwebserviceurl + 'siram_api/kamera_read_by_location_ID.php',
-      data: 
-      {
-        filter : params
+      data: {
+        filter: params,
       },
     });
     console.log(response, 'response');
@@ -4748,6 +4747,24 @@ export async function apiDeleteLantaiOtmil(params, token) {
     const response = await axios({
       method: 'post',
       url: newWebservice + 'siram_api/lantai_otmil_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiGetKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
       data: params,
       headers: {
         'Content-Type': 'application/json',

@@ -43,36 +43,7 @@ export const ModalAddCameraSave = ({
   };
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
-  // const handleAddCamera = (e) => {
-  //   e.preventDefault();
-  //   if (selectedBuilding && selectedFloor && selectedRoom && selectedCamera) {
-  //     const selectedBuildingObj = buildings.data.records.gedung.find(
-  //       (building) => building.gedung_otmil_id === selectedBuilding,
-  //     );
-  //     const selectedFloorObj = selectedBuildingObj.lantai.find(
-  //       (floor) => floor.lantai_otmil_id === selectedFloor,
-  //     );
-  //     const selectedRoomObj = selectedFloorObj.ruangan.find(
-  //       (room) => room.ruangan_otmil_id === selectedRoom,
-  //     );
 
-  //     const newCamera = {
-  //       building: selectedBuildingObj.nama_gedung_otmil,
-  //       floor: selectedFloorObj.nama_lantai,
-  //       room: selectedRoomObj.nama_ruangan_otmil,
-  //       camera: selectedCamera,
-  //     };
-  //     setCameraList((prevList) => [...prevList, newCamera]);
-  //     setPilihKamera('');
-  //     setPreviousSelectedCamera('');
-  //     setSelectedCamera('');
-  //     // setSelectedBuilding('');
-  //     // setSelectedFloor('');
-  //     // setSelectedRoom('');
-  //     // setSelectedCamera('');
-  //     // setPilihKamera('');
-  //   }
-  // };
   const fetchData = async () => {
     try {
       let dataLocal = localStorage.getItem('dataUser');
@@ -416,14 +387,6 @@ export const ModalAddCameraSave = ({
                                 )}
                               </>
                             )}
-                            {/* {selectedCamera && (
-                              <button
-                                onClick={handleAddCamera}
-                                className="p-2 border rounded bg-meta-4 font-semibold w-full"
-                              >
-                                Tambahkan
-                              </button>
-                            )} */}
                           </>
                         )}
                       </div>
