@@ -32,7 +32,7 @@ const DataCamera = (props) => {
     groupId: '',
     groupShow: [],
     ffmpegIP: 'localhost',
-    baseUrl: 'http://192.168.100.111:5000/stream/',
+    baseUrl: 'http://192.168.18.111:5000/stream/',
     extenstion: '_.m3u8',
     girdView: 1,
     isFullscreenEnabled: false,
@@ -56,10 +56,10 @@ const DataCamera = (props) => {
   const playerRef = useRef(null);
   const errorTimeoutRef: any = useRef(null);
 
-  const client = useRef(new W3CWebSocket('ws://192.168.100.111:5000'));
+  const client = useRef(new W3CWebSocket('ws://192.168.18.111:5000'));
   useEffect(() => {
     // Initialize WebSocket connection
-    client.current = new WebSocket('ws://192.168.100.111:5000');
+    client.current = new WebSocket('ws://192.168.18.111:5000');
 
     client.current.onopen = () => {
       console.log('WebSocket Client Connected');
