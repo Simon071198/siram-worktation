@@ -109,15 +109,13 @@ const GedungList = () => {
   const handleSearchClick = async () => {
     try {
       let params = {
-        filter: {
-          nama_gedung_otmil: filter,
-        },
+        filter: filter,
         page: currentPage,
         pageSize: pageSize,
       };
       const response = await apiGedungOtmilRead(params, token);
-
-      if (response.data.status === 200) {
+      console.log(response, "res")
+      if (response.status === 200) {
         const result = response.data.records;
         console.log(result, 'DATA');
         setData(result);
@@ -178,7 +176,7 @@ const GedungList = () => {
     setIsLoading(true);
     try {
       const response = await apiGedungOtmilRead(param, token);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         const result = response.data.records;
         console.log(result, 'DATA');
         setData(result);
@@ -251,14 +249,14 @@ const GedungList = () => {
   const handleDeleteGedungOtmil = async (params: any) => {
     try {
       const response = await apiDeleteGedungOtmil(params, token);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -282,14 +280,15 @@ const GedungList = () => {
   const handleInsertGedungOtmil = async (params: any) => {
     try {
       const response = await apiInsertGedungOtmil(params, token);
-      if (response.data.status === 201) {
+      console.log(response, "testing insert")
+      if (response.status === 201) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
@@ -313,14 +312,14 @@ const GedungList = () => {
   const handleEditDataGedungOtmil = async (params: any) => {
     try {
       const response = await apiUpdateGedungOtmil(params, token);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',

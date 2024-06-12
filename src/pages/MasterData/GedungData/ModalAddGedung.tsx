@@ -235,6 +235,7 @@ export const ModalAddGedung = ({
 
   const lokasiOtmilData = async () => {
     const data = await apiReadAlllokasiOtmil({}, token);
+    console.log(data, "data lokasi")
     setIsLokasiOtmil(data.data.records);
   };
 
