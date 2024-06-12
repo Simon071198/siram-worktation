@@ -259,18 +259,18 @@ const DaftarKasus = () => {
 
   const fetchData = async () => {
     let param = {
-      filter: ' ',
+      filter: '',
       page: currentPage,
       pageSize: pageSize,
     };
-
+    console.log('testingParam', param);
     setIsLoading(true);
     try {
       const response = await apiReadDaftarKasus(param, token);
       if (response.data.status === 'OK') {
         const result = response.data.records;
         setData(result);
-        console.log('result', result)
+        console.log('result', result);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
@@ -519,13 +519,12 @@ const DaftarKasus = () => {
       if (item.nomor_kasus) {
         const nomorKasus = item.nomor_kasus.split('/')[0]; // Get the first part of the case number
         const angka = parseInt(nomorKasus, 10);
-    
+
         if (!isNaN(angka) && item.nomor_kasus.includes(currentDate)) {
           angkaTerbesar = Math.max(angkaTerbesar, angka);
         }
       }
     });
-    
 
     // Increment the largest number by 1 if the date is the same
     if (angkaTerbesar === 0) {
@@ -618,8 +617,8 @@ const DaftarKasus = () => {
     }
   };
   const getDetailData = (datanya: any) => {
-    return navigate('/detail-perkara', { state: {data: datanya} })
-  }
+    return navigate('/detail-perkara', { state: { data: datanya } });
+  };
   console.log(searchData);
 
   return isLoading ? (
@@ -870,7 +869,10 @@ const DaftarKasus = () => {
                     >
                       <p className=" text-black truncate dark:text-white capitalize">
                         {/* {item.waktu_pelaporan_kasus} */}
-                        {dayjs(item.waktu_pelaporan_kasus, "DD MMM YYYY HH:mm").format('DD MMMM YYYY HH:mm')}
+                        {dayjs(
+                          item.waktu_pelaporan_kasus,
+                          'DD MMM YYYY HH:mm',
+                        ).format('DD MMMM YYYY HH:mm')}
                       </p>
                     </div>
 
@@ -881,7 +883,9 @@ const DaftarKasus = () => {
                     >
                       <p className=" text-black truncate text-center dark:text-white capitalize">
                         {/* {item.waktu_kejadian} */}
-                        {dayjs(item.waktu_kejadian, "DD MMM YYYY HH:mm").format('DD MMMM YYYY HH:mm')}
+                        {dayjs(item.waktu_kejadian, 'DD MMM YYYY HH:mm').format(
+                          'DD MMMM YYYY HH:mm',
+                        )}
                       </p>
                     </div>
                     {isOperator ? (

@@ -417,8 +417,9 @@ export async function apiDeleteOditur(params, token) {
 export async function apiReadDaftarKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_read.php',
+      method: 'get',
+      url: 'http://localhost:8000/api/kasus',
+      // url: newwebserviceurl + 'siram_api/kasus_read.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2552,12 +2553,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-              {
-                match: {
-                  name: params.name,
-                },
+            {
+              match: {
+                name: params.name,
               },
-            ]
+            },
+          ]
           : [],
         must_not: [
           {
@@ -2722,7 +2723,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-          'location/locationDeviceStatusTotalSummaryByLocation.php',
+        'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -3446,7 +3447,7 @@ export function apiUserLogin(params) {
   try {
     const response = axios({
       method: 'POST',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/user_login.php',
+      url: 'http://localhost:8000/api/login',
       data: params,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
