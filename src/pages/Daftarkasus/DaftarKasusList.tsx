@@ -293,7 +293,7 @@ const DaftarKasus = () => {
   const getAllJenisPidana = async () => {
     let params = {
       filter: '',
-      pageSize: 1000,
+      pageSize: 10,
     };
     try {
       const response = await apiJenisPidanaRead(params, token);

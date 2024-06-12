@@ -415,12 +415,19 @@ export async function apiDeleteOditur(params, token) {
 
 // api Daftar Kasus start
 export async function apiReadDaftarKasus(params, token) {
+  const urlSearchParams = new URLSearchParams(params.filter);
+
+  urlSearchParams.append('page', params.page);
+  urlSearchParams.append('pageSize', params.pageSize);
+  const queryString = urlSearchParams.toString();
+  const url = `http://localhost:8000/api/kasus?${queryString}`;
+
   try {
+    console.log('paramsRead', params);
     const response = await axios({
       method: 'get',
-      url: 'http://localhost:8000/api/kasus',
+      url: url,
       // url: newwebserviceurl + 'siram_api/kasus_read.php',
-      data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

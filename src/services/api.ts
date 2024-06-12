@@ -417,6 +417,7 @@ export async function apiDeleteOditur(params: any, token: any) {
 // api Daftar Kasus start
 export async function apiReadDaftarKasus(params: any, token: any) {
   try {
+    console.log('paramsRead');
     const response = await axios({
       method: 'get',
       url: 'http://localhost:8000/api/kasus',
