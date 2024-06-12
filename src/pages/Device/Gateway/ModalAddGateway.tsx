@@ -453,7 +453,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
 
                 {/* <div className="w-5"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -462,7 +462,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-75">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -559,7 +559,7 @@ export const AddGateway: React.FC<AddGatewayModalProps> = ({
                       Pilih Ruangan otmil:
                     </label>
                     <Select
-                      className="basic-single p-otmil"
+                      className="basic-single p-ruang"
                       classNamePrefix="select"
                       isSearchable
                       isDisabled={isDetail}

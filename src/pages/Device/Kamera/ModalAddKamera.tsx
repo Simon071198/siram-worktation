@@ -190,20 +190,6 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
           },
         },
         {
-          element: '.i-jenis',
-          popover: {
-            title: 'Jenis Ruangan',
-            description: 'Isi jenis ruangan',
-          },
-        },
-        {
-          element: '.i-lokasi',
-          popover: {
-            title: 'Nama Lokasi Otmil',
-            description: 'Isi nama lokasi otmil',
-          },
-        },
-        {
           element: '.i-zona',
           popover: {
             title: 'Zona',
@@ -515,7 +501,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-90">
+                  <button className="pr-100">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -524,7 +510,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-80">
+                  <button className="pr-90">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -687,7 +673,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       Pilih Ruangan Otmil:
                     </label>
                     <Select
-                      className="basic-single p-otmil"
+                      className="basic-single p-ruang"
                       classNamePrefix="select"
                       isSearchable={true}
                       isClearable={true}

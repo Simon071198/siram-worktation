@@ -138,14 +138,21 @@ const GelangList = () => {
           },
         },
         {
-          element: '.b-search',
+          element: '.i-search',
           popover: {
-            title: 'Button Search',
-            description: 'Click button untuk mencari nama gelang',
+            title: 'Search',
+            description: 'Mencari nomor DMAC',
           },
         },
         {
-          element: '.excel',
+          element: '.b-search',
+          popover: {
+            title: 'Button Search',
+            description: 'Click button untuk mencari nama gelang dan nomor DMAC',
+          },
+        },
+        {
+          element: '.b-excel',
           popover: { title: 'Excel', description: 'Mendapatkan file excel' },
         },
         {
@@ -434,7 +441,7 @@ const GelangList = () => {
             <option value="rusak">Rusak</option>
           </select> */}
             </div>
-            <div className="flex w-full search">
+            <div className="flex w-full i-search">
               <SearchInputButton
                 value={searchData.dmac}
                 placehorder="Cari Nomor DMAC"
@@ -467,7 +474,7 @@ const GelangList = () => {
 
             <button
               onClick={exportToExcel}
-              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium excel"
+              className="text-white rounded-sm bg-blue-500 px-10 py-1 text-sm font-medium b-excel"
             >
               Export&nbsp;Excel
             </button>

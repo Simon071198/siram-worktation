@@ -447,7 +447,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
                 {/* <div className="w-10"> */}
                 {isDetail ? null : isEdit ? (
-                  <button className="pr-80">
+                  <button className="pr-95">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
@@ -456,7 +456,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     />
                   </button>
                 ) : (
-                  <button className="pr-70">
+                  <button className="pr-80">
                     <HiQuestionMarkCircle
                       values={filter}
                       aria-placeholder="Show tutorial"
