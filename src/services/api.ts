@@ -6,6 +6,8 @@ export const webserviceurl = 'https://dev.transforme.co.id/';
 export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
 export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
+const newBaseUrl: string = "http://127.0.0.1:8000/api"
+
 function removeBase64Prefix(base64String: string) {
   // Find the index of the comma that separates the prefix from the actual base64 data
   const commaIndex = base64String.indexOf(',');
@@ -2154,9 +2156,9 @@ export async function apiReadAllRuanganSummary(params: any, token: any) {
 export async function apiReadAlllokasiOtmil(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/lokasi_otmil_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newwebserviceurl}/lokasi_otmil`,
+      params: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2571,12 +2573,12 @@ export async function apiVisitorWNAList(params: any) {
       filters: {
         must: params.name
           ? [
-              {
-                match: {
-                  name: params.name,
-                },
+            {
+              match: {
+                name: params.name,
               },
-            ]
+            },
+          ]
           : [],
         must_not: [
           {
@@ -4654,9 +4656,9 @@ export async function apiPengadilanMiliterRead(params: any, token: any) {
 export async function apiGedungOtmilRead(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/gedung_otmil_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/gedung_otmil`,
+      params: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4690,8 +4692,8 @@ export async function apiInsertGedungOtmil(params: any, token: any) {
 export async function apiUpdateGedungOtmil(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/gedung_otmil_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/gedung_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4707,8 +4709,8 @@ export async function apiUpdateGedungOtmil(params: any, token: any) {
 export async function apiDeleteGedungOtmil(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/gedung_otmil_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/gedung_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
