@@ -418,8 +418,9 @@ export async function apiDeleteOditur(params: any, token: any) {
 export async function apiReadDaftarKasus(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_read.php',
+      method: 'get',
+      url: 'http://localhost:8000/api/kasus',
+      // url: newwebserviceurl + 'siram_api/kasus_read.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3477,7 +3478,7 @@ export function apiUserLogin(params: any) {
   try {
     const response = axios({
       method: 'POST',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/user_login.php',
+      url: 'http://localhost:8000/api/login',
       data: params,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',

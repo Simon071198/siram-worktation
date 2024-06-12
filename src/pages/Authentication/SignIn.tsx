@@ -56,63 +56,70 @@ const SignIn = () => {
   } = useForm<FormValues>();
 
   const handleRegistration = async (data: any) => {
-    console.log('AA', data);
-    setButtonLoad(true);
-    await apiUserLogin(data).then((res) => {
-      console.log(res);
-      let record = res.data.user;
-      let token = res.data.auth;
-      if (res.data.status === 'success') {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          },
-          didClose: () => {},
-        });
+    try {
+      setError(false);
+      console.log('AA', data);
+      setButtonLoad(true);
+      await apiUserLogin(data).then((res) => {
+        console.log(res);
+        let record = res.data.user;
+        let token = res.data.auth;
+        if (res.data.status === 'success') {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
+            didClose: () => {},
+          });
 
-        localStorage.setItem('dataUser', JSON.stringify(record));
-        localStorage.setItem('token', JSON.stringify(token));
-        setError(false);
+          localStorage.setItem('dataUser', JSON.stringify(record));
+          localStorage.setItem('token', JSON.stringify(token));
+          setError(false);
 
-        navigate(lastPage);
-        Toast.fire({
-          icon: 'success',
-          title: 'Berhasil Masuk',
-        });
-        window.location.reload();
+          navigate(lastPage);
+          Toast.fire({
+            icon: 'success',
+            title: 'Berhasil Masuk',
+          });
+          window.location.reload();
 
-        // Toast.fire({
-        //   icon: "success",
-        //   title: "Berhasil Masuk"
-        // }).then(() => {
-        //   localStorage.setItem('dataUser', JSON.stringify(record));
-        //   localStorage.setItem('token', JSON.stringify(token));
-        //   setError(false);
+          // Toast.fire({
+          //   icon: "success",
+          //   title: "Berhasil Masuk"
+          // }).then(() => {
+          //   localStorage.setItem('dataUser', JSON.stringify(record));
+          //   localStorage.setItem('token', JSON.stringify(token));
+          //   setError(false);
 
-        //   navigate(lastPage);
-        //   window.location.reload();
-        // });
-        // Swal.fire(`Berhasil Masuk`).then(() => {
-        //   localStorage.setItem('dataUser', JSON.stringify(record));
-        //   localStorage.setItem('token', JSON.stringify(token));
-        //   setError(false);
+          //   navigate(lastPage);
+          //   window.location.reload();
+          // });
+          // Swal.fire(`Berhasil Masuk`).then(() => {
+          //   localStorage.setItem('dataUser', JSON.stringify(record));
+          //   localStorage.setItem('token', JSON.stringify(token));
+          //   setError(false);
 
-        //   navigate(lastPage);
-        //   window.location.reload();
-        // });
-        setButtonLoad(false);
-      } else {
-        setError(true);
-        setErrorName(res.data.message);
-        setButtonLoad(false);
-      }
-    });
+          //   navigate(lastPage);
+          //   window.location.reload();
+          // });
+          setButtonLoad(false);
+        } else {
+          setError(true);
+          setErrorName(res.data.message);
+          setButtonLoad(false);
+        }
+      });
+    } catch (error) {
+      setButtonLoad(false);
+      setError(true);
+      setErrorName('Terjadi kesalahan, silahkan coba lagi');
+    }
   };
 
   const registerOptions = {
