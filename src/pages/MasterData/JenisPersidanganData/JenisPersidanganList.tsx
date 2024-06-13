@@ -128,9 +128,9 @@ const JenisPersidanganList = () => {
 
   const handleSearchClick = async () => {
     try {
-      const params = {
+      let params = {
         filter: {
-          nama_jenis_persidangan: filter,
+          nama_jenis_persidangan: filter
         },
         page: currentPage,
         pageSize: pageSize,
@@ -139,7 +139,7 @@ const JenisPersidanganList = () => {
 
       if (response.data.status === 'OK') {
         const result = response.data;
-        setData(result.data);
+        setData(result.records);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
@@ -198,10 +198,11 @@ const JenisPersidanganList = () => {
     setIsLoading(true);
     try {
       const response = await apiJenisSidangRead(param, token);
+      console.log('tt', response);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
-      const result = response.data.data;
+      const result = response.data.records;
       setData(result);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
@@ -286,11 +287,43 @@ const JenisPersidanganList = () => {
   };
 
   // function untuk menambah data
+  // const handleSubmitAddDataPetugas = async (params: any) => {
+  //   console.log('DATA DARI LIST', params);
+  //   try {
+  //     const responseCreate = await apiJenisSidangInsert(params, token);
+  //     if (responseCreate.data.status === 'Ok') {
+  //       Alerts.fire({
+  //         icon: 'success',
+  //         title: 'Berhasil menambah data',
+  //       });
+  //       setModalAddOpen(false);
+  //       fetchData();
+  //     } else if (responseCreate.data.status === 'NO') {
+  //       Alerts.fire({
+  //         icon: 'error',
+  //         title: 'Gagal membuat data',
+  //       });
+  //     } else {
+  //       throw new Error(responseCreate.data.message);
+  //     }
+  //   } catch (e: any) {
+  //     if (e.response.status === 403) {
+  //       navigate('/auth/signin', {
+  //         state: { forceLogout: true, lastPage: location.pathname },
+  //       });
+  //     }
+  //     Alerts.fire({
+  //       icon: e.response.status === 403 ? 'warning' : 'error',
+  //       title: e.response.status === 403 ? Error403Message : e.message,
+  //     });
+  //   }
+  // };
+
   const handleSubmitAddDataPetugas = async (params: any) => {
     console.log('DATA DARI LIST', params);
     try {
       const responseCreate = await apiJenisSidangInsert(params, token);
-      if (responseCreate.data.status === 'Ok') {
+      if (responseCreate.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
