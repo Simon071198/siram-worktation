@@ -417,11 +417,19 @@ export async function apiDeleteOditur(params, token) {
 
 // api Daftar Kasus start
 export async function apiReadDaftarKasus(params, token) {
+  const urlSearchParams = new URLSearchParams(params.filter);
+
+  urlSearchParams.append('page', params.page);
+  urlSearchParams.append('pageSize', params.pageSize);
+  const queryString = urlSearchParams.toString();
+  const url = `http://localhost:8000/api/kasus?${queryString}`;
+
   try {
+    console.log('paramsRead', params);
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_read.php',
-      data: params,
+      method: 'get',
+      url: url,
+      // url: newwebserviceurl + 'siram_api/kasus_read.php',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4762,10 +4770,44 @@ export async function apiDeleteLantaiOtmil(params, token) {
   }
 }
 
-export async function apiGetKameraTersimpan(params, token) {
+export async function apiReadKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'get',
+      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiCreateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiUpdateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'put',
       url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
       data: params,
       headers: {
