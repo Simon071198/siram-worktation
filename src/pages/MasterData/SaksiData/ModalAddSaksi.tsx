@@ -27,7 +27,7 @@ export const AddSaksiModal = ({
       no_kontak: '',
       alamat: '',
       jenis_kelamin: '',
-      // keterangan:'',
+      keterangan: '',
     },
   );
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
@@ -49,8 +49,8 @@ export const AddSaksiModal = ({
     for (const [key, value] of Object.entries(formState)) {
       if (
         key !== 'kasus_id' &&
-        key !== 'nama_kasus'
-        // key !== '
+        key !== 'nama_kasus' &&
+        key !== 'keterangan'
       ) {
         if (!value) {
           errorFields.push(key);

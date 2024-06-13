@@ -36,9 +36,13 @@ export const AddTipeModal = ({
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
+      if (
+        key !== 'deleted_at'
+      ){
       if (!value) {
         errorFields.push(key);
       }
+    }
     }
 
     if (errorFields.length > 0) {

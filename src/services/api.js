@@ -609,8 +609,8 @@ export async function apiReadSaksi(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: url,
-      data: params,
+      url: `${newBaseUrl}/saksi`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -628,7 +628,7 @@ export async function apiCreateSaksi(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/saksi_insert.php',
+      url: `${newBaseUrl}/saksi`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -646,8 +646,8 @@ export async function apiCreateSaksi(params, token) {
 export async function apiUpdateSaksi(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/saksi_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/saksi`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -665,8 +665,8 @@ export async function apiUpdateSaksi(params, token) {
 export async function apiDeleteSaksi(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/saksi_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/saksi`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -843,9 +843,9 @@ export async function apiDeleteJaksaPenyidik(params, token) {
 export async function apiReadOditurPenyidik(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/oditur_penyidik`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -863,7 +863,7 @@ export async function apiCreateOditurPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_insert.php',
+      url: `${newBaseUrl}/oditur_penyidik`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -881,8 +881,8 @@ export async function apiCreateOditurPenyidik(params, token) {
 export async function apiUpdateOditurPenyidik(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/oditur_penyidik`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -900,8 +900,8 @@ export async function apiUpdateOditurPenyidik(params, token) {
 export async function apiDeleteOditurPenyidik(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/oditur_penyidik`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -921,9 +921,9 @@ export async function apiDeleteOditurPenyidik(params, token) {
 export async function apiReadOditurPenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/oditur_penuntut`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -941,7 +941,7 @@ export async function apiCreateOditurPenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_insert.php',
+      url: `${newBaseUrl}/oditur_penuntut`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -959,8 +959,8 @@ export async function apiCreateOditurPenuntut(params, token) {
 export async function apiUpdateOditurPenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/oditur_penuntut`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -978,8 +978,8 @@ export async function apiUpdateOditurPenuntut(params, token) {
 export async function apiDeleteOditurPenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/oditur_penuntut`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4055,9 +4055,9 @@ export async function apiAsetRead(params, token) {
 export async function apiTipeAsetRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/tipe_aset`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4075,7 +4075,7 @@ export async function apiTipeAsetInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_insert.php',
+      url: `${newBaseUrl}/tipe_aset`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4093,8 +4093,8 @@ export async function apiTipeAsetInsert(params, token) {
 export async function apiTipeAsetUpdate(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/tipe_aset`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4112,8 +4112,8 @@ export async function apiTipeAsetUpdate(params, token) {
 export async function apiTipeAsetDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/tipe_aset`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4284,9 +4284,9 @@ export async function apiSidangDelete(params, token) {
 export async function apiJenisSidangRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_persidangan_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/jenis_persidangan`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4324,7 +4324,7 @@ export async function apiJenisSidangInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/jenis_persidangan_insert.php',
+      url: `${newBaseUrl}/jenis_persidangan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4342,8 +4342,8 @@ export async function apiJenisSidangInsert(params, token) {
 export async function apiJenisSidangDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_persidangan_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/jenis_persidangan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4361,8 +4361,8 @@ export async function apiJenisSidangDelete(params, token) {
 export async function apiJenisSidangUpdate(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_persidangan_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/jenis_persidangan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4380,9 +4380,9 @@ export async function apiJenisSidangUpdate(params, token) {
 export async function apiAhliRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/ahli_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/ahli`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4400,7 +4400,7 @@ export async function apiAhliInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/ahli_insert.php',
+      url: `${newBaseUrl}/ahli`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4418,8 +4418,8 @@ export async function apiAhliInsert(params, token) {
 export async function apiAhliUpdate(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/ahli_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/ahli`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4437,8 +4437,8 @@ export async function apiAhliUpdate(params, token) {
 export async function apiAhliDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/ahli_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/ahli`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
