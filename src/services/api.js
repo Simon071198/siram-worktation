@@ -1,11 +1,37 @@
 import axios from 'axios';
 
-export const webserviceurl = 'https://dev.transforme.co.id/';
+// export const webserviceurl = 'https://dev.transforme.co.id/';
 
-export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
-export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
+// export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
+// export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
-const newBaseUrl = "http://127.0.0.1:8000/api";
+export const webserviceurl = 'http://localhost:8000/';
+
+export const newWebservice = 'http://localhost:8000/api/';
+export const newwebserviceurl = 'http://localhost:8000/api/';
+
+const newBaseUrl = 'http://127.0.0.1:8000/api';
+
+function getUrl(params) {
+  const object = {
+    page: params.page ? params.page : 1,
+    pageSize: params.pageSize ? params.pageSize : 1000000,
+    ...params.filter,
+  };
+
+  for (const key in object) {
+    if (typeof object[key] === 'string') {
+      object[key] = object[key].replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  const queryString = Object.keys(object)
+    .map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(object[key])}`,
+    )
+    .join('&');
+  return queryString;
+}
 
 function removeBase64Prefix(base64String) {
   // Find the index of the comma that separates the prefix from the actual base64 data
@@ -65,8 +91,8 @@ export async function apiRealtimeLog(params, token) {
 export async function apiReadStatusWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/status_wbp_kasus_read.php',
+      method: 'get',
+      url: newwebserviceurl + 'status_wbp_kasus',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -417,12 +443,9 @@ export async function apiDeleteOditur(params, token) {
 
 // api Daftar Kasus start
 export async function apiReadDaftarKasus(params, token) {
-  const urlSearchParams = new URLSearchParams(params.filter);
-
-  urlSearchParams.append('page', params.page);
-  urlSearchParams.append('pageSize', params.pageSize);
-  const queryString = urlSearchParams.toString();
-  const url = `http://localhost:8000/api/kasus?${queryString}`;
+  const queryString = getUrl(params);
+  const url = newWebservice + `kasus?${queryString}`;
+  console.log('urlKasus', url);
 
   try {
     console.log('paramsRead', params);
@@ -447,7 +470,7 @@ export async function apiCreateDaftarKasus(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_insert.php',
+      url: newWebservice + `kasus`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -465,8 +488,8 @@ export async function apiCreateDaftarKasus(params, token) {
 export async function apiUpdateDaftarKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_update.php',
+      method: 'put',
+      url: newwebserviceurl + 'kasus',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -484,9 +507,9 @@ export async function apiUpdateDaftarKasus(params, token) {
 export async function apiDeleteDaftarKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_delete.php',
-      data: params,
+      method: 'delete',
+      url: newwebserviceurl + 'kasus?kasus_id=' + params.kasus_id,
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -581,6 +604,8 @@ export async function apiDeleteBarangBukti(params, token) {
 
 // api Saksi start
 export async function apiReadSaksi(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `saksi?${queryString}`;
   try {
     const response = await axios({
       method: 'get',
@@ -737,11 +762,12 @@ export async function apiDeleteJaksapenuntut(params, token) {
 
 // api Jaksa penyidik start
 export async function apiReadJaksaPenyidik(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `oditur_penyidik?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1513,11 +1539,12 @@ export async function apiReadAllKesatuan() {
 }
 
 export async function apiReadjenisperkara(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `jenis_perkara?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/jenis_perkara_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1537,7 +1564,6 @@ export async function apiReadVisitor(params, token) {
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
-      data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1737,9 +1763,9 @@ export async function apiCreateAllEvent(params, token) {
 export async function apiReadAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/ruangan_otmil_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/ruangan_otmil`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2183,8 +2209,8 @@ export async function apiReadAllRuanganSummary(params, token) {
 export async function apiReadZona(token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/zona_read.php',
+      method: 'GET',
+      url: `${newBaseUrl}/zona`,
       data: {},
       headers: {
         'Content-Type': 'application/json',
@@ -2283,8 +2309,8 @@ export async function apiReadAllRuangan(params) {
 export async function apiCreateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2302,8 +2328,8 @@ export async function apiCreateAllRuanganOtmil(params, token) {
 export async function apiDeleteAllRuangan(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2321,8 +2347,8 @@ export async function apiDeleteAllRuangan(params, token) {
 export async function apiUpdateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/ruangan_otmil_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3456,7 +3482,7 @@ export function apiUserLogin(params) {
   try {
     const response = axios({
       method: 'POST',
-      url: 'http://localhost:8000/api/login',
+      url: newWebservice + 'login',
       data: params,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -3813,10 +3839,15 @@ export async function apiCreateWBP(params, token) {
 
 export async function apiReadAllWBP(params, token) {
   try {
+    const dataParam = {
+      page: params.page ? params.page : 1,
+      pageSize: params.pageSize ? params.pageSize : 100000000,
+      ...params.filter,
+    };
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'wbp_profile',
+      // params: dataParam,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4270,11 +4301,12 @@ export async function apiJenisSidangRead(params, token) {
 }
 
 export async function apiJenisPidanaRead(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `jenis_pidana?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_pidana_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4701,9 +4733,9 @@ export async function apiDeleteGedungOtmil(params, token) {
 export async function apiLantaiOtmilRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/lantai_otmil`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4720,7 +4752,7 @@ export async function apiInsertLantaiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_insert.php',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4737,8 +4769,8 @@ export async function apiInsertLantaiOtmil(params, token) {
 export async function apiUpdateLantaiOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4755,8 +4787,8 @@ export async function apiUpdateLantaiOtmil(params, token) {
 export async function apiDeleteLantaiOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4770,11 +4802,62 @@ export async function apiDeleteLantaiOtmil(params, token) {
   }
 }
 
-export async function apiGetKameraTersimpan(params, token) {
+export async function apiReadKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      url: `${newBaseUrl}/kamera_tersimpan`,
+      params: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiCreateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${newBaseUrl}/kamera_tersimpan`,
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiUpdateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'put',
+      url: `${newBaseUrl}/kamera_tersimpan`,
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiDeleteKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'delete',
+      url: `${newBaseUrl}/kamera_tersimpan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',

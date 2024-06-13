@@ -99,17 +99,18 @@ const LantaiList = () => {
   };
 
   const handleSearchClick = async () => {
+    console.log(filter)
     try {
       let params = {
-        filter: {
-          nama_lantai: filter,
-        },
+        // filter: {
+          search: filter,
+        // },
         page: currentPage,
         pageSize: pageSize,
       };
       const response = await apiLantaiOtmilRead(params, token);
 
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         const result = response.data.records;
         console.log(result, 'DATA');
         setData(result);
@@ -170,7 +171,7 @@ const LantaiList = () => {
     setIsLoading(true);
     try {
       const response = await apiLantaiOtmilRead(param, token);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         const result = response.data.records;
         console.log(result, 'DATA');
         setData(result);
@@ -211,6 +212,7 @@ const LantaiList = () => {
   };
 
   const handleEditClick = (item: any) => {
+    // console.log(item, "item edit")
     let newItem: any = {
       lantai_otmil_id: item.lantai_otmil_id,
       nama_lantai: item.nama_lantai,
@@ -218,7 +220,7 @@ const LantaiList = () => {
       lebar: item.lebar,
       posisi_X: item.posisi_X,
       posisi_Y: item.posisi_Y,
-      lokasi_otmil_id: item?.lokasi_otmil?.id_lokasi_otmil,
+      lokasi_otmil_id: item?.lokasi_otmil?.lokasi_otmil_id,
       nama_lokasi_otmil: item.lokasi_otmil.nama_lokasi_otmil,
       nama_gedung_otmil: item?.gedung_otmil?.nama_gedung_otmil,
       gedung_otmil_id: item?.gedung_otmil?.gedung_otmil_id,
@@ -248,14 +250,14 @@ const LantaiList = () => {
   const handleDeleteLantaiOtmil = async (params: any) => {
     try {
       const response = await apiDeleteLantaiOtmil(params, token);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
         setModalDeleteOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal hapus data',
@@ -279,14 +281,14 @@ const LantaiList = () => {
   const handleInsertLantaiOtmil = async (params: any) => {
     try {
       const response = await apiInsertLantaiOtmil(params, token);
-      if (response.data.status === 201) {
+      if (response.status === 201) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal membuat data',
@@ -310,30 +312,31 @@ const LantaiList = () => {
   const handleEditDataLantaiOtmil = async (params: any) => {
     try {
       const response = await apiUpdateLantaiOtmil(params, token);
-      if (response.data.status === 200) {
+      console.log(response, "response")
+      if (response.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
         setModalEditOpen(false);
         fetchData();
-      } else if (response.data.status === 400) {
+      } else if (response.status === 400) {
         Alerts.fire({
           icon: 'error',
           title: 'Gagal mengubah data',
         });
       } else {
-        throw new Error(response.data.message);
+        throw new Error(response.data.messag);
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
+      if (e?.response?.status === 403) {
         navigate('/auth/signin', {
           state: { forceLogout: true, lastPage: location.pathname },
         });
       }
       Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
+        icon: e?.response?.status === 403 ? 'warning' : 'error',
+        title: e?.response?.status === 403 ? Error403Message : e?.message,
       });
     }
   };

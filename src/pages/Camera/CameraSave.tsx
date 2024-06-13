@@ -1,27 +1,39 @@
 import { useEffect, useState } from 'react';
-import GambarKamera from '../../images/camera_images_test.jpeg';
 import { IoAdd } from 'react-icons/io5';
 import { ModalAddCameraSave } from './ModalAddCameraSave';
-import { apiGetKameraTersimpan } from '../../services/api';
+import {
+  apiCreateKameraTersimpan,
+  apiDeleteKameraTersimpan,
+  apiReadKameraTersimpan,
+  apiUpdateKameraTersimpan,
+} from '../../services/api';
 import { SlOptionsVertical } from 'react-icons/sl';
+import MenuItemComponent from '../../components/MenuItemCameraSave';
+import { Alerts } from './AlertCamera';
+import { DeleteKameraModalSave } from './ModalDeleteKameraSave';
+import { Link, useNavigate } from 'react-router-dom';
 
+interface Item {
+  id: string;
+  nama_grup: string;
+}
 const CameraSave = () => {
   const [modalAddOpen, setModalAddOpen] = useState(false);
-  const [data, setData] = useState([]);
-  // const tokenItem = localStorage.getItem('token');
-  // const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = '8|VSdTF5sjiynfMYSlBAXlM54P11BhLiEpi0frrUVc34ce5fca';
-  // const DataKamera = [
-  //   { name: 'Favorite 1', img: GambarKamera },
-  //   { name: 'Favorite 2', img: GambarKamera },
-  //   { name: 'Favorite 3', img: GambarKamera },
-  //   { name: 'Favorite 4', img: GambarKamera },
-  //   { name: 'Favorite 5', img: GambarKamera },
-  //   { name: 'Favorite 6', img: GambarKamera },
-  //   { name: 'Favorite 7', img: GambarKamera },
-  //   { name: 'Favorite 8', img: GambarKamera },
-  //   { name: 'Favorite 9', img: GambarKamera },
-  // ];
+  const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [data, setData] = useState<Item[]>([]);
+  const [editData, setEditData] = useState<Item | null>(null);
+  const [deleteData, setDeleteData] = useState<Item | null>(null);
+  const [menuIndex, setMenuIndex] = useState<number | null>(null);
+
+  const navigate = useNavigate();
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
+
+  const handleIconClick = (index: number) => {
+    setMenuIndex(index === menuIndex ? null : index);
+  };
   useEffect(() => {
     fetchKameraTersimpan();
   }, []);
@@ -30,8 +42,12 @@ const CameraSave = () => {
       page: 1,
     };
     try {
-      const response = await apiGetKameraTersimpan(params, token);
-      setData(response.data.records);
+      const response = await apiReadKameraTersimpan(params, token);
+      if (response.data.status !== 'OK') {
+        throw new Error(response.data.message);
+      }
+      const result = response.data.records;
+      setData(result);
       console.log(response.data.records);
     } catch (error) {
       console.log(error);
@@ -40,7 +56,120 @@ const CameraSave = () => {
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
   };
+  const handleCloseEditModal = () => {
+    setModalEditOpen(false);
+  };
+  const handleCloseDeleteModal = () => {
+    setModalDeleteOpen(false);
+  };
 
+  const handleSubmitAdd = async (params: any) => {
+    console.log('DATA DARI LIST', params);
+    try {
+      const responseCreate = await apiCreateKameraTersimpan(params, token);
+      if (responseCreate.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        setModalAddOpen(false);
+        fetchKameraTersimpan();
+      } else if (responseCreate.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseCreate.data.message);
+      }
+    } catch (e: any) {
+      console.log(e, 'error catch');
+    }
+  };
+  const handleSubmitEdit = async (params: any) => {
+    console.log('DATA DARI edit', params);
+    try {
+      const responseEdit = await apiUpdateKameraTersimpan(params, token);
+      if (responseEdit.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengubah data',
+        });
+        setModalEditOpen(false);
+        fetchKameraTersimpan();
+      } else if (responseEdit.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseEdit.data.message);
+      }
+    } catch (e: any) {
+      console.log(e, 'error catch');
+    }
+  };
+  const handleSubmitDelete = async (params: any) => {
+    console.log('DATA DARI delete', params);
+    try {
+      const responseEdit = await apiDeleteKameraTersimpan(params, token);
+      if (responseEdit.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
+        });
+        setModalDeleteOpen(false);
+        fetchKameraTersimpan();
+      } else if (responseEdit.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseEdit.data.message);
+      }
+    } catch (e: any) {
+      console.log(e, 'error catch');
+    }
+  };
+
+  const handleEditClick = (item: Item) => {
+    console.log(item, 'item nih');
+    setEditData(item);
+    setModalEditOpen(true);
+  };
+  const handleDeleteClick = (item: Item) => {
+    console.log(item, 'item delete nih');
+    setDeleteData(item);
+    setModalDeleteOpen(true);
+  };
+  const handleDetailClick = (item: Item) => {
+    navigate(`/kamera-tersimpan/list/${item?.id}`);
+  };
+
+  // const handleSubmitEdit = async (params: any) => {
+  //   console.log(params, 'edit');
+  //   try{
+  //     const responseEdit = await apiUpdateKameraTersimpan(params, token);
+  //     if(responseEdit.data.status === 'OK'){
+  //       Alerts.fire({
+  //         icon: 'success',
+  //         title: 'Berhasil mengubah data',
+  //       });
+  //       setModalEditOpen(false);
+  //       fetchKameraTersimpan();
+  //   } else if(responseEdit.data.status === 'NO'){
+  //       Alerts.fire({
+  //         icon: 'error',
+  //         title: 'Gagal mengubah data',
+  //       });
+  //     } else {
+  //       throw new Error(responseEdit.data.message);
+  //     }
+  //   } catch (e: any) {
+  //     console.log(e, 'error catch');
+  //   }
+  // }
   return (
     <>
       <div className="px-10 py-3">
@@ -52,27 +181,42 @@ const CameraSave = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 py-6 px-10">
-        {data.map((item, index) => (
+        {data?.map((item: any, index) => (
           <div
             key={index}
-            className="bg-slate-500 py-10 px-16  justify-center items-center rounded-2xl text-2xl text-white relative h-30"
+            className="bg-slate-500  flex px-8 text-center font-bold justify-center items-center rounded-2xl text-2xl text-white relative w-full h-36 cursor-pointer hover:bg-slate-600"
             onClick={() => console.log('test2', index)}
           >
             <div className="absolute top-3 right-2 zIndex-10 hover:cursor-pointer hover:bg-slate-400 hover:rounded-full flex items-center justify-center w-9 h-9">
               <span
-                className="flex items-center justify-center w-full h-full"
+                className="flex items-center justify-center w-full h-full text-slate-300"
                 onClick={(e) => {
                   e.stopPropagation();
+                  handleIconClick(index);
                   console.log('test1', index);
                 }}
               >
                 <SlOptionsVertical size={17} />
               </span>
             </div>
-            <p>{item.nama_grup}</p>
-            <div className="absolute bottom-1 left-2 w-full">
-              <p className="text-sm">{item.kamera_tersimpan.length} Camera</p>
+
+            <p className="text-xl cursor-pointer">{item.nama_grup}</p>
+            <div className="absolute bottom-1 right-4">
+              <p className="text-sm text-slate-300 ">
+                Total kamera :{' '}
+                <span className="text-orange-200 text-sm">
+                  {item.kamera_tersimpan.length}
+                </span>
+              </p>
             </div>
+            {menuIndex === index && (
+              <MenuItemComponent
+                onEdit={() => handleEditClick(item)}
+                onDelete={() => handleDeleteClick(item)}
+                onDetail={() => handleDetailClick(item)}
+                onClose={() => setMenuIndex(null)}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -80,7 +224,24 @@ const CameraSave = () => {
       {modalAddOpen && (
         <ModalAddCameraSave
           closeModal={handleCloseAddModal}
-          // onSubmit={handleInsertGedungOtmil}
+          onSubmit={handleSubmitAdd}
+          // token={token}
+        />
+      )}
+      {modalEditOpen && (
+        <ModalAddCameraSave
+          closeModal={handleCloseEditModal}
+          onSubmit={handleSubmitEdit}
+          isEdit={true}
+          defaultValue={editData}
+          // token={token}
+        />
+      )}
+      {modalDeleteOpen && (
+        <DeleteKameraModalSave
+          closeModal={handleCloseDeleteModal}
+          onSubmit={handleSubmitDelete}
+          defaultValue={deleteData}
           // token={token}
         />
       )}

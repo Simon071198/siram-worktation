@@ -3,16 +3,32 @@ import { apiBuilding } from '../../services/api';
 import { GiCancel } from 'react-icons/gi';
 import Swal from 'sweetalert2';
 
-export const ModalAddCameraSave = ({
+interface AddKameraSaveModalProps {
+  closeModal: () => void;
+  onSubmit: (params: any) => void;
+  defaultValue?: any;
+  isDetail?: boolean;
+  isEdit?: boolean;
+}
+
+export const ModalAddCameraSave: React.FC<AddKameraSaveModalProps> = ({
   closeModal,
   onSubmit,
   defaultValue,
   isDetail,
   isEdit,
-  token,
-}: any) => {
+}) => {
   const [buildings, setBuilding] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
+
+  const [formState, setFormState] = useState<any>({
+    grup_id: defaultValue?.id ?? '',
+    nama_grup: defaultValue?.nama_grup ?? '',
+    kamera:
+      defaultValue?.kamera_tersimpan?.map((kamera) => kamera.kamera_id) ?? [],
+  });
+  console.log(defaultValue, 'test 1');
+  console.log(formState?.kamera, 'test 2');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
@@ -69,6 +85,13 @@ export const ModalAddCameraSave = ({
     fetchData();
   }, []);
 
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setFormState({ ...formState, [e.target.name]: e.target.value });
+  };
   const handleSelectBuilding = (e) => {
     const selectedBuildingId = e.target.value;
     setSelectedBuilding(selectedBuildingId);
@@ -88,15 +111,10 @@ export const ModalAddCameraSave = ({
   };
 
   const handleClickKamera = (cam) => {
-    console.log('ini_camera', cam);
     let dataKamera = JSON.parse(cam);
-    const isAlreadySelected = cameraList.some(
-      (item) => item.camera.kamera_id === dataKamera.kamera_id,
-    );
-    if (!isAlreadySelected) {
-      setPreviousSelectedCamera(selectedCamera);
-      setSelectedCamera(dataKamera);
+    const isAlreadySelected = formState.kamera.includes(dataKamera.kamera_id);
 
+    if (!isAlreadySelected) {
       const selectedBuildingObj = buildings.data.records.gedung.find(
         (building) => building.gedung_otmil_id === selectedBuilding,
       );
@@ -113,21 +131,64 @@ export const ModalAddCameraSave = ({
         room: selectedRoomObj.nama_ruangan_otmil,
         camera: dataKamera,
       };
+
       Swal.fire({
         icon: 'success',
         title: 'Kamera ditambahkan',
         position: 'bottom-end',
         toast: true,
         showConfirmButton: false,
-        timer: 1500, // Sesuaikan durasi sesuai kebutuhan
+        timer: 1500,
       });
 
-      setCameraList((prevList) => [...prevList, newCamera]);
+      setFormState((prevState: any) => ({
+        ...prevState,
+        kamera: [...prevState.kamera, dataKamera.kamera_id],
+      }));
       setPilihKamera('');
-      setPreviousSelectedCamera('');
-      setSelectedCamera('');
     }
   };
+  // const handleClickKamera = (cam) => {
+  //   console.log('ini_camera', cam);
+  //   let dataKamera = JSON.parse(cam);
+  //   const isAlreadySelected = cameraList.some(
+  //     (item) => item.camera.kamera_id === dataKamera.kamera_id,
+  //   );
+  //   if (!isAlreadySelected) {
+  //     setPreviousSelectedCamera(selectedCamera);
+  //     setSelectedCamera(dataKamera);
+
+  //     const selectedBuildingObj = buildings.data.records.gedung.find(
+  //       (building) => building.gedung_otmil_id === selectedBuilding,
+  //     );
+  //     const selectedFloorObj = selectedBuildingObj.lantai.find(
+  //       (floor) => floor.lantai_otmil_id === selectedFloor,
+  //     );
+  //     const selectedRoomObj = selectedFloorObj.ruangan.find(
+  //       (room) => room.ruangan_otmil_id === selectedRoom,
+  //     );
+
+  //     const newCamera = {
+  //       building: selectedBuildingObj.nama_gedung_otmil,
+  //       floor: selectedFloorObj.nama_lantai,
+  //       room: selectedRoomObj.nama_ruangan_otmil,
+  //       camera: dataKamera,
+  //     };
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Kamera ditambahkan',
+  //       position: 'bottom-end',
+  //       toast: true,
+  //       showConfirmButton: false,
+  //       timer: 1500, // Sesuaikan durasi sesuai kebutuhan
+  //     });
+
+  //     setCameraList((prevList) => [...prevList, newCamera]);
+  //     setPilihKamera('');
+  //     setPreviousSelectedCamera('');
+  //     setSelectedCamera('');
+  //   }
+  // };
   // const handleClickKamera = (cam) => {
   //   console.log('ini_camera', cam);
   //   let dataKamera = JSON.parse(cam);
@@ -137,13 +198,30 @@ export const ModalAddCameraSave = ({
   //   console.log('data_kamera', dataKamera);
   //   console.log('data_kamera2', dataKamera.nama_kamera);
   // };
-  const handleRemoveCamera = (cameraId) => {
-    const updatedCameraList = cameraList.filter(
-      (item) => item.camera.kamera_id !== cameraId,
-    );
-    setCameraList(updatedCameraList);
+  const handleRemoveCamera = (kamera_id: any) => {
+    setFormState((prevState: any) => ({
+      ...prevState,
+      kamera: prevState.kamera.filter((id: any) => id !== kamera_id),
+    }));
   };
+  console.log('formstate', formState);
+  // const handleRemoveCamera = (cameraId) => {
+  //   const updatedCameraList = cameraList.filter(
+  //     (item) => item.camera.kamera_id !== cameraId,
+  //   );
+  //   setCameraList(updatedCameraList);
+  // };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(formState, 'formState');
+
+    // if (!validateForm()) return;
+    // setButtonLoad(true);
+
+    onSubmit(formState);
+    // closeModal();
+  };
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -191,11 +269,7 @@ export const ModalAddCameraSave = ({
               <div className="w-full flex justify-between mb-2  items-center  ">
                 <div className="flex items-center gap-4  w-full">
                   <h3 className="text-xl font-semibold text-black dark:text-white">
-                    {isDetail
-                      ? 'Detail Tampilan Kamera'
-                      : isEdit
-                        ? 'Edit Tampilan Kamera'
-                        : 'Tambah Tampilan Kamera'}
+                    {isEdit ? 'Edit Tampilan Kamera' : 'Tambah Tampilan Kamera'}
                   </h3>
                 </div>
 
@@ -207,8 +281,8 @@ export const ModalAddCameraSave = ({
                 </strong>
               </div>
 
-              <form action="">
-                <div className=" flex py-6 flex-col items-center gap-5">
+              <form onSubmit={handleSubmit}>
+                <div className="flex py-6 flex-col items-center gap-5">
                   {/* ini kotak kiri */}
                   <div className="flex flex-row gap-3 bg-slate-500 w-full text-xl justify-start px-4 py-3 rounded-xl">
                     <p className="w-1/4 text-white font-satoshi">
@@ -218,9 +292,12 @@ export const ModalAddCameraSave = ({
                       type="text"
                       className="border-none focus:outline-none bg-transparent text-white w-full"
                       placeholder="Masukan nama tampilan"
+                      name="nama_grup"
+                      onChange={handleChange}
+                      value={formState.nama_grup}
                     />
                   </div>
-                  <div className="flex flex-row gap-5 w-full h-[60vh] text-xl justify-start py-3 rounded-xl ">
+                  <div className="flex flex-row gap-5 w-full h-[60vh] text-xl justify-start py-3 rounded-xl">
                     <div className="h-[25rem] w-1/2 bg-slate-500 rounded-2xl flex flex-col items-center px-10 pt-8">
                       <div className="flex gap-7 flex-col">
                         <select
@@ -308,49 +385,14 @@ export const ModalAddCameraSave = ({
                                         <option
                                           key={room.ruangan_otmil_id}
                                           value={room.ruangan_otmil_id}
-                                          onClick={() =>
-                                            handleClickRoom(
-                                              room.ruangan_otmil_id,
-                                            )
-                                          }
                                         >
                                           {room.nama_ruangan_otmil}
                                         </option>
                                       ))}
                                   </select>
                                 )}
-                              </>
-                            )}
-                            {selectedRoom && (
-                              <>
-                                {buildings?.data?.records?.gedung
-                                  ?.find(
-                                    (building) =>
-                                      building.gedung_otmil_id ===
-                                      selectedBuilding,
-                                  )
-                                  ?.lantai.find(
-                                    (floor) =>
-                                      floor.lantai_otmil_id === selectedFloor,
-                                  )
-                                  ?.ruangan.find(
-                                    (room) =>
-                                      room.ruangan_otmil_id === selectedRoom,
-                                  )?.kamera.length > 0 && (
-                                  <select
-                                    value={
-                                      selectedCamera || previousSelectedCamera
-                                    }
-                                    onChange={(e) => {
-                                      handleClickKamera(e.target.value);
-                                      setPilihKamera(e.target.value);
-                                    }}
-                                    className="p-2 border rounded bg-meta-4 font-semibold w-full"
-                                  >
-                                    <option disabled value="">
-                                      Pilih Kamera
-                                    </option>
-                                    {/* Filter daftar kamera yang tersedia */}
+                                {selectedRoom && (
+                                  <>
                                     {buildings?.data?.records?.gedung
                                       ?.find(
                                         (building) =>
@@ -366,24 +408,52 @@ export const ModalAddCameraSave = ({
                                         (room) =>
                                           room.ruangan_otmil_id ===
                                           selectedRoom,
-                                      )
-                                      ?.kamera.filter(
-                                        (cam) =>
-                                          !cameraList.find(
-                                            (item) =>
-                                              item.camera.kamera_id ===
-                                              cam.kamera_id,
-                                          ),
-                                      )
-                                      .map((cam) => (
-                                        <option
-                                          key={cam.kamera_id}
-                                          value={JSON.stringify(cam)}
-                                        >
-                                          {cam.nama_kamera}
+                                      )?.kamera.length > 0 && (
+                                      <select
+                                        value={formState.kamera?.map(
+                                          (k) => k.kamera_id,
+                                        )}
+                                        onChange={(e) =>
+                                          handleClickKamera(e.target.value)
+                                        }
+                                        className="p-2 border rounded bg-meta-4 font-semibold w-full"
+                                      >
+                                        <option disabled value="">
+                                          Pilih Kamera
                                         </option>
-                                      ))}
-                                  </select>
+                                        {buildings?.data?.records?.gedung
+                                          ?.find(
+                                            (building) =>
+                                              building.gedung_otmil_id ===
+                                              selectedBuilding,
+                                          )
+                                          ?.lantai.find(
+                                            (floor) =>
+                                              floor.lantai_otmil_id ===
+                                              selectedFloor,
+                                          )
+                                          ?.ruangan.find(
+                                            (room) =>
+                                              room.ruangan_otmil_id ===
+                                              selectedRoom,
+                                          )
+                                          ?.kamera.filter(
+                                            (cam) =>
+                                              !formState.kamera.includes(
+                                                cam.kamera_id,
+                                              ),
+                                          )
+                                          .map((cam) => (
+                                            <option
+                                              key={cam.kamera_id}
+                                              value={JSON.stringify(cam)}
+                                            >
+                                              {cam.nama_kamera}
+                                            </option>
+                                          ))}
+                                      </select>
+                                    )}
+                                  </>
                                 )}
                               </>
                             )}
@@ -393,35 +463,50 @@ export const ModalAddCameraSave = ({
                     </div>
                     <div className="h-[25rem] w-1/2 bg-slate-500 rounded-2xl flex flex-col items-center pt-10 px-7 flex-wrap">
                       <ul className="list-disc text-white">
-                        {cameraList.map((item) => (
-                          <li
-                            key={item.camera.kamera_id}
-                            className="mb-2 text-sm flex items-center"
-                          >
-                            <div className=" flex flex-row text-md ">
-                              <div className="">
-                                {item?.building} - {item?.floor} - {item?.room}{' '}
-                                - {item?.camera?.nama_kamera}
+                        {formState.kamera.map((kamera_id) => {
+                          const camera = buildings?.data?.records?.gedung
+                            ?.find(
+                              (building) =>
+                                building.gedung_otmil_id === selectedBuilding,
+                            )
+                            ?.lantai.find(
+                              (floor) =>
+                                floor.lantai_otmil_id === selectedFloor,
+                            )
+                            ?.ruangan.find(
+                              (room) => room.ruangan_otmil_id === selectedRoom,
+                            )
+                            ?.kamera.find((cam) => cam.kamera_id === kamera_id);
+                          return (
+                            <li
+                              key={kamera_id}
+                              className="mb-2 text-sm flex items-center"
+                            >
+                              <div className="flex flex-row text-md">
+                                <div>{camera?.nama_kamera}</div>
+                                <div className="flex justify-center px-2">
+                                  <button
+                                    className="text-red-500"
+                                    onClick={() =>
+                                      handleRemoveCamera(kamera_id)
+                                    }
+                                  >
+                                    <GiCancel className="text-2xl" />
+                                  </button>
+                                </div>
                               </div>
-                              <div className=" flex justify-center px-2">
-                                <button
-                                  className="text-red-500"
-                                  onClick={() =>
-                                    handleRemoveCamera(item.camera.kamera_id)
-                                  }
-                                >
-                                  <GiCancel className="text-2xl" />
-                                </button>
-                              </div>
-                            </div>
-                          </li>
-                        ))}
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   </div>
 
-                  <div className="flex  flex-row gap-3 w-full text-xl rounded-xl justify-end mt-15 ">
-                    <button className="rounded-lg bg-slate-600 w-30 h-10 border hover:bg-slate-700">
+                  <div className="flex flex-row gap-3 w-full text-xl rounded-xl justify-end mt-15">
+                    <button
+                      type="submit"
+                      className="rounded-lg bg-slate-600 w-30 h-10 border hover:bg-slate-700"
+                    >
                       Simpan
                     </button>
                   </div>
