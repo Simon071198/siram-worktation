@@ -48,16 +48,16 @@ export const AddDaftarKasusModal = ({
     // waktu_pelaporan_kasus: dayjs().format('YYYY-MM-DDTHH:mm'),
     waktu_kejadian: '',
     waktu_pelaporan_kasus: '',
-    wbp_profile_ids: [],
-    keterangans: [],
-    role_ketua_oditur_ids: '',
+    wbp_profile_id: [],
+    keterangan_wbp: [],
+    role_ketua: '',
     oditur_penyidik_id: [],
     nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
     nama_jenis_pidana: defaultValue?.nama_jenis_pidana,
     saksi_id: [],
-    keteranganSaksis: [],
+    keterangan_saksi: [],
     zona_waktu: '',
-    tanggal_pelimpahan_kasus: ''
+    tanggal_pelimpahan_kasus: '',
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
 
@@ -87,53 +87,60 @@ export const AddDaftarKasusModal = ({
 
   const validateForm = () => {
     let errorFields = [];
-  
+
     for (const [key, value] of Object.entries(formState)) {
       if (!value || (Array.isArray(value) && value.length === 0)) {
         errorFields.push(key);
       }
-  
+
       // Tambahkan validasi khusus untuk oditur_penyidik_id
-      if (key === 'oditur_penyidik_id' && Array.isArray(value) && value.length === 0) {
-        errorFields.push(key);
-      }
-  
       if (
-        key === 'wbp_profile_ids' &&
+        key === 'oditur_penyidik_id' &&
         Array.isArray(value) &&
         value.length === 0
       ) {
         errorFields.push(key);
       }
-  
-      if (key === 'keterangans' && Array.isArray(value) && value.length === 0) {
+
+      if (
+        key === 'wbp_profile_id' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
+      }
+
+      if (
+        key === 'keterangan_wbp' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
         errorFields.push(key);
       }
       if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
         errorFields.push(key);
       }
-  
+
       if (
-        key === 'keteranganSaksis' &&
+        key === 'keterangan_saksi' &&
         Array.isArray(value) &&
         value.length === 0
       ) {
         errorFields.push(key);
       }
     }
-  
+
     if (errorFields.length > 0) {
       setErrors(errorFields);
       return false;
     }
-  
+
     setErrors([]);
     return true;
   };
-  
 
   //Handle Max Date
-  
+
   const [maxDate, setMaxDate] = useState(formatDate(new Date()));
 
   function formatDate(date) {
@@ -628,7 +635,7 @@ export const AddDaftarKasusModal = ({
   };
 
   const handleSelectKetuaOditur = (e: any) => {
-    setFormState({ ...formState, role_ketua_oditur_ids: e.value });
+    setFormState({ ...formState, role_ketua: e.value });
   };
 
   const jenisPerkaraOpstions = dataJenisPerkara?.map((item: any) => ({
@@ -660,7 +667,7 @@ export const AddDaftarKasusModal = ({
     }
     setFormState({
       ...formState,
-      wbp_profile_ids: arrayTersangka,
+      wbp_profile_id: arrayTersangka,
       saksi_id: arraSaksi,
     });
     setSelectSaksi(arraySaksiOptions);
@@ -668,20 +675,20 @@ export const AddDaftarKasusModal = ({
   };
 
   const handleChangeKeteranganTersangka = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keterangans]; // Salin array keterangan yang ada
+    const newKeteranganSaksi = [...formState.keterangan_wbp]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
     setFormState({
       ...formState,
-      keterangans: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keterangan_wbp: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
-  
+
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
+    const newKeteranganSaksi = [...formState.keterangan_saksi]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
     setFormState({
       ...formState,
-      keteranganSaksis: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keterangan_saksi: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
 
@@ -903,8 +910,7 @@ export const AddDaftarKasusModal = ({
                       disabled
                     />
                     <div className="h-2">
-                      <p className="error-text">
-                      </p>
+                      <p className="error-text"></p>
                     </div>
                   </div>
                   <div className="form-group w-full">
@@ -965,9 +971,10 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {
-                          errors.map((item) => 
-                          item === "waktu_kejadian" ? "Masukan tanggal kejadian" : ""
+                        {errors.map((item) =>
+                          item === 'waktu_kejadian'
+                            ? 'Masukan tanggal kejadian'
+                            : '',
                         )}
                       </p>
                     </div>
@@ -1009,7 +1016,11 @@ export const AddDaftarKasusModal = ({
                     </div>
                     <div className="h-2">
                       <p className="error-text">
-                        {errors.map((item) => item === 'waktu_pelaporan_kasus' ? 'Masukan tanggal pelaporan kasus' : '')}
+                        {errors.map((item) =>
+                          item === 'waktu_pelaporan_kasus'
+                            ? 'Masukan tanggal pelaporan kasus'
+                            : '',
+                        )}
                       </p>
                     </div>
                   </div>
@@ -1030,7 +1041,7 @@ export const AddDaftarKasusModal = ({
                       disabled={isDetail}
                       max={maxDate}
                     />
-                    <p className='error-text'>
+                    <p className="error-text">
                       {errors.map((item) =>
                         item === 'tanggal_pelimpahan_kasus'
                           ? 'Masukan Tanggal Pelimpahan Kasus'
@@ -1107,7 +1118,7 @@ export const AddDaftarKasusModal = ({
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'role_ketua_oditur_ids'
+                          item === 'role_ketua'
                             ? 'Pilih Ketua Oditur Penyidik'
                             : '',
                         )}
@@ -1138,7 +1149,9 @@ export const AddDaftarKasusModal = ({
                       {/* {errors.map((item) =>
                         item === 'oditur_penyidik_id' ? 'Masukan Tersangka' : '',
                       )} */}
-                      {errors.includes('oditur_penyidik_id') ? 'Masukan oditur' : ''}
+                      {errors.includes('oditur_penyidik_id')
+                        ? 'Masukan oditur'
+                        : ''}
                     </p>
                   </div>
                 </div>
@@ -1160,7 +1173,7 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.map((item) =>
-                        item === 'role_ketua_oditur_ids'
+                        item === 'role_ketua'
                           ? 'Pilih Ketua Oditur Penyidik'
                           : '',
                       )}
@@ -1186,14 +1199,12 @@ export const AddDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                      errors.includes('wbp_profile_ids')
+                      errors.includes('wbp_profile_id')
                         ? `${
-                            errors.includes('wbp_profile_ids')
-                              ? 'Tersangka'
-                              : ''
+                            errors.includes('wbp_profile_id') ? 'Tersangka' : ''
                           } ${
                             errors.includes('saksi_id') &&
-                            errors.includes('wbp_profile_ids')
+                            errors.includes('wbp_profile_id')
                               ? 'Dan'
                               : ''
                           } ${
@@ -1241,7 +1252,7 @@ export const AddDaftarKasusModal = ({
                             <div className="form-group w-2/6">
                               <label
                                 className="capitalize block text-sm font-medium text-black dark:text-white"
-                                htmlFor={`keterangans-${index}`}
+                                htmlFor={`keterangan_wbp-${index}`}
                               >
                                 {item.label}
                               </label>
@@ -1249,10 +1260,10 @@ export const AddDaftarKasusModal = ({
 
                             <div className="form-group w-4/6 flex items-center mr-2">
                               <input
-                                id={`keterangans-${index}`}
+                                id={`keterangan_wbp-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                                 placeholder={`${
-                                  errors.includes('keterangans')
+                                  errors.includes('keterangan_wbp')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan'
                                 }`}
@@ -1317,7 +1328,7 @@ export const AddDaftarKasusModal = ({
                                 id={`keterangan-${index}`}
                                 className="w-full rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                                 placeholder={`${
-                                  errors.includes('keteranganSaksis')
+                                  errors.includes('keterangan_saksi')
                                     ? 'Keterangan Belum Di Isi'
                                     : 'Keterangan Saksi'
                                 }`}
