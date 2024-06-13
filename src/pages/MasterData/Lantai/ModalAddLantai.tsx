@@ -45,6 +45,8 @@ export const ModalAddGedung = ({
   const [isLokasiOtmil, setIsLokasiOtmil] = useState([]);
   const [isGedungData, setIsGedungnData] = useState([]);
 
+  console.log(defaultValue, "defaultValue")
+
   const validateForm = () => {
     let errorFields = [];
 

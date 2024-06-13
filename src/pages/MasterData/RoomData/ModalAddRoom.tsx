@@ -213,21 +213,21 @@ export const AddRoomModal: React.FC<AddRoomModalProps> = ({
         });
       });
 
-    apiReadAllRuanganSummary(parameter, token)
-      .then((res: any) => {
-        setTotalWbp(res.data.records);
-      })
-      .catch((e: any) => {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
-      });
+    // // apiReadAllRuanganSummary(parameter, token)
+    // //   .then((res: any) => {
+    // //     setTotalWbp(res.data.records);
+    // //   })
+    //   .catch((e: any) => {
+    //     if (e.response.status === 403) {
+    //       navigate('/auth/signin', {
+    //         state: { forceLogout: true, lastPage: location.pathname },
+    //       });
+    //     }
+    //     Alerts.fire({
+    //       icon: e.response.status === 403 ? 'warning' : 'error',
+    //       title: e.response.status === 403 ? Error403Message : e.message,
+    //     });
+    //   });
 
     apiLantaiOtmilRead(params, token)
       .then((res: any) => {
