@@ -3,25 +3,33 @@ import { IoAdd } from 'react-icons/io5';
 import { ModalAddCameraSave } from './ModalAddCameraSave';
 import {
   apiCreateKameraTersimpan,
+  apiDeleteKameraTersimpan,
   apiReadKameraTersimpan,
   apiUpdateKameraTersimpan,
 } from '../../services/api';
 import { SlOptionsVertical } from 'react-icons/sl';
 import MenuItemComponent from '../../components/MenuItemCameraSave';
 import { Alerts } from './AlertCamera';
+import { DeleteKameraModalSave } from './ModalDeleteKameraSave';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Item {
+  id: string;
   nama_grup: string;
 }
 const CameraSave = () => {
   const [modalAddOpen, setModalAddOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
   const [data, setData] = useState<Item[]>([]);
   const [editData, setEditData] = useState<Item | null>(null);
+  const [deleteData, setDeleteData] = useState<Item | null>(null);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
-  // const tokenItem = localStorage.getItem('token');
-  // const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = '9|1Til7VYngnpA9cCOIazI6s8UbRGGfVI8EUMTm1PW2485e30a';
+
+  const navigate = useNavigate();
+  const tokenItem = localStorage.getItem('token');
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
 
   const handleIconClick = (index: number) => {
     setMenuIndex(index === menuIndex ? null : index);
@@ -50,6 +58,9 @@ const CameraSave = () => {
   };
   const handleCloseEditModal = () => {
     setModalEditOpen(false);
+  };
+  const handleCloseDeleteModal = () => {
+    setModalDeleteOpen(false);
   };
 
   const handleSubmitAdd = async (params: any) => {
@@ -98,11 +109,42 @@ const CameraSave = () => {
       console.log(e, 'error catch');
     }
   };
+  const handleSubmitDelete = async (params: any) => {
+    console.log('DATA DARI delete', params);
+    try {
+      const responseEdit = await apiDeleteKameraTersimpan(params, token);
+      if (responseEdit.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menghapus data',
+        });
+        setModalDeleteOpen(false);
+        fetchKameraTersimpan();
+      } else if (responseEdit.data.status === 'NO') {
+        Alerts.fire({
+          icon: 'error',
+          title: 'Gagal membuat data',
+        });
+      } else {
+        throw new Error(responseEdit.data.message);
+      }
+    } catch (e: any) {
+      console.log(e, 'error catch');
+    }
+  };
 
   const handleEditClick = (item: Item) => {
     console.log(item, 'item nih');
     setEditData(item);
     setModalEditOpen(true);
+  };
+  const handleDeleteClick = (item: Item) => {
+    console.log(item, 'item delete nih');
+    setDeleteData(item);
+    setModalDeleteOpen(true);
+  };
+  const handleDetailClick = (item: Item) => {
+    navigate(`/kamera-tersimpan/list/${item?.id}`);
   };
 
   // const handleSubmitEdit = async (params: any) => {
@@ -139,7 +181,7 @@ const CameraSave = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 py-6 px-10">
-        {data.map((item: any, index) => (
+        {data?.map((item: any, index) => (
           <div
             key={index}
             className="bg-slate-500  flex px-8 text-center font-bold justify-center items-center rounded-2xl text-2xl text-white relative w-full h-36 cursor-pointer hover:bg-slate-600"
@@ -147,7 +189,7 @@ const CameraSave = () => {
           >
             <div className="absolute top-3 right-2 zIndex-10 hover:cursor-pointer hover:bg-slate-400 hover:rounded-full flex items-center justify-center w-9 h-9">
               <span
-                className="flex items-center justify-center w-full h-full text-slate-200"
+                className="flex items-center justify-center w-full h-full text-slate-300"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleIconClick(index);
@@ -160,13 +202,18 @@ const CameraSave = () => {
 
             <p className="text-xl cursor-pointer">{item.nama_grup}</p>
             <div className="absolute bottom-1 right-4">
-              <p className="text-sm text-slate-200 ">
-                Total kamera : {item.kamera_tersimpan.length}
+              <p className="text-sm text-slate-300 ">
+                Total kamera :{' '}
+                <span className="text-orange-200 text-sm">
+                  {item.kamera_tersimpan.length}
+                </span>
               </p>
             </div>
             {menuIndex === index && (
               <MenuItemComponent
                 onEdit={() => handleEditClick(item)}
+                onDelete={() => handleDeleteClick(item)}
+                onDetail={() => handleDetailClick(item)}
                 onClose={() => setMenuIndex(null)}
               />
             )}
@@ -187,6 +234,14 @@ const CameraSave = () => {
           onSubmit={handleSubmitEdit}
           isEdit={true}
           defaultValue={editData}
+          // token={token}
+        />
+      )}
+      {modalDeleteOpen && (
+        <DeleteKameraModalSave
+          closeModal={handleCloseDeleteModal}
+          onSubmit={handleSubmitDelete}
+          defaultValue={deleteData}
           // token={token}
         />
       )}

@@ -4,11 +4,15 @@ import { CgDetailsMore } from 'react-icons/cg';
 interface MenuItemComponentProps {
   onClose: () => void;
   onEdit: () => void;
+  onDelete: () => void;
+  onDetail: () => void;
 }
 
 const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
   onClose,
   onEdit,
+  onDelete,
+  onDetail,
 }) => {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +37,7 @@ const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
       <ul className="py-1">
         <li
           className="px-4 py-2 flex justify-around items-center hover:bg-gray-200 cursor-pointer text-white text-lg hover:bg-red-500"
-          onClick={onClose}
+          onClick={onDelete}
         >
           Hapus
           <HiOutlineTrash />
@@ -49,7 +53,7 @@ const MenuItemComponent: React.FC<MenuItemComponentProps> = ({
         <div className="border-[0.5px] border-slate-200"></div>
         <li
           className="px-4 py-2 flex justify-around items-center hover:bg-gray-200 cursor-pointer text-white text-lg  hover:bg-slate-400"
-          onClick={onClose}
+          onClick={onDetail}
         >
           Detail
           <CgDetailsMore />

@@ -20,10 +20,15 @@ export const ModalAddCameraSave: React.FC<AddKameraSaveModalProps> = ({
 }) => {
   const [buildings, setBuilding] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
+
   const [formState, setFormState] = useState<any>({
+    grup_id: defaultValue?.id ?? '',
     nama_grup: defaultValue?.nama_grup ?? '',
-    kamera: defaultValue?.kamera_tersimpan ?? [],
+    kamera:
+      defaultValue?.kamera_tersimpan?.map((kamera) => kamera.kamera_id) ?? [],
   });
+  console.log(defaultValue, 'test 1');
+  console.log(formState?.kamera, 'test 2');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('');
@@ -406,7 +411,7 @@ export const ModalAddCameraSave: React.FC<AddKameraSaveModalProps> = ({
                                       )?.kamera.length > 0 && (
                                       <select
                                         value={formState.kamera?.map(
-                                          (k) => k.kamera.id,
+                                          (k) => k.kamera_id,
                                         )}
                                         onChange={(e) =>
                                           handleClickKamera(e.target.value)
