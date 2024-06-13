@@ -2209,9 +2209,9 @@ export async function apiReadAllRuanganSummary(params, token) {
 export async function apiReadZona(token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/zona_read.php',
-      data: {},
+      method: 'GET',
+      url: `${newBaseUrl}/lokasi_otmil`,
+      params: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2229,8 +2229,8 @@ export async function apiReadAlllokasiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'GET',
-      url: `${newBaseUrl}/lokasi_otmil`,
-      params: params,
+      url: `${newBaseUrl}/zona`,
+      data: {},
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2294,9 +2294,13 @@ export async function apiReadAlllokasiLemasmil(params) {
 export async function apiReadAllRuangan(params) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/ruangan_otmil`,
+      params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(response);
     return response;
@@ -2309,8 +2313,8 @@ export async function apiReadAllRuangan(params) {
 export async function apiCreateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2328,8 +2332,8 @@ export async function apiCreateAllRuanganOtmil(params, token) {
 export async function apiDeleteAllRuangan(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2347,8 +2351,8 @@ export async function apiDeleteAllRuangan(params, token) {
 export async function apiUpdateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/ruangan_otmil_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/ruangan_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4733,8 +4737,8 @@ export async function apiDeleteGedungOtmil(params, token) {
 export async function apiLantaiOtmilRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_read.php',
+      method: 'get',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4752,7 +4756,7 @@ export async function apiInsertLantaiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_insert.php',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4769,8 +4773,8 @@ export async function apiInsertLantaiOtmil(params, token) {
 export async function apiUpdateLantaiOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4787,8 +4791,8 @@ export async function apiUpdateLantaiOtmil(params, token) {
 export async function apiDeleteLantaiOtmil(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/lantai_otmil_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/lantai_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4802,7 +4806,7 @@ export async function apiDeleteLantaiOtmil(params, token) {
   }
 }
 
-export async function apiReadKameraTersimpan(params, token) {
+export async function apiReadKameraTersimpan(params: any, token: any) {
   try {
     const response = await axios({
       method: 'get',
@@ -4819,7 +4823,7 @@ export async function apiReadKameraTersimpan(params, token) {
     throw error;
   }
 }
-export async function apiCreateKameraTersimpan(params, token) {
+export async function apiCreateKameraTersimpan(params: any, token: any) {
   try {
     const response = await axios({
       method: 'post',
@@ -4836,7 +4840,7 @@ export async function apiCreateKameraTersimpan(params, token) {
     throw error;
   }
 }
-export async function apiUpdateKameraTersimpan(params, token) {
+export async function apiUpdateKameraTersimpan(params: any, token: any) {
   try {
     const response = await axios({
       method: 'put',
