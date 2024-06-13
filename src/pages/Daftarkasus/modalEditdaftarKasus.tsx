@@ -7,7 +7,7 @@ import {
   apiReadSaksi,
   apiReadStatusWBP,
   apiReadjenisperkara,
-  apiJenisPidanaRead
+  apiJenisPidanaRead,
 } from '../../services/api';
 import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { driver } from 'driver.js';
@@ -42,11 +42,11 @@ export const EditDaftarKasusModal = ({
     waktu_pelaporan_kasus: defaultValue?.waktu_pelaporan_kasus,
     tanggal_pelimpahan_kasus: defaultValue?.tanggal_pelimpahan_kasus,
     zona_waktu: defaultValue?.zona_waktu,
-    wbp_profile_ids:
+    wbp_profile_pivot:
       defaultValue?.wbp_profile?.map((item: any) => item.wbp_profile_id) || [],
-    keterangans:
+    keterangan_wbp:
       defaultValue?.wbp_profile?.map((item: any) => item.keterangan) || [],
-    role_ketua_oditur: defaultValue?.oditur_penyidik?.find(
+    role_ketua: defaultValue?.oditur_penyidik?.find(
       (item: any) => item.role_ketua === '1',
     )?.oditur_penyidik_id,
     oditur_penyidik_id:
@@ -56,7 +56,7 @@ export const EditDaftarKasusModal = ({
     nama_jenis_perkara: defaultValue?.nama_jenis_perkara,
     nama_jenis_pidana: defaultValue?.nama_jenis_pidana,
     saksi_id: defaultValue?.saksi?.map((item: any) => item.saksi_id) || [],
-    keteranganSaksis:
+    keterangan_saksi:
       defaultValue?.saksi?.map((item: any) => item.keterangan) || [],
   });
   // const lokasi_lemasmil_id = localStorage.getItem('lokasi_lemasmil_id')
@@ -91,51 +91,59 @@ export const EditDaftarKasusModal = ({
       ]
     : [];
 
-    const validateForm = () => {
-      let errorFields = [];
-    
-      for (const [key, value] of Object.entries(formState)) {
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          errorFields.push(key);
-        }
-    
-        // Tambahkan validasi khusus untuk oditur_penyidik_id
-        if (key === 'oditur_penyidik_id' && Array.isArray(value) && value.length === 0) {
-          errorFields.push(key);
-        }
-    
-        if (
-          key === 'wbp_profile_ids' &&
-          Array.isArray(value) &&
-          value.length === 0
-        ) {
-          errorFields.push(key);
-        }
-    
-        if (key === 'keterangans' && Array.isArray(value) && value.length === 0) {
-          errorFields.push(key);
-        }
-        if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
-          errorFields.push(key);
-        }
-    
-        if (
-          key === 'keteranganSaksis' &&
-          Array.isArray(value) &&
-          value.length === 0
-        ) {
-          errorFields.push(key);
-        }
+  const validateForm = () => {
+    let errorFields = [];
+
+    for (const [key, value] of Object.entries(formState)) {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        errorFields.push(key);
       }
-    
-      if (errorFields.length > 0) {
-        setErrors(errorFields);
-        return false;
+
+      // Tambahkan validasi khusus untuk oditur_penyidik_id
+      if (
+        key === 'oditur_penyidik_id' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
       }
-    
-      setErrors([]);
-      return true;
-    };
+
+      if (
+        key === 'wbp_profile_pivot' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
+      }
+
+      if (
+        key === 'keterangan_wbp' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
+      }
+      if (key === 'saksi_id' && Array.isArray(value) && value.length === 0) {
+        errorFields.push(key);
+      }
+
+      if (
+        key === 'keterangan_saksi' &&
+        Array.isArray(value) &&
+        value.length === 0
+      ) {
+        errorFields.push(key);
+      }
+    }
+
+    if (errorFields.length > 0) {
+      setErrors(errorFields);
+      return false;
+    }
+
+    setErrors([]);
+    return true;
+  };
 
   //Handle Max Date
   const [maxDate, setMaxDate] = useState(formatDate(new Date()));
@@ -628,7 +636,7 @@ export const EditDaftarKasusModal = ({
   };
 
   const handleSelectKetuaOditur = (e: any) => {
-    setFormState({ ...formState, role_ketua_oditur: e.value });
+    setFormState({ ...formState, role_ketua: e.value });
   };
 
   const jenisPerkaraOpstionsDefault = {
@@ -679,7 +687,7 @@ export const EditDaftarKasusModal = ({
     }
     setFormState({
       ...formState,
-      wbp_profile_ids: arrayTersangka,
+      wbp_profile_pivot: arrayTersangka,
       saksi_id: arraSaksi,
     });
     setSelectSaksi(arraySaksiOptions);
@@ -687,19 +695,19 @@ export const EditDaftarKasusModal = ({
   };
 
   const handleChangeKeteranganTersangka = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keterangans]; // Salin array keterangan yang ada
+    const newKeteranganSaksi = [...formState.keterangan_wbp]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
     setFormState({
       ...formState,
-      keterangans: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keterangan_wbp: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
   const handleChangeKeterangan = (e: any, index: any) => {
-    const newKeteranganSaksi = [...formState.keteranganSaksis]; // Salin array keterangan yang ada
+    const newKeteranganSaksi = [...formState.keterangan_saksi]; // Salin array keterangan yang ada
     newKeteranganSaksi[index] = e.target.value; // Perbarui nilai keterangan sesuai dengan indeks elemen
     setFormState({
       ...formState,
-      keteranganSaksis: newKeteranganSaksi, // Set array keterangan yang diperbarui
+      keterangan_saksi: newKeteranganSaksi, // Set array keterangan yang diperbarui
     });
   };
 
@@ -1028,8 +1036,6 @@ export const EditDaftarKasusModal = ({
                       </p>
                     </div>
                   </div>
-                </div>
-                <div className={`mt-4 grid grid-cols-2 gap-4`}>
                   <div className="form-group w-full ">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
@@ -1047,7 +1053,7 @@ export const EditDaftarKasusModal = ({
                       disabled={isDetail}
                       max={maxDate}
                     />
-                    <p className='error-text'>
+                    <p className="error-text">
                       {errors.map((item) =>
                         item === 'tanggal_pelimpahan_kasus'
                           ? 'Masukan Tanggal Pelimpahan Kasus'
@@ -1055,8 +1061,9 @@ export const EditDaftarKasusModal = ({
                       )}
                     </p>
                   </div>
-                  
-                  <div className="form-group w-full ">
+                </div>
+                <div className={`mt-4 grid grid-cols-2 gap-4`}>
+                  {/* <div className="form-group w-full ">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -1068,14 +1075,14 @@ export const EditDaftarKasusModal = ({
                       name="waktu_pelaporan_kasus"
                       placeholder="Jumlah Penyidikan"
                       onChange={handleChange}
-                      value={
-                        defaultValue?.penyidikan[0]?.penyidikan_id === null
-                          ? '0'
-                          : defaultValue?.penyidikan?.length
-                      }
+                      // value={
+                      //   defaultValue?.penyidikan[0]?.penyidikan_id === null
+                      //     ? '0'
+                      //     : defaultValue?.penyidikan?.length
+                      // }
                       disabled={isDetail || isEdit}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="form-group w-full ">
@@ -1095,11 +1102,13 @@ export const EditDaftarKasusModal = ({
                       placeholder="Pilih Oditur Penyidik"
                       styles={customStyles}
                     />
-                     <p className="error-text">
+                    <p className="error-text">
                       {/* {errors.map((item) =>
                         item === 'nama' ? 'Masukan Tersangka' : ''
                       )} */}
-                    {errors.includes('oditur_penyidik_id') ? 'Pilih oditur' : ''}
+                      {errors.includes('oditur_penyidik_id')
+                        ? 'Pilih oditur'
+                        : ''}
                     </p>
                   </div>
 
@@ -1122,7 +1131,7 @@ export const EditDaftarKasusModal = ({
                     <div className="h-2">
                       <p className="error-text">
                         {errors.map((item) =>
-                          item === 'role_ketua_oditur'
+                          item === 'role_ketua'
                             ? 'Pilih Ketua Oditur Penyidik'
                             : '',
                         )}
@@ -1150,14 +1159,14 @@ export const EditDaftarKasusModal = ({
                   <div className="h-2">
                     <p className="error-text">
                       {errors.includes('saksi_id') ||
-                      errors.includes('wbp_profile_ids')
+                      errors.includes('wbp_profile_pivot')
                         ? `${
-                            errors.includes('wbp_profile_ids')
+                            errors.includes('wbp_profile_pivot')
                               ? 'Tersangka'
                               : ''
                           } ${
                             errors.includes('saksi_id') &&
-                            errors.includes('wbp_profile_ids')
+                            errors.includes('wbp_profile_pivot')
                               ? 'Dan'
                               : ''
                           } ${
@@ -1203,7 +1212,7 @@ export const EditDaftarKasusModal = ({
                         <div className="form-group w-2/6">
                           <label
                             className="capitalize block text-sm font-medium text-black dark:text-white"
-                            htmlFor={`keterangans-${index}`}
+                            htmlFor={`keterangan_wbp-${index}`}
                           >
                             {item.label}
                           </label>
@@ -1211,10 +1220,10 @@ export const EditDaftarKasusModal = ({
 
                         <div className="form-group w-4/6 flex items-center mr-2">
                           <input
-                            id={`keterangans-${index}`}
+                            id={`keterangan_wbp-${index}`}
                             className="w-full capitalize rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                             placeholder={`${
-                              errors.includes('keterangans')
+                              errors.includes('keterangan_wbp')
                                 ? 'Keterangan Belum Di Isi'
                                 : 'Keterangan'
                             }`}
@@ -1277,7 +1286,7 @@ export const EditDaftarKasusModal = ({
                             defaultValue={item.keterangan}
                             className="w-full capitalize rounded border border-stroke py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
                             placeholder={`${
-                              errors.includes('keteranganSaksis')
+                              errors.includes('keterangan_saksi')
                                 ? 'Keterangan Belum Di Isi'
                                 : 'Keterangan Saksi'
                             }`}

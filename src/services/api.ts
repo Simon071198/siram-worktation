@@ -1,14 +1,39 @@
-import axios, { AxiosResponse } from 'axios';
-import { log } from 'console';
+import axios from 'axios';
 
-export const webserviceurl = 'https://dev.transforme.co.id/';
+// export const webserviceurl = 'https://dev.transforme.co.id/';
 
-export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
-export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
+// export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
+// export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
-const newBaseUrl: string = "http://127.0.0.1:8000/api"
+export const webserviceurl = 'http://localhost:8000/';
 
-function removeBase64Prefix(base64String: string) {
+export const newWebservice = 'http://localhost:8000/api/';
+export const newwebserviceurl = 'http://localhost:8000/api/';
+
+const newBaseUrl = 'http://127.0.0.1:8000/api';
+
+function getUrl(params) {
+  const object = {
+    page: params.page ? params.page : 1,
+    pageSize: params.pageSize ? params.pageSize : 1000000,
+    ...params.filter,
+  };
+
+  for (const key in object) {
+    if (typeof object[key] === 'string') {
+      object[key] = object[key].replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  const queryString = Object.keys(object)
+    .map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(object[key])}`,
+    )
+    .join('&');
+  return queryString;
+}
+
+function removeBase64Prefix(base64String) {
   // Find the index of the comma that separates the prefix from the actual base64 data
   const commaIndex = base64String.indexOf(',');
 
@@ -23,7 +48,7 @@ function removeBase64Prefix(base64String: string) {
 }
 
 // api filter pelacakan tersangka
-export async function apiPelacakanTersangka(params: any, token: any) {
+export async function apiPelacakanTersangka(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -43,7 +68,7 @@ export async function apiPelacakanTersangka(params: any, token: any) {
 }
 
 // api realtime
-export async function apiRealtimeLog(params: any, token: any) {
+export async function apiRealtimeLog(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -63,11 +88,11 @@ export async function apiRealtimeLog(params: any, token: any) {
 }
 
 // API status wbp start
-export async function apiReadStatusWBP(params: any, token: any) {
+export async function apiReadStatusWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/status_wbp_kasus_read.php',
+      method: 'get',
+      url: newwebserviceurl + 'status_wbp_kasus',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -83,7 +108,7 @@ export async function apiReadStatusWBP(params: any, token: any) {
 // API status wbp end
 
 // API Kasus start
-export async function apiReadKasus(params: any, token: any) {
+export async function apiReadKasus(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -104,11 +129,12 @@ export async function apiReadKasus(params: any, token: any) {
 // API Kasus end
 
 // api Penyidikan start
-export async function apiReadPenyidikan(params: any, token: any) {
+export async function apiReadPenyidikan(params, token) {
   try {
     const response = await axios({
       method: 'post',
       url: newwebserviceurl + 'siram_api/penyidikan_read.php',
+      data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -122,9 +148,8 @@ export async function apiReadPenyidikan(params: any, token: any) {
   }
 }
 
-export async function apiCreatePenyidikan(params: any, token: any) {
+export async function apiCreatePenyidikan(params, token) {
   console.log('params', params);
-
   try {
     const response = await axios({
       method: 'post',
@@ -143,7 +168,7 @@ export async function apiCreatePenyidikan(params: any, token: any) {
   }
 }
 
-export async function apiUpdatePenyidikan(params: any, token: any) {
+export async function apiUpdatePenyidikan(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -162,7 +187,7 @@ export async function apiUpdatePenyidikan(params: any, token: any) {
   }
 }
 
-export async function apiDeletePenyidikan(params: any, token: any) {
+export async function apiDeletePenyidikan(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -183,7 +208,7 @@ export async function apiDeletePenyidikan(params: any, token: any) {
 // api Penyidikan end
 
 // api BAP start
-export async function apiReadBAP(params: any, token: any) {
+export async function apiReadBAP(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -202,11 +227,11 @@ export async function apiReadBAP(params: any, token: any) {
   }
 }
 
-export async function apiCreateBAP(params: any, token: any) {
+export async function apiCreateBAP(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/bap_insert.php',
+      url: newwebserviceurl + 'siram_api/dokumen_bap_insert.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -221,11 +246,11 @@ export async function apiCreateBAP(params: any, token: any) {
   }
 }
 
-export async function apiUpdateBAP(params: any, token: any) {
+export async function apiUpdateBAP(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/bap_update.php',
+      url: newwebserviceurl + 'siram_api/dokumen_bap_update.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -240,11 +265,11 @@ export async function apiUpdateBAP(params: any, token: any) {
   }
 }
 
-export async function apiDeleteBAP(params: any, token: any) {
+export async function apiDeleteBAP(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/bap_delete.php',
+      url: newwebserviceurl + 'siram_api/dokumen_bap_delete.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -261,7 +286,7 @@ export async function apiDeleteBAP(params: any, token: any) {
 // api BAP end
 
 // api PengadilanMiliter start
-export async function apiReadPengadilanMiliter(params: any, token: any) {
+export async function apiReadPengadilanMiliter(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -280,7 +305,7 @@ export async function apiReadPengadilanMiliter(params: any, token: any) {
   }
 }
 
-export async function apiCreatePengadilanMiliter(params: any, token: any) {
+export async function apiCreatePengadilanMiliter(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -299,7 +324,7 @@ export async function apiCreatePengadilanMiliter(params: any, token: any) {
   }
 }
 
-export async function apiUpdatePengadilanMiliter(params: any, token: any) {
+export async function apiUpdatePengadilanMiliter(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -318,7 +343,7 @@ export async function apiUpdatePengadilanMiliter(params: any, token: any) {
   }
 }
 
-export async function apiDeletePengadilanMiliter(params: any, token: any) {
+export async function apiDeletePengadilanMiliter(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -339,7 +364,7 @@ export async function apiDeletePengadilanMiliter(params: any, token: any) {
 // api PengadilanMiliter end
 
 // api Oditur start
-export async function apiReadOditur(params: any, token: any) {
+export async function apiReadOditur(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -358,11 +383,11 @@ export async function apiReadOditur(params: any, token: any) {
   }
 }
 
-export async function apiCreateOditur(params: any, token: any) {
+export async function apiCreateOditur(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_insert.php',
+      url: newwebserviceurl + 'siram_api/oditur_insert.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -377,11 +402,11 @@ export async function apiCreateOditur(params: any, token: any) {
   }
 }
 
-export async function apiUpdateOditur(params: any, token: any) {
+export async function apiUpdateOditur(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_update.php',
+      url: newwebserviceurl + 'siram_api/oditur_update.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -396,11 +421,11 @@ export async function apiUpdateOditur(params: any, token: any) {
   }
 }
 
-export async function apiDeleteOditur(params: any, token: any) {
+export async function apiDeleteOditur(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_delete.php',
+      url: newwebserviceurl + 'siram_api/oditur_delete.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -417,13 +442,35 @@ export async function apiDeleteOditur(params: any, token: any) {
 // api Oditur end
 
 // api Daftar Kasus start
-export async function apiReadDaftarKasus(params: any, token: any) {
+export async function apiReadDaftarKasus(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `kasus?${queryString}`;
+  console.log('urlKasus', url);
+
   try {
-    console.log('paramsRead');
+    console.log('paramsRead', params);
     const response = await axios({
       method: 'get',
-      url: 'http://localhost:8000/api/kasus',
+      url: url,
       // url: newwebserviceurl + 'siram_api/kasus_read.php',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiCreateDaftarKasus(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + `kasus`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -438,11 +485,11 @@ export async function apiReadDaftarKasus(params: any, token: any) {
   }
 }
 
-export async function apiCreateDaftarKasus(params: any, token: any) {
+export async function apiUpdateDaftarKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_insert.php',
+      method: 'put',
+      url: newwebserviceurl + 'kasus',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -457,31 +504,12 @@ export async function apiCreateDaftarKasus(params: any, token: any) {
   }
 }
 
-export async function apiUpdateDaftarKasus(params: any, token: any) {
+export async function apiDeleteDaftarKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_update.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiDeleteDaftarKasus(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_delete.php',
-      data: params,
+      method: 'delete',
+      url: newwebserviceurl + 'kasus?kasus_id=' + params.kasus_id,
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -497,7 +525,7 @@ export async function apiDeleteDaftarKasus(params: any, token: any) {
 // api Daftar Kasus end
 
 // api barang bukti start
-export async function apiReadBarangBukti(params: any, token: any) {
+export async function apiReadBarangBukti(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -516,7 +544,7 @@ export async function apiReadBarangBukti(params: any, token: any) {
   }
 }
 
-export async function apiCreateBarangBukti(params: any, token: any) {
+export async function apiCreateBarangBukti(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -535,11 +563,11 @@ export async function apiCreateBarangBukti(params: any, token: any) {
   }
 }
 
-export async function apiUpdateBarangBukti(params: any, token: any) {
+export async function apiUpdateBarangBukti(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_update.php',
+      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_update.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -554,7 +582,7 @@ export async function apiUpdateBarangBukti(params: any, token: any) {
   }
 }
 
-export async function apiDeleteBarangBukti(params: any, token: any) {
+export async function apiDeleteBarangBukti(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -575,11 +603,13 @@ export async function apiDeleteBarangBukti(params: any, token: any) {
 // api barang bukti end
 
 // api Saksi start
-export async function apiReadSaksi(params: any, token: any) {
+export async function apiReadSaksi(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `saksi?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/saksi_read.php',
+      method: 'get',
+      url: url,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -594,7 +624,7 @@ export async function apiReadSaksi(params: any, token: any) {
   }
 }
 
-export async function apiCreateSaksi(params: any, token: any) {
+export async function apiCreateSaksi(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -613,7 +643,7 @@ export async function apiCreateSaksi(params: any, token: any) {
   }
 }
 
-export async function apiUpdateSaksi(params: any, token: any) {
+export async function apiUpdateSaksi(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -632,7 +662,7 @@ export async function apiUpdateSaksi(params: any, token: any) {
   }
 }
 
-export async function apiDeleteSaksi(params: any, token: any) {
+export async function apiDeleteSaksi(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -653,7 +683,7 @@ export async function apiDeleteSaksi(params: any, token: any) {
 // api Saksi end
 
 // api Jaksa penuntut start
-export async function apiReadJaksapenuntut(params: any, token: any) {
+export async function apiReadJaksapenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -672,7 +702,7 @@ export async function apiReadJaksapenuntut(params: any, token: any) {
   }
 }
 
-export async function apiCreateJaksapenuntut(params: any, token: any) {
+export async function apiCreateJaksapenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -691,7 +721,7 @@ export async function apiCreateJaksapenuntut(params: any, token: any) {
   }
 }
 
-export async function apiUpdateJaksapenuntut(params: any, token: any) {
+export async function apiUpdateJaksapenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -710,7 +740,7 @@ export async function apiUpdateJaksapenuntut(params: any, token: any) {
   }
 }
 
-export async function apiDeleteJaksapenuntut(params: any, token: any) {
+export async function apiDeleteJaksapenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -731,12 +761,13 @@ export async function apiDeleteJaksapenuntut(params: any, token: any) {
 // api Jaksa penuntut end
 
 // api Jaksa penyidik start
-export async function apiReadJaksaPenyidik(params: any, token: any) {
+export async function apiReadJaksaPenyidik(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `oditur_penyidik?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penyidik_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -750,7 +781,7 @@ export async function apiReadJaksaPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiCreateJaksaPenyidik(params: any, token: any) {
+export async function apiCreateJaksaPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -769,7 +800,7 @@ export async function apiCreateJaksaPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiUpdateJaksaPenyidik(params: any, token: any) {
+export async function apiUpdateJaksaPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -788,7 +819,7 @@ export async function apiUpdateJaksaPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiDeleteJaksaPenyidik(params: any, token: any) {
+export async function apiDeleteJaksaPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -809,7 +840,7 @@ export async function apiDeleteJaksaPenyidik(params: any, token: any) {
 // api Jaksa penyidik end
 
 // api Oditur penyidik start
-export async function apiReadOditurPenyidik(params: any, token: any) {
+export async function apiReadOditurPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -828,7 +859,7 @@ export async function apiReadOditurPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiCreateOditurPenyidik(params: any, token: any) {
+export async function apiCreateOditurPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -847,7 +878,7 @@ export async function apiCreateOditurPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiUpdateOditurPenyidik(params: any, token: any) {
+export async function apiUpdateOditurPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -866,7 +897,7 @@ export async function apiUpdateOditurPenyidik(params: any, token: any) {
   }
 }
 
-export async function apiDeleteOditurPenyidik(params: any, token: any) {
+export async function apiDeleteOditurPenyidik(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -887,7 +918,7 @@ export async function apiDeleteOditurPenyidik(params: any, token: any) {
 // api Oditur penyidik end
 
 // api Oditur penuntut start
-export async function apiReadOditurPenuntut(params: any, token: any) {
+export async function apiReadOditurPenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -906,7 +937,7 @@ export async function apiReadOditurPenuntut(params: any, token: any) {
   }
 }
 
-export async function apiCreateOditurPenuntut(params: any, token: any) {
+export async function apiCreateOditurPenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -925,7 +956,7 @@ export async function apiCreateOditurPenuntut(params: any, token: any) {
   }
 }
 
-export async function apiUpdateOditurPenuntut(params: any, token: any) {
+export async function apiUpdateOditurPenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -944,7 +975,7 @@ export async function apiUpdateOditurPenuntut(params: any, token: any) {
   }
 }
 
-export async function apiDeleteOditurPenuntut(params: any, token: any) {
+export async function apiDeleteOditurPenuntut(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -965,7 +996,7 @@ export async function apiDeleteOditurPenuntut(params: any, token: any) {
 // api Oditur penuntut end
 
 // api hakim start
-export async function apiReadHakim(params: any, token: any) {
+export async function apiReadHakim(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -984,7 +1015,7 @@ export async function apiReadHakim(params: any, token: any) {
   }
 }
 
-export async function apiCreateHakim(params: any, token: any) {
+export async function apiCreateHakim(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1003,7 +1034,7 @@ export async function apiCreateHakim(params: any, token: any) {
   }
 }
 
-export async function apiUpdateHakim(params: any, token: any) {
+export async function apiUpdateHakim(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1022,7 +1053,7 @@ export async function apiUpdateHakim(params: any, token: any) {
   }
 }
 
-export async function apiDeleteHakim(params: any, token: any) {
+export async function apiDeleteHakim(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1042,8 +1073,29 @@ export async function apiDeleteHakim(params: any, token: any) {
 }
 // api hakim end
 
+// log kamera start
+export async function apiReadLogKamera(params) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newwebserviceurl + 'siram_api/kamera_log_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+// log kamera end
+
 // aktifitas Pengunjung start
-export async function apiReadAktifitasPengunjung(params: any, token: any) {
+export async function apiReadAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1054,7 +1106,7 @@ export async function apiReadAktifitasPengunjung(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(params);
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1062,7 +1114,7 @@ export async function apiReadAktifitasPengunjung(params: any, token: any) {
   }
 }
 
-export async function apiDeleteAktifitasPengunjung(params: any, token: any) {
+export async function apiDeleteAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1073,7 +1125,7 @@ export async function apiDeleteAktifitasPengunjung(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(params);
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1081,7 +1133,7 @@ export async function apiDeleteAktifitasPengunjung(params: any, token: any) {
   }
 }
 
-export async function apiUpdateAktifitasPengunjung(params: any, token: any) {
+export async function apiUpdateAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1092,7 +1144,7 @@ export async function apiUpdateAktifitasPengunjung(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(params);
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1100,7 +1152,7 @@ export async function apiUpdateAktifitasPengunjung(params: any, token: any) {
   }
 }
 
-export async function apiCreateAktifitasPengunjung(params: any, token: any) {
+export async function apiCreateAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1121,7 +1173,7 @@ export async function apiCreateAktifitasPengunjung(params: any, token: any) {
 // aktifitas Pengunjung end
 
 // api kamera
-export async function apiReadKamera(params: any, token: any) {
+export async function apiReadKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1140,7 +1192,7 @@ export async function apiReadKamera(params: any, token: any) {
   }
 }
 
-export async function apiDeleteKamera(params: any, token: any) {
+export async function apiDeleteKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1159,7 +1211,7 @@ export async function apiDeleteKamera(params: any, token: any) {
   }
 }
 
-export async function apiUpdateKamera(params: any, token: any) {
+export async function apiUpdateKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1178,7 +1230,7 @@ export async function apiUpdateKamera(params: any, token: any) {
   }
 }
 
-export async function apiCreateKamera(params: any, token: any) {
+export async function apiCreateKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1198,7 +1250,7 @@ export async function apiCreateKamera(params: any, token: any) {
 }
 
 // api Gateway start
-export async function apiReadGateway(params: any, token: any) {
+export async function apiReadGateway(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1217,7 +1269,7 @@ export async function apiReadGateway(params: any, token: any) {
   }
 }
 
-export async function apiDeleteGateway(params: any, token: any) {
+export async function apiDeleteGateway(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1236,7 +1288,7 @@ export async function apiDeleteGateway(params: any, token: any) {
   }
 }
 
-export async function apiUpdateGateway(params: any, token: any) {
+export async function apiUpdateGateway(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1255,7 +1307,7 @@ export async function apiUpdateGateway(params: any, token: any) {
   }
 }
 
-export async function apiCreateGateway(params: any, token: any) {
+export async function apiCreateGateway(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1276,7 +1328,7 @@ export async function apiCreateGateway(params: any, token: any) {
 // api Gateway end
 
 // api Gelang start
-export async function apiReadGelang(params: any, token: any) {
+export async function apiReadGelang(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1295,7 +1347,7 @@ export async function apiReadGelang(params: any, token: any) {
   }
 }
 
-export async function apiDeleteGelang(params: any, token: any) {
+export async function apiDeleteGelang(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1314,7 +1366,7 @@ export async function apiDeleteGelang(params: any, token: any) {
   }
 }
 
-export async function apiUpdateGelang(params: any, token: any) {
+export async function apiUpdateGelang(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1333,7 +1385,7 @@ export async function apiUpdateGelang(params: any, token: any) {
   }
 }
 
-export async function apiCreateGelang(params: any, token: any) {
+export async function apiCreateGelang(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1354,7 +1406,7 @@ export async function apiCreateGelang(params: any, token: any) {
 // api Gelang end
 
 // api kategori Perkara start
-export async function apiDeleteKategoriPerkara(params: any, token: any) {
+export async function apiDeleteKategoriPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1362,7 +1414,7 @@ export async function apiDeleteKategoriPerkara(params: any, token: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${params.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data);
@@ -1373,7 +1425,7 @@ export async function apiDeleteKategoriPerkara(params: any, token: any) {
   }
 }
 
-export async function apiUpdateKategoriPerkara(params: any, token: any) {
+export async function apiUpdateKategoriPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1381,7 +1433,7 @@ export async function apiUpdateKategoriPerkara(params: any, token: any) {
       data: params,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${params.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data);
@@ -1392,7 +1444,7 @@ export async function apiUpdateKategoriPerkara(params: any, token: any) {
   }
 }
 
-export async function apiCreateKategoriPerkara(params: any, token: any) {
+export async function apiCreateKategoriPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1412,11 +1464,11 @@ export async function apiCreateKategoriPerkara(params: any, token: any) {
 }
 // api kategori Perkara end
 
-export async function apiReadKota(params: any, token: any) {
+export async function apiReadKota(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
+      url: newwebserviceurl + 'siram_api/kota_read.php',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1424,14 +1476,14 @@ export async function apiReadKota(params: any, token: any) {
       },
     });
     console.log(response.data);
-    return response.data.records;
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
 
-export async function apiReadProvinsi(params: any, token: any) {
+export async function apiReadProvinsi(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1442,7 +1494,7 @@ export async function apiReadProvinsi(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('hallo', response.data);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -1486,13 +1538,13 @@ export async function apiReadAllKesatuan() {
   }
 }
 
-// jenis perkara api
-export async function apiReadjenisperkara(params: any, token: any) {
+export async function apiReadjenisperkara(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `jenis_perkara?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/jenis_perkara_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1507,12 +1559,11 @@ export async function apiReadjenisperkara(params: any, token: any) {
 }
 
 // Visitor API
-export async function apiReadVisitor(params: any, token: any) {
+export async function apiReadVisitor(params, token) {
   try {
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
-      data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1525,7 +1576,7 @@ export async function apiReadVisitor(params: any, token: any) {
     throw error;
   }
 }
-export async function apiCreateVisitor(params: any, token: any) {
+export async function apiCreateVisitor(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1543,7 +1594,7 @@ export async function apiCreateVisitor(params: any, token: any) {
     throw error;
   }
 }
-export async function apiUpdateVisitor(params: any, token: any) {
+export async function apiUpdateVisitor(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1561,7 +1612,7 @@ export async function apiUpdateVisitor(params: any, token: any) {
     throw error;
   }
 }
-export async function apiDeletePengunjung(params: any, token: any) {
+export async function apiDeletePengunjung(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1581,15 +1632,12 @@ export async function apiDeletePengunjung(params: any, token: any) {
 }
 
 // Camera API
-export async function apiReadAllCamera(params: any) {
+export async function apiReadAllCamera(params) {
   try {
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/read_all_camera.php',
       data: params,
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
     });
 
     console.log(response.data);
@@ -1602,7 +1650,7 @@ export async function apiReadAllCamera(params: any) {
 }
 
 // Gateway API
-export async function apiReadAllGateway(params: any) {
+export async function apiReadAllGateway(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -1620,7 +1668,7 @@ export async function apiReadAllGateway(params: any) {
 }
 
 // Gelang API
-export async function apiReadAllGelang(params: any) {
+export async function apiReadAllGelang(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -1638,7 +1686,7 @@ export async function apiReadAllGelang(params: any) {
 }
 
 // Event API
-export async function apiReadAllEvent(params: any, token: any) {
+export async function apiReadAllEvent(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1656,7 +1704,7 @@ export async function apiReadAllEvent(params: any, token: any) {
     throw error;
   }
 }
-export async function apiUpdateAllEvent(params: any, token: any) {
+export async function apiUpdateAllEvent(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1674,7 +1722,7 @@ export async function apiUpdateAllEvent(params: any, token: any) {
     throw error;
   }
 }
-export async function apiDeleteAllEvent(params: any, token: any) {
+export async function apiDeleteAllEvent(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1692,7 +1740,7 @@ export async function apiDeleteAllEvent(params: any, token: any) {
     throw error;
   }
 }
-export async function apiCreateAllEvent(params: any, token: any) {
+export async function apiCreateAllEvent(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -1710,8 +1758,29 @@ export async function apiCreateAllEvent(params: any, token: any) {
     throw error;
   }
 }
+
+// api ruangan otmil
+export async function apiReadAllRuanganOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'POST',
+      url: newwebserviceurl + 'siram_api/ruangan_otmil_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 //Read shift
-export async function apiReadAllShift(params: any, token: any) {
+export async function apiReadAllShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1729,7 +1798,7 @@ export async function apiReadAllShift(params: any, token: any) {
   }
 }
 //Create shift
-export async function apiCreatShift(params: any) {
+export async function apiCreatShift(params) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1747,8 +1816,27 @@ export async function apiCreatShift(params: any) {
   }
 }
 
+//Delete Shift
+export async function apiDeleteShift(params, token) {
+  try {
+    const response = await axios({
+      method: 'POST',
+      url: newwebserviceurl + 'siram_api/shift_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 //Edit Shift
-export async function apiEditShift(params: any, token: any) {
+export async function apiEditShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1768,29 +1856,9 @@ export async function apiEditShift(params: any, token: any) {
   }
 }
 
-//Delete Shift
-export async function apiDeleteShift(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_delete.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log('shiftdelete', params.token);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-//Grup --------------------------------
+//Grup-------------------------------------
 //Read
-export async function apiReadAllGrupPetugas(params: any, token: any) {
+export async function apiReadAllGrupPetugas(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1811,7 +1879,7 @@ export async function apiReadAllGrupPetugas(params: any, token: any) {
 }
 
 //Create
-export async function apiCreatGrupPetugas(params: any, token: any) {
+export async function apiCreatGrupPetugas(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1830,7 +1898,7 @@ export async function apiCreatGrupPetugas(params: any, token: any) {
 }
 
 //Update
-export async function apiUpdateGrupPetugas(params: any, token: any) {
+export async function apiUpdateGrupPetugas(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1849,7 +1917,7 @@ export async function apiUpdateGrupPetugas(params: any, token: any) {
 }
 
 //Delete
-export async function apiDeleteGrupPetugas(params: any, token: any) {
+export async function apiDeleteGrupPetugas(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1867,9 +1935,9 @@ export async function apiDeleteGrupPetugas(params: any, token: any) {
   }
 }
 
-//Rekap Absensi -----------------------------------------------
+//Rekap Absensi -------------------------------------------+
 // Read Absensi
-export async function apiReadAllRekapAbsensi(params: any, token: any) {
+export async function apiReadAllRekapAbsensi(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1888,7 +1956,7 @@ export async function apiReadAllRekapAbsensi(params: any, token: any) {
 }
 
 // Read Cuti
-export async function apiReadAllRekapCuti(params: any, token: any) {
+export async function apiReadAllRekapCuti(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1906,9 +1974,9 @@ export async function apiReadAllRekapCuti(params: any, token: any) {
   }
 }
 
-//Petugas Shift -------------------------------------------
+//Petugas Shift
 //Read
-export async function apiReadAllPetugasShift(params: any, token: any) {
+export async function apiReadAllPetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1919,7 +1987,6 @@ export async function apiReadAllPetugasShift(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('api read', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1928,7 +1995,7 @@ export async function apiReadAllPetugasShift(params: any, token: any) {
 }
 
 //Create
-export async function apiCretePetugasShift(params: any, token: any) {
+export async function apiCretePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1939,7 +2006,6 @@ export async function apiCretePetugasShift(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('api read', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1948,7 +2014,7 @@ export async function apiCretePetugasShift(params: any, token: any) {
 }
 
 //Update
-export async function apiEditPetugasShift(params: any, token: string) {
+export async function apiEditPetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1966,7 +2032,8 @@ export async function apiEditPetugasShift(params: any, token: string) {
     throw error;
   }
 }
-export async function apiDeletePetugasShift(params: any, token: string) {
+//Delete
+export async function apiDeletePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -1977,7 +2044,6 @@ export async function apiDeletePetugasShift(params: any, token: string) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('api read', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -1985,9 +2051,9 @@ export async function apiDeletePetugasShift(params: any, token: string) {
   }
 }
 
-//Schedule ---------------------------------
+//Schedule ----------------------------
 //Read
-export async function apiReadAllScheduleShift(params: any, token: any) {
+export async function apiReadAllScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2006,7 +2072,7 @@ export async function apiReadAllScheduleShift(params: any, token: any) {
 }
 
 //Create
-export async function apiCreateScheduleShift(params: any, token: any) {
+export async function apiCreateScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2023,8 +2089,9 @@ export async function apiCreateScheduleShift(params: any, token: any) {
     throw error;
   }
 }
+
 //Delete
-export async function apiDeleteScheduleShift(params: any, token: string) {
+export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2044,7 +2111,7 @@ export async function apiDeleteScheduleShift(params: any, token: string) {
 
 //Penugasan ----------------------------------------------
 //Read
-export async function apiReadAllPenugasanShift(params: any, token: string) {
+export async function apiReadAllPenugasanShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2062,7 +2129,7 @@ export async function apiReadAllPenugasanShift(params: any, token: string) {
   }
 }
 //create
-export async function apiCreatePenugasanShift(params: any, token: string) {
+export async function apiCreatePenugasanShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2080,7 +2147,7 @@ export async function apiCreatePenugasanShift(params: any, token: string) {
   }
 }
 //Edit
-export async function apiEditPenugasanShift(params: any, token: string) {
+export async function apiEditPenugasanShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2097,8 +2164,9 @@ export async function apiEditPenugasanShift(params: any, token: string) {
     throw error;
   }
 }
+
 //Delete
-export async function apiDeletePenugasanShift(params: any, token: string) {
+export async function apiDeletePenugasanShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2110,7 +2178,6 @@ export async function apiDeletePenugasanShift(params: any, token: string) {
       },
     });
     console.log(response);
-
     return response;
   } catch (error) {
     console.log(error);
@@ -2119,7 +2186,7 @@ export async function apiDeletePenugasanShift(params: any, token: string) {
 }
 
 //Read Ruangan summary
-export async function apiReadAllRuanganSummary(params: any, token: any) {
+export async function apiReadAllRuanganSummary(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2138,43 +2205,8 @@ export async function apiReadAllRuanganSummary(params: any, token: any) {
   }
 }
 
-// api ruangan
-// export async function apiReadAllRuanganOtmil(params:any) {
-//   try {
-//     const response = await axios({
-//       method: 'POST',
-//       url: newwebserviceurl + 'ruangan_otmil_read.php',
-//       data: params,
-//     });
-//     console.log(response);
-//     return response;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
-
-export async function apiReadAlllokasiOtmil(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'GET',
-      url: `${newwebserviceurl}/lokasi_otmil`,
-      params: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-//Read All Zona
-export async function apiReadZona(token: any) {
+//Read All Zona ----------------------------
+export async function apiReadZona(token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2193,8 +2225,27 @@ export async function apiReadZona(token: any) {
   }
 }
 
+export async function apiReadAlllokasiOtmil(params, token) {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${newBaseUrl}/lokasi_otmil`,
+      params: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // api version
-export async function apiversion(params: any) {
+export async function apiversion(params) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2208,9 +2259,8 @@ export async function apiversion(params: any) {
     throw error;
   }
 }
-
 // api ruangan lemasmil
-export async function apiReadAllRuanganLemasmil(params: any) {
+export async function apiReadAllRuanganLemasmil(params) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2225,7 +2275,7 @@ export async function apiReadAllRuanganLemasmil(params: any) {
   }
 }
 
-export async function apiReadAlllokasiLemasmil(params: any) {
+export async function apiReadAlllokasiLemasmil(params) {
   try {
     const response = await axios({
       method: 'POST',
@@ -2240,16 +2290,13 @@ export async function apiReadAlllokasiLemasmil(params: any) {
   }
 }
 
-export async function apiReadAllRuanganOtmil(params: any, token: any) {
+// API Ruangan Otmil
+export async function apiReadAllRuangan(params) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newwebserviceurl + 'siram_api/ruangan_otmil_read.php',
+      url: webserviceurl + 'siram_admin_api/siram_api/ruangan_otmil_read.php',
       data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
     });
     console.log(response);
     return response;
@@ -2259,7 +2306,7 @@ export async function apiReadAllRuanganOtmil(params: any, token: any) {
   }
 }
 
-export async function apiCreateAllRuanganOtmil(params: any, token: any) {
+export async function apiCreateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2270,7 +2317,7 @@ export async function apiCreateAllRuanganOtmil(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('add ts', response);
+    console.log('add js', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -2278,7 +2325,7 @@ export async function apiCreateAllRuanganOtmil(params: any, token: any) {
   }
 }
 
-export async function apiDeleteAllRuangan(params: any, token: any) {
+export async function apiDeleteAllRuangan(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2297,7 +2344,7 @@ export async function apiDeleteAllRuangan(params: any, token: any) {
   }
 }
 
-export async function apiUpdateAllRuanganOtmil(params: any, token: any) {
+export async function apiUpdateAllRuanganOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2308,6 +2355,7 @@ export async function apiUpdateAllRuanganOtmil(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(response, 'fata');
     return response;
   } catch (error) {
     console.log(error);
@@ -2315,7 +2363,7 @@ export async function apiUpdateAllRuanganOtmil(params: any, token: any) {
   }
 }
 
-export async function apiWatchListList(params: any) {
+export async function apiWatchListList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2330,7 +2378,7 @@ export async function apiWatchListList(params: any) {
   }
 }
 
-// export async function apiReadAllJenisJahat(params:any) {
+// export async function apiReadAllJenisJahat(params) {
 //   try {
 //     const response = await axios({
 //       method: "post",
@@ -2345,7 +2393,7 @@ export async function apiWatchListList(params: any) {
 //   }
 // }
 
-export async function apiCreateJenisJahat(params: any, token: any) {
+export async function apiCreateJenisJahat(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2364,7 +2412,7 @@ export async function apiCreateJenisJahat(params: any, token: any) {
   }
 }
 
-export async function apiUpdateJenisJahat(params: any, token: any) {
+export async function apiUpdateJenisJahat(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2375,7 +2423,7 @@ export async function apiUpdateJenisJahat(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
+    console.log(response.data);
     return response;
   } catch (error) {
     console.log(error);
@@ -2383,11 +2431,11 @@ export async function apiUpdateJenisJahat(params: any, token: any) {
   }
 }
 
-export async function apiDeleteJenisJahat(params: any, token: any) {
+export async function apiDeleteJenisJahat(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: webserviceurl + 'siram_admin_api/jenis_jahat_delete.php',
+      url: newwebserviceurl + 'siram_api/jenis_perkara_delete.php  ',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2402,7 +2450,7 @@ export async function apiDeleteJenisJahat(params: any, token: any) {
   }
 }
 
-export async function apiReadKategoriPerkara(params: any, token: any) {
+export async function apiReadKategoriPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -2421,51 +2469,39 @@ export async function apiReadKategoriPerkara(params: any, token: any) {
   }
 }
 
-// Define an interface for the 'params' object
-interface ApiVisitorParams {
-  device_id: any;
-  country_id: string;
-  age: string;
-  analytics: string;
-  name: string;
-  gender: string;
-}
-
-// Modify your function to accept 'params' of type 'ApiVisitorParams'
-export async function apiVisitorRealtimeLogList(params: ApiVisitorParams) {
+export async function apiVisitorRealtimeLogList(params) {
   try {
     let parameter = {
       pageSize: 100,
-      filters: {} as Record<string, string>, // Initialize filters as an empty object
+      filters: {},
     };
-    if (params.device_id !== '') {
+    if (params.device_id != '') {
       parameter.filters.device_id = params.device_id;
     }
-    if (params.country_id !== '') {
+    if (params.country_id != '') {
       parameter.filters.country_id = params.country_id;
     }
-    if (params.age !== '') {
+    if (params.age != '') {
       parameter.filters.age = params.age;
     }
 
-    if (params.analytics !== '') {
+    if (params.analytics != '') {
       parameter.filters.analytics = params.analytics;
     }
-    if (params.name !== '') {
+    if (params.name != '') {
       parameter.filters.name = params.name;
     }
-    if (params.gender !== '') {
+    if (params.gender != '') {
       parameter.filters.gender = params.gender;
     }
 
-    console.log(parameter, 'parameter');
     const response = await axios({
       method: 'post',
       url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
       data: JSON.stringify(parameter),
     });
-    console.log(response.data);
-    console.log(response.data.records);
+    // console.log(response.data);
+
     return response.data.records;
   } catch (error) {
     console.log(error);
@@ -2473,13 +2509,7 @@ export async function apiVisitorRealtimeLogList(params: ApiVisitorParams) {
   }
 }
 
-interface ApiVisitorEmployeeParams {
-  pageSize: number;
-  pageIndex: number;
-  name?: string;
-}
-
-export async function apiVisitorEmployeeList(params: ApiVisitorEmployeeParams) {
+export async function apiVisitorEmployeeList(params) {
   try {
     let parameter = {
       pageSize: params.pageSize,
@@ -2495,21 +2525,18 @@ export async function apiVisitorEmployeeList(params: ApiVisitorEmployeeParams) {
       },
     };
 
-    // TURN ON IF NEEDED
-    // if (params.name) {
-    //   parameter.filters.must.push({
-    //     match: {
-    //       name: params.name,
-    //     },
-    //   });
-    // }
-
+    if (params.name) {
+      parameter.filters.must.push({
+        match: {
+          name: params.name,
+        },
+      });
+    }
     const response = await axios({
       method: 'post',
       url: webserviceurl + '/gema_admin_api/visitor/read.php',
       data: parameter,
     });
-
     console.log(response.data.data);
     return response.data.data;
     // Rest of your code...
@@ -2517,47 +2544,34 @@ export async function apiVisitorEmployeeList(params: ApiVisitorEmployeeParams) {
     // Handle error...
   }
 }
-
-interface ApiVisitorInmateParams {
-  pageSize: number;
-  pageIndex: number;
-  name?: string;
-}
-
-export async function apiVisitorInmateList(params: ApiVisitorInmateParams) {
+export async function apiVisitorInmateList(params) {
   try {
     let parameter = {
       pageSize: params.pageSize,
       pageIndex: params.pageIndex,
       filters: {
-        must: [] as Array<{ match_all: { isdpo: boolean } }>, // Initialize as an empty array with the correct structure
+        must: [
+          // {
+          //   match_all: {
+          //     "isdpo": false,
+          //   },
+          // },
+        ],
       },
     };
 
-    // Uncomment the following block if you want to include the "match_all" filter
-    // if (!params.isdpo) {
-    //   parameter.filters.must.push({
-    //     match_all: {
-    //       isdpo: false,
-    //     },
-    //   });
-    // }
-
-    // TURN ON IF NEEDED
-    // if (params.name) {
-    //   parameter.filters.must.push({
-    //     match: {
-    //       name: params.name,
-    //     },
-    //   });
-    // }
-
+    if (params.name) {
+      parameter.filters.must.push({
+        match: {
+          name: params.name,
+        },
+      });
+    }
     const response = await axios({
       method: 'post',
       url: webserviceurl + '/gema_admin_api/visitor/readInmate.php',
       data: parameter,
     });
-
     console.log(response.data.data);
     return response.data.data;
     // Rest of your code...
@@ -2566,7 +2580,7 @@ export async function apiVisitorInmateList(params: ApiVisitorInmateParams) {
   }
 }
 
-export async function apiVisitorWNAList(params: any) {
+export async function apiVisitorWNAList(params) {
   try {
     let parameter = {
       pageSize: params.pageSize,
@@ -2574,12 +2588,12 @@ export async function apiVisitorWNAList(params: any) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2605,7 +2619,7 @@ export async function apiVisitorWNAList(params: any) {
   }
 }
 
-export async function apiWatchlistHistory(params: any) {
+export async function apiWatchlistHistory(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2620,7 +2634,7 @@ export async function apiWatchlistHistory(params: any) {
   }
 }
 
-export async function apiVisitorList(params: any) {
+export async function apiVisitorList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2635,7 +2649,7 @@ export async function apiVisitorList(params: any) {
   }
 }
 
-export async function apiUserList(params: any) {
+export async function apiUserList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2650,7 +2664,7 @@ export async function apiUserList(params: any) {
   }
 }
 
-export async function apiSearchDpoByName(params: any) {
+export async function apiSearchDpoByName(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2664,7 +2678,7 @@ export async function apiSearchDpoByName(params: any) {
     throw error;
   }
 }
-export async function apiSearchVisitorByName(params: any) {
+export async function apiSearchVisitorByName(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2679,7 +2693,7 @@ export async function apiSearchVisitorByName(params: any) {
   }
 }
 
-export async function apiAllCameraOnlineList(params: any) {
+export async function apiAllCameraOnlineList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2693,7 +2707,7 @@ export async function apiAllCameraOnlineList(params: any) {
     throw error;
   }
 }
-export async function apiAllCameraOfflineList(params: any) {
+export async function apiAllCameraOfflineList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2707,7 +2721,7 @@ export async function apiAllCameraOfflineList(params: any) {
     throw error;
   }
 }
-export async function apiAllCameraDamageList(params: any) {
+export async function apiAllCameraDamageList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2721,7 +2735,7 @@ export async function apiAllCameraDamageList(params: any) {
     throw error;
   }
 }
-export async function apiLocationDeviceStatusTotalSummary(params: any) {
+export async function apiLocationDeviceStatusTotalSummary(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2737,15 +2751,14 @@ export async function apiLocationDeviceStatusTotalSummary(params: any) {
     throw error;
   }
 }
-export async function apiLocationDeviceStatusTotalSummaryByLocation(
-  params: any,
-) {
+export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
   try {
     const response = await axios({
       method: 'post',
       url:
         webserviceurl +
-        'gema_admin_api/location/locationDeviceStatusTotalSummaryByLocation.php',
+        gema_admin_api /
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -2756,50 +2769,37 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(
   }
 }
 
-interface ApiVisitorLogParams {
-  pageSize: number;
-  pageIndex: number;
-  from: string;
-  to: string;
-  device_id: string;
-  country_id: string;
-  age: string;
-  analytics: string;
-  name: string;
-  gender: string;
-}
-
-export async function apiVisitorLogList(params: ApiVisitorLogParams) {
+export async function apiVisitorLogList(params) {
   try {
     let parameter = {
+      // pageSize: 100,
       pageSize: params.pageSize,
       pageIndex: params.pageIndex,
-      filters: {} as Record<string, string>, // Initialize filters as an empty object
+      filters: {},
     };
-
-    if (params.from !== '') {
+    if (params.from != '') {
       parameter.filters.from = params.from;
     }
-    if (params.to !== '') {
+    if (params.to != '') {
       parameter.filters.to = params.to;
     }
-    if (params.device_id !== '') {
+    if (params.device_id != '') {
       parameter.filters.device_id = params.device_id;
     }
-    if (params.country_id !== '') {
+    if (params.country_id != '') {
       parameter.filters.country_id = params.country_id;
     }
-    if (params.age !== '') {
+    if (params.age != '') {
       parameter.filters.age = params.age;
     }
 
-    if (params.analytics !== '') {
+    if (params.analytics != '') {
       parameter.filters.analytics = params.analytics;
     }
-    if (params.name !== '') {
+    if (params.name != '') {
       parameter.filters.name = params.name;
     }
-    if (params.gender !== '') {
+    if (params.gender != '') {
       parameter.filters.gender = params.gender;
     }
 
@@ -2817,7 +2817,7 @@ export async function apiVisitorLogList(params: ApiVisitorLogParams) {
   }
 }
 
-export async function apiDeviceList(params: any) {
+export async function apiDeviceList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2832,7 +2832,7 @@ export async function apiDeviceList(params: any) {
   }
 }
 
-export async function apiBraceletList(params: any) {
+export async function apiBraceletList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2847,7 +2847,7 @@ export async function apiBraceletList(params: any) {
   }
 }
 
-export async function apiLocationDeviceList(params: any) {
+export async function apiLocationDeviceList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2877,7 +2877,7 @@ export async function apiBuilding(params) {
     throw error;
   }
 }
-export async function apiLocationOnlineDeviceList(params: any) {
+export async function apiLocationOnlineDeviceList(params) {
   try {
     const response = await axios({
       method: 'post',
@@ -2892,12 +2892,13 @@ export async function apiLocationOnlineDeviceList(params: any) {
   }
 }
 
-export async function apiDeviceDetail(id: any) {
+export async function apiDeviceDetail(id) {
   try {
     const response = await axios({
       method: 'post',
-      url: webserviceurl + 'siram_admin_api/siram_api/kamera_read_one.php',
       // url: webserviceurl + 'gema_admin_api/device/read_one.php',
+      url: webserviceurl + 'siram_admin_api/siram_api/kamera_read_one.php',
+
       data: {
         deviceId: id,
       },
@@ -2910,9 +2911,9 @@ export async function apiDeviceDetail(id: any) {
   }
 }
 
-export async function apiDeviceDelete(params: any) {
+export function apiDeviceDelete(params) {
   try {
-    const response: AxiosResponse = await axios({
+    const response = axios({
       method: 'post',
       url: webserviceurl + 'gema_admin_api/device/delete.php',
       data: params,
@@ -2923,7 +2924,7 @@ export async function apiDeviceDelete(params: any) {
   }
 }
 
-// export function apiDeleteVisitor(params:any) {
+// export function apiDeleteVisitor(params) {
 //   try {
 //     const response = axios({
 //       method: "post",
@@ -2935,7 +2936,7 @@ export async function apiDeviceDelete(params: any) {
 //     throw error;
 //   }
 // }
-export function apiDeleteUser(params: any) {
+export function apiDeleteUser(params) {
   try {
     const response = axios({
       method: 'post',
@@ -2948,7 +2949,7 @@ export function apiDeleteUser(params: any) {
   }
 }
 
-export function apiDeviceInsert(params: any) {
+export function apiDeviceInsert(params) {
   try {
     const response = axios({
       method: 'post',
@@ -2960,7 +2961,7 @@ export function apiDeviceInsert(params: any) {
     throw error;
   }
 }
-export function apiUserInsert(params: any) {
+export function apiUserInsert(params) {
   try {
     const response = axios({
       method: 'post',
@@ -2973,7 +2974,7 @@ export function apiUserInsert(params: any) {
   }
 }
 
-export function apiUserUpdate(params: any) {
+export function apiUserUpdate(params) {
   try {
     console.log(params);
     const response = axios({
@@ -2989,7 +2990,7 @@ export function apiUserUpdate(params: any) {
     throw error;
   }
 }
-export function apiVisitorUpdateWithImage(params: any) {
+export function apiVisitorUpdateWithImage(params) {
   try {
     console.log(params);
     const response = axios({
@@ -3006,7 +3007,7 @@ export function apiVisitorUpdateWithImage(params: any) {
   }
 }
 
-export function apiVisitorUpdate(params: any) {
+export function apiVisitorUpdate(params) {
   try {
     console.log(params);
     const response = axios({
@@ -3023,7 +3024,7 @@ export function apiVisitorUpdate(params: any) {
   }
 }
 
-export async function apiDeleteVisitor(params: any) {
+export async function apiDeleteVisitor(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3060,7 +3061,7 @@ export async function apiDeleteVisitor(params: any) {
     throw error;
   }
 }
-export async function apiEditToRemoveWatchlist(params: any) {
+export async function apiEditToRemoveWatchlist(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3077,7 +3078,7 @@ export async function apiEditToRemoveWatchlist(params: any) {
     throw error;
   }
 }
-export async function apiEditToAddWatchlist(params: any) {
+export async function apiEditToAddWatchlist(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3095,7 +3096,7 @@ export async function apiEditToAddWatchlist(params: any) {
   }
 }
 
-export async function apiEmployeeInsert(params: any) {
+export async function apiEmployeeInsert(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3130,7 +3131,7 @@ export async function apiEmployeeInsert(params: any) {
     throw error;
   }
 }
-export async function apiWatchlistInsert(params: any) {
+export async function apiWatchlistInsert(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3165,7 +3166,7 @@ export async function apiWatchlistInsert(params: any) {
     throw error;
   }
 }
-export async function apiInmateInsert(params: any) {
+export async function apiInmateInsert(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3201,7 +3202,7 @@ export async function apiInmateInsert(params: any) {
   }
 }
 
-export async function apiVisitorInsert(params: any) {
+export async function apiVisitorInsert(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3237,7 +3238,7 @@ export async function apiVisitorInsert(params: any) {
   }
 }
 
-export async function apiDpoInsert(params: any) {
+export async function apiDpoInsert(params) {
   try {
     console.log(params);
     const response = await axios({
@@ -3273,7 +3274,7 @@ export async function apiDpoInsert(params: any) {
   }
 }
 
-export async function apiVisitorSearch(params: any) {
+export async function apiVisitorSearch(params) {
   try {
     let image = removeBase64Prefix(params);
     // console.log(params);
@@ -3311,7 +3312,7 @@ export async function apiVisitorSearch(params: any) {
   }
 }
 
-export function apiDeviceUpdate(params: any) {
+export function apiDeviceUpdate(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3324,7 +3325,7 @@ export function apiDeviceUpdate(params: any) {
   }
 }
 
-export function apiPageLocation(params: any) {
+export function apiPageLocation(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3337,7 +3338,7 @@ export function apiPageLocation(params: any) {
   }
 }
 
-export function apiLocationDelete(params: any) {
+export function apiLocationDelete(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3350,7 +3351,7 @@ export function apiLocationDelete(params: any) {
   }
 }
 
-export function apiLocationUpdate(params: any) {
+export function apiLocationUpdate(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3387,7 +3388,7 @@ export function apiCountryList() {
   }
 }
 
-export function apiCameraList(params: any) {
+export function apiCameraList(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3399,7 +3400,7 @@ export function apiCameraList(params: any) {
   }
 }
 
-export function apiAdminLogin(params: any) {
+export function apiAdminLogin(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3414,7 +3415,7 @@ export function apiAdminLogin(params: any) {
     throw error;
   }
 }
-export function faceCompareChina(params: any) {
+export function faceCompareChina(params) {
   return new Promise((resolve, reject) => {
     // Add a flag to check if the function has been executed
     let isExecuted = false;
@@ -3461,7 +3462,7 @@ export function faceCompareChina(params: any) {
   });
 }
 
-export function apiUserRegister(params: any) {
+export function apiUserRegister(params) {
   try {
     const response = axios({
       method: 'post',
@@ -3477,11 +3478,11 @@ export function apiUserRegister(params: any) {
   }
 }
 
-export function apiUserLogin(params: any) {
+export function apiUserLogin(params) {
   try {
     const response = axios({
       method: 'POST',
-      url: 'http://localhost:8000/api/login',
+      url: newWebservice + 'login',
       data: params,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -3493,9 +3494,9 @@ export function apiUserLogin(params: any) {
   }
 }
 
-// new api
+//new api
 
-export async function apiReadAllLokasi(token: any) {
+export async function apiReadAllLokasi(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3514,7 +3515,7 @@ export async function apiReadAllLokasi(token: any) {
   }
 }
 
-export async function apiReadAllPangkat(params: any, token: any) {
+export async function apiReadAllPangkat(params, token) {
   console.log(params, token, '6666 ');
   try {
     const response = await axios({
@@ -3534,7 +3535,7 @@ export async function apiReadAllPangkat(params: any, token: any) {
   }
 }
 
-export async function apiKota(token: any) {
+export async function apiKota(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3553,7 +3554,7 @@ export async function apiKota(token: any) {
   }
 }
 
-export async function apiProvinsi(token: any) {
+export async function apiProvinsi(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3572,7 +3573,7 @@ export async function apiProvinsi(token: any) {
   }
 }
 
-export async function apiAgama(token: any) {
+export async function apiAgama(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3590,8 +3591,7 @@ export async function apiAgama(token: any) {
     throw error;
   }
 }
-
-export async function apiStatusKawin(token: any) {
+export async function apiStatusKawin(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3610,7 +3610,7 @@ export async function apiStatusKawin(token: any) {
   }
 }
 
-export async function apiPendidikan(token: any) {
+export async function apiPendidikan(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3629,7 +3629,7 @@ export async function apiPendidikan(token: any) {
   }
 }
 
-export async function apiKeahlian(token: any) {
+export async function apiKeahlian(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3648,7 +3648,7 @@ export async function apiKeahlian(token: any) {
   }
 }
 
-export async function apiKesatuan(token: any) {
+export async function apiKesatuan(token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3667,7 +3667,7 @@ export async function apiKesatuan(token: any) {
   }
 }
 
-export async function apiReadAllKategoriJahat(params: any, token: any) {
+export async function apiReadAllKategoriJahat(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3686,7 +3686,7 @@ export async function apiReadAllKategoriJahat(params: any, token: any) {
   }
 }
 
-export async function apiReadAllJenisPerkara(params: any, token: any) {
+export async function apiReadAllJenisPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3705,7 +3705,7 @@ export async function apiReadAllJenisPerkara(params: any, token: any) {
   }
 }
 
-export async function apiCreateAllStaff(params: any, token: any) {
+export async function apiCreateAllStaff(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3716,7 +3716,7 @@ export async function apiCreateAllStaff(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
+    console.log('dtaa', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -3724,7 +3724,7 @@ export async function apiCreateAllStaff(params: any, token: any) {
   }
 }
 
-export async function apiReadAllStaff(params: any, token: any) {
+export async function apiReadAllStaff(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -3742,7 +3742,7 @@ export async function apiReadAllStaff(params: any, token: any) {
   }
 }
 
-export async function apiDeleteAllStaff(params: any, token: any) {
+export async function apiDeleteAllStaff(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3761,7 +3761,7 @@ export async function apiDeleteAllStaff(params: any, token: any) {
   }
 }
 
-export async function apiUpdateAllStaff(params: any, token: any) {
+export async function apiUpdateAllStaff(params, token) {
   console.log('params:', params, 'token:', token);
   try {
     const response = await axios({
@@ -3773,7 +3773,6 @@ export async function apiUpdateAllStaff(params: any, token: any) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -3781,7 +3780,7 @@ export async function apiUpdateAllStaff(params: any, token: any) {
   }
 }
 
-export async function apiReadAllHunian(params: any, token: any) {
+export async function apiReadAllHunian(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -3800,7 +3799,7 @@ export async function apiReadAllHunian(params: any, token: any) {
   }
 }
 
-export async function apiGelang(params: any, token: any) {
+export async function apiGelang(params, token) {
   try {
     const response = await axios({
       method: 'POST',
@@ -3819,7 +3818,7 @@ export async function apiGelang(params: any, token: any) {
   }
 }
 
-export async function apiCreateWBP(params: any, token: any) {
+export async function apiCreateWBP(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3838,12 +3837,17 @@ export async function apiCreateWBP(params: any, token: any) {
   }
 }
 
-export async function apiReadAllWBP(params: any, token: any) {
+export async function apiReadAllWBP(params, token) {
   try {
+    const dataParam = {
+      page: params.page ? params.page : 1,
+      pageSize: params.pageSize ? params.pageSize : 100000000,
+      ...params.filter,
+    };
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'wbp_profile',
+      // params: dataParam,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3857,7 +3861,7 @@ export async function apiReadAllWBP(params: any, token: any) {
   }
 }
 
-export async function apiDeleteAllWBP(params: any, token: any) {
+export async function apiDeleteAllWBP(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3876,7 +3880,7 @@ export async function apiDeleteAllWBP(params: any, token: any) {
   }
 }
 
-export async function apiUpdateWBP(params: any, token: any) {
+export async function apiUpdateWBP(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3895,7 +3899,7 @@ export async function apiUpdateWBP(params: any, token: any) {
   }
 }
 
-export async function apiReadAllUser(params: any, token: any) {
+export async function apiReadAllUser(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3915,7 +3919,7 @@ export async function apiReadAllUser(params: any, token: any) {
   }
 }
 
-export async function apiCreateUser(params: any, token: any) {
+export async function apiCreateUser(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3934,7 +3938,7 @@ export async function apiCreateUser(params: any, token: any) {
   }
 }
 
-export async function apiNewDeleteUser(params: any, token: any) {
+export async function apiNewDeleteUser(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3953,7 +3957,7 @@ export async function apiNewDeleteUser(params: any, token: any) {
   }
 }
 
-export async function apiEditUser(params: any, token: any) {
+export async function apiEditUser(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3972,7 +3976,7 @@ export async function apiEditUser(params: any, token: any) {
   }
 }
 
-export async function apiReadAllRole(params: any, token: any) {
+export async function apiReadAllRole(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -3991,7 +3995,7 @@ export async function apiReadAllRole(params: any, token: any) {
   }
 }
 
-export async function apiChangePassword(params: any, token: any) {
+export async function apiChangePassword(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4010,7 +4014,7 @@ export async function apiChangePassword(params: any, token: any) {
   }
 }
 
-export async function apiGatewayLog(params: any, token: any) {
+export async function apiGatewayLog(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4029,83 +4033,7 @@ export async function apiGatewayLog(params: any, token: any) {
   }
 }
 
-export async function apiTipeAsetRead(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_read.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiTipeAsetInsert(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_insert.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiTipeAsetUpdate(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_update.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiTipeAsetDelete(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/tipe_aset_delete.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiAsetRead(params: any, token: any) {
+export async function apiAsetRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4124,7 +4052,83 @@ export async function apiAsetRead(params: any, token: any) {
   }
 }
 
-export async function apiAsetInsert(params: any, token: any) {
+export async function apiTipeAsetRead(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/tipe_aset_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiTipeAsetInsert(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/tipe_aset_insert.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiTipeAsetUpdate(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/tipe_aset_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiTipeAsetDelete(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/tipe_aset_delete.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiAsetInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4143,7 +4147,7 @@ export async function apiAsetInsert(params: any, token: any) {
   }
 }
 
-export async function apiAsetUpdate(params: any, token: any) {
+export async function apiAsetUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4162,7 +4166,7 @@ export async function apiAsetUpdate(params: any, token: any) {
   }
 }
 
-export async function apiAsetDelete(params: any, token: any) {
+export async function apiAsetDelete(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4181,7 +4185,7 @@ export async function apiAsetDelete(params: any, token: any) {
   }
 }
 
-export async function apiMatraRead(params: any, token: any) {
+export async function apiMatraRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4199,8 +4203,9 @@ export async function apiMatraRead(params: any, token: any) {
     throw error;
   }
 }
+
 //datasidang
-export async function apiSidangRead(params: any, token: any) {
+export async function apiSidangRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4219,7 +4224,7 @@ export async function apiSidangRead(params: any, token: any) {
   }
 }
 
-export async function apiSidangUpdate(params: any, token: any) {
+export async function apiSidangUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4238,7 +4243,7 @@ export async function apiSidangUpdate(params: any, token: any) {
   }
 }
 
-export async function apiSidangInsert(params: any, token: any) {
+export async function apiSidangInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4257,7 +4262,7 @@ export async function apiSidangInsert(params: any, token: any) {
   }
 }
 
-export async function apiSidangDelete(params: any, token: any) {
+export async function apiSidangDelete(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4276,7 +4281,7 @@ export async function apiSidangDelete(params: any, token: any) {
   }
 }
 
-export async function apiJenisSidangRead(params: any, token: any) {
+export async function apiJenisSidangRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4295,12 +4300,13 @@ export async function apiJenisSidangRead(params: any, token: any) {
   }
 }
 
-export async function apiJenisPidanaRead(params: any, token: any) {
+export async function apiJenisPidanaRead(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `jenis_pidana?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_pidana_read.php',
-      data: params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4314,7 +4320,7 @@ export async function apiJenisPidanaRead(params: any, token: any) {
   }
 }
 
-export async function apiJenisSidangInsert(params: any, token: any) {
+export async function apiJenisSidangInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4333,26 +4339,7 @@ export async function apiJenisSidangInsert(params: any, token: any) {
   }
 }
 
-export async function apiJenisSidangUpdate(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_persidangan_update.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiJenisSidangDelete(params: any, token: any) {
+export async function apiJenisSidangDelete(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4371,7 +4358,26 @@ export async function apiJenisSidangDelete(params: any, token: any) {
   }
 }
 
-export async function apiAhliRead(params: any, token: any) {
+export async function apiJenisSidangUpdate(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/jenis_persidangan_update.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function apiAhliRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4390,7 +4396,7 @@ export async function apiAhliRead(params: any, token: any) {
   }
 }
 
-export async function apiAhliInsert(params: any, token: any) {
+export async function apiAhliInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4409,7 +4415,7 @@ export async function apiAhliInsert(params: any, token: any) {
   }
 }
 
-export async function apiAhliUpdate(params: any, token: any) {
+export async function apiAhliUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4428,7 +4434,7 @@ export async function apiAhliUpdate(params: any, token: any) {
   }
 }
 
-export async function apiAhliDelete(params: any, token: any) {
+export async function apiAhliDelete(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4447,7 +4453,7 @@ export async function apiAhliDelete(params: any, token: any) {
   }
 }
 
-export async function apiJaksaRead(params: any, token: any) {
+export async function apiJaksaRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4466,7 +4472,7 @@ export async function apiJaksaRead(params: any, token: any) {
   }
 }
 
-export async function apiHakimRead(params: any, token: any) {
+export async function apiHakimRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4485,7 +4491,7 @@ export async function apiHakimRead(params: any, token: any) {
   }
 }
 
-export async function apiHakimInsert(params: any, token: any) {
+export async function apiHakimInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4504,7 +4510,7 @@ export async function apiHakimInsert(params: any, token: any) {
   }
 }
 
-export async function apiHakimUpdate(params: any, token: any) {
+export async function apiHakimUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4523,7 +4529,7 @@ export async function apiHakimUpdate(params: any, token: any) {
   }
 }
 
-export async function apiHakimDelete(params: any, token: any) {
+export async function apiHakimDelete(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4542,7 +4548,7 @@ export async function apiHakimDelete(params: any, token: any) {
   }
 }
 
-export async function apiStatusWbp(params: any, token: any) {
+export async function apiStatusWbp(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4561,7 +4567,7 @@ export async function apiStatusWbp(params: any, token: any) {
   }
 }
 
-export async function apiKasusRead(params: any, token: any) {
+export async function apiKasusRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4596,6 +4602,26 @@ export async function allKameraLemasmil() {
     throw error;
   }
 }
+
+export async function apiPengadilanMiliterRead(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: newWebservice + 'siram_api/pengadilan_militer_read.php',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function allKameraOtmil() {
   try {
     const response = await axios({
@@ -4613,7 +4639,7 @@ export async function allKameraOtmil() {
   }
 }
 
-export async function allKameraOtmilByLocation(token: any) {
+export async function allKameraOtmilByLocation(token) {
   const otmil = {
     lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
   };
@@ -4635,37 +4661,17 @@ export async function allKameraOtmilByLocation(token: any) {
   }
 }
 
-export async function apiPengadilanMiliterRead(params: any, token: any) {
-  try {
-    const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/pengadilan_militer_read.php',
-      data: params,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log(response);
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
-
-export async function apiGedungOtmilRead(params: any, token: any) {
+export async function apiGedungOtmilRead(params, token) {
   try {
     const response = await axios({
       method: 'get',
       url: `${newBaseUrl}/gedung_otmil`,
-      params: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.log(error);
@@ -4673,11 +4679,11 @@ export async function apiGedungOtmilRead(params: any, token: any) {
   }
 }
 
-export async function apiInsertGedungOtmil(params: any, token: any) {
+export async function apiInsertGedungOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/gedung_otmil_insert.php',
+      url: `${newBaseUrl}/gedung_otmil`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4690,7 +4696,7 @@ export async function apiInsertGedungOtmil(params: any, token: any) {
   }
 }
 
-export async function apiUpdateGedungOtmil(params: any, token: any) {
+export async function apiUpdateGedungOtmil(params, token) {
   try {
     const response = await axios({
       method: 'put',
@@ -4707,7 +4713,7 @@ export async function apiUpdateGedungOtmil(params: any, token: any) {
   }
 }
 
-export async function apiDeleteGedungOtmil(params: any, token: any) {
+export async function apiDeleteGedungOtmil(params, token) {
   try {
     const response = await axios({
       method: 'delete',
@@ -4724,7 +4730,7 @@ export async function apiDeleteGedungOtmil(params: any, token: any) {
   }
 }
 
-export async function apiLantaiOtmilRead(params: any, token: any) {
+export async function apiLantaiOtmilRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4742,7 +4748,7 @@ export async function apiLantaiOtmilRead(params: any, token: any) {
   }
 }
 
-export async function apiInsertLantaiOtmil(params: any, token: any) {
+export async function apiInsertLantaiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4760,7 +4766,7 @@ export async function apiInsertLantaiOtmil(params: any, token: any) {
   }
 }
 
-export async function apiUpdateLantaiOtmil(params: any, token: any) {
+export async function apiUpdateLantaiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4778,7 +4784,7 @@ export async function apiUpdateLantaiOtmil(params: any, token: any) {
   }
 }
 
-export async function apiDeleteLantaiOtmil(params: any, token: any) {
+export async function apiDeleteLantaiOtmil(params, token) {
   try {
     const response = await axios({
       method: 'post',
@@ -4796,10 +4802,44 @@ export async function apiDeleteLantaiOtmil(params: any, token: any) {
   }
 }
 
-export async function apiGetKameraTersimpan(params: any, token: any) {
+export async function apiReadKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'get',
+      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiCreateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiUpdateKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'put',
       url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
       data: params,
       headers: {
