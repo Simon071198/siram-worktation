@@ -5,7 +5,7 @@ export const webserviceurl = 'https://dev.transforme.co.id/';
 export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
 export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
-const newBaseUrl = "http://127.0.0.1:8000/api";
+const newBaseUrl = 'http://127.0.0.1:8000/api';
 
 function removeBase64Prefix(base64String) {
   // Find the index of the comma that separates the prefix from the actual base64 data
@@ -2562,12 +2562,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2732,7 +2732,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -4774,8 +4774,8 @@ export async function apiReadKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
-      data: params,
+      url: `${newBaseUrl}/kamera_tersimpan`,
+      params: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4791,7 +4791,7 @@ export async function apiCreateKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      url: `${newBaseUrl}/kamera_tersimpan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4808,7 +4808,24 @@ export async function apiUpdateKameraTersimpan(params, token) {
   try {
     const response = await axios({
       method: 'put',
-      url: 'http://127.0.0.1:8000/api/kamera_tersimpan',
+      url: `${newBaseUrl}/kamera_tersimpan`,
+      data: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function apiDeleteKameraTersimpan(params, token) {
+  try {
+    const response = await axios({
+      method: 'delete',
+      url: `${newBaseUrl}/kamera_tersimpan`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
