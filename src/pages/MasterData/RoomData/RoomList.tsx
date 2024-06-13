@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from '../../../common/Loader';
 import { Alerts } from './AlertRoom';
 import * as xlsx from 'xlsx';
@@ -106,18 +106,21 @@ const RoomList = () => {
   const handleSearchClick = async () => {
     let params = {
       filter: {
-        nama_ruangan_otmil: filter,
-        jenis_ruangan_otmil: filterJenisRuangan,
+        search: filter,
+        searchType: filterJenisRuangan,
+        page: currentPage,
+        pageSize: pageSize,
         // nama_lokasi_otmil: 'Cimahi',
+
       },
     };
     try {
-      const response = await apiReadAllRuanganOtmil(params, token);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-      if (response.data.status === 'OK') {
+      const response = await apiReadAllRuanganOtmil(params.filter, token);
+      if (response.status === 200) {
         const result = response.data;
         setData(result.records);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
@@ -165,9 +168,9 @@ const RoomList = () => {
 
   const fetchData = async () => {
     let params = {
-      filter: {
-        // nama_lokasi_otmil: 'Cimahi',
-      },
+      // filter: {
+      //   // nama_lokasi_otmil: 'Cimahi',
+      // },
       page: currentPage,
       pageSize: pageSize,
     };
