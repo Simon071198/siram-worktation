@@ -1,20 +1,21 @@
 import axios from 'axios';
+import { get } from 'react-hook-form';
 
 // export const webserviceurl = 'https://dev.transforme.co.id/';
 
 // export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
-// export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
+export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
 export const webserviceurl = 'http://localhost:8000/';
 const newBaseUrl: string = 'http://127.0.0.1:8000/api';
 
 export const newWebservice = 'http://localhost:8000/api/';
-export const newwebserviceurl = 'http://localhost:8000/api/';
+// export const newwebserviceurl = 'http://localhost:8000/api/';
 
 function getUrl(params) {
   const object = {
     page: params.page ? params.page : 1,
-    pageSize: params.pageSize ? params.pageSize : 1000000,
+    pageSize: params.pageSize ? params.pageSize : Infinity,
     ...params.filter,
   };
 
@@ -129,11 +130,14 @@ export async function apiReadKasus(params, token) {
 
 // api Penyidikan start
 export async function apiReadPenyidikan(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `penyidikan?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/penyidikan_read.php',
-      data: params,
+      method: 'get',
+      // url: newwebserviceurl + 'penyidikan',
+      url: url,
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3728,11 +3732,19 @@ export async function apiCreateAllStaff(params, token) {
 }
 
 export async function apiReadAllStaff(params, token) {
+  console.log('testingStaff');
+  const object = {
+    page: params.page ? params.page : 1,
+    pageSize: params.pageSize ? params.pageSize : Infinity,
+    ...params.filter,
+  };
+  console.log('objectStaff:', object);
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'petugas',
+      // url: newWebservice + 'petugas',
+      params: object,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

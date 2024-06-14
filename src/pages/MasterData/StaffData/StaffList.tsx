@@ -170,8 +170,9 @@ const StaffList = () => {
         page: currentPage,
         pageSize: pageSize,
       };
+      console.log('PARAMStaff', params);
       const response = await apiReadAllStaff(params, token);
-
+      console.log('ResponseData', response.data);
       if (response.data.status === 'OK') {
         const result = response.data;
         setData(result.records);
@@ -181,15 +182,15 @@ const StaffList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.response.status === 403 ? 'warning' : 'error',
+      //   title: e.response.status === 403 ? Error403Message : e.message,
+      // });
     }
   };
 

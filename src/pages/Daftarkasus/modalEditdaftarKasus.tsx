@@ -1063,7 +1063,7 @@ export const EditDaftarKasusModal = ({
                   </div>
                 </div>
                 <div className={`mt-4 grid grid-cols-2 gap-4`}>
-                  {/* <div className="form-group w-full ">
+                  <div className="form-group w-full ">
                     <label
                       className="  block text-sm font-medium text-black dark:text-white"
                       htmlFor="id"
@@ -1075,14 +1075,14 @@ export const EditDaftarKasusModal = ({
                       name="waktu_pelaporan_kasus"
                       placeholder="Jumlah Penyidikan"
                       onChange={handleChange}
-                      // value={
-                      //   defaultValue?.penyidikan[0]?.penyidikan_id === null
-                      //     ? '0'
-                      //     : defaultValue?.penyidikan?.length
-                      // }
+                      value={
+                        defaultValue?.penyidikan[0]?.penyidikan_id === null
+                          ? '0'
+                          : defaultValue?.penyidikan?.length
+                      }
                       disabled={isDetail || isEdit}
                     />
-                  </div> */}
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="form-group w-full ">
