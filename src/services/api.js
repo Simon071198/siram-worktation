@@ -111,9 +111,9 @@ export async function apiReadStatusWBP(params, token) {
 export async function apiReadKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/kasus`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -528,9 +528,9 @@ export async function apiDeleteDaftarKasus(params, token) {
 export async function apiReadBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -547,11 +547,11 @@ export async function apiReadBarangBukti(params, token) {
 export async function apiCreateBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -566,11 +566,11 @@ export async function apiCreateBarangBukti(params, token) {
 export async function apiUpdateBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_update.php',
+      method: 'POST',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -3689,9 +3689,9 @@ export async function apiReadAllKategoriJahat(params, token) {
 export async function apiReadAllJenisPerkara(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/jenis_perkara_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/jenis_perkara`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

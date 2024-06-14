@@ -110,9 +110,9 @@ export async function apiReadStatusWBP(params, token) {
 export async function apiReadKasus(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kasus_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/kasus`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -527,9 +527,9 @@ export async function apiDeleteDaftarKasus(params, token) {
 export async function apiReadBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -546,8 +546,8 @@ export async function apiReadBarangBukti(params, token) {
 export async function apiCreateBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -565,8 +565,8 @@ export async function apiCreateBarangBukti(params, token) {
 export async function apiUpdateBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_update.php',
+      method: 'POST',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1542,8 +1542,9 @@ export async function apiReadjenisperkara(params, token) {
   const url = newWebservice + `jenis_perkara?${queryString}`;
   try {
     const response = await axios({
-      method: 'get',
-      url: url,
+      method: 'GET',
+      url: `${newBaseUrl}/jenis_perkara`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2591,12 +2592,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-              {
-                match: {
-                  name: params.name,
-                },
+            {
+              match: {
+                name: params.name,
               },
-            ]
+            },
+          ]
           : [],
         must_not: [
           {
@@ -2761,7 +2762,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-          'location/locationDeviceStatusTotalSummaryByLocation.php',
+        'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
