@@ -286,11 +286,14 @@ export async function apiDeleteBAP(params, token) {
 
 // api PengadilanMiliter start
 export async function apiReadPengadilanMiliter(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `pengadilan_militer?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/pengadilan_militer_read.php',
-      data: params,
+      method: 'get',
+      // url: newwebserviceurl + 'siram_api/pengadilan_militer_read.php',
+      // data: params,
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -308,7 +311,8 @@ export async function apiCreatePengadilanMiliter(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/pengadilan_militer_insert.php',
+      // url: newwebserviceurl + 'siram_api/pengadilan_militer_insert.php',
+      url: newWebservice + `pengadilan_militer`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -326,8 +330,9 @@ export async function apiCreatePengadilanMiliter(params, token) {
 export async function apiUpdatePengadilanMiliter(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/pengadilan_militer_update.php',
+      method: 'put',
+      // url: newwebserviceurl + 'siram_api/pengadilan_militer_update.php',
+      url: newWebservice + `pengadilan_militer`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1408,9 +1413,10 @@ export async function apiCreateGelang(params, token) {
 export async function apiDeleteKategoriPerkara(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kategori_perkara_delete.php',
-      data: params,
+      method: 'delete',
+      // url: newwebserviceurl + 'siram_api/kategori_perkara_delete.php',
+      url: newwebserviceurl + `kategori_perkara?kategori_perkara_id=` + params.kategori_perkara_id,
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1427,8 +1433,9 @@ export async function apiDeleteKategoriPerkara(params, token) {
 export async function apiUpdateKategoriPerkara(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kategori_perkara_update.php',
+      method: 'put',
+      // url: newwebserviceurl + 'siram_api/kategori_perkara_update.php',
+      url: newwebserviceurl + `kategori_perkara`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1447,7 +1454,8 @@ export async function apiCreateKategoriPerkara(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kategori_perkara_insert.php',
+      // url: newwebserviceurl + 'siram_api/kategori_perkara_insert.php',
+      url: newWebservice + `kategori_perkara`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1466,9 +1474,9 @@ export async function apiCreateKategoriPerkara(params, token) {
 export async function apiReadKota(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kota_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/kota`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1485,9 +1493,9 @@ export async function apiReadKota(params, token) {
 export async function apiReadProvinsi(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/provinsi_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/provinsi`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2454,11 +2462,14 @@ export async function apiDeleteJenisJahat(params, token) {
 }
 
 export async function apiReadKategoriPerkara(params, token) {
+  const queryString = getUrl(params);
+  const url = newWebservice + `kategori_perkara?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kategori_perkara_read.php',
-      data: params,
+      method: 'get',
+      // url: newwebserviceurl + 'siram_api/kategori_perkara_read.php',
+      // data: params,
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3538,12 +3549,12 @@ export async function apiReadAllPangkat(params, token) {
   }
 }
 
-export async function apiKota(token) {
+export async function apiKota(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/kota_read.php',
-      data: {},
+      method: 'get',
+      url: `${newBaseUrl}/kota`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3557,12 +3568,12 @@ export async function apiKota(token) {
   }
 }
 
-export async function apiProvinsi(token) {
+export async function apiProvinsi(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/provinsi_read.php',
-      data: {},
+      method: 'get',
+      url: `${newBaseUrl}/provinsi`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

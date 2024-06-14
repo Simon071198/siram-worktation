@@ -98,6 +98,7 @@ const PengadilanMiliter = () => {
 
   const handleFilterChange = async (e: any) => {
     const newFilter = e.target.value;
+    console.log(newFilter);
     setFilter(newFilter);
     // try {
     //   const response = await apiReadPengadilanMiliter({ filter: { nama: newFilter } });

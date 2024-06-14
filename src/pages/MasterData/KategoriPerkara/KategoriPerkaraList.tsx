@@ -80,13 +80,19 @@ const KategoriPerkaraList = () => {
     try {
       let params = {
         filter: { nama_kategori_perkara: filter },
+        page: currentPage,
+        pageSize: pageSize,
       };
       const response = await apiReadKategoriPerkara(params, token);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-      if (response.status === 200) {
-        const result = response.data;
-        setData(result.records);
+      
+      if (response.data.status === 'OK') {
+        const result = response.data.records;
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+      } else if(response.data.status === 'error'){
+        const result = response.data.records;
+        setData(result);
       } else {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
