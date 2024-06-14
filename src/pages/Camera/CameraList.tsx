@@ -128,7 +128,12 @@ const CameraList = () => {
         nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
 
-      const response = await apiBuilding(dataUser);
+      console.log(dataUser, 'dataUser');
+
+      const response = await apiBuilding(
+        dataUser?.lokasi_otmil_id,
+        token?.token,
+      );
       console.log('response from apiBuilding', response);
 
       if (response.data.status === 'OK') {
