@@ -270,7 +270,7 @@ const DaftarKasus = () => {
       if (response.data.status === 'OK') {
         const result = response.data.records;
         setData(result);
-        console.log('result', result);
+        console.log('hasilResult', result);
         setPages(response.data.pagination.totalPages);
         setRows(response.data.pagination.totalRecords);
       } else {
