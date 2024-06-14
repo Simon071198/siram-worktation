@@ -203,7 +203,7 @@ const KameraList = () => {
 
   const fetchData = async () => {
     let params = {
-      filter: { lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot' },
+      filter: { lokasi_otmil_id: '890cc9b1-b01f-4d1f-9075-a6a96e851b12' },
       page: currentPage,
       pageSize: pageSize,
     };
