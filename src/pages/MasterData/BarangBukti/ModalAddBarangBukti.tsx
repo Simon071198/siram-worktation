@@ -68,6 +68,7 @@ export const AddBarangBuktiModal = ({
   const [dataKasus, setDataKasus] = useState([]);
   const [dataJenisPerkara, setDataJenisPerkara] = useState([]);
   const [filter, setFilter] = useState('');
+  const [gambarBarangBuktiPreview, setGambarBarangBuktiPreview] = useState('');
 
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -77,7 +78,7 @@ export const AddBarangBuktiModal = ({
     if (isEdit) {
       for (const [key, value] of Object.entries(formState)) {
         if (
-          key !== 'dokumen_barang_bukti' &&
+          // key !== 'dokumen_barang_bukti' &&
           key !== 'tanggal_pelimpahan_kasus' &&
           key !== 'nama_dokumen_barang_bukti' &&
           key !== 'longitude' &&
@@ -96,7 +97,7 @@ export const AddBarangBuktiModal = ({
     } else {
       for (const [key, value] of Object.entries(formState)) {
         if (
-          key !== 'dokumen_barang_bukti' &&
+          // key !== 'dokumen_barang_bukti' &&
           key !== 'tanggal_pelimpahan_kasus' &&
           key !== 'nama_dokumen_barang_bukti' &&
           key !== 'longitude' &&
@@ -142,22 +143,22 @@ export const AddBarangBuktiModal = ({
   const handleUpload = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
+      // const reader = new FileReader();
+      // console.log(reader.result, 'reader reader');
 
-      reader.onloadend = async () => {
-        setFormState({ ...formState, pdf_file_base64: reader.result });
+      // reader.onloadend = async () => {
+        setFormState({ ...formState, dokumen_barang_bukti: file });
 
         // setImagePreview(reader.result);
-        console.log(formState.pdf_file_base64, 'Preview');
-      };
-      reader.readAsDataURL(file);
+      //   console.log(formState.pdf_file_base64, 'Preview');
+      // };
+      // reader.readAsDataURL(file);
     }
   };
 
   const openNewWindow = () => {
     // URL to be opened in the new window
-    const url = `https://dev.transforme.co.id${defaultValue.dokumen_barang_bukti}`;
+    const url = `http://127.0.0.1:8000/storage/${defaultValue.dokumen_barang_bukti}`;
 
     // Specify window features (optional)
     const windowFeatures = 'width=600,height=400';
@@ -206,17 +207,9 @@ export const AddBarangBuktiModal = ({
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
-
-      reader.onloadend = async () => {
-        console.log(reader.result, 'reader.result reader.result');
-        setFormState({ ...formState, gambar_barang_bukti: reader.result });
-
-        // setImagePreview(reader.result);
-        console.log(formState.gambar_barang_bukti, 'imagePreview imagePreview');
-      };
-      reader.readAsDataURL(file);
+        setFormState({ ...formState, gambar_barang_bukti: file});
+        const imageUrl = URL.createObjectURL(file);
+        setGambarBarangBuktiPreview(imageUrl)
     }
   };
 
@@ -245,6 +238,7 @@ export const AddBarangBuktiModal = ({
       ...dataDefaultValue,
       gambar_barang_bukti: '',
     });
+    setGambarBarangBuktiPreview(null)
     const inputElement = document.getElementById(
       'image-upload',
     ) as HTMLInputElement;
@@ -548,7 +542,7 @@ export const AddBarangBuktiModal = ({
 
     driverObj.drive();
   };
-
+  console.log(gambarBarangBuktiPreview, "gambarBarangBuktiPreview")
   return (
     // <div
     //   ref={modalContainerRef}
@@ -634,10 +628,7 @@ export const AddBarangBuktiModal = ({
                         <div className="mt-4 flex flex-col items-center">
                           <img
                             className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                            src={
-                              'https://dev.transforme.co.id/siram_admin_api' +
-                              defaultValue.gambar_barang_bukti
-                            }
+                            src={`http://127.0.0.1:8000/storage/${formState.gambar_barang_bukti}`}
                             alt="Image Preview"
                           />
                         </div>
@@ -646,32 +637,28 @@ export const AddBarangBuktiModal = ({
                     {isEdit && (
                       <div className="orm-group w-full h-[330px] ">
                         <div className="mt-4 flex flex-col items-center relative h-64">
-                          {defaultValue.gambar_barang_bukti ? (
-                            formState.gambar_barang_bukti.startsWith(
-                              'data:image/',
-                            ) ? (
-                              <img
-                                className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={formState.gambar_barang_bukti}
-                                alt="Image Preview"
-                              />
-                            ) : (
-                              <img
-                                className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={
-                                  'http://dev.transforme.co.id/siram_admin_api' +
-                                  dataDefaultValue.gambar_barang_bukti
-                                }
-                                alt="Image Preview"
-                              />
-                            ) // Don't render anything if the image format is not as expected
+                        {defaultValue.gambar_barang_bukti ? (
+                          typeof formState.gambar_barang_bukti === 'string' ? (
+                            <img
+                              className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                              src={`http://127.0.0.1:8000/storage/${formState.gambar_barang_bukti}`}
+                              alt="Image Preview"
+                            />
                           ) : (
                             <img
-                              className="w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                              src="https://via.placeholder.com/200x200"
-                              alt="Placeholder"
+                              className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                              src={gambarBarangBuktiPreview}
+                              alt="Image Preview"
                             />
-                          )}
+                          )
+                        ) : (
+                          <img
+                            className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                            src={"https://via.placeholder.com/200x200"}
+                            alt="Placeholder"
+                          />
+                        )}
+
 
                           <input
                             accept="image/*"
@@ -726,7 +713,7 @@ export const AddBarangBuktiModal = ({
                           {formState.gambar_barang_bukti ? (
                             <img
                               className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                              src={formState.gambar_barang_bukti}
+                              src={gambarBarangBuktiPreview}
                               alt="Image Preview"
                             />
                           ) : (
@@ -990,7 +977,7 @@ export const AddBarangBuktiModal = ({
                         className="hidden"
                       />
                       {!isEdit && !isDetail ? (
-                        formState.pdf_file_base64 ? (
+                        formState.dokumen_barang_bukti ? (
                           <div className="grid grid-cols-1">
                             <div
                               className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
@@ -1084,7 +1071,7 @@ export const AddBarangBuktiModal = ({
                             <p className="mt-1.5">PDF</p>
                           </div>
                         )
-                      ) : formState.pdf_file_base64 ||
+                      ) : formState.dokumen_barang_bukti ||
                         dataDefaultValue.dokumen_barang_bukti ? (
                         <div className="grid grid-cols-1">
                           <div

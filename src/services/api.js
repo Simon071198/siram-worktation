@@ -595,7 +595,7 @@ export async function apiUpdateBarangBukti(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: `${newBaseUrl}/barang_bukti_kasus`,
+      url: `${newBaseUrl}/barang_bukti_kasus?_method=PUT`,
       data: params,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -613,8 +613,8 @@ export async function apiUpdateBarangBukti(params, token) {
 export async function apiDeleteBarangBukti(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/barang_bukti_kasus_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/barang_bukti_kasus`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
