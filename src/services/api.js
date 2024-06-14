@@ -1191,8 +1191,8 @@ export async function apiCreateAktifitasPengunjung(params, token) {
 export async function apiReadKamera(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dashboard_kamera_read.php',
+      method: 'get',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2603,12 +2603,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2773,7 +2773,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -2876,13 +2876,15 @@ export async function apiLocationDeviceList(params) {
     throw error;
   }
 }
-export async function apiBuilding(params) {
+export async function apiBuilding(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_read_by_location_ID.php',
-      data: {
-        filter: params,
+      method: 'get',
+      url: `${newBaseUrl}/kamera_read_by_location`,
+      params: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response, 'response');

@@ -37,7 +37,8 @@ export const ModalAddCameraSave: React.FC<AddKameraSaveModalProps> = ({
   const [pilihKamera, setPilihKamera] = useState('');
   const [cameraList, setCameraList] = useState([]);
   const [previousSelectedCamera, setPreviousSelectedCamera] = useState('');
-  console.log(cameraList);
+  let getToken = localStorage.getItem('token');
+  const token = JSON.parse(getToken);
 
   const modalStyles: any = {
     backdrop: {
@@ -70,8 +71,9 @@ export const ModalAddCameraSave: React.FC<AddKameraSaveModalProps> = ({
         nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
         nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
-      const response = await apiBuilding(dataUser);
+      const response = await apiBuilding(dataUser, token?.token);
       if (response.data.status === 'OK') {
+        console.log('building', response);
         setBuilding(response);
       } else {
         throw new Error(response.data.message);

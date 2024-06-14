@@ -86,7 +86,7 @@ const CameraListSave = () => {
 
   console.log(totalCameras, 'totalCameras');
   console.log(
-    currentCameras[0].map((kamera) => kamera.nama_kamera),
+    currentCameras[0]?.map((kamera) => kamera.nama_kamera),
     'currentCameras',
   );
   console.log(totalPages, 'totalPages');
@@ -245,7 +245,7 @@ const CameraListSave = () => {
       </div>
 
       <div>
-        {currentCameras[0].map((item: any, index: number) => (
+        {currentCameras[0]?.map((item: any, index: number) => (
           <div
             key={item.id}
             className={`rounded-sm border bg-meta-4-dark py-2 px-2 shadow-default backdrop-blur-sm relative ${columns && rows === 1 && ' h-[28rem]'} hover:bg-slate-700`}
