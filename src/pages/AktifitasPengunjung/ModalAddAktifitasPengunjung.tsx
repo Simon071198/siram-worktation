@@ -408,47 +408,55 @@ export const AddAktifitasPengunjung: React.FC<
     getTimeZone();
     const fetchData = async () => {
       let params = {
-        pageSize: 1000,
-        page: 1,
         filter: {
-          nama_lokasi_otmil: 'Cimahi',
+          // search: filter,
+          page: 1,
+          pageSize: 1000,
         },
       };
+  
       try {
-        const ruangan = await apiReadAllRuanganOtmil(params, token);
-        const ruanganlem = ruangan.data.records;
-        setruanganotmil(ruanganlem);
-
-        const lokasi = await apiReadAlllokasiOtmil(params, token);
-        const lokasilem = lokasi.data.records;
-        setlokasiotmil(lokasilem);
-
-        const zone = await apiReadZona(token);
-        const zona = zone.data.records;
-        setNamaZona(zona);
-
-        const petugasdata = await apiReadAllStaff(params, token);
-        setDataPetugas(petugasdata.data.records);
-
-        const wbp = await apiReadAllWBP(params, token);
-        setDataWBP(wbp.data.records);
-
-        const pengunjung = await apiReadVisitor(params, token);
-        setDatapengunjung(pengunjung.data.records);
-
+        const [
+          ruanganResponse,
+          lokasiResponse,
+          zoneResponse,
+          petugasResponse,
+          wbpResponse,
+          pengunjungResponse
+        ] = await Promise.all([
+          apiReadAllRuanganOtmil(params.filter, token),
+          apiReadAlllokasiOtmil(params.filter, token),
+          apiReadZona(token),
+          apiReadAllStaff(params, token),
+          apiReadAllWBP(params, token),
+          apiReadVisitor(params, token)
+        ]);
+  
+        setruanganotmil(ruanganResponse.data.records);
+        setlokasiotmil(lokasiResponse.data.records);
+        setNamaZona(zoneResponse.data.records);
+        setDataPetugas(petugasResponse.data.records);
+        setDataWBP(wbpResponse.data.records);
+        setDatapengunjung(pengunjungResponse.data.records);
+  
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
       } catch (e: any) {
-        if (e.response.status === 403) {
+        if (e.response && e.response.status === 403) {
           navigate('/auth/signin', {
             state: { forceLogout: true, lastPage: location.pathname },
           });
+          Alerts.fire({
+            icon: 'warning',
+            title: Error403Message,
+          });
+        } else {
+          Alerts.fire({
+            icon: 'error',
+            title: e.message,
+          });
         }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
       }
     };
     fetchData();

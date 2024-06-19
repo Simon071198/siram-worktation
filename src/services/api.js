@@ -1126,9 +1126,9 @@ export async function apiReadLogKamera(params) {
 export async function apiReadAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1145,8 +1145,8 @@ export async function apiReadAktifitasPengunjung(params, token) {
 export async function apiDeleteAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1164,8 +1164,8 @@ export async function apiDeleteAktifitasPengunjung(params, token) {
 export async function apiUpdateAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1593,8 +1593,8 @@ export async function apiReadjenisperkara(params, token) {
 export async function apiReadVisitor(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
+      method: 'GET',
+      url: `${newBaseUrl}/pengunjung`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
