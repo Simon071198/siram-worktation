@@ -22,14 +22,24 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('');
 
-  const [dataShift, setDataShift] = useState(
-    defaultValue || {
-      nama_shift: '',
-      waktu_mulai: '',
-      waktu_selesai: '',
-    },
-  );
+  const getTimeHourMinute = (time: string) => {
+    return time ? time.substring(0, 5) : '';
+  };
 
+  const [dataShift, setDataShift] = useState(() => {
+    return defaultValue
+      ? {
+          shift_id: defaultValue.id,
+          nama_shift: defaultValue.nama_shift || '',
+          waktu_mulai: getTimeHourMinute(defaultValue.waktu_mulai),
+          waktu_selesai: getTimeHourMinute(defaultValue.waktu_selesai),
+        }
+      : {
+          nama_shift: '',
+          waktu_mulai: '',
+          waktu_selesai: '',
+        };
+  });
   const [errors, setErrors] = useState({
     nama_shift: '',
     waktu_mulai: '',

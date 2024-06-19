@@ -1186,7 +1186,7 @@ export async function apiReadKamera(params, token) {
     const response = await axios({
       method: 'get',
       url: `${newBaseUrl}/kamera`,
-      data: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1203,8 +1203,8 @@ export async function apiReadKamera(params, token) {
 export async function apiDeleteKamera(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1222,8 +1222,8 @@ export async function apiDeleteKamera(params, token) {
 export async function apiUpdateKamera(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1242,7 +1242,7 @@ export async function apiCreateKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_insert.php',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1805,9 +1805,9 @@ export async function apiReadAllRuanganOtmil(params, token) {
 export async function apiReadAllShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/shift`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1820,15 +1820,15 @@ export async function apiReadAllShift(params, token) {
   }
 }
 //Create shift
-export async function apiCreatShift(params) {
+export async function apiCreateShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_insert.php',
-      data: params.params,
+      url: `${newBaseUrl}/shift`,
+      data: params,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${params.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response;
@@ -1842,8 +1842,8 @@ export async function apiCreatShift(params) {
 export async function apiDeleteShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1861,8 +1861,8 @@ export async function apiDeleteShift(params, token) {
 export async function apiEditShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',

@@ -23,7 +23,9 @@ import { Error403Message } from '../../../utils/constants';
 import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
 // Interface untuk objek 'params' dan 'item'
-
+interface Params {
+  filter: string;
+}
 interface Item {
   nama_kamera: string;
   url_rtsp: string;
@@ -149,15 +151,15 @@ const KameraList = () => {
   const handleSearchClick = async () => {
     let params = {
       filter: {
-        nama_kamera: filter,
+        search: filter,
         status_kamera: filterStatus,
-        lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
+        // lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
+        page: currentPage,
+        pageSize: pageSize,
       },
-      page: currentPage,
-      pageSize: pageSize,
     };
     try {
-      const response = await apiReadKamera(params, token);
+      const response = await apiReadKamera(params.filter, token);
       setPages(response.data.pagination.totalPages);
       setRows(response.data.pagination.totalRecords);
       if (response.status === 200) {
@@ -178,7 +180,7 @@ const KameraList = () => {
       });
     }
   };
-
+  console.log(data);
   const handleEnterKeyPress = (event: any) => {
     if (event.key === 'Enter') {
       handleSearchClick();
@@ -203,7 +205,7 @@ const KameraList = () => {
 
   const fetchData = async () => {
     let params = {
-      filter: { lokasi_otmil_id: '890cc9b1-b01f-4d1f-9075-a6a96e851b12' },
+      // filter: { lokasi_otmil_id: '890cc9b1-b01f-4d1f-9075-a6a96e851b12' },
       page: currentPage,
       pageSize: pageSize,
     };
@@ -275,7 +277,7 @@ const KameraList = () => {
             IpAddress: item?.ip_address,
             urlRTSP: item?.url_rtsp,
             deviceName: item?.nama_kamera,
-            deviceId: item?.deviceId,
+            deviceId: item?.kamera_id,
           },
         ],
       });
@@ -428,9 +430,9 @@ const KameraList = () => {
         'Zona',
       ],
       ...data.map((item: any) => [
-        item.deviceName,
+        item.nama_kamera,
         item.urlRTSP,
-        item.IpAddress,
+        item.ip_address,
         item.status_kamera === 'offline' ? 'offline' : item.status_kamera,
         item.merk,
         item.model,
@@ -481,7 +483,6 @@ const KameraList = () => {
               </div>
               <select
                 className="ml-2 w-3/6 text-sm rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-1 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary p-status"
-                name="status_gateway"
                 value={filterStatus}
                 onChange={handleFilterChangeStatus}
               >
@@ -601,7 +602,7 @@ const KameraList = () => {
                     className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                   >
                     <p className="text-black dark:text-white">
-                      {item.deviceName}
+                      {item.nama_kamera}
                     </p>
                   </div>
                   <div
@@ -609,7 +610,7 @@ const KameraList = () => {
                     className="cursor-pointer hidden items-center justify-center p-2.5 sm:flex xl:p-5"
                   >
                     <p className="text-black dark:text-white">
-                      {item.IpAddress}
+                      {item.ip_address}
                     </p>
                   </div>
                   <div

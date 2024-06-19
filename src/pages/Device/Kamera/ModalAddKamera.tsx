@@ -49,13 +49,13 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  console.log(defaultValue, 'deff');
   const [building, setBuilding] = useState([]);
   const [formState, setFormState] = useState<any>({
-    kamera_id: defaultValue?.deviceId ?? '',
-    nama_kamera: defaultValue?.deviceName ?? '',
-    url_rtsp: defaultValue?.urlRTSP ?? '',
-    ip_address: defaultValue?.IpAddress ?? '',
+    kamera_id: defaultValue?.kamera_id ?? '',
+    nama_kamera: defaultValue?.nama_kamera ?? '',
+    url_rtsp: defaultValue?.url_rtsp ?? '',
+    ip_address: defaultValue?.ip_address ?? '',
     status_kamera: defaultValue?.status_kamera ?? '',
     merk: defaultValue?.merk ?? '',
     model: defaultValue?.model ?? '',
@@ -217,15 +217,14 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
       let dataLocal = localStorage.getItem('dataUser');
       let dataUser = JSON.parse(dataLocal!);
       dataUser = {
-        lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
+        // lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
         lokasi_otmil_id: dataUser.lokasi_otmil_id,
-        nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
-        nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+        // nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+        // nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
       console.log('data user', dataUser);
 
-      const response = await apiBuilding(dataUser);
-      console.log('response from apiBuilding', response);
+      const response = await apiReadAllRuanganOtmil(dataUser, token);
 
       if (response.data.status === 'OK') {
         setBuilding(response);
@@ -246,6 +245,41 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
     }
     // setIsLoading(false);
   };
+  // let fetchData = async () => {
+  //   try {
+  //     let dataLocal = localStorage.getItem('dataUser');
+  //     let dataUser = JSON.parse(dataLocal!);
+  //     dataUser = {
+  //       lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
+  //       lokasi_otmil_id: dataUser.lokasi_otmil_id,
+  //       nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+  //       nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+  //     };
+  //     console.log('data user', dataUser);
+
+  //     const response = await apiBuilding(dataUser, token);
+
+  //     if (response.data.status === 'OK') {
+  //       setBuilding(response);
+  //     } else {
+  //       throw new Error(response.data.message);
+  //     }
+  //   } catch (e: any) {
+  //     console.log('error', e);
+  //     // if (e.response.status === 403) {
+  //     //   navigate('/auth/signin', {
+  //     //     state: { forceLogout: true, lastPage: location.pathname },
+  //     //   });
+  //     // }
+  //     // Alerts.fire({
+  //     //   icon: e.response.status === 403 ? 'warning' : 'error',
+  //     //   title: e.response.status === 403 ? Error403Message : e.message,
+  //     // });
+  //   }
+  //   // setIsLoading(false);
+  // };
+
+  console.log(building, 'building ini');
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -689,19 +723,20 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                           : formState.ruangan_otmil_id
                       }
                       // onChange={handleRuanganChange}
-                      options={building?.data?.records?.gedung?.flatMap(
-                        (gedung) =>
-                          gedung.lantai.flatMap((lantai) =>
-                            lantai.ruangan.map((ruangan) => ({
-                              value: ruangan.ruangan_otmil_id,
-                              label: ruangan.nama_ruangan_otmil,
-                            })),
-                          ),
-                      )}
-                      // options={ruanganotmil.map((item: any) => ({
-                      //   value: item.ruangan_otmil_id,
-                      //   label: item.nama_ruangan_otmil,
-                      // }))}
+                      // options={building?.data?.records?.gedung?.flatMap(
+                      //   (gedung) =>
+                      //     gedung.lantai.flatMap((lantai) =>
+                      //       lantai.ruangan.map((ruangan) => ({
+                      //         value: ruangan.ruangan_otmil_id,
+                      //         label: ruangan.nama_ruangan_otmil,
+                      //       })),
+                      //     ),
+                      // )}
+
+                      options={building?.data?.records.map((item: any) => ({
+                        value: item.ruangan_otmil_id,
+                        label: item.nama_ruangan_otmil,
+                      }))}
                       onChange={(e) => {
                         setFormState({
                           ...formState,
@@ -776,7 +811,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                       )}
                     </p>
                   </div> */}
-                  <div className="form-group h-22 w-full">
+                  {/* <div className="form-group h-22 w-full">
                     <label htmlFor="nama_zona">Zona :</label>
                     <input
                       type="text"
@@ -793,7 +828,7 @@ export const AddKamera: React.FC<AddKameraModalProps> = ({
                         item === 'nama_zona' ? 'Masukan Zona' : '',
                       )}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className={` ${isDetail ? 'h-auto' : 'h-15'}  mt-3`}>
