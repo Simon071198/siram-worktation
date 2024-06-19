@@ -62,6 +62,7 @@ const InventarisList = () => {
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [gambarVisitorPreview, setGambarVisitorPreview] = useState('');
 
   console.log(editData, 'ini data EDIT BOSS QQ');
 
@@ -526,6 +527,7 @@ const InventarisList = () => {
           ) : (
             <>
               {data.map((item: any) => {
+                console.log(item, 'dataku')
                 return (
                   <div>
                     <div
@@ -538,10 +540,7 @@ const InventarisList = () => {
                         className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
                       >
                         <img
-                          src={
-                            'https://dev.transforme.co.id/siram_admin_api' +
-                            item.foto_barang
-                          }
+                          src={`http://127.0.0.1:8000/storage/${item.foto_barang}`}
                           alt="picture"
                           className="w-20 h-20 object-fit border-slate-400 border"
                         ></img>

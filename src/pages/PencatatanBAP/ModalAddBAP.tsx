@@ -35,9 +35,11 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
       link_dokumen_bap: '',
       penyidikan_id: '',
       nomor_penyidikan: '',
-      pdf_file_base64: '',
+      link_dokumen_bap: '',
     },
   );
+  console.log(defaultValue, "defaultValue")
+  console.log(formState, "formState")
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -190,50 +192,41 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
     }
   };
 
-  useEffect(() => {
-    checkFileType(formState.link_dokumen_bap);
+  // useEffect(() => {
+  //   checkFileType(formState.link_dokumen_bap);
 
-    if (isDetail || isEdit) {
-      setFormState((prevFormState: any) => ({
-        ...prevFormState,
-        pdf_file_base64: prevFormState.link_dokumen_bap,
-      }));
-    }
-  }, [formState.link_dokumen_bap]);
+  //   if (isDetail || isEdit) {
+  //     setFormState((prevFormState: any) => ({
+  //       ...prevFormState,
+  //       link_dokumen_bap: prevFormState.link_dokumen_bap,
+  //     }));
+  //   }
+  // }, [formState.link_dokumen_bap]);
 
-  const handleUpload = (e: any) => {
-    const file = e.target.files[0];
-    const maxSizeInBytes = 10 * 1024 * 1024; // 5 MB, adjust as needed
+   const handleUpload = (e: any) => {
+     const file = e.target.files[0];
+     console.log(file, "file")
+    // const maxSizeInBytes = 10 * 1024 * 1024; // 5 MB, adjust as needed
 
     if (file) {
-      if (file.size > maxSizeInBytes) {
-        // File size exceeds the limit, handle the error as you wish
-        console.log('File size exceeds the limit.');
-        toast.error(
-          'File size exceeds limit of 10MB. Please reduce file size and try again.',
-        );
-        return;
-      }
-
-      const reader = new FileReader();
-
-      reader.onloadend = async () => {
-        await setFormState({ ...formState, pdf_file_base64: reader.result });
-        setPdf(reader.result as string)
-        // console.log(formState.pdf_file_base64, 'Preview');
-        // console.log(file, 'Preview');
-        // console.log(reader.result, 'Preview');
-      };
-
-      reader.readAsDataURL(file);
-      // console.log(formState.pdf_file_base64, 'Preview');
+      // if (file.size > maxSizeInBytes) {
+      //   // File size exceeds the limit, handle the error as you wish
+      //   console.log('File size exceeds the limit.');
+      //   toast.error(
+      //     'File size exceeds limit of 10MB. Please reduce file size and try again.',
+      //   );
+      //   return;
+      // }
+      
+         setFormState({ ...formState, link_dokumen_bap: file });
+      
     }
   };
 
   // const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
   const openNewWindow = () => {
     // URL to be opened in the new window
-    const url = `https://dev.transforme.co.id${formState.link_dokumen_bap}`;
+    const url = `http://127.0.0.1:8000/storage/${formState.link_dokumen_bap}`;
 
     // Specify window features (optional)
     const windowFeatures = 'width=600,height=400';
@@ -243,7 +236,7 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
   };
 
   const handleRemoveDoc = () => {
-    setFormState({ ...formState, pdf_file_base64: '' });
+    setFormState({ ...formState, link_dokumen_bap: '' });
     const inputElement = document.getElementById(
       'fileUpload',
     ) as HTMLInputElement;
@@ -750,8 +743,8 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                       // className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                       className="hidden"
                     />
-                    {formState.pdf_file_base64 ? (
-                      console.log(formState.pdf_file_base64),
+                    {formState.link_dokumen_bap ? (
+                      console.log(formState.link_dokumen_bap),
                       <div className="grid grid-cols-1">
                         <div
                           className={`absolute top-0 right-0  bg-red-500 flex items-center  rounded-bl  ${
@@ -863,12 +856,12 @@ export const AddBAPModal: React.FC<AddBAPModalProps> = ({
                   </div>
                   <p className="error-text">
                     {submitted &&
-                      !formState.pdf_file_base64 &&
+                      !formState.link_dokumen_bap &&
                       'Masukan Dokumen BAP'}
                   </p>
                   {/* <p className="error-text">
                     {errors.map((item) =>
-                      item == 'pdf_file_base64' ? 'Masukan dokumen sidang' : '',
+                      item == 'link_dokumen_bap' ? 'Masukan dokumen sidang' : '',
                     )}
                   </p> */}
                 </div>
