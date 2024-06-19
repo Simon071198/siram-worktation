@@ -170,23 +170,23 @@ export const AddStaffModal = ({
     ]).then(() => setIsLoading(false));
   }, []);
 
-  console.log(formState, 'formstate staff')
+  console.log(formState, 'formstate staff');
 
   const validateForm = () => {
     let errorFields = [];
 
     for (const [key, value] of Object.entries(formState)) {
-      if (
-        key !== 'lokasi_lemasmil_id' && 
-        key !== 'foto_wajah_fr' &&
-        key !== 'nomor_petugas' &&
-        key !== 'grup_petugas_id' &&
-        key !== 'nama_grup_petugas' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
-      ) {
-        if (!value) {
-          errorFields.push(key);
-        }
-      }
+      // if (
+      //   key !== 'lokasi_lemasmil_id' &&
+      //   key !== 'foto_wajah_fr' &&
+      //   key !== 'nomor_petugas' &&
+      //   key !== 'grup_petugas_id' &&
+      //   key !== 'nama_grup_petugas' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+      // ) {
+      //   if (!value) {
+      //     errorFields.push(key);
+      //   }
+      // }
     }
 
     if (errorFields.length > 0) {
@@ -199,7 +199,7 @@ export const AddStaffModal = ({
     return true;
   };
 
-  console.log(validateForm, 'validate form')
+  console.log(validateForm, 'validate form');
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -480,6 +480,7 @@ export const AddStaffModal = ({
   };
 
   const kotaData = async () => {
+    console.log(token, 'tokenJakarta');
     await apiKota(token)
       .then((res) => {
         setKota(res);
