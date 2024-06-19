@@ -372,6 +372,34 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
     }
   };
 
+  // const handleWaktuMulai = (e: any) => {
+  //   console.log('test', e);
+
+  //   const timeZone = dayjs().format('Z');
+  //   let zonaWaktu;
+  //   switch (timeZone) {
+  //     case '+07:00':
+  //       zonaWaktu = 'WIB';
+  //       break;
+  //     case '+08:00':
+  //       zonaWaktu = 'WITA';
+  //       break;
+  //     case '+09:00':
+  //       zonaWaktu = 'WIT';
+  //       break;
+  //     default:
+  //       zonaWaktu = 'Zona Waktu Tidak Dikenal';
+  //   }
+
+  //   // console.log('Formatted Date:', formattedDate);
+  //   console.log('Zona Waktu:', zonaWaktu);
+  //   setFormState({
+  //     ...formState,
+  //     waktu_mulai_kegiatan: dayjs(e).format('Y-m-d H:i:s'),
+  //     zona_waktu: zonaWaktu,
+  //   });
+  // };
+
   const handleWaktuMulai = (e: any) => {
     console.log('test', e);
 
@@ -391,14 +419,17 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
 
-    // console.log('Formatted Date:', formattedDate);
+    const formattedDate = dayjs(e).format('YYYY-MM-DD HH:mm:ss');
+    console.log('Formatted Date:', formattedDate);
     console.log('Zona Waktu:', zonaWaktu);
+
     setFormState({
       ...formState,
-      waktu_mulai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      waktu_mulai_kegiatan: formattedDate,
       zona_waktu: zonaWaktu,
     });
   };
+
 
   const handleWaktuSelesai = (e: any) => {
     console.log('1213', e);
@@ -418,9 +449,13 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
       default:
         zonaWaktu = 'Zona Waktu Tidak Dikenal';
     }
+
+        const formattedDate = dayjs(e).format('YYYY-MM-DD HH:mm:ss');
+        console.log('Formatted Date:', formattedDate);
+        console.log('Zona Waktu:', zonaWaktu);
     setFormState({
       ...formState,
-      waktu_selesai_kegiatan: dayjs(e).format('YYYY-MM-DDTHH:mm'),
+      waktu_selesai_kegiatan: formattedDate,
       zona_waktu: zonaWaktu,
     });
   };
@@ -751,12 +786,15 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         }
                         // onChange={handleWaktuMulai}
                         onChange={(date) => {
+                          const formattedDate = dayjs(date).format(
+                            'YYYY-MM-DD HH:mm:ss',
+                          );
                           handleWaktuMulai(date); // Panggil handleWaktuMulai
                           handleChange({
                             // Panggil handleChange
                             target: {
                               name: 'waktu_mulai_kegiatan',
-                              value: date,
+                              value: formattedDate,
                             },
                           });
                         }}
@@ -811,12 +849,15 @@ export const AddEventModal: React.FC<AddVisitorModalProps> = ({
                         }
                         // onChange={handleWaktuSelesai}
                         onChange={(date) => {
+                          const formattedDate = dayjs(date).format(
+                            'YYYY-MM-DD HH:mm:ss',
+                          );
                           handleWaktuSelesai(date); // Panggil handleWaktuMulai
                           handleChange({
                             // Panggil handleChange
                             target: {
                               name: 'waktu_selesai_kegiatan',
-                              value: date,
+                              value: formattedDate,
                             },
                           });
                         }}
