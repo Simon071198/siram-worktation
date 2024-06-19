@@ -11,22 +11,22 @@ interface Item {
   nama: string;
 }
 
-
 const DataUmum = ({ dataperkara }) => {
+  console.log('dataPerkara', dataperkara);
   const [states, setState] = useState<Item[]>([]);
   const [pihakTerlibat, setPihakTerlibat] = useState<Item[]>([]);
   const handlePihatTerlibat = () => {
     const saksi = dataperkara.saksi.map((data: { nama_saksi: string }) => ({
-      nama: `${data.nama_saksi} (Saksi)`
+      nama: `${data.nama_saksi} (Saksi)`,
     }));
 
-    const wbp = dataperkara.wbp_profile.map((data: {nama: string}) => ({
-      nama: `${data.nama} (Tersangka)`
+    const wbp = dataperkara.wbp_profile.map((data: { nama: string }) => ({
+      nama: `${data.nama} (Tersangka)`,
     }));
 
     const combined = [...saksi, ...wbp];
     setPihakTerlibat(combined);
-  }
+  };
 
   useEffect(() => {
     handlePihatTerlibat();
@@ -173,13 +173,13 @@ const DataUmum = ({ dataperkara }) => {
                 </tr>
               </thead>
               <tbody className="text-center items-center">
-              {pihakTerlibat.map((data: { nama: string }, index: number) => (
-                <tr key={index}>
-                  <td className="bg-gray-3 dark:bg-slate-300 p-2 border-b">
-                    {data.nama}
-                  </td>
-                </tr>
-              ))}
+                {pihakTerlibat.map((data: { nama: string }, index: number) => (
+                  <tr key={index}>
+                    <td className="bg-gray-3 dark:bg-slate-300 p-2 border-b">
+                      {data.nama}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

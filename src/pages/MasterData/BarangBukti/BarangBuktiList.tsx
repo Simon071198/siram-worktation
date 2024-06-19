@@ -146,17 +146,15 @@ const AhliList = () => {
   const handleSearchClick = async () => {
     try {
       let params = {
-        filter: {
-          nama_bukti_kasus: filter,
-          nama_kasus: filterKasus,
-          nama_jenis_perkara: filterPerkara,
-        },
+        nama_barang: filter,
+        nama_kasus: filterKasus,
+        nama_perkara: filterPerkara,
         page: currentPage,
         pageSize: pageSize,
       };
       const response = await apiReadBarangBukti(params, token);
 
-      if (response.data.status === 'OK') {
+      if (response.status === 200) {
         const result = response.data;
         setData(result.records);
         setPages(response.data.pagination.totalPages);
@@ -208,15 +206,17 @@ const AhliList = () => {
   }, [filter, filterJabatan, filterPangkat, filterKasus, filterPerkara]); // [] menandakan bahwa useEffect hanya akan dijalankan sekali saat komponen dimuat
 
   const fetchData = async () => {
-    let param = {
-      filter: ' ',
+    let params = {
+      nama_barang: filter,
+      nama_kasus: filterKasus,
+      nama_perkara: filterPerkara,
       page: currentPage,
       pageSize: pageSize,
     };
 
     setIsLoading(true);
     try {
-      const response = await apiReadBarangBukti(param, token);
+      const response = await apiReadBarangBukti(params, token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -409,6 +409,7 @@ const AhliList = () => {
     );
   };
 
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -573,6 +574,7 @@ const AhliList = () => {
           ) : (
             <>
               {data.map((item: any) => {
+                
                 return (
                   <div>
                     {isOperator ? (
@@ -586,8 +588,8 @@ const AhliList = () => {
                             className="flex items-center justify-center gap-3 p-2.5 xl:p-5 cursor-pointer"
                           >
                             <img
-                              src={
-                                'https://dev.transforme.co.id/siram_admin_api' +
+                               src={
+                                'http://127.0.0.1:8000/storage/' +
                                 item.gambar_barang_bukti
                               }
                               alt="picture"
@@ -661,7 +663,7 @@ const AhliList = () => {
                           >
                             <img
                               src={
-                                'https://dev.transforme.co.id/siram_admin_api' +
+                                'http://127.0.0.1:8000/storage/' +
                                 item.gambar_barang_bukti
                               }
                               alt="picture"
