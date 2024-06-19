@@ -13,6 +13,7 @@ import { HiQuestionMarkCircle } from 'react-icons/hi2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alerts } from './AlertGelang';
 import { Error403Message } from '../../../utils/constants';
+import { Label } from '@windmill/react-ui';
 
 // interface
 interface AddGelangModalProps {
@@ -631,6 +632,15 @@ export const AddGelang: React.FC<AddGelangModalProps> = ({
                       className="basic-single p-otmil"
                       classNamePrefix="select"
                       isSearchable
+                      isClearable={true}
+                      defaultValue={
+                        isDetail || isEdit
+                        ? {
+                          value: formState.ruangan_otmil_id,
+                          label: formState.nama_ruangan_otmil
+                        }
+                        : formState.ruangan_otmil_id
+                      }
                       isDisabled={isDetail}
                       styles={customStyles}
                       name="ruangan_otmil_id"

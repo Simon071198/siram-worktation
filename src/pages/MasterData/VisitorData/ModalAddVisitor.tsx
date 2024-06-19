@@ -60,6 +60,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
       nik: '',
     },
   );
+
   const [kota, setkota] = useState<Kota[]>([]);
   const [provinsi, setprovinsi] = useState<Pronvisi[]>([]);
   const [nameWBP, setnameWBP] = useState<namawbp[]>([]);
@@ -68,6 +69,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   const [buttonLoad, setButtonLoad] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('');
+  const [gambarVisitorPreview, setGambarVisitorPreview] = useState('');
+  const [dataDefaultValue, setDataDefaultValue] = useState(defaultValue);
 
   const tokenItem = localStorage.getItem('token');
   const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
@@ -97,7 +100,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (
-        key !== '' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+        key !== 'foto_wajah' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
       ) {
         if (!value) {
           errorFields.push(key);
@@ -205,7 +208,9 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
           element: `${isEdit ? '#b-ubah' : '#b-tambah'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'}`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data pengunjung`,
+            description: `Klik untuk ${
+              isEdit ? 'mengubah' : 'menambahkan'
+            } data pengunjung`,
           },
         },
       ],
@@ -245,22 +250,30 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
     setFormState({ ...formState, kota_id: e?.value });
   };
 
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     console.log(reader.result, 'reader reader');
+
+  //     reader.onloadend = async () => {
+  //       console.log(reader.result, 'reader.result reader.result');
+
+  //       const base64String = reader.result as string;
+  //       await setFormState({ ...formState, foto_wajah: reader.result });
+
+  //       // setImagePreview(reader.result);
+  //       console.log(formState.foto_wajah, 'imagePreview imagePreview');
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
-
-      reader.onloadend = async () => {
-        console.log(reader.result, 'reader.result reader.result');
-
-        const base64String = reader.result as string;
-        await setFormState({ ...formState, foto_wajah: reader.result });
-
-        // setImagePreview(reader.result);
-        console.log(formState.foto_wajah, 'imagePreview imagePreview');
-      };
-      reader.readAsDataURL(file);
+      setFormState({ ...formState, foto_wajah: file });
+      const imageUrl = URL.createObjectURL(file);
+      setGambarVisitorPreview(imageUrl);
     }
   };
 
@@ -346,7 +359,16 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
   }
 
   const handleRemoveFoto = () => {
+    // if (isEdit && !formState.gambar_barang_bukti) {
+    //   setFormState({ ...formState, gambar_barang_bukti: '' });
+    // }
+
     setFormState({ ...formState, foto_wajah: '' });
+    setDataDefaultValue({
+      ...dataDefaultValue,
+      foto_wajah: '',
+    });
+    setGambarVisitorPreview(null)
     const inputElement = document.getElementById(
       'image-upload',
     ) as HTMLInputElement;
@@ -400,10 +422,10 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -460,6 +482,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
     },
   };
 
+  console.log(gambarVisitorPreview, 'gambar');
+
   return (
     <div>
       <div style={modalStyles.backdrop}></div>
@@ -511,8 +535,8 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                     {isDetail
                       ? 'Detail data Pengunjung'
                       : isEdit
-                        ? 'Edit data Pengunjung'
-                        : 'Tambah data Pengunjung'}
+                      ? 'Edit data Pengunjung'
+                      : 'Tambah data Pengunjung'}
                   </h3>
                 </div>
 
@@ -555,10 +579,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                           <div className=" mt-6 flex flex-col items-center">
                             <img
                               className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                              src={
-                                'https://dev.transforme.co.id/siram_admin_api/' +
-                                formState.foto_wajah
-                              }
+                              src={`http://127.0.0.1:8000/storage/${formState.foto_wajah}`}
                               alt="Image Preview"
                             />
                           </div>
@@ -568,20 +589,17 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                       {isEdit && (
                         <div className="form-group w-full h-[330px] ">
                           <div className="mt-6 flex flex-col items-center">
-                            {formState.foto_wajah ? (
-                              formState.foto_wajah.startsWith('data:image') ? (
+                            {defaultValue.foto_wajah ? (
+                              typeof formState.foto_wajah === 'string' ? (
                                 <img
                                   className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                  src={formState.foto_wajah}
+                                  src={`http://127.0.0.1:8000/storage/${formState.foto_wajah}`}
                                   alt="Image Preview"
                                 />
                               ) : (
                                 <img
                                   className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                  src={
-                                    'https://dev.transforme.co.id/siram_admin_api/' +
-                                    formState.foto_wajah
-                                  }
+                                  src={gambarVisitorPreview}
                                   alt="Image Preview"
                                 />
                               ) // Don't render anything if the image format is not as expected
@@ -641,7 +659,7 @@ export const AddVisitorModal: React.FC<AddVisitorModalProps> = ({
                             {formState.foto_wajah ? (
                               <img
                                 className="object-cover w-[200px] h-[300px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={formState.foto_wajah}
+                                src={gambarVisitorPreview}
                                 alt="Image Preview"
                               />
                             ) : (
