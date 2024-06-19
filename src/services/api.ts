@@ -3562,7 +3562,7 @@ export async function apiKota(params, token) {
     const response = await axios({
       method: 'post',
       url: `${newBaseUrl}/kota`,
-      data: {},
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

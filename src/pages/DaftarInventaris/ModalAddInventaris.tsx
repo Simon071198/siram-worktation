@@ -48,7 +48,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
       kondisi: '',
       keterangan: '',
       tanggal_masuk: '',
-      foto_barang: '',
+      image: null,
       garansi: '',
       merek: '',
     },
@@ -84,7 +84,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      setFormState({ ...formState, foto_barang: file });
+      setFormState({ ...formState, image: file });
       const imageUrl = URL.createObjectURL(file);
       setGambarAsetPreview(imageUrl);
     }
@@ -182,7 +182,9 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
           element: `${isEdit ? '#t-data-ubah' : '#t-data'}`,
           popover: {
             title: `${isEdit ? 'Ubah' : 'Tambah'} Data Inventaris`,
-            description: `Klik untuk ${isEdit ? 'mengubah' : 'menambahkan'} data inventaris`,
+            description: `Klik untuk ${
+              isEdit ? 'mengubah' : 'menambahkan'
+            } data inventaris`,
           },
         },
       ],
@@ -236,10 +238,10 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-            ? ''
-            : isFocused
-              ? 'rgb(51, 133, 255)'
-              : undefined,
+          ? ''
+          : isFocused
+          ? 'rgb(51, 133, 255)'
+          : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -277,12 +279,12 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   };
 
   const handleRemoveFoto = () => {
-    setFormState({ ...formState, foto_barang: '' });
+    setFormState({ ...formState, image: '' });
     setDataDefaultValue({
       ...dataDefaultValue,
-      foto_barang: '',
+      image: '',
     });
-    setGambarAsetPreview(null)
+    setGambarAsetPreview(null);
     const inputElement = document.getElementById(
       'image-upload',
     ) as HTMLInputElement;
@@ -306,7 +308,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
         key !== 'status_zona_lemasmil' &&
         key !== 'updated_at' &&
         key !== 'garansi' &&
-        // key !== 'nama_tipe' &&
+        key !== 'nama_tipe' &&
         key !== 'ruangan_lemasmil_id'
       ) {
         if (!value) {
@@ -334,6 +336,15 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
     console.log(formState, 'formState');
 
     if (!validateForm()) return;
+
+    const formData = new FormData();
+    for (const key in formState) {
+      formData.append(key, formState[key]);
+    }
+
+    // const formData = new FormData();
+    // formData.append('image', formState.image);
+
     setButtonLoad(true);
     onSubmit(formState).then(() => setButtonLoad(false));
   };
@@ -456,8 +467,8 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     {isDetail
                       ? 'Detail Data Inventaris'
                       : isEdit
-                        ? 'Edit Data Inventaris'
-                        : 'Tambah Data Inventaris'}
+                      ? 'Edit Data Inventaris'
+                      : 'Tambah Data Inventaris'}
                   </h3>
                 </div>
 
@@ -498,7 +509,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         <div className="mt-4 flex flex-col items-center">
                           <img
                             className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                            src={`http://127.0.0.1:8000/storage/${formState.foto_barang}`}
+                            src={`http://127.0.0.1:8000/storage/${formState.image}`}
                             alt="Image Preview"
                           />
                         </div>
@@ -507,19 +518,17 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     {isEdit && (
                       <div className="orm-group w-full h-[330px] ">
                         <div className="mt-4 flex flex-col items-center">
-                          {formState.foto_barang ? (
-                            typeof formState.foto_barang === 'string' ? (
+                          {formState.image ? (
+                            typeof formState.image === 'string' ? (
                               <img
                                 className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={`http://127.0.0.1:8000/storage/${formState.foto_barang}`}
+                                src={`http://127.0.0.1:8000/storage/${formState.image}`}
                                 alt="Image Preview"
                               />
                             ) : (
                               <img
                                 className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={
-                                  gambarAsetPreview
-                                }
+                                src={gambarAsetPreview}
                                 alt="Image Preview"
                               />
                             ) // Don't render anything if the image format is not as expected
@@ -566,9 +575,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'image'
-                                ? 'Masukan foto barang'
-                                : '',
+                              item === 'image' ? 'Masukan foto barang' : '',
                             )}
                           </p>
                         </div>
@@ -577,12 +584,20 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                     {!isEdit && !isDetail && (
                       <div className="form-group w-full h-[330px] ">
                         <div className=" mt-4 flex flex-col items-center">
-                          {formState.foto_barang ? (
-                            <img
-                              className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                              src={gambarAsetPreview}
-                              alt="Image Preview"
-                            />
+                          {formState.image ? (
+                            typeof formState.image === 'string' ? (
+                              <img
+                                className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                                src={`http://127.0.0.1:8000/storage/${formState.image}`}
+                                alt="Image Preview"
+                              />
+                            ) : (
+                              <img
+                                className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
+                                src={gambarAsetPreview}
+                                alt="Image Preview"
+                              />
+                            )
                           ) : (
                             <img
                               className="w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
@@ -626,9 +641,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'image'
-                                ? 'Masukan foto barang'
-                                : '',
+                              item === 'image' ? 'Masukan foto barang' : '',
                             )}
                           </p>
                         </div>

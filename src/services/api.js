@@ -4181,7 +4181,7 @@ export async function apiAsetInsert(params, token) {
       url: `${newBaseUrl}/aset`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -4200,7 +4200,7 @@ export async function apiAsetUpdate(params, token) {
       url: `${newBaseUrl}/aset?_method=PUT`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });

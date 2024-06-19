@@ -62,6 +62,7 @@ const InventarisList = () => {
   const [pages, setPages] = useState(1);
   const [rows, setRows] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [gambarVisitorPreview, setGambarVisitorPreview] = useState('');
 
   console.log(editData, 'ini data EDIT BOSS QQ');
 
