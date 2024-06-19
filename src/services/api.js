@@ -1720,11 +1720,14 @@ export async function apiReadAllGelang(params) {
 
 // Event API
 export async function apiReadAllEvent(params, token) {
+  // const queryString = getUrl(params);
+  // const url = newWebservice + `kegiatan?${queryString}`;
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/kegiatan_read.php',
-      data: params,
+      method: 'get',
+      url: newwebserviceurl + 'kegiatan',
+      params,
+      // url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1740,9 +1743,10 @@ export async function apiReadAllEvent(params, token) {
 export async function apiUpdateAllEvent(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kegiatan_update.php',
-      data: params,
+      method: 'put',
+      // url: newwebserviceurl + 'siram_api/kegiatan_update.php',
+      url: newWebservice + `kegiatan`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1758,9 +1762,10 @@ export async function apiUpdateAllEvent(params, token) {
 export async function apiDeleteAllEvent(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/kegiatan_delete.php',
-      data: params,
+      method: 'delete',
+      // url: newWebservice + 'siram_api/kegiatan_delete.php',
+      // data: params,
+      url: newwebserviceurl + `kegiatan?kegiatan_id=` + params.kegiatan_id,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1777,8 +1782,9 @@ export async function apiCreateAllEvent(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kegiatan_insert.php',
-      data: params,
+      // url: newwebserviceurl + 'siram_api/kegiatan_insert.php',
+      url: newWebservice + `kegiatan`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
