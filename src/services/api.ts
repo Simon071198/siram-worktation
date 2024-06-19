@@ -214,9 +214,9 @@ export async function apiDeletePenyidikan(params, token) {
 export async function apiReadBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/dokumen_bap`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -233,11 +233,11 @@ export async function apiReadBAP(params, token) {
 export async function apiCreateBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -252,11 +252,11 @@ export async function apiCreateBAP(params, token) {
 export async function apiUpdateBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -271,8 +271,8 @@ export async function apiUpdateBAP(params, token) {
 export async function apiDeleteBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1106,9 +1106,9 @@ export async function apiReadLogKamera(params) {
 export async function apiReadAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1125,8 +1125,8 @@ export async function apiReadAktifitasPengunjung(params, token) {
 export async function apiDeleteAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1144,8 +1144,8 @@ export async function apiDeleteAktifitasPengunjung(params, token) {
 export async function apiUpdateAktifitasPengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/aktivitas_pengunjung_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/aktivitas_pengunjung`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1577,8 +1577,8 @@ export async function apiReadjenisperkara(params, token) {
 export async function apiReadVisitor(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
+      method: 'GET',
+      url: `${newBaseUrl}/pengunjung`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2610,12 +2610,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-              {
-                match: {
-                  name: params.name,
-                },
+            {
+              match: {
+                name: params.name,
               },
-            ]
+            },
+          ]
           : [],
         must_not: [
           {
@@ -2780,7 +2780,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-          'location/locationDeviceStatusTotalSummaryByLocation.php',
+        'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);

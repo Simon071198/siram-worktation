@@ -151,33 +151,34 @@ const AktifitasPengunjungList = () => {
     //     waktu_mulai_kunjungan: selectedMonth ? selectedMonth : null,
     //   },
     // };
-    try {
-      let params = {
-        filter: {
-          nama_pengunjung: filter,
-          nama_wbp: searchData.nama_wbp,
-        }
+    let params = {
+      nama_pengunjung: filter,
+      nama_wbp: searchData.nama_wbp,
+      page: currentPage,
+      pageSize: pageSize,
       };
-      const response = await apiReadAktifitasPengunjung(params, token);
-      setPages(response.data.pagination.totalPages);
-      setRows(response.data.pagination.totalRecords);
-      if (response.status === 200) {
-        const result = response.data;
-        setData(result.records);
-      } else {
-        throw new Error('Terjadi kesalahan saat mencari data.');
-      }
-    } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
+      // setIsLoading(true);
+      try {
+        const response = await apiReadAktifitasPengunjung(params, token);
+        if (response.data.status !== 'OK') {
+          throw new Error(response.data);
+        }
+        const result = response.data.records;
+        setData(result);
+        setPages(response.data.pagination.totalPages);
+        setRows(response.data.pagination.totalRecords);
+        // setIsLoading(false);
+      } catch (e: any) {
+        if (e.response.status === 403) {
+          navigate('/auth/signin', {
+            state: { forceLogout: true, lastPage: location.pathname },
+          });
+        }
+        Alerts.fire({
+          icon: e.response.status === 403 ? 'warning' : 'error',
+          title: e.response.status === 403 ? Error403Message : e.message,
         });
       }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
-    }
   };
 
   const handleEnterKeyPress = (event: any) => {
@@ -210,7 +211,7 @@ const AktifitasPengunjungList = () => {
 
   const fetchData = async () => {
     let params = {
-      filter: { nama_lokasi_otmil: 'Cimahi' },
+      // filter: { nama_lokasi_otmil: 'Cimahi' },
       page: currentPage,
       pageSize: pageSize,
     };
