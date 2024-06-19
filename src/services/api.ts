@@ -1466,9 +1466,9 @@ export async function apiCreateKategoriPerkara(params, token) {
 export async function apiReadKota(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kota_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/kota`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1485,9 +1485,9 @@ export async function apiReadKota(params, token) {
 export async function apiReadProvinsi(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/provinsi_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/provinsi`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1561,8 +1561,9 @@ export async function apiReadjenisperkara(params, token) {
 export async function apiReadVisitor(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_read.php',
+      method: 'get',
+      url: `${newBaseUrl}/pengunjung`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1579,10 +1580,10 @@ export async function apiCreateVisitor(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_insert.php',
+      url: `${newBaseUrl}/pengunjung`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -1597,10 +1598,10 @@ export async function apiUpdateVisitor(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_update.php',
+      url: `${newBaseUrl}/pengunjung?_method=PUT`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -1614,8 +1615,8 @@ export async function apiUpdateVisitor(params, token) {
 export async function apiDeletePengunjung(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/pengunjung_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/pengunjung`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3542,7 +3543,7 @@ export async function apiKota(token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/kota_read.php',
+      url: `${newBaseUrl}/kota`,
       data: {},
       headers: {
         'Content-Type': 'application/json',
@@ -4115,9 +4116,9 @@ export async function apiTipeAsetDelete(params: any, token: any) {
 export async function apiAsetRead(params: any, token: any) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/aset_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/aset`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4135,7 +4136,7 @@ export async function apiAsetInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/aset_insert.php',
+      url: `${newBaseUrl}/aset`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4154,7 +4155,7 @@ export async function apiAsetUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/aset_update.php',
+      url: `${newBaseUrl}/aset?_method=PUT`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4172,8 +4173,8 @@ export async function apiAsetUpdate(params, token) {
 export async function apiAsetDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/aset_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/aset`,
       data: params,
       headers: {
         'Content-Type': 'application/json',

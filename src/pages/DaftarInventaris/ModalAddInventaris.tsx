@@ -61,21 +61,32 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [buttonLoad, setButtonLoad] = useState(false);
   const [filter, setFilter] = useState('');
+  const [gambarAsetPreview, setGambarAsetPreview] = useState('');
+  const [dataDefaultValue, setDataDefaultValue] = useState(defaultValue);
+
+  // const handleImageChange = (e: any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     console.log(reader.result, 'reader reader');
+
+  //     reader.onloadend = async () => {
+  //       console.log(reader.result, 'reader.result reader.result');
+  //       setFormState({ ...formState, image: reader.result });
+
+  //       // setImagePreview(reader.result);
+  //       console.log(formState.image, 'imagePreview imagePreview');
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      console.log(reader.result, 'reader reader');
-
-      reader.onloadend = async () => {
-        console.log(reader.result, 'reader.result reader.result');
-        setFormState({ ...formState, foto_barang: reader.result });
-
-        // setImagePreview(reader.result);
-        console.log(formState.foto_barang, 'imagePreview imagePreview');
-      };
-      reader.readAsDataURL(file);
+      setFormState({ ...formState, foto_barang: file });
+      const imageUrl = URL.createObjectURL(file);
+      setGambarAsetPreview(imageUrl);
     }
   };
 
@@ -267,6 +278,11 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
 
   const handleRemoveFoto = () => {
     setFormState({ ...formState, foto_barang: '' });
+    setDataDefaultValue({
+      ...dataDefaultValue,
+      foto_barang: '',
+    });
+    setGambarAsetPreview(null)
     const inputElement = document.getElementById(
       'image-upload',
     ) as HTMLInputElement;
@@ -482,10 +498,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                         <div className="mt-4 flex flex-col items-center">
                           <img
                             className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                            src={
-                              'https://dev.transforme.co.id/siram_admin_api' +
-                              formState.foto_barang
-                            }
+                            src={`http://127.0.0.1:8000/storage/${formState.foto_barang}`}
                             alt="Image Preview"
                           />
                         </div>
@@ -495,18 +508,17 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                       <div className="orm-group w-full h-[330px] ">
                         <div className="mt-4 flex flex-col items-center">
                           {formState.foto_barang ? (
-                            formState.foto_barang.startsWith('data:image/') ? (
+                            typeof formState.foto_barang === 'string' ? (
                               <img
                                 className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                                src={formState.foto_barang}
+                                src={`http://127.0.0.1:8000/storage/${formState.foto_barang}`}
                                 alt="Image Preview"
                               />
                             ) : (
                               <img
                                 className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
                                 src={
-                                  'http://dev.transforme.co.id/siram_admin_api' +
-                                  formState.foto_barang
+                                  gambarAsetPreview
                                 }
                                 alt="Image Preview"
                               />
@@ -554,7 +566,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'foto_barang'
+                              item === 'image'
                                 ? 'Masukan foto barang'
                                 : '',
                             )}
@@ -568,7 +580,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           {formState.foto_barang ? (
                             <img
                               className="object-contain w-[200px] h-[200px] mb-2 border-2 border-gray-200 border-dashed rounded-md"
-                              src={formState.foto_barang}
+                              src={gambarAsetPreview}
                               alt="Image Preview"
                             />
                           ) : (
@@ -614,7 +626,7 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           </div>
                           <p className="error-text">
                             {errors.map((item) =>
-                              item === 'foto_barang'
+                              item === 'image'
                                 ? 'Masukan foto barang'
                                 : '',
                             )}
