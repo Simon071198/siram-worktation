@@ -214,9 +214,9 @@ export async function apiDeletePenyidikan(params, token) {
 export async function apiReadBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/dokumen_bap`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -233,11 +233,11 @@ export async function apiReadBAP(params, token) {
 export async function apiCreateBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_insert.php',
+      method: 'POST',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -252,11 +252,11 @@ export async function apiCreateBAP(params, token) {
 export async function apiUpdateBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -271,8 +271,8 @@ export async function apiUpdateBAP(params, token) {
 export async function apiDeleteBAP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/dokumen_bap_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/dokumen_bap`,
       data: params,
       headers: {
         'Content-Type': 'application/json',

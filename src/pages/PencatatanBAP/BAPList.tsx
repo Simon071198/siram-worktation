@@ -52,7 +52,7 @@ const BAPList = () => {
   const [pageSize, setPageSize] = useState(10);
   const [isOperator, setIsOperator] = useState<boolean>();
   const [searchData, setSearchData] = useState({
-    nomor_kasus: '',
+    namaDokumen: '',
     nama_kasus: '',
     nomor_penyidikan: '',
   });
@@ -86,13 +86,9 @@ const BAPList = () => {
   const handleSearchClick = async () => {
     try {
       let params = {
-        filter: {
-          nama_dokumen_bap: filter,
-          nomor_kasus: searchData.nomor_kasus,
-          nama_kasus: searchData.nama_kasus,
-          nomor_penyidikan: searchData.nomor_penyidikan,
-          // lokasi_otmil: 'Cimahi',
-        },
+        namaDokumen: searchData.namaDokumen,
+        nomorPenyidikan: searchData.nomor_penyidikan,
+        namaKasus: searchData.nama_kasus,
         page: currentPage,
         pageSize: pageSize,
       };
@@ -244,7 +240,9 @@ const BAPList = () => {
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
-      filter: '',
+      namaDokumen: "",
+      nomorPenyidikan: "",
+      namaKasus: "",
       page: currentPage,
       pageSize: pageSize,
     };
@@ -532,9 +530,14 @@ const BAPList = () => {
           <div className="mb-4 flex gap-2 items-center border-[1px] border-slate-800 px-4 py-2 rounded-md">
             <div className="w-full search">
               <SearchInputButton
-                value={filter}
+                value={searchData.namaDokumen}
                 placehorder="Cari Nama Dokumen"
-                onChange={handleFilterChange}
+                onChange={(e) =>
+                  setSearchData({
+                    ...searchData,
+                    namaDokumen: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="w-full search-nomor">
