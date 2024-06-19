@@ -714,7 +714,6 @@ export const AddInventarisModal: React.FC<AddInventarisModalProps> = ({
                           isClearable={true}
                           isSearchable={true}
                           placeholder="Pilih tipe aset"
-                          // value={formState.tipe_aset_id}
                           defaultValue={
                             isEdit || isDetail
                               ? {
