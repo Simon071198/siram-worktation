@@ -1419,7 +1419,10 @@ export async function apiDeleteKategoriPerkara(params, token) {
     const response = await axios({
       method: 'delete',
       // url: newwebserviceurl + 'siram_api/kategori_perkara_delete.php',
-      url: newwebserviceurl + `kategori_perkara?kategori_perkara_id=` + params.kategori_perkara_id,
+      url:
+        newwebserviceurl +
+        `kategori_perkara?kategori_perkara_id=` +
+        params.kategori_perkara_id,
       // data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3556,11 +3559,12 @@ export async function apiReadAllPangkat(params, token) {
   }
 }
 
-export async function apiKota(params, token) {
+export async function apiKota(token) {
+  console.log('tokenjakarta3', token);
   try {
     const response = await axios({
       method: 'get',
-      url: `${newBaseUrl}/kota`,
+      url: `${newBaseUrl}/kota?pageSize=1000`,
       params,
       headers: {
         'Content-Type': 'application/json',
@@ -3575,11 +3579,11 @@ export async function apiKota(params, token) {
   }
 }
 
-export async function apiProvinsi(params, token) {
+export async function apiProvinsi(token) {
   try {
     const response = await axios({
       method: 'get',
-      url: `${newBaseUrl}/provinsi`,
+      url: `${newBaseUrl}/provinsi?pageSize=1000`,
       params,
       headers: {
         'Content-Type': 'application/json',
@@ -3730,7 +3734,7 @@ export async function apiCreateAllStaff(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/petugas_insert.php',
+      url: newWebservice + 'petugas',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3774,8 +3778,8 @@ export async function apiReadAllStaff(params, token) {
 export async function apiDeleteAllStaff(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/petugas_delete.php',
+      method: 'delete',
+      url: newWebservice + 'petugas',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3794,8 +3798,8 @@ export async function apiUpdateAllStaff(params, token) {
   console.log('params:', params, 'token:', token);
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/petugas_update.php',
+      method: 'put',
+      url: newWebservice + 'petugas',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4218,7 +4222,7 @@ export async function apiMatraRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/matra_read.php',
+      url: newWebservice + `matra?pageSize=99999`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
