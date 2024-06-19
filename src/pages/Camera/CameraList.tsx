@@ -1,34 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { apiBuilding } from '../../services/api';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { HiQuestionMarkCircle } from 'react-icons/hi2';
-import { Alerts } from './AlertCamera';
-import { Error403Message } from '../../utils/constants';
-import { Breadcrumbs } from '../../components/Breadcrumbs';
 import { RiCameraOffLine } from 'react-icons/ri';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import ReactPlayer from 'react-player';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { HiRefresh } from 'react-icons/hi';
 import ToolsTip from '../../components/ToolsTip';
-import { ChunkGraph } from 'webpack';
 
 const CameraList = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [errorCam, setErrorCam] = useState(false);
-  const [filter, setFilter] = useState('');
-  const [dense, setDense] = React.useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
-  const [accordionState, setAccordionState] = useState({
-    accordion1: false,
-    accordion2: false,
-    accordion3: false,
-  });
-  let [locationDeviceList, setLocationDeviceList] = useState([]);
+
   // let [locationDeviceListOtmil, setLocationDeviceListOtmil] = useState([]);
   // let [locationDeviceListLemasmil, setLocationDeviceListLemasmil] = useState(
   //   [],
@@ -41,7 +27,6 @@ const CameraList = () => {
   const [rows, setRows] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageCamOnline, setCurrentPageCamOnline] = useState(1);
-  const [liveViewCalled, setLiveViewCalled] = useState({});
   const camerasPerPage = columns * rows;
 
   interface messageCam {
@@ -124,16 +109,13 @@ const CameraList = () => {
       dataUser = {
         lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
         lokasi_otmil_id: dataUser.lokasi_otmil_id,
-        nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
-        nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+        // nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+        // nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
 
       console.log(dataUser, 'dataUser');
 
-      const response = await apiBuilding(
-        dataUser?.lokasi_otmil_id,
-        token?.token,
-      );
+      const response = await apiBuilding(dataUser, token?.token);
       console.log('response from apiBuilding', response);
 
       if (response.data.status === 'OK') {
@@ -505,6 +487,13 @@ const CameraList = () => {
                           className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
                         />
                       )}
+                      {/* {camera.status_kamera === 'online' ? (
+                        renderThumb(camera)
+                      ) : (
+                        <RiCameraOffLine
+                          className={`${rows === 4 ? 'w-2/5 h-2/5' : 'w-3/5 h-3/5'} text-white`}
+                        />
+                      )} */}
                     </div>
                     {/* footer kamera */}
 
@@ -604,7 +593,7 @@ const CameraList = () => {
   // console.log('BABA2', newArray);
 
   const test1 = receivedObjects.map((item) => item.massage);
-
+  console.log(test1, 'test 11111111');
   // Reverse the array to prioritize the last occurrence of duplicates
   const reversedArray = [...test1].reverse();
 
@@ -639,7 +628,7 @@ const CameraList = () => {
           .filter((kamera) => kamera.kamera_id),
       ),
     );
-
+    console.log(onlineCamera, 'on cam');
     if (onlineCamera.length === 0) {
       return (
         <div className="flex justify-center items-center bg-graydark w-11/12 h-5/6">

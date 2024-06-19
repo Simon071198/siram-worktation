@@ -6,8 +6,8 @@ export const DeleteKameraModal = ({
   defaultValue,
 }: any) => {
   const [formState, setFormState] = useState({
-    kamera_id: defaultValue?.deviceId,
-    nama_kamera: defaultValue?.deviceName,
+    kamera_id: defaultValue?.kamera_id,
+    nama_kamera: defaultValue?.nama_kamera,
   });
   const [errors, setErrors] = useState<string[]>([]);
   const modalContainerRef: any = useRef(null);

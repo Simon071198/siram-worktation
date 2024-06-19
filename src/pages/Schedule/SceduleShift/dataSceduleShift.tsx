@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AddDataShiftKerja from './addDataShiftKerja';
 import {
-  apiCreatShift,
+  apiCreateShift,
   apiDeleteShift,
   apiEditShift,
   apiReadAllShift,
@@ -71,49 +71,52 @@ const DataSceduleShift = () => {
 
   //get Token
   const tokenItem = localStorage.getItem('token');
-  let tokens = tokenItem ? JSON.parse(tokenItem) : null;
-  let token = tokens.token;
+  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
+  const token = dataToken.token;
 
   useEffect(() => {
-    const data = async () => {
-      setIsLoading(true);
-      try {
-        const response = await apiReadAllShift(token, token);
-        setDataShift(response.data.records);
-        if (response.data.status !== 'OK') {
-          throw new Error(response.data.message);
-        }
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    const params = {
+      shift_id: '',
+      nama_shift: '',
+      waktu_mulai: '',
+      waktu_selesai: '',
+    };
+    try {
+      const response = await apiReadAllShift(params, token);
+      setDataShift(response.data.records);
+      console.log(response, 'response shift');
+      if (response.data.status !== 'OK') {
+        throw new Error(response.data.message);
+      }
+      setIsLoading(false);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
         });
       }
-    };
-    data();
-  }, []);
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
 
   const handleAddShift = async (params: any) => {
     try {
-      const data = {
-        params: params,
-        token: token,
-      };
-      const AddData = await apiCreatShift(data);
+      const AddData = await apiCreateShift(params, token);
       if (AddData.data.status === 'OK') {
         handleCloseAddModal();
-        const response = await apiReadAllShift(token, token);
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
-        setDataShift(response.data.records);
+        fetchData();
       } else {
         Alerts.fire({
           icon: 'error',
@@ -122,7 +125,7 @@ const DataSceduleShift = () => {
       }
     } catch (e: any) {
       console.error('Error adding shift data:', e);
-      if (e.response.status === 403) {
+      if (e.data.status === 403) {
         navigate('/auth/signin', {
           state: { forceLogout: true, lastPage: location.pathname },
         });
@@ -136,31 +139,31 @@ const DataSceduleShift = () => {
 
   const handleEditShift = async (params: any) => {
     try {
-      const AddData = await apiEditShift(params, token);
-      if (AddData.data.status === 'OK') {
+      const EditShift = await apiEditShift(params, token);
+      if (EditShift.data.status === 'OK') {
         handleCloseAddModal();
-        const response = await apiReadAllShift(token, token);
         Alerts.fire({
           icon: 'success',
-          title: 'Berhasil mengedit data',
+          title: 'Berhasil mengubah data',
         });
-        setDataShift(response.data.records);
+        fetchData();
       } else {
         Alerts.fire({
           icon: 'error',
-          title: 'Gagal mengedit data',
+          title: 'Gagal mengubah data',
         });
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
+      console.log(e);
+      // if (e.data.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.data.status === 403 ? 'warning' : 'error',
+      //   title: e.data.status === 403 ? Error403Message : e.message,
+      // });
     }
   };
 
@@ -172,6 +175,7 @@ const DataSceduleShift = () => {
 
   //delete
   const handleDeleteClick = (item: any) => {
+    console.log(item);
     setDeleteData({ shift_id: item });
     setModalDeleteOpen(true);
   };
@@ -319,9 +323,7 @@ const DataSceduleShift = () => {
                                   Edit
                                 </button>
                                 <button
-                                  onClick={() =>
-                                    handleDeleteClick(item.shift_id)
-                                  }
+                                  onClick={() => handleDeleteClick(item.id)}
                                   className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
                                 >
                                   Delete

@@ -13,7 +13,7 @@ export const newwebserviceurl = 'http://localhost:8000/api/';
 const newBaseUrl = 'http://127.0.0.1:8000/api';
 
 function getUrl(params) {
-  console.log("parmsTesting", params)
+  console.log('parmsTesting', params);
   // const object = {
   //   page: params.page ? params.page : 1,
   //   pageSize: params.pageSize ? params.pageSize : Infinity,
@@ -25,7 +25,7 @@ function getUrl(params) {
     ...(params.filter && params.filter.trim() ? JSON.parse(params.filter) : {}),
   };
 
-  console.log("objectTesting", object)
+  console.log('objectTesting', object);
 
   for (const key in object) {
     if (typeof object[key] === 'string') {
@@ -368,7 +368,10 @@ export async function apiDeletePengadilanMiliter(params, token) {
     const response = await axios({
       method: 'delete',
       // url: newwebserviceurl + 'siram_api/pengadilan_militer_delete.php',
-      url: newwebserviceurl + `pengadilan_militer?pengadilan_militer_id=` + params.pengadilan_militer_id,
+      url:
+        newwebserviceurl +
+        `pengadilan_militer?pengadilan_militer_id=` +
+        params.pengadilan_militer_id,
       // data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1206,7 +1209,7 @@ export async function apiReadKamera(params, token) {
     const response = await axios({
       method: 'get',
       url: `${newBaseUrl}/kamera`,
-      data: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1223,8 +1226,8 @@ export async function apiReadKamera(params, token) {
 export async function apiDeleteKamera(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1242,8 +1245,8 @@ export async function apiDeleteKamera(params, token) {
 export async function apiUpdateKamera(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1262,7 +1265,7 @@ export async function apiCreateKamera(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_insert.php',
+      url: `${newBaseUrl}/kamera`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1439,7 +1442,10 @@ export async function apiDeleteKategoriPerkara(params, token) {
     const response = await axios({
       method: 'delete',
       // url: newwebserviceurl + 'siram_api/kategori_perkara_delete.php',
-      url: newwebserviceurl + `kategori_perkara?kategori_perkara_id=` + params.kategori_perkara_id,
+      url:
+        newwebserviceurl +
+        `kategori_perkara?kategori_perkara_id=` +
+        params.kategori_perkara_id,
       // data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1814,9 +1820,9 @@ export async function apiReadAllRuanganOtmil(params, token) {
 export async function apiReadAllShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/shift`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1829,15 +1835,15 @@ export async function apiReadAllShift(params, token) {
   }
 }
 //Create shift
-export async function apiCreatShift(params) {
+export async function apiCreateShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_insert.php',
-      data: params.params,
+      url: `${newBaseUrl}/shift`,
+      data: params,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${params.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response;
@@ -1851,8 +1857,8 @@ export async function apiCreatShift(params) {
 export async function apiDeleteShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_delete.php',
+      method: 'delete',
+      url: `${newBaseUrl}/shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1870,8 +1876,8 @@ export async function apiDeleteShift(params, token) {
 export async function apiEditShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/shift_update.php',
+      method: 'put',
+      url: `${newBaseUrl}/shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2622,12 +2628,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2792,7 +2798,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -3762,7 +3768,7 @@ export async function apiCreateAllStaff(params, token) {
 }
 
 export async function apiReadAllStaff(params, token) {
-  console.log("testingStaff")
+  console.log('testingStaff');
   const object = {
     page: params.page ? params.page : 1,
     pageSize: params.pageSize ? params.pageSize : Infinity,
