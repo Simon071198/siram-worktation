@@ -903,7 +903,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     };
     try {
       const response = await apiJenisSidangRead(params, token);
-      const data = response.data.data;
+      console.log(response, 'jenis sidang')
+      const data = response.data.records;
       const uniqueData: any[] = [];
       const trackedNames: any[] = [];
 

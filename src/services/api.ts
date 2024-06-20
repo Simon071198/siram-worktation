@@ -71,9 +71,9 @@ export async function apiPelacakanTersangka(params, token) {
 export async function apiRealtimeLog(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/kamera_log_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'kamera_log',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -694,9 +694,9 @@ export async function apiDeleteSaksi(params, token) {
 export async function apiReadJaksapenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/oditur_penuntur`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1085,9 +1085,9 @@ export async function apiDeleteHakim(params, token) {
 export async function apiReadLogKamera(params) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/kamera_log_read.php',
-      data: params,
+      method: 'get',
+      url: newBaseUrl + 'kamera_log',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1340,7 +1340,7 @@ export async function apiReadGelang(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: newwebserviceurl + 'gelang',
+      url: `${newBaseUrl}/gelang`,
       params,
       headers: {
         'Content-Type': 'application/json',
@@ -2525,8 +2525,9 @@ export async function apiVisitorRealtimeLogList(params) {
     }
 
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
+      method: 'get',
+      // url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
+      url: `${newBaseUrl}/kamera_log`,
       data: JSON.stringify(parameter),
     });
     // console.log(response.data);
@@ -4249,8 +4250,8 @@ export async function apiSidangRead(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/sidang_read.php',
-      data: params,
+      url: newWebservice + 'sidang',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4287,10 +4288,10 @@ export async function apiSidangInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/sidang_insert.php',
+      url: newWebservice + 'sidang',
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -4515,9 +4516,9 @@ export async function apiJaksaRead(params, token) {
 export async function apiHakimRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/hakim_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'hakim',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4610,9 +4611,9 @@ export async function apiStatusWbp(params, token) {
 export async function apiKasusRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/kasus_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'kasus',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4646,9 +4647,9 @@ export async function allKameraLemasmil() {
 export async function apiPengadilanMiliterRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/pengadilan_militer_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'pengadilan_militer',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
