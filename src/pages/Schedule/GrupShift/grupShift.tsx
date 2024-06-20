@@ -39,6 +39,7 @@ const GrupShift = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [pages, setPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalAddOpen, setModalAddOpen] = useState(false);
@@ -85,32 +86,67 @@ const GrupShift = () => {
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
   };
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const params = {
+  //     filter: '',
+  //   };
+  //   const dataGrup = async () => {
+  //     let params = {
+  //       page: currentPage,
+  //       pageSize: pageSize,
+  //     }
+  //     try {
+  //       const response = await apiReadAllGrupPetugas(params, token);
+  //       setDataGrup(response.data.records);
+  //       setPages(response.data.pagination.totalPages);
+  //       setRows(response.data.pagination.totalRecords);
+  //       setIsLoading(false);
+  //     } catch (e: any) {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     }
+  //   };
+  //   dataGrup();
+  // }, []);
+
   useEffect(() => {
+    fetchGrupShift();
+  }, [pageSize, currentPage]);
+  const fetchGrupShift = async () => {
     setIsLoading(true);
-    const params = {
-      filter: '',
+    let params = {
+      page: currentPage,
+      pageSize: pageSize,
     };
-    const dataGrup = async () => {
-      try {
-        const response = await apiReadAllGrupPetugas(params, token);
-        setDataGrup(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
+    try {
+      const response = await apiReadAllGrupPetugas(params, token);
+      if (response.data.status !== 'OK') {
+        throw new Error(response.data.message);
+      }
+      setDataGrup(response.data.records);
+      setPages(response.data.pagination.totalPages);
+      setRows(response.data.pagination.totalRecords);
+      setIsLoading(false);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
         });
       }
-    };
-    dataGrup();
-  }, []);
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
 
   //Tambah Data
   const handleAddShift = async (params: any) => {
