@@ -1866,7 +1866,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         },
                       });
 
-                      const versionName = response.data.data.version_name;
+                      console.log(response, 'version')
+                      
+                      const versionName = response.data.records.version_name;
 
                       // Update toast content with fetched data
                       // toast(
@@ -1894,7 +1896,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             There is an update from version {version} to version{' '}
                             {versionName}{' '}
                             <a
-                              href={response.data.data.link}
+                              href={response.data.records.link}
                               target="_blank"
                               rel="noreferrer"
                               className="text-blue-500 bold"
@@ -1917,7 +1919,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         ));
                       }
 
-                      console.log('Data:', response.data.data);
+                      console.log('Data:', response.data.records);
                     } catch (error) {
                       console.error('Error fetching data:', error);
                       toast('Error fetching data', { duration: 5000 });
