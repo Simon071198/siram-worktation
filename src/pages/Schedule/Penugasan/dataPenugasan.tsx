@@ -17,8 +17,8 @@ import Pagination from '../../../components/Pagination';
 import SearchInputButton from '../../MasterData/Search';
 import { Breadcrumbs } from '../../../components/Breadcrumbs';
 
-interface Item {
-  nama_penugasan: string;
+interface Params {
+  filter: string;
 }
 
 const Penugasan = () => {
@@ -56,12 +56,12 @@ const Penugasan = () => {
       let params = {
         filter: {
           nama_penugasan: filter,
+          page: currentPage,
+          pageSize: pageSize,
         },
-        page: currentPage,
-        pageSize: pageSize,
       };
 
-      const response = await apiReadAllPenugasanShift(params, token);
+      const response = await apiReadAllPenugasanShift(params.filter, token);
 
       if (response.data.status === 'OK') {
         const data = response.data.records;
@@ -75,11 +75,11 @@ const Penugasan = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
       Alerts.fire({
         icon: e.response.status === 403 ? 'warning' : 'error',
         title: e.response.status === 403 ? Error403Message : e.message,
@@ -136,6 +136,7 @@ const Penugasan = () => {
   }, [filter]);
 
   const fecthPenugasan = async () => {
+    setIsLoading(true);
     const params = {
       filter: {
         penugasan_id: '',
@@ -144,7 +145,6 @@ const Penugasan = () => {
       pageSize: pageSize,
     };
 
-    setIsLoading(true);
     try {
       const response = await apiReadAllPenugasanShift(params, token);
       const data = response.data.records;
@@ -207,16 +207,18 @@ const Penugasan = () => {
             penugasan_id: '',
           },
         };
-        const response = await apiReadAllPenugasanShift(params, token);
+        // const response = await apiReadAllPenugasanShift(params, token);
         // const data = response.data.records;
+
+        fecthPenugasan();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
-        // setModalAddOpen(false);
-        setDataPenugasan(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
+        // // setModalAddOpen(false);
+        // setDataPenugasan(response.data.records);
+        // setPages(response.data.pagination.totalPages);
+        // setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -239,25 +241,14 @@ const Penugasan = () => {
   //Edit
   const handleEditPenugasan = async (param: any) => {
     try {
-      const addData = await apiEditPenugasanShift(param, token);
-      if (addData.data.status === 'OK') {
+      const EditData = await apiEditPenugasanShift(param, token);
+      if (EditData.data.status === 'OK') {
         handleCloseModalEdit();
-        const params = {
-          filter: {
-            penugasan_id: '',
-          },
-        };
-        const response = await apiReadAllPenugasanShift(params, token);
-        // const data = response.data.records;
-
+        fecthPenugasan();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
         });
-        // setModalEditOpen(false);
-        setDataPenugasan(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -287,21 +278,11 @@ const Penugasan = () => {
       const addData = await apiDeletePenugasanShift(param, token);
       if (addData.data.status === 'OK') {
         handleCloseDeleteModal();
-        const params = {
-          filter: {
-            penugasan_id: '',
-          },
-        };
-        const response = await apiReadAllPenugasanShift(params, token);
-        // const data = response.data.records;
+        fecthPenugasan();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
-        // setModalEditOpen(false);
-        setDataPenugasan(response.data.records);
-        setPages(response.data.pagenation.totalPages);
-        setRows(response.data.pagenation.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -380,6 +361,8 @@ const Penugasan = () => {
             closeModal={handleCloseModalEdit}
             onSubmit={handleEditPenugasan}
             defaultValue={dataEditPenugasan}
+            isEdit={true}
+            token={token}
           />
         )}
         {modalDeleteOpen && (

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiReadAllStaff } from '../../../services/api';
+import { apiReadAllRekapCuti, apiReadAllStaff } from '../../../services/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import dayjs from 'dayjs';
@@ -19,6 +19,13 @@ interface Staff {
   nama: string;
   // tambahkan atribut lain sesuai kebutuhan
 }
+
+interface RekapCuti {
+  tanggal: string;
+  bulan: string;
+  tahun: string;
+  petugas_cuti: Array<any>;
+}
 const DetailGrup: React.FC<AddRoomModalProps> = ({
   closeModal,
   defaultValue,
@@ -28,10 +35,11 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
   const tokenItem = localStorage.getItem('token');
   let tokens = tokenItem ? JSON.parse(tokenItem) : null;
   let token = tokens.token;
-
+  const [rekapCuti, setRekapCuti] = useState<RekapCuti[]>([]);
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [cutiValues, setCutiValues] = useState('');
+  console.log(defaultValue, 'defaultValue');
   const [dataGrup, setDataGrup] = useState(
     defaultValue || {
       grup_petugas_id: '',
@@ -94,6 +102,31 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
     dataStaff();
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    const dataRekapCuti = async () => {
+      const params = {
+        filter: {
+          bulan: '',
+        },
+      };
+      try {
+        const cuti = await apiReadAllRekapCuti(params.filter, token);
+        setRekapCuti(cuti.data.records);
+      } catch (error: any) {
+        Alerts.fire({
+          icon: 'error',
+          title: error.message,
+        });
+      }
+    };
+    dataRekapCuti();
+  }, []);
+  console.log(staff, 'staff');
+  console.log(rekapCuti, 'rekap');
+  console.log(cutiValues, 'values');
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -109,6 +142,23 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [closeModal]);
+
+  useEffect(() => {
+    const findCutiValues = (staff, rekapCuti) => {
+      const cutiMap = {};
+      staff.forEach((member) => {
+        const matchingRekap = rekapCuti.find((rekap) =>
+          rekap.petugas_cuti.includes(member.petugas_id),
+        );
+        cutiMap[member.petugas_id] = matchingRekap ? matchingRekap.cuti : '';
+      });
+      return cutiMap;
+    };
+
+    const values = findCutiValues(staff, rekapCuti);
+    console.log(values, 'values');
+    setCutiValues(values);
+  }, [staff, rekapCuti]);
 
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
@@ -272,7 +322,7 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
                               name="waktu_selesai"
                               className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                               disabled={isDetail}
-                              value={dataPetugasGrup.waktu_selesai}
+                              value={cutiValues[item.petugas_id] || '-'}
                             />
                           </div>
                         </div>
