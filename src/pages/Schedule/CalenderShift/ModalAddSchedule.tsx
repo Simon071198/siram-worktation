@@ -260,6 +260,7 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
       try {
         const shift = await apiReadAllShift(filter, token);
         setShiftData(shift?.data.records);
+        console.log('shift', shift.data.records);
       } catch (e: any) {
         if (e.response.status === 403) {
           navigate('/auth/signin', {
@@ -317,6 +318,8 @@ const AddDataSchedule = ({ closeModal, onSubmit }: any) => {
     const filteredShift = shiftData?.find(
       (item: any) => item.shift_id === e.target.value
     );
+
+    console.log('filter', filteredShift);
   
     if (filteredShift) {
       setSchedule({

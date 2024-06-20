@@ -1829,7 +1829,8 @@ export async function apiReadAllShift(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: `${newBaseUrl}/shift`,
+      // url: `${newBaseUrl}/shift`,
+      url: newWebservice + 'shift',
       params,
       headers: {
         'Content-Type': 'application/json',
@@ -1906,9 +1907,9 @@ export async function apiEditShift(params, token) {
 export async function apiReadAllGrupPetugas(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/grup_petugas_read.php',
-      data: params,
+      method: 'get',
+      url: newwebserviceurl + 'grup_petugas',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2024,9 +2025,9 @@ export async function apiReadAllRekapCuti(params, token) {
 export async function apiReadAllPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'petugas_shift',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2044,8 +2045,8 @@ export async function apiCretePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_insert.php',
-      data: params,
+      url: newWebservice + 'petugas_shift',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2062,9 +2063,9 @@ export async function apiCretePetugasShift(params, token) {
 export async function apiEditPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_update.php',
-      data: params,
+      method: 'put',
+      url: newWebservice + 'petugas_shift',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2101,9 +2102,9 @@ export async function apiDeletePetugasShift(params, token) {
 export async function apiReadAllScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'schedule',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2121,8 +2122,8 @@ export async function apiCreateScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/schedule_insert.php',
-      data: params,
+      url: newWebservice + 'schedule',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2139,9 +2140,9 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_delete.php',
-      data: params,
+      method: 'delete',
+      url: newWebservice + 'schedule',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3789,7 +3790,7 @@ export async function apiReadAllStaff(params, token) {
       method: 'get',
       url: newWebservice + 'petugas',
       // url: newWebservice + 'petugas',
-      params: object,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4077,9 +4078,9 @@ export async function apiChangePassword(params, token) {
 export async function apiGatewayLog(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/gateway_log_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'gateway_log',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
