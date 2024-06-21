@@ -2002,7 +2002,7 @@ export async function apiReadAllPetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'GET',
-      url: newWebservice + 'siram_api/petugas_shift_read.php',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2021,7 +2021,7 @@ export async function apiCretePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_insert.php',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2039,8 +2039,8 @@ export async function apiCretePetugasShift(params, token) {
 export async function apiEditPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2058,8 +2058,8 @@ export async function apiEditPetugasShift(params, token) {
 export async function apiDeletePetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2078,8 +2078,8 @@ export async function apiDeletePetugasShift(params, token) {
 export async function apiReadAllScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_read.php',
+      method: 'GET',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2098,7 +2098,7 @@ export async function apiCreateScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/schedule_insert.php',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2116,8 +2116,8 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',

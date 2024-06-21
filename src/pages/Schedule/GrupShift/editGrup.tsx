@@ -47,7 +47,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
       ketua_grup_id: '',
     },
   );
-
+  console.log(dataGrup, 'dataGrup');
   //new data for update
   const [grupEdit, setGrupedit] = useState({
     grup_petugas_id: dataGrup.grup_petugas_id,
@@ -62,6 +62,8 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
 
   //data all petugas
   const [newStaff, setNewStaff] = useState<Staff[]>([]);
+  console.log(newStaff, 'newstaff');
+  console.log(dataGrup, 'dataGrup');
   const StaffOptions = newStaff
     .filter((item: any) => item.grup_petugas_id == dataGrup.grup_petugas_id)
     .map((item: any) => ({
@@ -580,44 +582,49 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
                     </div>
                   </div>
                   <div className="w-full h-64 overflow-y-auto d-grup">
-                    {staff.map((item: any) => {
-                      return (
-                        <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke border-primary my-1 dark:text-gray dark:bg-slate-800 ">
-                          <div className="form-group w-2/6 ">
-                            <h1></h1>
-                            <input
-                              name="nama"
-                              disabled
-                              className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
-                              value={item.nama}
-                            />
+                    {staff
+                      .filter(
+                        (item) =>
+                          item.grup_petugas_id === defaultValue.grup_petugas_id,
+                      )
+                      .map((item: any) => {
+                        return (
+                          <div className="flex justify-between space-x-2 mx-1 rounded border border-stroke border-primary my-1 dark:text-gray dark:bg-slate-800 ">
+                            <div className="form-group w-2/6 ">
+                              <h1></h1>
+                              <input
+                                name="nama"
+                                disabled
+                                className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
+                                value={item.nama}
+                              />
+                            </div>
+                            <div className="form-group w-2/6 ">
+                              <input
+                                value={item.jabatan}
+                                name="jam"
+                                className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
+                              />
+                            </div>
+                            <div className="form-group w-2/6 ">
+                              <input
+                                name="cuti"
+                                value={item.divisi}
+                                className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
+                              />
+                            </div>
+                            <div className="w-1/12 ">
+                              <button
+                                type="button"
+                                onClick={() => handleDeletePetugas(item)}
+                                className="w-full h-full flex items-center justify-center hover:text-red-600"
+                              >
+                                <BsTrash />
+                              </button>
+                            </div>
                           </div>
-                          <div className="form-group w-2/6 ">
-                            <input
-                              value={item.jabatan}
-                              name="jam"
-                              className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
-                            />
-                          </div>
-                          <div className="form-group w-2/6 ">
-                            <input
-                              name="cuti"
-                              value={item.divisi}
-                              className="capitalize w-full dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:text-white dark:focus:border-primary"
-                            />
-                          </div>
-                          <div className="w-1/12 ">
-                            <button
-                              type="button"
-                              onClick={() => handleDeletePetugas(item)}
-                              className="w-full h-full flex items-center justify-center hover:text-red-600"
-                            >
-                              <BsTrash />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
                 <button

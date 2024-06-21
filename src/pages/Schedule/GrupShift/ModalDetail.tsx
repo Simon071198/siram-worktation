@@ -298,36 +298,41 @@ const DetailGrup: React.FC<AddRoomModalProps> = ({
                     </div>
                   </div>
                   <div className="w-full h-64 overflow-y-auto">
-                    {staff.map((item: any) => {
-                      return (
-                        <div className="flex justify-between space-x-2">
-                          <div className="form-group w-1/3 ">
-                            <input
-                              name="nama"
-                              className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                              disabled={isDetail}
-                              value={item.nama}
-                            />
+                    {staff
+                      .filter(
+                        (item) =>
+                          item.grup_petugas_id === defaultValue.grup_petugas_id,
+                      )
+                      .map((item: any) => {
+                        return (
+                          <div className="flex justify-between space-x-2">
+                            <div className="form-group w-1/3 ">
+                              <input
+                                name="nama"
+                                className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                disabled={isDetail}
+                                value={item.nama}
+                              />
+                            </div>
+                            <div className="form-group w-1/3 ">
+                              <input
+                                name="waktu_selesai"
+                                className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                disabled={isDetail}
+                                value={dataPetugasGrup.waktu_selesai}
+                              />
+                            </div>
+                            <div className="form-group w-1/3 ">
+                              <input
+                                name="waktu_selesai"
+                                className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                                disabled={isDetail}
+                                value={cutiValues[item.petugas_id] || '-'}
+                              />
+                            </div>
                           </div>
-                          <div className="form-group w-1/3 ">
-                            <input
-                              name="waktu_selesai"
-                              className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                              disabled={isDetail}
-                              value={dataPetugasGrup.waktu_selesai}
-                            />
-                          </div>
-                          <div className="form-group w-1/3 ">
-                            <input
-                              name="waktu_selesai"
-                              className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-2 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                              disabled={isDetail}
-                              value={cutiValues[item.petugas_id] || '-'}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
                 {errors.filter((item: string) => item.startsWith('INVALID_ID'))

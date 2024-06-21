@@ -87,7 +87,7 @@ interface Schedule {
 const shiftJaga = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [currentPage, setCurrentPage] = useState(1);
   //Get Token
   const getToken = localStorage.getItem('token');
   let tokenItem = getToken ? JSON.parse(getToken) : null;
@@ -179,7 +179,13 @@ const shiftJaga = () => {
   const filterFetch = {
     filter: {},
   };
-
+  let filterStaff = {
+    filter: {
+      nama: filter,
+    },
+    page: 1,
+    pageSize: 1000,
+  };
   const filterSchedule = {
     pageSize: Number.MAX_SAFE_INTEGER,
     filter: {
@@ -202,7 +208,7 @@ const shiftJaga = () => {
       const schedule = await apiReadAllScheduleShift(filterSchedule, token);
       const grupPetugas = await apiReadAllGrupPetugas(filterFetch, token);
       const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
-      const staff = await apiReadAllStaff(filterFetch, token);
+      const staff = await apiReadAllStaff(filterStaff, token);
       const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
 
       setDataExcel(petugasShift.data.records);
@@ -292,93 +298,91 @@ const shiftJaga = () => {
   //   driverObj.drive();
   // };
 
-const handleClickTutorial = () => {
-  const steps = [
-    {
-      element: '.p-grup',
-      popover: {
-        title: 'Grup',
-        description: 'Pilih grup yang diinginkan',
+  const handleClickTutorial = () => {
+    const steps = [
+      {
+        element: '.p-grup',
+        popover: {
+          title: 'Grup',
+          description: 'Pilih grup yang diinginkan',
+        },
       },
-    },
-    {
-      element: '.p-semua',
-      popover: {
-        title: 'Semua Grup',
-        description: 'Pilih semua grup yang diinginkan',
+      {
+        element: '.p-semua',
+        popover: {
+          title: 'Semua Grup',
+          description: 'Pilih semua grup yang diinginkan',
+        },
       },
-    },
-    {
-      element: '.p-tanggal',
-      popover: {
-        title: 'Pilih Tanggal',
-        description: 'Pilih tanggal yang diinginkan',
+      {
+        element: '.p-tanggal',
+        popover: {
+          title: 'Pilih Tanggal',
+          description: 'Pilih tanggal yang diinginkan',
+        },
       },
-    },
-    {
-      element: '.b-jadwal',
-      popover: {
-        title: 'Buat Jadwal',
-        description: 'Klik untuk membuat jadwal',
+      {
+        element: '.b-jadwal',
+        popover: {
+          title: 'Buat Jadwal',
+          description: 'Klik untuk membuat jadwal',
+        },
       },
-    },
-  ];
+    ];
 
-  const isElementVisible = (selector: any) => {
-    const element = document.querySelector(selector);
-    if (element) {
-      const rect = element.getBoundingClientRect();
-      return (
-        rect.width > 0 &&
-        rect.height > 0 &&
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <=
-          (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <=
-          (window.innerWidth || document.documentElement.clientWidth)
-      );
+    const isElementVisible = (selector: any) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+        );
+      }
+      return false;
+    };
+
+    if (isElementVisible('#b-ubah')) {
+      steps.push({
+        element: '#b-ubah',
+        popover: {
+          title: 'Ubah Jadwal',
+          description: 'Klik untuk mengubah jadwal',
+        },
+      });
     }
-    return false;
+
+    if (isElementVisible('#b-hapus')) {
+      steps.push({
+        element: '#b-hapus',
+        popover: {
+          title: 'Hapus Jadwal',
+          description: 'Klik untuk menghapus jadwal',
+        },
+      });
+    }
+
+    steps.push({
+      element: '.b-excel',
+      popover: {
+        title: 'Export Excel',
+        description: 'Klik untuk mengexport excel',
+      },
+    });
+
+    const driverObj = driver({
+      showProgress: true,
+      steps: steps,
+    });
+
+    driverObj.drive();
   };
-
-  if (isElementVisible('#b-ubah')) {
-    steps.push({
-      element: '#b-ubah',
-      popover: {
-        title: 'Ubah Jadwal',
-        description: 'Klik untuk mengubah jadwal',
-      },
-    });
-  }
-
-  if (isElementVisible('#b-hapus')) {
-    steps.push({
-      element: '#b-hapus',
-      popover: {
-        title: 'Hapus Jadwal',
-        description: 'Klik untuk menghapus jadwal',
-      },
-    });
-  }
-
-  steps.push({
-    element: '.b-excel',
-    popover: {
-      title: 'Export Excel',
-      description: 'Klik untuk mengexport excel',
-    },
-  });
-
-  const driverObj = driver({
-    showProgress: true,
-    steps: steps,
-  });
-
-  driverObj.drive();
-};
-
-
 
   const modalContainerRef = useRef<HTMLDivElement>(null);
   //useEffect untuk menambahkan event listener  ke elemen dokumen
@@ -405,7 +409,10 @@ const handleClickTutorial = () => {
     setTanggal(selectedDays);
     setEndDate(startDate + 6);
   }, [year, month, startDate, endDate]);
-  console.log('tanggal', tanggal);
+  console.log(
+    'tanggal',
+    tanggal.map((a) => a),
+  );
 
   const handleDateChange = (date: any) => {
     const dateValue = date;
@@ -909,14 +916,11 @@ const handleClickTutorial = () => {
     },
   };
   const timeString = (startTime: string, endTime: string): string => {
-    return  `${startTime
+    return `${startTime.split(':').slice(0, 2).join(':')} - ${endTime
       .split(':')
       .slice(0, 2)
-      .join(':')} - ${endTime
-      .split(':')
-      .slice(0, 2)
-      .join(':')}`
-  }
+      .join(':')}`;
+  };
   return (
     <div className="w-full rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="pb-4">
@@ -1164,6 +1168,7 @@ const handleClickTutorial = () => {
                   <div className="w-4/6">
                     <div className="flex space-x-1">
                       {tanggal.map((item: any, index) => {
+                        console.log(item, 'item nihh');
                         const backgroundColor =
                           index % 2 === 0 ? 'bg-slate-500' : 'bg-slate-600';
                         const backgroundColorHover =
@@ -1215,31 +1220,52 @@ const handleClickTutorial = () => {
                         let jam = '';
                         let shiftBackgroundColor = '';
                         let shiftBgList = '';
-                        // console.log(jadwalPegawai?.shift_id, "testing")
-                        console.log(shift, "testing")
+                        console.log(jadwalPegawai, 'this t');
+                        console.log(shift, 'testing');
                         if (jadwalPegawai) {
-                          if (jadwalPegawai.shift_id === "i20q8t3b-wy0j-9u0v-b6zl-zpgejzjjvq7s") {
+                          if (
+                            jadwalPegawai.shift_id ===
+                            'c5e99fed-d404-4c3e-a96b-9cfde0e341f5'
+                          ) {
                             shiftBackgroundColor = 'bg-yellow-300';
                             shiftBgList = 'bg-yellow-500';
-                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
-                          } else if (jadwalPegawai.shift_id === "u9f28n11-gown-rihg-z4qq-wtugvi6liysb") {
+                            jam = timeString(
+                              jadwalPegawai.waktu_mulai,
+                              jadwalPegawai.waktu_selesai,
+                            );
+                          } else if (
+                            jadwalPegawai.shift_id ===
+                            'c6e99fed-d404-4c3e-a96b-9cfde0e341f7'
+                          ) {
                             shiftBackgroundColor = 'bg-orange-500';
                             shiftBgList = 'bg-orange-700';
-                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
-                          } else if (jadwalPegawai.shift_id === "4bb362e5-f9ac-4cdd-ae48-27e6ce348136") {
+                            jam = timeString(
+                              jadwalPegawai.waktu_mulai,
+                              jadwalPegawai.waktu_selesai,
+                            );
+                          } else if (
+                            jadwalPegawai.shift_id ===
+                            'c7e99fed-d404-4c3e-a96b-9cfde0e341f8'
+                          ) {
                             shiftBackgroundColor = 'bg-blue-500';
                             shiftBgList = 'bg-blue-700';
-                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
-                          } 
+                            jam = timeString(
+                              jadwalPegawai.waktu_mulai,
+                              jadwalPegawai.waktu_selesai,
+                            );
+                          }
                           // else if(jadwalPegawai.shift_id != "i20q8t3b-wy0j-9u0v-b6zl-zpgejzjjvq7s" || jadwalPegawai.shift_id != "4bb362e5-f9ac-4cdd-ae48-27e6ce348136" || jadwalPegawai.shift_id != "4bb362e5-f9ac-4cdd-ae48-27e6ce348136"){
                           //   shiftBackgroundColor = 'bg-orange-500';
                           //   shiftBgList = 'bg-orange-700';
                           //   jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
-                          // } 
+                          // }
                           else {
                             shiftBackgroundColor = 'bg-orange-500';
                             shiftBgList = 'bg-orange-700';
-                            jam = timeString(jadwalPegawai.waktu_mulai, jadwalPegawai.waktu_selesai);
+                            jam = timeString(
+                              jadwalPegawai.waktu_mulai,
+                              jadwalPegawai.waktu_selesai,
+                            );
                           }
                         }
                         return (
