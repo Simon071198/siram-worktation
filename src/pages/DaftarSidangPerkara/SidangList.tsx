@@ -856,7 +856,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.role_ketua === '1',
+                                  (item: any) => item.role_ketua === 1,
                                 )?.nama_oditur || ''
                               : ''}
                           </p>
@@ -908,7 +908,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.role_ketua === '1',
+                                  (item: any) => item.role_ketua === 1,
                                 )?.nama_oditur || ''
                               : ''}
                           </p>

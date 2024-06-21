@@ -67,7 +67,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       jenis_persidangan_id: '',
       pengadilan_militer_id: '',
       nama_dokumen_persidangan: '',
-      pdf_file_base64: '',
+      // pdf_file_base64: '',
       link_dokumen_persidangan: '',
       hasil_vonis: '',
       ahli: [],
@@ -416,14 +416,14 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   };
 
   useEffect(() => {
-    checkFileType(formState.link_dokumen_persidangan);
-    if (isDetail || isEdit) {
-      setFormState((prevFormState: any) => ({
-        ...prevFormState,
-        pdf_file_base64: prevFormState.link_dokumen_persidangan,
-        // link_dokumen_persidangan: prevFormState.link_dokumen_persidangan,
-      }));
-    }
+    // checkFileType(formState.link_dokumen_persidangan);
+    // if (isDetail || isEdit) {
+    //   setFormState((prevFormState: any) => ({
+    //     ...prevFormState,
+    //     pdf_file_base64: prevFormState.link_dokumen_persidangan,
+    //     // link_dokumen_persidangan: prevFormState.link_dokumen_persidangan,
+    //   }));
+    // }
 
     console.log('jaksa aja', jaksa);
     // console.log('jaksa filter', jaksa.filter((item) => formState.oditur_penuntut_id.includes(item.oditur_penuntut_id)));
@@ -456,7 +456,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         link_dokumen_persidangan: formState.link_dokumen_persidangan,
       });
     }
-  }, [formState.link_dokumen_persidangan]);
+  });
 
   useEffect(() => {
     if (getSaksi.length > 0 && getWbp.length > 0) {
@@ -641,19 +641,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        setFormState({ ...formState, pdf_file_base64: reader.result, link_dokumen_persidangan: reader.result});
+        setFormState({ ...formState, link_dokumen_persidangan: reader.result});
         console.log('Preview:', reader.result);
         setPdftUrl(reader.result as string);
       };
 
       reader.readAsDataURL(file);
+
+      // setFormState({ ...formState, link_dokumen_persidangan: file });
     }
   };
   const handleRemoveDoc = () => {
     setFormState({
       ...formState,
       link_dokumen_persidangan: '',
-      pdf_file_base64: '',
+      // pdf_file_base64: '',
     });
     const inputElement = document.getElementById(
       'fileUpload',
@@ -903,7 +905,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     };
     try {
       const response = await apiJenisSidangRead(params, token);
-      const data = response.data.data;
+      console.log(response, 'jenis sidang')
+      const data = response.data.records;
       const uniqueData: any[] = [];
       const trackedNames: any[] = [];
 
@@ -2483,7 +2486,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                       />
                       {formState.link_dokumen_persidangan ? (
                         (console.log(
-                          formState.pdf_file_base64,
+                          formState.link_dokumen_persidangan,
                           'pdf_file_base64',
                         ),
                         (
