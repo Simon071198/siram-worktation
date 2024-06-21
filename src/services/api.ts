@@ -4306,8 +4306,8 @@ export async function apiSidangInsert(params, token) {
 export async function apiSidangDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/sidang_delete.php',
+      method: 'delete',
+      url: newWebservice + 'delete',
       data: params,
       headers: {
         'Content-Type': 'application/json',
