@@ -39,6 +39,7 @@ const GrupShift = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [pages, setPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [rows, setRows] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalAddOpen, setModalAddOpen] = useState(false);
@@ -85,32 +86,68 @@ const GrupShift = () => {
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
   };
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const params = {
+  //     filter: '',
+  //   };
+  //   const dataGrup? = async () => {
+  //     let params = {
+  //       page: currentPage,
+  //       pageSize: pageSize,
+  //     }
+  //     try {
+  //       const response = await apiReadAllGrupPetugas(params, token);
+  //       setDataGrup(response.data.records);
+  //       setPages(response.data.pagination.totalPages);
+  //       setRows(response.data.pagination.totalRecords);
+  //       setIsLoading(false);
+  //     } catch (e: any) {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     }
+  //   };
+  //   dataGrup?();
+  // }, []);
+
   useEffect(() => {
+    fetchGrupShift();
+  }, [pageSize, currentPage]);
+  const fetchGrupShift = async () => {
     setIsLoading(true);
-    const params = {
-      filter: '',
+    let params = {
+      page: currentPage,
+      pageSize: pageSize,
     };
-    const dataGrup = async () => {
-      try {
-        const response = await apiReadAllGrupPetugas(params, token);
-        setDataGrup(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
+    try {
+      const response = await apiReadAllGrupPetugas(params, token);
+      if (response.data.status !== 'OK') {
+        throw new Error(response.data.message);
       }
-    };
-    dataGrup();
-  }, []);
+      setDataGrup(response?.data.records);
+      setPages(response?.data?.pagination?.totalPages);
+      setRows(response?.data.pagination.totalRecords);
+      setIsLoading(false);
+    } catch (e: any) {
+      console.log(e);
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.response.status === 403 ? 'warning' : 'error',
+      //   title: e.response.status === 403 ? Error403Message : e.message,
+      // });
+    }
+  };
 
   //Tambah Data
   const handleAddShift = async (params: any) => {
@@ -119,17 +156,12 @@ const GrupShift = () => {
 
       if (AddData.data.status === 'OK') {
         handleCloseAddModal();
-        const params = {
-          filter: '',
-        };
-        const response = await apiReadAllGrupPetugas(params, token);
+
+        fetchGrupShift();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
-        setDataGrup(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -172,17 +204,11 @@ const GrupShift = () => {
 
       if (EditData.data.status === 'OK') {
         handleCloseEditModal();
-        const params = {
-          filter: '',
-        };
-        const response = await apiReadAllGrupPetugas(params, token);
+        fetchGrupShift();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengedit data',
         });
-        setDataGrup(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -218,17 +244,12 @@ const GrupShift = () => {
 
       if (AddData.data.status === 'OK') {
         handleCloseDeleteModal();
-        const params = {
-          filter: '',
-        };
-        const response = await apiReadAllGrupPetugas(params, token);
+
+        fetchGrupShift();
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menghapus data',
         });
-        setDataGrup(response.data.records);
-        setPages(response.data.pagination.totalPages);
-        setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -340,7 +361,7 @@ const GrupShift = () => {
                 </ul>
               </li>
               <div className="dark:bg-meta-4 rounded-b-md pb-1">
-                {dataGrup.map((itemGrup: any, index: any) => {
+                {dataGrup?.map((itemGrup: any, index: any) => {
                   return (
                     <li className="my-1 flex dark:bg-meta-4" key={index}>
                       <div className="w-1/5 mr-1 flex items-center justify-center">
