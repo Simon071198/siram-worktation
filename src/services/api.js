@@ -2324,8 +2324,8 @@ export async function apiReadAlllokasiOtmil(params, token) {
 export async function apiversion(params) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/version_check.php',
+      method: 'get',
+      url: newwebserviceurl + 'version',
       data: params,
     });
     console.log(response);
