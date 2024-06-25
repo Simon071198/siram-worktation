@@ -73,8 +73,9 @@ const AddPetugasShiftGrup = ({
       tahun: '',
     },
   );
-  const [staff, setStaff] = useState<Staff[]>([]);
 
+  const [staff, setStaff] = useState<Staff[]>([]);
+  console.log(defaultValue, 'petugas');
   // //DatePicker
   const tanggal = dayjs(
     `${defaultValue.tahun}-${defaultValue.bulan}-${defaultValue.tanggal}`,
@@ -83,9 +84,7 @@ const AddPetugasShiftGrup = ({
     },
   ).format('YYYY MM DD');
   const [selectedDate, setSelectedDate] = useState(dayjs(tanggal));
-  const [selectedEndDate, setSelectedEndDate] = useState(
-    dayjs(tanggal),
-  );
+  const [selectedEndDate, setSelectedEndDate] = useState(dayjs(tanggal));
   console.log('time', selectedDate, 'end', selectedEndDate, 'defaul', tanggal);
 
   //useEffect untuk menambahkan event listener  ke elemen dokumen
@@ -179,39 +178,71 @@ const AddPetugasShiftGrup = ({
     addEntriesForStaff();
   }, [staff]);
 
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const fetchSchedule = async () => {
+  //     const data = {};
+  //     const params = {
+  //       pageSize: Number.MAX_SAFE_INTEGER,
+  //       filter: {
+  //         grup_petugas_id: dataPetugasShift.grup_petugas_id,
+  //       },
+  //     };
+  //     try {
+  //       const shift = await apiReadAllShift(data, token);
+  //       const staff = await apiReadAllStaff(params, token);
+  //       const penugasan = await apiReadAllPenugasanShift(data, token);
+  //       setShift(shift.data.records);
+  //       setStaff(staff.data.records);
+  //       setPenugasan(penugasan.data.records);
+  //       setIsLoading(false);
+  //     } catch (e: any) {
+  //       if (e.response.status === 403) {
+  //         navigate('/auth/signin', {
+  //           state: { forceLogout: true, lastPage: location.pathname },
+  //         });
+  //       }
+  //       Alerts.fire({
+  //         icon: e.response.status === 403 ? 'warning' : 'error',
+  //         title: e.response.status === 403 ? Error403Message : e.message,
+  //       });
+  //     }
+  //   };
+  //   fetchSchedule();
+  // }, []);
+
   useEffect(() => {
-    setIsLoading(true);
-    const fetchSchedule = async () => {
-      const data = {};
-      const params = {
-        pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: dataPetugasShift.grup_petugas_id,
-        },
-      };
-      try {
-        const shift = await apiReadAllShift(data, token);
-        const staff = await apiReadAllStaff(params, token);
-        const penugasan = await apiReadAllPenugasanShift(data, token);
-        setShift(shift.data.records);
-        setStaff(staff.data.records);
-        setPenugasan(penugasan.data.records);
-        setIsLoading(false);
-      } catch (e: any) {
-        if (e.response.status === 403) {
-          navigate('/auth/signin', {
-            state: { forceLogout: true, lastPage: location.pathname },
-          });
-        }
-        Alerts.fire({
-          icon: e.response.status === 403 ? 'warning' : 'error',
-          title: e.response.status === 403 ? Error403Message : e.message,
-        });
-      }
-    };
     fetchSchedule();
   }, []);
-
+  const fetchSchedule = async () => {
+    setIsLoading(true);
+    const data = {};
+    const params = {
+      pageSize: Number.MAX_SAFE_INTEGER,
+      filter: {
+        grup_petugas_id: dataPetugasShift.grup_petugas_id,
+      },
+    };
+    try {
+      const shift = await apiReadAllShift(data, token);
+      const staff = await apiReadAllStaff(params, token);
+      const penugasan = await apiReadAllPenugasanShift(data, token);
+      setShift(shift.data.records);
+      setStaff(staff.data.records);
+      setPenugasan(penugasan.data.records);
+      setIsLoading(false);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
   const shiftOptions = shift.filter((item: any) =>
     schedule.some((jadwal: any) => jadwal.shift_id === item.shift_id),
   );
@@ -235,7 +266,10 @@ const AddPetugasShiftGrup = ({
           filterSchedule,
           token,
         );
-        const schedule = await apiReadAllScheduleShift(filterSchedule, token);
+        const schedule = await apiReadAllScheduleShift(
+          filterSchedule.filter,
+          token,
+        );
         const filterPetugas = petugasShift.data.records?.filter(
           (item: any) => item.grup_petugas_id === defaultValue?.grup_petugas_id,
         );
@@ -273,6 +307,10 @@ const AddPetugasShiftGrup = ({
     const selectedSchedule = schedule?.filter(
       (item: any) => item.shift_id === selectedShiftId,
     );
+    // console.log(selectedShiftId, 'test a');
+    // console.log(schedule, 'test b');
+    // console.log(selectedSchedule, 'test c');
+    console.log(jamKerja, 'jam kerja');
     const sceduleAvail = selectedSchedule?.filter(
       (item: any) =>
         !petugasShift.some(
@@ -292,7 +330,7 @@ const AddPetugasShiftGrup = ({
       nama_shift: selectedSchedule[0]?.nama_shift,
     });
   };
-
+  console.log(sceduleAvail, 'sceduleAvail');
   const handleClickTutorial = () => {
     const driverObj = driver({
       showProgress: true,
@@ -397,20 +435,22 @@ const AddPetugasShiftGrup = ({
 
   const handleSubmit = () => {
     const addData = sceduleAvail?.flatMap((item: any) =>
-      petugasShiftAdd?.map((items: any) => ({
-        shift_id: item.shift_id,
-        petugas_id: items.petugas_id,
-        schedule_id: item.schedule_id,
-        status_kehadiran: '0',
-        jam_kehadiran: items.jam_kehadiran,
-        status_izin: '',
-        penugasan_id: items.penugasan_id,
-        ruangan_otmil_id: '',
-        ruangan_lemasmil_id: '',
-        status_pengganti: items.status_pengganti,
-        created_at: '',
-        updated_at: '',
-      })),
+      petugasShiftAdd
+        ?.map((items: any) => ({
+          shift_id: item.shift_id,
+          petugas_id: items.petugas_id,
+          schedule_id: item.schedule_id,
+          status_kehadiran: '1',
+          jam_kehadiran: items.jam_kehadiran,
+          status_izin: '',
+          penugasan_id: items.penugasan_id,
+          ruangan_otmil_id: '',
+          ruangan_lemasmil_id: '',
+          status_pengganti: '0',
+          created_at: '',
+          updated_at: '',
+        }))
+        .filter((data) => !petugasShift.includes(data.shift_id)),
     );
     if (!validateForm()) return;
     setButtonLoad(true);
@@ -482,7 +522,7 @@ const AddPetugasShiftGrup = ({
               </h1>
 
               {/* <div className="w-10"> */}
-              <button className='pr-70'>
+              <button className="pr-70">
                 <HiQuestionMarkCircle
                   values={filter}
                   aria-placeholder="Show tutorial"
@@ -518,8 +558,10 @@ const AddPetugasShiftGrup = ({
                           dateFormat="dd MMMM yyyy"
                           placeholderText="Pilih tanggal"
                           locale="id"
-                          minDate={dayjs(selectedDate).startOf('month').toDate()}
-                      maxDate={dayjs(selectedDate).endOf('month').toDate()} 
+                          minDate={dayjs(selectedDate)
+                            .startOf('month')
+                            .toDate()}
+                          maxDate={dayjs(selectedDate).endOf('month').toDate()}
                         />
                       </div>
                       <h1>s/d</h1>

@@ -2103,7 +2103,7 @@ export async function apiReadAllScheduleShift(params, token) {
     const response = await axios({
       method: 'GET',
       url: `${newBaseUrl}/schedule`,
-      data: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
