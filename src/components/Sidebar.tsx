@@ -1866,9 +1866,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         },
                       });
 
-                      console.log(response, 'version')
-                      
-                      const versionName = response.data.records.version_name;
+                      let versionName: string;
+                      const version = response.data.records.map((a) => {
+                        versionName = a.version_name;
+                        return versionName;
+                      });
 
                       // Update toast content with fetched data
                       // toast(

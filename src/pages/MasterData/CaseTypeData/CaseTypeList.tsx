@@ -93,13 +93,12 @@ const CaseTypeList = () => {
 
   const handleSearchClick = async () => {
     let params = {
-      filter: {
-        nama_jenis_perkara: filter,
-        nama_kategori_perkara: filterPekara,
-      },
+      nama_jenis_perkara: filter,
+      nama_kategori_perkara: filterPekara,
       page: currentPage,
       pageSize: pageSize,
     };
+    console.log(params, 'paramsJenisPerkara');
     try {
       const response = await apiReadjenisperkara(params, token);
       if (response.status === 200) {
@@ -111,15 +110,16 @@ const CaseTypeList = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
+      // console.log(e, 'testHasil');
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.response.status === 403 ? 'warning' : 'error',
+      //   title: e.response.status === 403 ? Error403Message : e.message,
+      // });
     }
   };
 
@@ -270,12 +270,13 @@ const CaseTypeList = () => {
     console.log('DATA DARI LIST', params);
     try {
       const responseCreate = await apiCreateJenisJahat(params, token);
-      if (responseCreate.data.status === 201) {
+      if (responseCreate.status === 201) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
         setModalAddOpen(false);
+        handleCloseAddModal();
         fetchData();
       } else if (responseCreate.data.status === 400) {
         Alerts.fire({
@@ -303,7 +304,7 @@ const CaseTypeList = () => {
   const handleSubmitEditJenisJahat = async (params: any) => {
     try {
       const responseEdit = await apiUpdateJenisJahat(params, token);
-      if (responseEdit.data.status === 200) {
+      if (responseEdit.status === 200) {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',
