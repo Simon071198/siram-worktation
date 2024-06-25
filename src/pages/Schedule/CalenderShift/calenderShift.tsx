@@ -205,12 +205,15 @@ const shiftJaga = () => {
     setIsLoading(true);
     try {
       const shift = await apiReadAllShift(filterFetch, token);
-      const schedule = await apiReadAllScheduleShift(filterSchedule, token);
+      const schedule = await apiReadAllScheduleShift(
+        filterSchedule.filter,
+        token,
+      );
       const grupPetugas = await apiReadAllGrupPetugas(filterFetch, token);
       const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
       const staff = await apiReadAllStaff(filterStaff, token);
       const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
-
+      console.log(filterSchedule.filter, 'filter  222');
       setDataExcel(petugasShift.data.records);
       setGrupPetugas(grupPetugas.data.records);
       setShift(shift.data.records);
@@ -231,6 +234,8 @@ const shiftJaga = () => {
       });
     }
   };
+
+  console.log(schedule, 'schedule nih');
   useEffect(() => {
     fetchData();
   }, [selectedDate, loadSchedule]);
@@ -405,6 +410,7 @@ const shiftJaga = () => {
     const days = DaysInMonth({ year, month });
     // Menggunakan metode .slice() untuk memilih rentang tanggal yang dipilih
     const selectedDays = days.slice(startDate - 1, endDate);
+    console.log(selectedDays, 'days');
     // startDate - 1 karena indeks dimulai dari 0
     setTanggal(selectedDays);
     setEndDate(startDate + 6);
@@ -431,7 +437,7 @@ const shiftJaga = () => {
     setMonth(selectedMonth + 1);
   };
 
-  const [dataPetugasShift, setDataPetugasShift] = useState({});
+  const [dataPetugasShift, setDataPetugasShift] = useState([]);
   const [dataDetailPetugasShift, setDataDetailPetugasShift] = useState();
   const handleOpenAddModal = (data: any) => {
     console.log('data1', data);
@@ -578,40 +584,41 @@ const shiftJaga = () => {
   };
 
   //add petugasShiftGrup
-  const handleAddPetugasShift = async (data: any) => {
-    let alertShown = false;
-    try {
-      const promises = data.map(async (singleData: any) => {
-        const addPetugasShift = await apiCretePetugasShift(singleData, token);
-        if (addPetugasShift.data.status === 'OK') {
-          if (!alertShown) {
-            alertShown = true; // Set alertShown menjadi true
-            Alerts.fire({
-              icon: 'success',
-              title: 'Berhasil menambah data',
-            });
-            setModalAddOpen(!modalAddOpen);
-            setTimeout(() => {
-              setLoadSchedule(!loadSchedule);
-            }, 500);
-          }
-        }
-      });
+  // const handleAddPetugasShift = async (data: any) => {
+  //   let alertShown = false;
+  //   try {
+  //     const promises = data.map(async (singleData: any) => {
+  //       const addPetugasShift = await apiCretePetugasShift(singleData, token);
+  //       console.log('single data', singleData);
+  //       if (addPetugasShift.data.status === 'OK') {
+  //         if (!alertShown) {
+  //           alertShown = true; // Set alertShown menjadi true
+  //           Alerts.fire({
+  //             icon: 'success',
+  //             title: 'Berhasil menambah data',
+  //           });
+  //           setModalAddOpen(!modalAddOpen);
+  //           setTimeout(() => {
+  //             setLoadSchedule(!loadSchedule);
+  //           }, 500);
+  //         }
+  //       }
+  //     });
 
-      await Promise.all(promises);
-      fetchData();
-    } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
-    }
-  };
+  //     await Promise.all(promises);
+  //     fetchData();
+  //   } catch (e: any) {
+  //     if (e.response.status === 403) {
+  //       navigate('/auth/signin', {
+  //         state: { forceLogout: true, lastPage: location.pathname },
+  //       });
+  //     }
+  //     Alerts.fire({
+  //       icon: e.response.status === 403 ? 'warning' : 'error',
+  //       title: e.response.status === 403 ? Error403Message : e.message,
+  //     });
+  //   }
+  // };
 
   //Edit Petugas ShiftGrup
   const handleEditPetugasShiftGrup = async (data: any) => {
@@ -1185,12 +1192,16 @@ const shiftJaga = () => {
                           (itemJadwal: any) =>
                             parseInt(itemJadwal.tanggal) === item,
                         );
-
+                        console.log(jadwalPegawai, 'kkk');
                         //Schedule
                         const scheduleShift = schedule.find(
                           (schedule: any) =>
                             parseInt(schedule.tanggal) === item,
                         );
+
+                        console.log(scheduleShift, 'jadwal pegawai 1');
+
+                        console.log(item, 'item nihh');
                         const dataAdd = {
                           grup_petugas_id: itemNama.grup_petugas_id,
                           nama_grup_petugas: itemNama.nama_grup_petugas,
@@ -1220,7 +1231,7 @@ const shiftJaga = () => {
                         let jam = '';
                         let shiftBackgroundColor = '';
                         let shiftBgList = '';
-                        console.log(jadwalPegawai, 'this t');
+
                         console.log(shift, 'testing');
                         if (jadwalPegawai) {
                           if (
@@ -1387,6 +1398,261 @@ const shiftJaga = () => {
                 </div>
               );
             })}
+            {/* {filteredGrup?.map((itemNama: any) => {
+              const jadwal = petugasShift.filter(
+                (itemJadwal: any) =>
+                  itemJadwal.grup_petugas_id === itemNama.grup_petugas_id,
+              );
+              const jumlahIzin = jadwal?.filter(
+                (pegawai: any) => pegawai.status_izin === 'Izin',
+              ).length;
+              const jumlahSakit = jadwal?.filter(
+                (pegawai: any) => pegawai.status_izin === 'Sakit',
+              ).length;
+              const jumlahAbsen = jadwal?.filter(
+                (pegawai: any) => pegawai.status_izin === 'Absen',
+              ).length;
+              const jumlahCuti = jadwal?.filter(
+                (pegawai: any) => pegawai.status_izin === 'Cuti',
+              ).length;
+
+              return (
+                <div
+                  className={`flex my-1 ${!openGrup ? '' : 'hidden'}`}
+                  key={itemNama.grup_petugas_id}
+                >
+                  <div className="w-1/6 bg-slate-600 mr-1">
+                    <h2 className="pl-3 flex items-center h-full">
+                      {itemNama.nama_grup_petugas}
+                    </h2>
+                  </div>
+                  <div className="w-4/6">
+                    <div className="flex space-x-1">
+                      {tanggal.map((item: any, index) => {
+                        const backgroundColor =
+                          index % 2 === 0 ? 'bg-slate-500' : 'bg-slate-600';
+                        const backgroundColorHover =
+                          index % 2 === 0 ? 'bg-slate-300' : 'bg-slate-300';
+
+                        // Filter jadwal yang sesuai dengan tanggal
+                        const jadwalPadaTanggal = jadwal.filter(
+                          (itemJadwal: any) =>
+                            parseInt(itemJadwal.tanggal) === item,
+                        );
+
+                        // Filter schedule yang sesuai dengan tanggal
+                        const scheduleShifts = schedule.filter(
+                          (schedule: any) =>
+                            parseInt(schedule.tanggal) === item,
+                        );
+
+                        // Ambil shift_id dari jadwal
+                        const shiftIds = scheduleShifts.map(
+                          (s: any) => s.shift_id,
+                        );
+
+                        // Generate data untuk add/edit
+                        const dataAdd = {
+                          grup_petugas_id: itemNama.grup_petugas_id,
+                          nama_grup_petugas: itemNama.nama_grup_petugas,
+                          ketua_grup_id: itemNama.ketua_grup_id,
+                          nama_ketua_grup: itemNama.nama_ketua_grup,
+                          tanggal: item,
+                          bulan: new Date().getMonth() + 1, // Contoh saja, sesuaikan dengan data Anda
+                          tahun: new Date().getFullYear(), // Contoh saja, sesuaikan dengan data Anda
+                          shift_ids: shiftIds,
+                        };
+
+                        const dataEdit = (jadwalPegawai: any) => ({
+                          grup_petugas_id: itemNama.grup_petugas_id,
+                          nama_grup_petugas: itemNama.nama_grup_petugas,
+                          ketua_grup_id: itemNama.ketua_grup_id,
+                          nama_ketua_grup: itemNama.nama_ketua_grup,
+                          schedule_id: jadwalPegawai.schedule_id,
+                          nama_shift: jadwalPegawai.nama_shift,
+                          shift_id: jadwalPegawai.shift_id,
+                          tanggal: jadwalPegawai.tanggal,
+                          bulan: jadwalPegawai.bulan,
+                          tahun: jadwalPegawai.tahun,
+                          waktu_mulai: jadwalPegawai.waktu_mulai,
+                          waktu_selesai: jadwalPegawai.waktu_selesai,
+                        });
+
+                        return (
+                          <div
+                            key={index}
+                            className={`w-full flex flex-col items-center ${backgroundColor} hover:${backgroundColorHover} h-auto`}
+                          >
+                            {jadwalPadaTanggal.length > 0 ? (
+                              jadwalPadaTanggal.map(
+                                (jadwalPegawai: any, idx: number) => {
+                                  let jam = '';
+                                  let shiftBackgroundColor = '';
+                                  let shiftBgList = '';
+
+                                  if (
+                                    jadwalPegawai.shift_id ===
+                                    'c5e99fed-d404-4c3e-a96b-9cfde0e341f5'
+                                  ) {
+                                    shiftBackgroundColor = 'bg-yellow-300';
+                                    shiftBgList = 'bg-yellow-500';
+                                    jam = timeString(
+                                      jadwalPegawai.waktu_mulai,
+                                      jadwalPegawai.waktu_selesai,
+                                    );
+                                  } else if (
+                                    jadwalPegawai.shift_id ===
+                                    'c6e99fed-d404-4c3e-a96b-9cfde0e341f7'
+                                  ) {
+                                    shiftBackgroundColor = 'bg-orange-500';
+                                    shiftBgList = 'bg-orange-700';
+                                    jam = timeString(
+                                      jadwalPegawai.waktu_mulai,
+                                      jadwalPegawai.waktu_selesai,
+                                    );
+                                  } else if (
+                                    jadwalPegawai.shift_id ===
+                                    'c7e99fed-d404-4c3e-a96b-9cfde0e341f8'
+                                  ) {
+                                    shiftBackgroundColor = 'bg-blue-500';
+                                    shiftBgList = 'bg-blue-700';
+                                    jam = timeString(
+                                      jadwalPegawai.waktu_mulai,
+                                      jadwalPegawai.waktu_selesai,
+                                    );
+                                  } else {
+                                    shiftBackgroundColor = 'bg-orange-500';
+                                    shiftBgList = 'bg-orange-700';
+                                    jam = timeString(
+                                      jadwalPegawai.waktu_mulai,
+                                      jadwalPegawai.waktu_selesai,
+                                    );
+                                  }
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className={`w-full flex ${shiftBackgroundColor} h-16 items-center justify-center`}
+                                    >
+                                      {hapusPetugasShift ? (
+                                        <button
+                                          onClick={() =>
+                                            handleOpenModalDelete(
+                                              dataEdit(jadwalPegawai),
+                                            )
+                                          }
+                                          className={`${shiftBackgroundColor} w-full flex justify-center items-center h-16`}
+                                        >
+                                          <BsTrash className="w-5 text-black h-5" />
+                                        </button>
+                                      ) : (
+                                        <button
+                                          className={`w-full flex justify-center ${shiftBackgroundColor} h-16`}
+                                          onClick={() =>
+                                            handleOpenDetailModal(
+                                              dataEdit(jadwalPegawai),
+                                            )
+                                          }
+                                        >
+                                          <div className="text-black">
+                                            <div
+                                              className={`h-2 w-full ${shiftBgList}`}
+                                            ></div>
+                                            <h3 className="sm:hidden xl:block text-sm font-semibold ml-1">
+                                              {jam}
+                                            </h3>
+                                            <h3
+                                              className={`flex items-center font-bold text-sm ml-1`}
+                                            >
+                                              {jadwalPegawai.nama_shift}
+                                            </h3>
+                                          </div>
+                                        </button>
+                                      )}
+                                    </div>
+                                  );
+                                },
+                              )
+                            ) : (
+                              <div
+                                className={`w-full flex justify-center items-center h-16`}
+                              >
+                                {scheduleShifts.length > 0 ? (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        handleOpenDeleteSchedule(dataAdd)
+                                      }
+                                      className={`${
+                                        hapusPetugasShift ? 'block' : 'hidden'
+                                      } text-white h-5 w-5 hover:${backgroundColorHover} rounded flex items-center justify-center`}
+                                    >
+                                      <BsTrash className="w-full h-full" />
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleOpenAddModal(dataAdd)
+                                      }
+                                      className={`${
+                                        !hapusPetugasShift ? 'block' : 'hidden'
+                                      } text-white max-w-xs h-full w-auto  rounded flex flex-col items-center justify-center pt-2`}
+                                    >
+                                      <BsPlusSquareDotted className="h-[40%] w-[40%] mb-2" />
+                                      <span className="text-xs">
+                                        Tambah Shift
+                                      </span>
+                                    </button>
+                                  </>
+                                ) : (
+                                  <h1 className="flex text-xs text-center justify-center items-center text-white w-full h-full bg-red-600">
+                                    Jadwal Belum Dibuat
+                                  </h1>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="w-1/6 bg-slate-500 ml-1">
+                    <div className="flex items-center">
+                      {jumlahIzin ? (
+                        <h1 className="text-black font-semibold pl-3 pt-2 sm:text-xs xl:text-sm ">
+                          Izin : {jumlahIzin}
+                        </h1>
+                      ) : (
+                        <></>
+                      )}
+                      {jumlahSakit ? (
+                        <h1 className="text-black font-semibold pl-3 pt-2 sm:text-xs xl:text-sm ">
+                          Sakit : {jumlahSakit}
+                        </h1>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                    <div className="flex items-center">
+                      {jumlahCuti ? (
+                        <h1 className="text-black font-semibold pl-3 pt-2 sm:text-xs xl:text-sm ">
+                          Cuti : {jumlahCuti}
+                        </h1>
+                      ) : (
+                        <></>
+                      )}
+                      {jumlahAbsen ? (
+                        <h1 className="text-black font-semibold pl-3 pt-2 sm:text-xs xl:text-sm ">
+                          Absen : {jumlahAbsen}
+                        </h1>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                    <h2 className="flex justify-center h-full items-center w-full"></h2>
+                  </div>
+                </div>
+              );
+            })} */}
             {staff.map((itemNama: any) => {
               const jadwal = petugasShift.filter(
                 (itemJadwal: any) =>
