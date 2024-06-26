@@ -175,7 +175,7 @@ const DataSceduleShift = () => {
 
   //delete
   const handleDeleteClick = (item: any) => {
-    console.log(item);
+    console.log(item, 'del');
     setDeleteData({ shift_id: item });
     setModalDeleteOpen(true);
   };
@@ -323,7 +323,9 @@ const DataSceduleShift = () => {
                                   Edit
                                 </button>
                                 <button
-                                  onClick={() => handleDeleteClick(item.id)}
+                                  onClick={() =>
+                                    handleDeleteClick(item.shift_id)
+                                  }
                                   className="py-1 text-sm px-2 text-white rounded-md bg-red-500"
                                 >
                                   Delete

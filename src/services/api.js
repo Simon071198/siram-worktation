@@ -55,7 +55,10 @@ function getUrl2(params) {
 
   // Membuat query string dari params
   const queryString = Object.keys(cleanedParams)
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(cleanedParams[key])}`)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(cleanedParams[key])}`,
+    )
     .join('&');
 
   return queryString;
@@ -70,7 +73,6 @@ const params = {
 
 const result = getUrl2(params);
 console.log(result); // Output: "page=1&pageSize=20"
-
 
 function removeBase64Prefix(base64String) {
   // Find the index of the comma that separates the prefix from the actual base64 data
@@ -1619,7 +1621,7 @@ export async function apiReadjenisperkara(params, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("first", response);
+    console.log('first', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -2057,7 +2059,7 @@ export async function apiReadAllPetugasShift(params, token) {
     const response = await axios({
       method: 'GET',
       url: `${newBaseUrl}/petugas_shift`,
-      data: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2668,12 +2670,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2838,7 +2840,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -3752,8 +3754,8 @@ export async function apiKesatuan(token) {
 }
 
 export async function apiReadAllKategoriJahat(params, token) {
-  const queryString = getUrl(params)
-  const url = `${newBaseUrl}/kategori_perkara?${queryString}`
+  const queryString = getUrl(params);
+  const url = `${newBaseUrl}/kategori_perkara?${queryString}`;
   try {
     const response = await axios({
       method: 'get',
@@ -3995,8 +3997,8 @@ export async function apiUpdateWBP(params, token) {
 }
 
 export async function apiReadAllUser(params, token) {
-  const queryString = getUrl2(params)
-  const url = `${newBaseUrl}/users?${queryString}`
+  const queryString = getUrl2(params);
+  const url = `${newBaseUrl}/users?${queryString}`;
   try {
     const response = await axios({
       method: 'get',

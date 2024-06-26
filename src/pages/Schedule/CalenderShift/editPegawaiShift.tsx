@@ -260,6 +260,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
   };
 
   const handleSubmit = () => {
+    console.log('handle ini');
     setButtonLoad(true);
     onSubmit(dataEdit).then(() => setButtonLoad(false));
   };
@@ -343,7 +344,7 @@ const EditPegawaiPetugasShift: React.FC<AddRoomModalProps> = ({
           <>
             <div className="w-full flex justify-between px-4 mt-2">
               <h1 className="text-xl font-semibold text-black dark:text-white">
-                Data Jadwal Shift Kerja{tanggal}
+                Data Jadwal Shift Kerja {tanggal}
               </h1>
               <strong
                 className="text-xl align-center cursor-pointer "

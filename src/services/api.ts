@@ -2024,7 +2024,7 @@ export async function apiReadAllPetugasShift(params, token) {
     const response = await axios({
       method: 'GET',
       url: `${newBaseUrl}/petugas_shift`,
-      data: params,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
