@@ -3727,9 +3727,14 @@ export async function apiReadAllKategoriJahat(params, token) {
   try {
     const response = await axios({
       method: 'get',
+<<<<<<< HEAD
+      url: `${newBaseUrl}/kategori_perkara`,
+      params,
+=======
       url: url,
       // url: newWebservice + 'siram_api/kategori_perkara_read.php',
       data: {},
+>>>>>>> e6249fe437c47272ce2e4cc1f81286a0ac9c85e7
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3848,9 +3853,9 @@ export async function apiUpdateAllStaff(params, token) {
 export async function apiReadAllHunian(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/hunian_wbp_otmil_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/hunian_wbp_otmil`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3867,9 +3872,9 @@ export async function apiReadAllHunian(params, token) {
 export async function apiGelang(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/dashboard_gelang_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/dashboard_gelang`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3887,7 +3892,7 @@ export async function apiCreateWBP(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_insert.php',
+      url: `${newBaseUrl}/wbp_profile`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3929,8 +3934,8 @@ export async function apiReadAllWBP(params, token) {
 export async function apiDeleteAllWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_delete.php',
+      method: 'delete',
+      url: newWebservice + 'wbp_profile',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3948,8 +3953,8 @@ export async function apiDeleteAllWBP(params, token) {
 export async function apiUpdateWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_update.php',
+      method: 'put',
+      url: newWebservice + 'wbp_profile',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4295,10 +4300,10 @@ export async function apiSidangUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/sidang_update.php',
+      url: `${newBaseUrl}/sidang?_method=PUT`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -4618,9 +4623,9 @@ export async function apiHakimDelete(params, token) {
 export async function apiStatusWbp(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/status_wbp_kasus_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'status_wbp_kasus',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

@@ -75,7 +75,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       saksi: [],
       pengacara: [],
       wbp_profile: [],
-      nama: [],
+      // nama: [],
       // hakim_id: [],
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
@@ -167,11 +167,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'perubahan_jadwal_sidang' &&
         key !== 'waktu_mulai_sidang' &&
         key !== 'waktu_selesai_sidang' &&
-        // key !== 'hasil_keputusan_sidang' &&
+        key !== 'nama_dokumen_persidangan' &&
+        key !== 'link_dokumen_persidangan' &&
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
         key !== 'nama_kota' &&
-        key !== 'nama_pengadilan_militer'
+        key !== 'nama_pengadilan_militer' &&
+        key !== 'link_dokumen_persidangan'
 
         // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
         // || key === 'saksi' && Array.isArray(value) && value.length === 0
@@ -469,7 +471,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         wbp_profile: wbpValues,
       }));
     }
-  }, [getSaksi, getWbp]);
+  },[]);
 
   const handleSelectWbp = (e: any) => {
     const selectedValues = e.map((item: any) => ({
@@ -638,17 +640,17 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     const file = e.target.files[0];
 
     if (file) {
-      const reader = new FileReader();
+      // const reader = new FileReader();
 
-      reader.onloadend = () => {
-        setFormState({ ...formState, link_dokumen_persidangan: reader.result});
-        console.log('Preview:', reader.result);
-        setPdftUrl(reader.result as string);
-      };
+      // reader.onloadend = () => {
+      //   setFormState({ ...formState, link_dokumen_persidangan: reader.result});
+      //   console.log('Preview:', reader.result);
+      //   setPdftUrl(reader.result as string);
+      // };
 
-      reader.readAsDataURL(file);
+      // reader.readAsDataURL(file);
 
-      // setFormState({ ...formState, link_dokumen_persidangan: file });
+      setFormState({ ...formState, link_dokumen_persidangan: file });
     }
   };
   const handleRemoveDoc = () => {

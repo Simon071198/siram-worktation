@@ -81,10 +81,10 @@ const InmateList = () => {
     item?.akses_ruangan_otmil.map((item: any) =>
       newAksesRuangOtmil.push({
         id: item?.ruangan_otmil_id,
-        isPermitted: item?.isPermitted
+        isPermitted: item?.isPermitted,
       }),
     );
-    console.log(item, "item edit")
+    console.log(item, 'item edit');
     const newEditItem: any = {
       wbp_profile_id: item?.wbp_profile_id,
       foto_wajah: item?.foto_wajah,
@@ -145,7 +145,6 @@ const InmateList = () => {
       is_new_kasus: 'false',
       existing_kasus_id: item.kasus_id,
 
-
       // Form State Kasus
       // wbp_existing_id: '',
       nomor_kasus: '',
@@ -157,8 +156,8 @@ const InmateList = () => {
       wbp_profile_ids: [],
       keterangans: [],
       role_ketua_oditur_ids: '',
-      oditur_penyidik_id: [],
-      
+      oditur_penyidikan_id: [],
+
       nama_jenis_pidana: '',
       saksi_id: [],
       keteranganSaksis: [],
