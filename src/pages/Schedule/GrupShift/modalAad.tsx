@@ -166,7 +166,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
 
     onSubmit(dataGrup);
   };
-
+  console.log(staff, 'staff');
   return (
     <div className="modal-container fixed z-[9999] flex top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
       <div
@@ -269,11 +269,11 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                   >
                     <option value="">Pilih Petugas</option>
                     {staff
-                      .filter((staffItem) => staffItem.grup_petugas_id == '')
+                      .filter((staffItem) => staffItem.grup_petugas_id == null)
                       .map((staffItem) => {
                         return (
                           <option
-                            // key={staffItem.petugas_id}
+                            key={staffItem.petugas_id}
                             value={staffItem.petugas_id}
                           >
                             {staffItem.nama}
