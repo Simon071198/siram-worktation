@@ -79,7 +79,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
     };
     dataStaff();
   }, []);
-
+  console.log(staff, 'staff');
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {

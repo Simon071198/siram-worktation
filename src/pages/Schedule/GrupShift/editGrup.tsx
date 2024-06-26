@@ -65,7 +65,7 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
   console.log(newStaff, 'newstaff');
   console.log(dataGrup, 'dataGrup');
   const StaffOptions = newStaff
-    .filter((item: any) => item.grup_petugas_id == dataGrup.grup_petugas_id)
+    .filter((item: any) => item.grup_petugas_id !== dataGrup.grup_petugas_id)
     .map((item: any) => ({
       value: item.petugas_id,
       label: item.nama,
@@ -105,9 +105,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
       };
       const filter2 = {
         pageSize: Number.MAX_SAFE_INTEGER,
-        filter: {
-          grup_petugas_id: '',
-        },
+        // filter: {
+        //   grup_petugas_id: '',
+        // },
       };
       try {
         const staff = await apiReadAllStaff(filter, token);
@@ -274,9 +274,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
         };
         const filter2 = {
           pageSize: Number.MAX_SAFE_INTEGER,
-          filter: {
-            grup_petugas_id: '',
-          },
+          // filter: {
+          //   grup_petugas_id: '',
+          // },
         };
         const staff = await apiReadAllStaff(filter, token);
         const staffNew = await apiReadAllStaff(filter2, token);
@@ -317,9 +317,9 @@ const EditGrup: React.FC<AddRoomModalProps> = ({
         };
         const filter2 = {
           pageSize: Number.MAX_SAFE_INTEGER,
-          filter: {
-            grup_petugas_id: '',
-          },
+          // filter: {
+          //   grup_petugas_id: '',
+          // },
         };
         const staff = await apiReadAllStaff(filter, token);
         const staffNew = await apiReadAllStaff(filter2, token);

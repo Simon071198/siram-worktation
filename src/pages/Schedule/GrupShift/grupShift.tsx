@@ -133,7 +133,7 @@ const GrupShift = () => {
       }
       setDataGrup(response?.data.records);
       setPages(response?.data?.pagination?.totalPages);
-      setRows(response?.data.pagination.totalRecords);
+      setRows(response.data.pagination?.totalRecords ?? null);
       setIsLoading(false);
     } catch (e: any) {
       console.log(e);
