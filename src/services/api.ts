@@ -15,7 +15,7 @@ export const newWebservice = 'http://localhost:8000/api/';
 function getUrl(params) {
   const object = {
     page: params.page ? params.page : 1,
-    pageSize: params.pageSize ? params.pageSize : Infinity,
+    pageSize: params.pageSize ? params.pageSize : 999999,
     ...params.filter,
   };
 
@@ -30,6 +30,29 @@ function getUrl(params) {
       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(object[key])}`,
     )
     .join('&');
+  return queryString;
+}
+function getUrl2(params) {
+  console.log('paramsTesting', params);
+
+  // Menghapus spasi ekstra dan memangkas nilai string dalam params
+  const cleanedParams = {};
+  for (const key in params) {
+    if (typeof params[key] === 'string') {
+      cleanedParams[key] = params[key].replace(/\s+/g, ' ').trim();
+    } else {
+      cleanedParams[key] = params[key];
+    }
+  }
+
+  // Membuat query string dari params
+  const queryString = Object.keys(cleanedParams)
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(cleanedParams[key])}`,
+    )
+    .join('&');
+
   return queryString;
 }
 
@@ -1553,26 +1576,24 @@ export async function apiReadAllKesatuan() {
 }
 
 export async function apiReadjenisperkara(params, token) {
-  const queryString = getUrl(params);
+  const queryString = getUrl2(params);
   const url = newWebservice + `jenis_perkara?${queryString}`;
   try {
     const response = await axios({
-      method: 'GET',
-      url: `${newBaseUrl}/jenis_perkara`,
-      params,
+      method: 'get',
+      url: url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data);
+    console.log('first', response);
     return response;
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
-
 // Visitor API
 export async function apiReadVisitor(params, token) {
   try {
@@ -2002,7 +2023,7 @@ export async function apiReadAllPetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'GET',
-      url: newWebservice + 'siram_api/petugas_shift_read.php',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2021,7 +2042,7 @@ export async function apiCretePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_insert.php',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2039,8 +2060,8 @@ export async function apiCretePetugasShift(params, token) {
 export async function apiEditPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2058,8 +2079,8 @@ export async function apiEditPetugasShift(params, token) {
 export async function apiDeletePetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2078,9 +2099,9 @@ export async function apiDeletePetugasShift(params, token) {
 export async function apiReadAllScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/schedule`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2098,7 +2119,7 @@ export async function apiCreateScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/schedule_insert.php',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2116,8 +2137,8 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2271,8 +2292,8 @@ export async function apiversion(params) {
   try {
     const response = await axios({
       method: 'get',
-      url: `${newBaseUrl}/version`,
-      params,
+      url: newwebserviceurl + 'version',
+      data: params,
     });
     console.log(response);
     return response;
@@ -2423,7 +2444,7 @@ export async function apiCreateJenisJahat(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newwebserviceurl + 'siram_api/jenis_perkara_insert.php',
+      url: newwebserviceurl + 'jenis_perkara',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2441,8 +2462,8 @@ export async function apiCreateJenisJahat(params, token) {
 export async function apiUpdateJenisJahat(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/jenis_perkara_update.php',
+      method: 'put',
+      url: newwebserviceurl + 'jenis_perkara',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2460,8 +2481,8 @@ export async function apiUpdateJenisJahat(params, token) {
 export async function apiDeleteJenisJahat(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/jenis_perkara_delete.php  ',
+      method: 'delete',
+      url: newwebserviceurl + 'jenis_perkara',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3701,11 +3722,19 @@ export async function apiKesatuan(token) {
 }
 
 export async function apiReadAllKategoriJahat(params, token) {
+  const queryString = getUrl(params);
+  const url = `${newBaseUrl}/kategori_perkara?${queryString}`;
   try {
     const response = await axios({
       method: 'get',
+<<<<<<< HEAD
       url: `${newBaseUrl}/kategori_perkara`,
       params,
+=======
+      url: url,
+      // url: newWebservice + 'siram_api/kategori_perkara_read.php',
+      data: {},
+>>>>>>> e6249fe437c47272ce2e4cc1f81286a0ac9c85e7
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3941,11 +3970,13 @@ export async function apiUpdateWBP(params, token) {
 }
 
 export async function apiReadAllUser(params, token) {
+  const queryString = getUrl2(params);
+  const url = `${newBaseUrl}/users?${queryString}`;
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/user_read.php',
-      data: params,
+      method: 'get',
+      url: url,
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         // 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -3964,7 +3995,7 @@ export async function apiCreateUser(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/user_insert.php',
+      url: newWebservice + 'users ',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3982,8 +4013,8 @@ export async function apiCreateUser(params, token) {
 export async function apiNewDeleteUser(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/user_delete.php',
+      method: 'delete',
+      url: newWebservice + 'users',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4001,8 +4032,8 @@ export async function apiNewDeleteUser(params, token) {
 export async function apiEditUser(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/user_update.php',
+      method: 'put',
+      url: newWebservice + 'users',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4017,12 +4048,12 @@ export async function apiEditUser(params, token) {
   }
 }
 
-export async function apiReadAllRole(params, token) {
+export async function apiReadAllRole(token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/user_role_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'user_role',
+      // data: params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

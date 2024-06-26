@@ -102,20 +102,20 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
   const validateForm = () => {
     let errorFields = [];
 
-    for (const [key, value] of Object.entries(formState)) {
-      if (
-        key !== 'lokasi_lemasmil_id' &&
-        key !== 'last_login' &&
-        key !== 'username' &&
-        key !== 'nama_lokasi_lemasmil' &&
-        key !== 'image' &&
-        key !== 'updated_at' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
-      ) {
-        if (!value) {
-          errorFields.push(key);
-        }
-      }
-    }
+    // for (const [key, value] of Object.entries(formState)) {
+    //   if (
+    //     key !== 'lokasi_lemasmil_id' &&
+    //     key !== 'last_login' &&
+    //     key !== 'username' &&
+    //     key !== 'nama_lokasi_lemasmil' &&
+    //     key !== 'image' &&
+    //     key !== 'updated_at' // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
+    //   ) {
+    //     if (!value) {
+    //       errorFields.push(key);
+    //     }
+    //   }
+    // }
 
     if (errorFields.length > 0) {
       console.log(errorFields);
@@ -356,7 +356,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
       let params = {
         filter: '',
       };
-      const response = await apiReadAllRole(params, token);
+      const response = await apiReadAllRole(token);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
@@ -617,7 +617,7 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
                         Pilih Role
                       </option>
                       {roleData.map((item: any) => (
-                        <option value={item.user_role_id}>
+                        <option value={item.id}>
                           {item.role_name} - ( {item.deskripsi_role} )
                         </option>
                       ))}

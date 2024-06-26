@@ -269,7 +269,7 @@ const AddDataGrup: React.FC<AddRoomModalProps> = ({
                   >
                     <option value="">Pilih Petugas</option>
                     {staff
-                      .filter((staffItem) => staffItem.grup_petugas_id !== '')
+                      .filter((staffItem) => staffItem.grup_petugas_id == null)
                       .map((staffItem) => {
                         return (
                           <option

@@ -76,23 +76,23 @@ export const AddCaseTypeModal: React.FC<AddCaseTypeModalProps> = ({
   const validateForm = () => {
     let errorFields = [];
 
-    for (const [key, value] of Object.entries(formState)) {
-      if (
-        key !== 'jenis_perkara_id' &&
-        key !== 'vonis_bulan_perkara' &&
-        key !== 'vonis_hari_perkara' &&
-        key !== 'vonis_tahun_perkara'
-      ) {
-        if (!value) {
-          errorFields.push(key);
-        }
-      }
-    }
-    if (errorFields.length > 0) {
-      console.log(errorFields);
-      setErrors(errorFields);
-      return false;
-    }
+    // for (const [key, value] of Object.entries(formState)) {
+    //   if (
+    //     key !== 'jenis_perkara_id' &&
+    //     key !== 'vonis_bulan_perkara' &&
+    //     key !== 'vonis_hari_perkara' &&
+    //     key !== 'vonis_tahun_perkara'
+    //   ) {
+    //     if (!value) {
+    //       errorFields.push(key);
+    //     }
+    //   }
+    // }
+    // if (errorFields.length > 0) {
+    //   console.log(errorFields);
+    //   setErrors(errorFields);
+    //   return false;
+    // }
     setErrors([]);
     return true;
   };
