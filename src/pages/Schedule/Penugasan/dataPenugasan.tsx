@@ -75,11 +75,11 @@ const Penugasan = () => {
         throw new Error('Terjadi kesalahan saat mencari data.');
       }
     } catch (e: any) {
-      // if (e.response.status === 403) {
-      //   navigate('/auth/signin', {
-      //     state: { forceLogout: true, lastPage: location.pathname },
-      //   });
-      // }
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
       Alerts.fire({
         icon: e.response.status === 403 ? 'warning' : 'error',
         title: e.response.status === 403 ? Error403Message : e.message,
@@ -207,18 +207,13 @@ const Penugasan = () => {
             penugasan_id: '',
           },
         };
-        // const response = await apiReadAllPenugasanShift(params, token);
-        // const data = response.data.records;
 
         fecthPenugasan();
+        setFilter('');
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil menambah data',
         });
-        // // setModalAddOpen(false);
-        // setDataPenugasan(response.data.records);
-        // setPages(response.data.pagination.totalPages);
-        // setRows(response.data.pagination.totalRecords);
       } else {
         Alerts.fire({
           icon: 'error',
@@ -245,6 +240,7 @@ const Penugasan = () => {
       if (EditData.data.status === 'OK') {
         handleCloseModalEdit();
         fecthPenugasan();
+        setFilter('');
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil mengubah data',

@@ -28,6 +28,7 @@ import { Breadcrumbs } from '../../components/Breadcrumbs';
 let tokenItem = localStorage.getItem('token');
 let dataToken = tokenItem ? JSON.parse(tokenItem) : null;
 let token = dataToken.token;
+let lokasiUser: string = '';
 
 const UserList = () => {
   const navigate = useNavigate();
@@ -60,6 +61,12 @@ const UserList = () => {
   // const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
   //  setToken(dataToken.token)
   //   },[token])
+
+  useEffect(() => {
+    const dataUser: any = localStorage.getItem('dataUser');
+    lokasiUser = JSON.parse(dataUser).lokasi_otmil_id;
+    console.log('lokasiUser', lokasiUser);
+  }, []);
 
   const handleClickTutorial = () => {
     const driverObj = driver({
@@ -152,12 +159,11 @@ const UserList = () => {
   const handleSearchClick = async () => {
     try {
       let params = {
-        filter: {
-          nama: filter,
-          role_name: filterRole,
-        },
+        nama: filter,
+        user_role_id: filterRole,
         page: currentPage,
         pageSize: 10,
+        lokasi_otmil_id: lokasiUser,
       };
       const responseRead = await apiReadAllUser(params, token);
       if (responseRead.data.status === 'OK') {
@@ -168,15 +174,15 @@ const UserList = () => {
         throw new Error(responseRead.data.message);
       }
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
+      // if (e.response.status === 403) {
+      //   navigate('/auth/signin', {
+      //     state: { forceLogout: true, lastPage: location.pathname },
+      //   });
+      // }
+      // Alerts.fire({
+      //   icon: e.response.status === 403 ? 'warning' : 'error',
+      //   title: e.response.status === 403 ? Error403Message : e.message,
+      // });
     }
   };
 
@@ -348,6 +354,7 @@ const UserList = () => {
       ],
       ...data.map((item: any) => [
         item.nama,
+        item.user_role_id,
         item.role_name,
         item.nrp,
         item.nama_matra,
@@ -372,9 +379,7 @@ const UserList = () => {
   let fetchData = async () => {
     setIsLoading(true);
     let params = {
-      filter: {
-        lokasi_otmil_id: '1tcb4qwu-tkxh-lgfb-9e6f-xm1k3zcu0vot',
-      },
+      lokasi_otmil_id: lokasiUser,
       page: currentPage,
       pageSize: 10,
     };
@@ -400,14 +405,13 @@ const UserList = () => {
 
   const getAllRole = async () => {
     try {
-      let params = {
-        filter: '',
-      };
-      const response = await apiReadAllRole(params, token);
+      const response = await apiReadAllRole(token);
+      console.log('responseRole', response);
       if (response.data.status !== 'OK') {
         throw new Error(response.data.message);
       }
       const result = response.data;
+      console.log('resultRoleData', result);
       setRoleData(result.records);
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -447,7 +451,7 @@ const UserList = () => {
             >
               <option value="">Semua role</option>
               {roleData.map((item: any) => (
-                <option value={item.role_name}>{item.role_name}</option>
+                <option value={item.id}>{item.role_name}</option>
               ))}
             </select>
 
