@@ -69,7 +69,7 @@ interface Petugas {
   schedule_id: any;
   nama: any;
   status_izin: any;
-  status_kehadiran: any;
+  status_kehadiran: number;
   status_pengganti: any;
   grup_petugas_id: any;
   nama_grup_petugas: any;
@@ -210,9 +210,15 @@ const shiftJaga = () => {
         token,
       );
       const grupPetugas = await apiReadAllGrupPetugas(filterFetch, token);
-      const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
+      const Petugas = await apiReadAllPetugasShift(
+        filterSchedule.filter,
+        token,
+      );
       const staff = await apiReadAllStaff(filterStaff, token);
-      const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
+      const petugasShift = await apiReadAllPetugasShift(
+        filter1bln.filter,
+        token,
+      );
       console.log(filterSchedule.filter, 'filter  222');
       setDataExcel(petugasShift.data.records);
       setGrupPetugas(grupPetugas.data.records);

@@ -2179,7 +2179,7 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'PUT',
+      method: 'DELETE',
       url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
