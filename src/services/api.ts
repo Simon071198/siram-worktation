@@ -2001,9 +2001,9 @@ export async function apiReadAllRekapCuti(params, token) {
 export async function apiReadAllPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/petugas_shift`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3703,9 +3703,15 @@ export async function apiKesatuan(token) {
 export async function apiReadAllKategoriJahat(params, token) {
   try {
     const response = await axios({
-      method: 'GET',
+      method: 'get',
+<<<<<<< HEAD
       url: `${newBaseUrl}/kategori_perkara`,
       params,
+=======
+      url: url,
+      // url: newWebservice + 'siram_api/kategori_perkara_read.php',
+      data: {},
+>>>>>>> e6249fe437c47272ce2e4cc1f81286a0ac9c85e7
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3824,7 +3830,7 @@ export async function apiUpdateAllStaff(params, token) {
 export async function apiReadAllHunian(params, token) {
   try {
     const response = await axios({
-      method: 'GET',
+      method: 'get',
       url: `${newBaseUrl}/hunian_wbp_otmil`,
       params,
       headers: {
@@ -3905,8 +3911,8 @@ export async function apiReadAllWBP(params, token) {
 export async function apiDeleteAllWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_delete.php',
+      method: 'delete',
+      url: newWebservice + 'wbp_profile',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -3924,8 +3930,8 @@ export async function apiDeleteAllWBP(params, token) {
 export async function apiUpdateWBP(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/wbp_profile_update.php',
+      method: 'put',
+      url: newWebservice + 'wbp_profile',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4269,10 +4275,10 @@ export async function apiSidangUpdate(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/sidang_update.php',
+      url: `${newBaseUrl}/sidang?_method=PUT`,
       data: params,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -4592,8 +4598,8 @@ export async function apiHakimDelete(params, token) {
 export async function apiStatusWbp(params, token) {
   try {
     const response = await axios({
-      method: 'GET',
-      url: newWebservice + 'siram_api/status_wbp_kasus',
+      method: 'get',
+      url: newWebservice + 'status_wbp_kasus',
       params,
       headers: {
         'Content-Type': 'application/json',

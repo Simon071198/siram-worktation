@@ -189,7 +189,7 @@ export const AddInmateModal = ({
       wbp_profile_ids: [],
       keterangans: [],
       role_ketua_oditur_ids: '',
-      oditur_penyidik_id: [],
+      oditur_penyidikan_id: [],
       nama_jenis_perkara: '',
       nama_jenis_pidana: '',
       saksi_id: [],
@@ -578,7 +578,7 @@ export const AddInmateModal = ({
   };
 
   const oditurPenyidikOptions = dataOditurPenyidik.map((item: any) => ({
-    value: item.oditur_penyidik_id,
+    value: item.oditur_penyidikan_id,
     label: item.nama_oditur,
   }));
 
@@ -589,7 +589,10 @@ export const AddInmateModal = ({
       arrayTemp.push(e[i].value);
       arrayAnggota.push(e[i]);
     }
-    setFormState({ ...formState, oditur_penyidik_id: arrayTemp });
+
+    console.log('oditur_penyidikan_id', arrayTemp);
+
+    setFormState({ ...formState, oditur_penyidikan_id: arrayTemp });
     setKetuaOditurPenyidik(arrayAnggota);
   };
 
@@ -682,7 +685,7 @@ export const AddInmateModal = ({
   //         key != 'vonis_hari_perkara' &&
   //         key != 'nama_jenis_pidana' &&
   //         key != 'lokasi_kasus' &&
-  //         key != 'oditur_penyidik_id' &&
+  //         key != 'oditur_penyidikan_id' &&
   //         key != 'role_ketua_oditur_ids' &&
   //         key != 'saksi_id'
   //       ) {
@@ -759,7 +762,7 @@ export const AddInmateModal = ({
           }
         }
 
-      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil') {
+      if (key === 'lokasi_lemasmil_id' || key === 'nama_hunian_wbp_lemasmil' || key === 'vonis_bulan_perkara' || key === 'tanggal_penetapan_tersangka' || key === 'tanggal_penetapan_terdakwa' || key === 'tanggal_penetapan_terpidana' || key === 'role_ketua_oditur_ids') {
         console.log('STATUS ADA');
         continue;
       }
