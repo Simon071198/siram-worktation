@@ -718,7 +718,7 @@ export async function apiReadJaksapenuntut(params, token) {
   try {
     const response = await axios({
       method: 'get',
-      url: `${newBaseUrl}/oditur_penuntur`,
+      url: `${newBaseUrl}/oditur_penuntut`,
       params,
       headers: {
         'Content-Type': 'application/json',
