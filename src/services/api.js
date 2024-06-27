@@ -5,12 +5,12 @@ import axios from 'axios';
 // export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
 // export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
-export const webserviceurl = 'http://localhost:8000/api/';
+export const webserviceurl = 'https://dev-siram-workstation.transforme.co.id/api/';
 
-export const newWebservice = 'http://localhost:8000/api/';
-export const newwebserviceurl = 'http://localhost:8000/api/';
+export const newWebservice = 'https://dev-siram-workstation.transforme.co.id/api/';
+export const newwebserviceurl = 'https://dev-siram-workstation.transforme.co.id/api/';
 
-const newBaseUrl = 'http://127.0.0.1:8000/api';
+const newBaseUrl = 'https://dev-siram-workstation.transforme.co.id/api';
 
 // export const webserviceurl = 'https://dev-siram-workstation.transforme.co.id/api/login';
 
