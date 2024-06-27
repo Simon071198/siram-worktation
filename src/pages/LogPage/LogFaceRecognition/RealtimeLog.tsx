@@ -68,18 +68,21 @@ export default function Realtime() {
   const [filter, setFilter] = useState('');
 
   const handleLocationChange = (event: any) => {
+    console.log(event.target.value, "val")
     setSelectedLocation(event.target.value);
     setSelectedDevice('');
   };
 
   const handleDeviceChange = (event: any) => {
+    console.log(event.target.value, "selected")
     setSelectedDevice(event.target.value);
   };
 
   const selectedLocationEntry = jsonData.find(
-    (entry) => entry?.nama_lokasi_otmil === selectedLocation,
+    (entry: {lokasi_otmil_id: string}) => entry?.lokasi_otmil_id === selectedLocation,
   );
   const devices = selectedLocationEntry ? selectedLocationEntry.kamera : [];
+  console.log(devices, "devices")
   function exportToCSV(data, filename) {
     const csvData = convertToCSV(data);
     const csvBlob = new Blob([csvData], { type: 'text/csv' });
@@ -243,12 +246,12 @@ export default function Realtime() {
   let fetch = async () => {
     try {
       let params = {
-        device_id: selectedDevice,
-        country_id: selectedCountry,
-        age: selectedAge,
-        analytics: selectedAnalytics,
-        name: selectedName,
-        gender: selectedGender,
+        lokasiId: selectedLocation,
+        kameraId: selectedDevice,
+        // age: selectedAge,
+        // analytics: selectedAnalytics,
+        // name: selectedName,
+        // gender: selectedGender,
       };
 
       setLoading(true);
@@ -420,9 +423,7 @@ export default function Realtime() {
                 >
                   <option value="">Semua Lokasi</option>
                   {jsonData.map((entry) => (
-                    <option key={entry.nama_lokasi_otmil
-                    } value={entry.nama_lokasi_otmil
-                    }>
+                    <option key={entry.lokasi_otmil_id} value={entry.lokasi_otmil_id}>
                       {entry.nama_lokasi_otmil
                       }
                     </option>
@@ -452,7 +453,7 @@ export default function Realtime() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-5 pt-4">
+          <div className="flex flex-col gap-5 pt-19">
           <button
             onClick={handleExportClick}
             className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded b-csv h-fit"
@@ -460,12 +461,12 @@ export default function Realtime() {
             Export CSV
           </button>
           
-            <button
+            {/* <button
             onClick={() => console.log("search")}
             className="bg-blue-300 hover:bg-blue-400 col-span-1 font-bold py-2 px-3 rounded b-csv h-fit text-black"
           >
             Search
-          </button>
+          </button> */}
           
           </div>
           <DataNotFoundModal
@@ -531,7 +532,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/siram_admin_api' +
+                        'http://localhost:8000/storage/' +
                         item.image
                       }
                       alt=""
@@ -618,7 +619,7 @@ export default function Realtime() {
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
                   {item.image ? (
                     <img
-                      className="w-10 h-10 rounded-sm"
+                      className="w-fit h-fit rounded-sm"
                       src={
                         'http://dev.transforme.co.id/siram_admin_api' +
                         item.image

@@ -2501,33 +2501,34 @@ export async function apiReadKategoriPerkara(params, token) {
 export async function apiVisitorRealtimeLogList(params) {
   try {
     let parameter = {
+      ...params,
       pageSize: 100,
       filters: {},
     };
-    if (params.device_id != '') {
-      parameter.filters.device_id = params.device_id;
-    }
-    if (params.country_id != '') {
-      parameter.filters.country_id = params.country_id;
-    }
-    if (params.age != '') {
-      parameter.filters.age = params.age;
-    }
+    // if (params.device_id != '') {
+    //   parameter.filters.device_id = params.device_id;
+    // }
+    // if (params.country_id != '') {
+    //   parameter.filters.country_id = params.country_id;
+    // }
+    // if (params.age != '') {
+    //   parameter.filters.age = params.age;
+    // }
 
-    if (params.analytics != '') {
-      parameter.filters.analytics = params.analytics;
-    }
-    if (params.name != '') {
-      parameter.filters.name = params.name;
-    }
-    if (params.gender != '') {
-      parameter.filters.gender = params.gender;
-    }
+    // if (params.analytics != '') {
+    //   parameter.filters.analytics = params.analytics;
+    // }
+    // if (params.name != '') {
+    //   parameter.filters.name = params.name;
+    // }
+    // if (params.gender != '') {
+    //   parameter.filters.gender = params.gender;
+    // }
 
     const response = await axios({
-      method: 'post',
-      url: 'https://dev.transforme.co.id/siram_admin_api/siram_api/kamera_log_read.php',
-      data: JSON.stringify(parameter),
+      method: 'GET',
+      url: `${newBaseUrl}/kamera_log`,
+      params: parameter,
     });
     // console.log(response.data);
 
