@@ -60,14 +60,12 @@ const DeletePetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     bulan: parseInt(dayjs(selectedDate).format('M')),
     tahun: parseInt(dayjs(selectedDate).format('YYYY')),
   });
-
+  console.log(defaultValue, 'defaultValue delete');
   const [endDate, setEndDate] = useState({
     tanggal: parseInt(dayjs(selectedEndDate).format('D')),
     bulan: parseInt(dayjs(selectedEndDate).format('M')),
     tahun: parseInt(dayjs(selectedEndDate).format('YYYY')),
   });
-
-  console.log('papap:', dataPetugasShift);
 
   useEffect(() => {
     setIsLoading(true);
@@ -75,16 +73,17 @@ const DeletePetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
       const filterPetugasShift = {
         pageSize: Number.MAX_SAFE_INTEGER,
         filter: {
-          grup_petugas_id: defaultValue?.grup_petugas_id,
-          tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
-          bulan: defaultValue.bulan,
-          tahun: defaultValue.tahun,
+          // grup_petugas_id: defaultValue?.grup_petugas_id,
+          schedule_id: defaultValue?.schedule_id,
+          // tanggal: `${startDate.tanggal}-${endDate.tanggal}`,
+          // bulan: defaultValue.bulan,
+          // tahun: defaultValue.tahun,
         },
       };
 
       try {
         const petugasShift = await apiReadAllPetugasShift(
-          filterPetugasShift,
+          filterPetugasShift.filter,
           token,
         );
         setDataPetugasShift(petugasShift.data.records);
@@ -103,7 +102,7 @@ const DeletePetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     };
     fetchSchedule();
   }, []);
-
+  console.log('papap:', dataPetugasShift);
   const handleDateChange = (date: any) => {
     const end = dayjs(date).add(4, 'day');
     setSelectedDate(dayjs(date));
@@ -135,12 +134,13 @@ const DeletePetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
 
   const handleSubmit = () => {
     const deleteData = dataPetugasShift?.map((item: any) => ({
-      petugas_shift_id: item.petugas_shift_id,
+      petugas_shift_id: [item.petugas_shift_id],
     }));
+
     console.log('deleteData', deleteData);
 
     setIsLoading(true);
-    onSubmit(dataPetugasShift).then(() => setButtonLoad(false));
+    onSubmit(deleteData).then(() => setButtonLoad(false));
   };
 
   return (

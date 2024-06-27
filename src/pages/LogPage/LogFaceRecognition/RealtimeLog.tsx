@@ -68,19 +68,21 @@ export default function Realtime() {
   const [filter, setFilter] = useState('');
 
   const handleLocationChange = (event: any) => {
+    console.log(event.target.value, "val")
     setSelectedLocation(event.target.value);
     setSelectedDevice('');
   };
 
   const handleDeviceChange = (event: any) => {
+    console.log(event.target.value, "selected")
     setSelectedDevice(event.target.value);
   };
 
   const selectedLocationEntry = jsonData.find(
-    (entry) => entry.location === selectedLocation,
+    (entry: {lokasi_otmil_id: string}) => entry?.lokasi_otmil_id === selectedLocation,
   );
-  const devices = selectedLocationEntry ? selectedLocationEntry.devices : [];
-
+  const devices = selectedLocationEntry ? selectedLocationEntry.kamera : [];
+  console.log(devices, "devices")
   function exportToCSV(data, filename) {
     const csvData = convertToCSV(data);
     const csvBlob = new Blob([csvData], { type: 'text/csv' });
@@ -244,12 +246,12 @@ export default function Realtime() {
   let fetch = async () => {
     try {
       let params = {
-        device_id: selectedDevice,
-        country_id: selectedCountry,
-        age: selectedAge,
-        analytics: selectedAnalytics,
-        name: selectedName,
-        gender: selectedGender,
+        lokasiId: selectedLocation,
+        kameraId: selectedDevice,
+        // age: selectedAge,
+        // analytics: selectedAnalytics,
+        // name: selectedName,
+        // gender: selectedGender,
       };
 
       setLoading(true);
@@ -283,11 +285,12 @@ export default function Realtime() {
   ]);
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.post(
-        webserviceurl + 'gema_admin_api/location/readOnline.php',
+      const result = await axios.get(
+       'http://127.0.0.1:8000/api/kamera_lokasi',
       );
-      console.log(result.data.data.records);
-      setJsonData(result.data.data.records);
+      console.log("result", result)
+      console.log(result.data.records, "sini");
+      setJsonData(result.data.records);
     };
     fetchData();
   }, []);
@@ -306,8 +309,8 @@ export default function Realtime() {
         </div>
       </NavLink> */}
       <div className="flex-col items-center">
-        <div className="grid grid-cols-5 gap-4 mb-4 items-end">
-          <div className="grid grid-cols-3 col-span-4 gap-x-7 flex-wrap">
+        <div className="grid grid-cols-5 gap-4 mb-4 items-center">
+          <div className="grid grid-cols-3 col-span-4 gap-x-7 flex-wrap w-full items-center">
             <div className="">
               <div className="items-center">
                 <h1 className="block text-sm font-medium truncate text-gray-700">
@@ -363,6 +366,7 @@ export default function Realtime() {
                 </div>
               </div>
             )}
+            
             {/* <div className="">
             <div className="w-full">
               <h1
@@ -419,8 +423,9 @@ export default function Realtime() {
                 >
                   <option value="">Semua Lokasi</option>
                   {jsonData.map((entry) => (
-                    <option key={entry.location} value={entry.location}>
-                      {entry.location}
+                    <option key={entry.lokasi_otmil_id} value={entry.lokasi_otmil_id}>
+                      {entry.nama_lokasi_otmil
+                      }
                     </option>
                   ))}
                 </select>
@@ -440,21 +445,30 @@ export default function Realtime() {
                 >
                   <option value="">Semua Kamera</option>
                   {devices.map((device) => (
-                    <option key={device.deviceId} value={device.deviceId}>
-                      {device.deviceName}
+                    <option key={device.id} value={device.id}>
+                      {device.nama_kamera}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
           </div>
-
+          <div className="flex flex-col gap-5 pt-19">
           <button
             onClick={handleExportClick}
-            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded b-csv"
+            className="bg-blue-500 hover:bg-blue-700 col-span-1 text-white font-bold py-2 px-3 rounded b-csv h-fit"
           >
             Export CSV
           </button>
+          
+            {/* <button
+            onClick={() => console.log("search")}
+            className="bg-blue-300 hover:bg-blue-400 col-span-1 font-bold py-2 px-3 rounded b-csv h-fit text-black"
+          >
+            Search
+          </button> */}
+          
+          </div>
           <DataNotFoundModal
             open={showModal}
             onClose={handleCloseModal}
@@ -518,7 +532,7 @@ export default function Realtime() {
                     <img
                       className="w-10 h-10 rounded-sm"
                       src={
-                        'http://dev.transforme.co.id/siram_admin_api' +
+                        'http://localhost:8000/storage/' +
                         item.image
                       }
                       alt=""
@@ -605,7 +619,7 @@ export default function Realtime() {
                 <div className="flex items-center gap-3 p-2.5 xl:p-5">
                   {item.image ? (
                     <img
-                      className="w-10 h-10 rounded-sm"
+                      className="w-fit h-fit rounded-sm"
                       src={
                         'http://dev.transforme.co.id/siram_admin_api' +
                         item.image

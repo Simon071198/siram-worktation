@@ -29,7 +29,7 @@ const AddDataShiftKerja: React.FC<AddRoomModalProps> = ({
   const [dataShift, setDataShift] = useState(() => {
     return defaultValue
       ? {
-          shift_id: defaultValue.id,
+          shift_id: defaultValue.shift_id,
           nama_shift: defaultValue.nama_shift || '',
           waktu_mulai: getTimeHourMinute(defaultValue.waktu_mulai),
           waktu_selesai: getTimeHourMinute(defaultValue.waktu_selesai),

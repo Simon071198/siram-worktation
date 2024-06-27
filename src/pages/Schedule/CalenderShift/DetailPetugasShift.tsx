@@ -58,13 +58,15 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
       ruangan_otmil_id: '',
       ruangan_lemasmil_id: '',
       status_pengganti: '',
+      lembur: '',
+      keterangan_lembur: '',
       created_at: '',
       updated_at: '',
     },
   ]);
   const [staff, setStaff] = useState<Staff[]>([]);
   const [filter, setFilter] = useState('');
-
+  console.log(dataPetugasShift, 'data detail');
   //useEffect untuk menambahkan event listener  ke elemen dokumen
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -125,6 +127,8 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
       ruangan_otmil_id: '',
       ruangan_lemasmil_id: '',
       status_pengganti: '',
+      lembur: '',
+      keterangan_lembur: '',
       created_at: '',
       updated_at: '',
     },
@@ -166,14 +170,23 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     setIsLoading(true);
     const fetchSchedule = async () => {
       const data = {};
-      const params = {
-        pageSize: Number.MAX_SAFE_INTEGER,
+      // const params = {
+      //    pageSize: Number.MAX_SAFE_INTEGER,
+      //   filter: {
+      //     grup_petugas_id: defaultValue.grup_petugas_id,
+      //   },
+      // };
+
+      let params = {
         filter: {
           grup_petugas_id: defaultValue.grup_petugas_id,
         },
+        page: 1,
+        pageSize: 100,
       };
       const filter = {
         filter: {
+          // schedule_id: defaultValue.schedule_id,
           tanggal: defaultValue.tanggal,
           bulan: defaultValue.bulan,
           tahun: defaultValue.tahun,
@@ -183,7 +196,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
         // pageSize: Number.MAX_SAFE_INTEGER,
         filter: {
           schedule_id: defaultValue.schedule_id,
-          // grup_petugas_id:defaultValue.grup_petugas_id,
+          grup_petugas_id: defaultValue.grup_petugas_id,
           tanggal: defaultValue.tanggal,
           bulan: defaultValue.bulan,
           tahun: defaultValue.tahun,
@@ -191,12 +204,12 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
       };
 
       try {
-        const schedule = await apiReadAllScheduleShift(filter, token);
+        const schedule = await apiReadAllScheduleShift(filter.filter, token);
         const shift = await apiReadAllShift(data, token);
         const staff = await apiReadAllStaff(params, token);
         const penugasan = await apiReadAllPenugasanShift(data, token);
         const petugasShift = await apiReadAllPetugasShift(
-          filterPetugasShift,
+          filterPetugasShift.filter,
           token,
         );
 
@@ -230,7 +243,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     };
     fetchSchedule();
   }, []);
-
+  console.log(schedule, 'schedule');
   const handleChangeShift = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -331,9 +344,42 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
     driverObj.drive();
   };
 
+  // const handleSubmit = () => {
+  //   setButtonLoad(true);
+  //   const editData = petugasShiftAdd?.map((petugas_shift_id: any) => ({
+  //     petugas_shift_id,
+  //   }));
+  //   onSubmit(editData).then(() => setButtonLoad(false));
+  //   console.log('handle ini 2', editData);
+  // };
+
   const handleSubmit = () => {
     setButtonLoad(true);
-    onSubmit(petugasShiftAdd).then(() => setButtonLoad(false));
+    const editData = petugasShiftAdd.map((petugas_shift) => ({
+      petugas_shift_id: petugas_shift.petugas_shift_id,
+      shift_id: petugas_shift.shift_id,
+      petugas_id: petugas_shift.petugas_id,
+      schedule_id: petugas_shift.schedule_id,
+      status_kehadiran: petugas_shift.status_kehadiran,
+      jam_kehadiran: petugas_shift.jam_kehadiran,
+      status_izin: petugas_shift.status_izin,
+      penugasan_id: petugas_shift.penugasan_id,
+      ruangan_otmil_id: petugas_shift.ruangan_otmil_id,
+      ruangan_lemasmil_id: petugas_shift.ruangan_lemasmil_id,
+      status_pengganti: petugas_shift.status_pengganti,
+      lembur: petugas_shift.lembur,
+      keterangan_lembur: petugas_shift.keterangan_lembur,
+    }));
+
+    // Kirim seluruh array ke backend sekaligus
+    onSubmit({ petugas_shifts: editData })
+      .then(() => setButtonLoad(false))
+      .catch((error) => {
+        console.error('Error editing petugas shifts:', error);
+        setButtonLoad(false);
+      });
+
+    console.log('handle ini 2', editData);
   };
 
   const tanggal = `${defaultValue.tanggal}/${defaultValue.bulan}/${defaultValue.tahun}`;
@@ -428,7 +474,6 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                           const matchingShift = shift.find(
                             (item) => item.shift_id === schedule.shift_id,
                           );
-
                           return (
                             <>
                               <option value={matchingShift?.shift_id}>
@@ -479,6 +524,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     </label>
                     <input
                       value={defaultValue.nama_grup_petugas}
+                      readOnly
                       name="grup_petuas_id"
                       className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-nama"
                     />
@@ -493,6 +539,7 @@ const EditPetugasShift = ({ closeModal, onSubmit, defaultValue }: any) => {
                     <input
                       value={defaultValue.nama_ketua_grup}
                       name="nama_ketua_grup"
+                      readOnly
                       className="capitalize w-full rounded border border-stroke  dark:text-gray dark:bg-slate-800 py-3 pl-3 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:focus:border-primary i-ketua"
                     />
                   </div>
