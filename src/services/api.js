@@ -5,10 +5,13 @@ import axios from 'axios';
 // export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
 // export const newwebserviceurl = 'https://dev.transforme.co.id/siram_admin_api/';
 
-export const webserviceurl = 'https://dev-siram-workstation.transforme.co.id/api/';
+export const webserviceurl =
+  'https://dev-siram-workstation.transforme.co.id/api/';
 
-export const newWebservice = 'https://dev-siram-workstation.transforme.co.id/api/';
-export const newwebserviceurl = 'https://dev-siram-workstation.transforme.co.id/api/';
+export const newWebservice =
+  'https://dev-siram-workstation.transforme.co.id/api/';
+export const newwebserviceurl =
+  'https://dev-siram-workstation.transforme.co.id/api/';
 
 const newBaseUrl = 'https://dev-siram-workstation.transforme.co.id/api';
 
@@ -1542,7 +1545,7 @@ export async function apiCreateKategoriPerkara(params, token) {
 // api kategori Perkara end
 
 export async function apiReadKota(params, token) {
-  console.log('kotaJakarta1', token)
+  console.log('kotaJakarta1', token);
   try {
     const response = await axios({
       method: 'get',
@@ -2179,8 +2182,8 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/schedule`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2562,7 +2565,6 @@ export async function apiVisitorRealtimeLogList(params) {
     let parameter = {
       ...params,
       pageSize: 100,
-
     };
     // if (params.device_id != '') {
     //   parameter.filters.device_id = params.device_id;
@@ -2677,12 +2679,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2847,7 +2849,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
@@ -3628,7 +3630,7 @@ export async function apiReadAllPangkat(params, token) {
 }
 
 export async function apiKota(token) {
-  console.log('kotaJakarta2', token)
+  console.log('kotaJakarta2', token);
   try {
     const response = await axios({
       method: 'get',
