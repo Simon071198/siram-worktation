@@ -12,6 +12,7 @@ import MenuItemComponent from '../../components/MenuItemCameraSave';
 import { Alerts } from './AlertCamera';
 import { DeleteKameraModalSave } from './ModalDeleteKameraSave';
 import { Link, useNavigate } from 'react-router-dom';
+import Loader from '../../common/Loader';
 
 interface Item {
   id: string;
@@ -25,6 +26,7 @@ const CameraSave = () => {
   const [editData, setEditData] = useState<Item | null>(null);
   const [deleteData, setDeleteData] = useState<Item | null>(null);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const tokenItem = localStorage.getItem('token');
@@ -41,6 +43,7 @@ const CameraSave = () => {
     const params = {
       page: 1,
     };
+    setIsLoading(true);
     try {
       const response = await apiReadKameraTersimpan(params, token);
       if (response.data.status !== 'OK') {
@@ -48,11 +51,12 @@ const CameraSave = () => {
       }
       const result = response.data.records;
       setData(result);
-      console.log(response.data.records);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
+  console.log(data, 'data fetch');
   const handleCloseAddModal = () => {
     setModalAddOpen(false);
   };
@@ -64,7 +68,6 @@ const CameraSave = () => {
   };
 
   const handleSubmitAdd = async (params: any) => {
-    console.log('DATA DARI LIST', params);
     try {
       const responseCreate = await apiCreateKameraTersimpan(params, token);
       if (responseCreate.data.status === 'OK') {
@@ -87,7 +90,6 @@ const CameraSave = () => {
     }
   };
   const handleSubmitEdit = async (params: any) => {
-    console.log('DATA DARI edit', params);
     try {
       const responseEdit = await apiUpdateKameraTersimpan(params, token);
       if (responseEdit.data.status === 'OK') {
@@ -134,12 +136,10 @@ const CameraSave = () => {
   };
 
   const handleEditClick = (item: Item) => {
-    console.log(item, 'item nih');
     setEditData(item);
     setModalEditOpen(true);
   };
   const handleDeleteClick = (item: Item) => {
-    console.log(item, 'item delete nih');
     setDeleteData(item);
     setModalDeleteOpen(true);
   };
@@ -170,7 +170,9 @@ const CameraSave = () => {
   //     console.log(e, 'error catch');
   //   }
   // }
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <>
       <div className="px-10 py-3">
         <button
