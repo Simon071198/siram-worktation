@@ -215,8 +215,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState({ ...formState, role_ketua_oditur: e?.value });
   };
 
-  const handleSelectKetuaJaksa = (e: any) => {
-    setFormState({ ...formState, role_ketua_oditur: e?.value });
+  const handleSelectKetuaJaksa = (e) => {
+    setFormState({
+      ...formState,
+      role_ketua_oditur: e.value,
+      // oditur_penuntut_id: e?.value,
+    });
   };
 
   const handleSelectHakim = (e: any) => {
@@ -411,13 +415,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
   const handleSelectJaksa = (e: any) => {
     console.log('jaksa', e);
-    let arrayTemp: any = [];
+    let arrayTemp = [];
     for (let i = 0; i < e.length; i++) {
       arrayTemp.push(e[i].value);
     }
 
     setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
   };
+
+  // const handleSelectJaksa = (selectedOptions) => {
+  //   console.log('jaksa', selectedOptions);
+  //   const arrayTemp = selectedOptions
+  //     ? selectedOptions.map((option) => option.value)
+  //     : [];
+  //   setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
+  // };
 
   useEffect(() => {
     // checkFileType(formState.link_dokumen_persidangan);
@@ -1554,7 +1566,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         value: item.oditur_penuntut_id,
                         label: item.nama_oditur,
                       }))}
-                      onChange={handleSelectJaksa}
+                      onChange={
+                        handleSelectJaksa
+                        }
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1688,7 +1702,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                             value: item.oditur_penuntut_id,
                             label: item.nama_oditur,
                           }))}
-                        onChange={handleSelectKetuaHakim}
+                        onChange={handleSelectKetuaJaksa}
                       />
                       {/* <Select
                           className="basic-select"

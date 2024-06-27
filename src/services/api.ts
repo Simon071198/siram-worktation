@@ -694,9 +694,9 @@ export async function apiDeleteSaksi(params, token) {
 export async function apiReadJaksapenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_read.php',
-      data: params,
+      method: 'get',
+      url: `${newBaseUrl}/oditur_penuntut`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -3704,14 +3704,8 @@ export async function apiReadAllKategoriJahat(params, token) {
   try {
     const response = await axios({
       method: 'get',
-<<<<<<< HEAD
       url: `${newBaseUrl}/kategori_perkara`,
       params,
-=======
-      url: url,
-      // url: newWebservice + 'siram_api/kategori_perkara_read.php',
-      data: {},
->>>>>>> e6249fe437c47272ce2e4cc1f81286a0ac9c85e7
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
