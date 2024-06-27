@@ -219,11 +219,15 @@ const InmateList = () => {
   };
 
   const handleSubmitAddUser = async (params: any) => {
-    console.log(params, 'params submit add');
+    if (params.hasOwnProperty('is_new_kasus')) {
+      params.is_new_kasus = params.is_new_kasus === 'true';
+    }
+
+    console.log(params, 'params_params');
 
     try {
       const responseAdd = await apiCreateWBP(params, token);
-      if (responseAdd.data[1].status === 'OK') {
+      if (responseAdd.data.status === 'OK') {
         Alerts.fire({
           icon: 'success',
           title: 'Berhasil membuat data',
@@ -255,7 +259,11 @@ const InmateList = () => {
   };
 
   const handleSubmitEditUser = async (params: any) => {
-    console.log(params, 'params submit edit');
+    if (params.hasOwnProperty('is_new_kasus')) {
+      params.is_new_kasus = params.is_new_kasus === 'true';
+    }
+
+    console.log(params, 'params_params');
     try {
       const responseEdit = await apiUpdateWBP(params, token);
       if (responseEdit.data.status === 'OK') {
