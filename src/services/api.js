@@ -757,9 +757,9 @@ export async function apiDeleteSaksi(params, token) {
 export async function apiReadJaksapenuntut(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newwebserviceurl + 'siram_api/oditur_penuntut_read.php',
-      data: params,
+      method: 'get',
+      url: newwebserviceurl + 'oditur_penuntut',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4313,9 +4313,9 @@ export async function apiMatraRead(params, token) {
 export async function apiSidangRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/sidang_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'sidang',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4352,7 +4352,7 @@ export async function apiSidangInsert(params, token) {
   try {
     const response = await axios({
       method: 'post',
-      url: newWebservice + 'siram_api/sidang_insert.php',
+      url: newWebservice + 'sidang',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4370,8 +4370,8 @@ export async function apiSidangInsert(params, token) {
 export async function apiSidangDelete(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/sidang_delete.php',
+      method: 'delete',
+      url: newWebservice + 'sidang',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -4580,9 +4580,9 @@ export async function apiJaksaRead(params, token) {
 export async function apiHakimRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/hakim_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'hakim',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -4711,9 +4711,9 @@ export async function allKameraLemasmil() {
 export async function apiPengadilanMiliterRead(params, token) {
   try {
     const response = await axios({
-      method: 'post',
-      url: newWebservice + 'siram_api/pengadilan_militer_read.php',
-      data: params,
+      method: 'get',
+      url: newWebservice + 'pengadilan_militer',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
