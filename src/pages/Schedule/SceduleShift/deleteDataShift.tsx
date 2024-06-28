@@ -6,16 +6,20 @@ interface RoomModalProps {
   onSubmit: (params: any) => void;
   defaultValue?: any;
 }
-export const DeleteShiftModal: React.FC<RoomModalProps> = ({ closeModal, onSubmit, defaultValue }) => {
+export const DeleteShiftModal: React.FC<RoomModalProps> = ({
+  closeModal,
+  onSubmit,
+  defaultValue,
+}) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-    
-    }
+      shift_id: '',
+    },
   );
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleOutsideClick = (e:any) => {
+    const handleOutsideClick = (e: any) => {
       if (
         modalContainerRef.current &&
         !modalContainerRef.current.contains(e.target)
@@ -30,7 +34,7 @@ export const DeleteShiftModal: React.FC<RoomModalProps> = ({ closeModal, onSubmi
     };
   }, [closeModal]);
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     onSubmit(formState);
     closeModal();
@@ -60,9 +64,7 @@ export const DeleteShiftModal: React.FC<RoomModalProps> = ({ closeModal, onSubmi
             <p className="text-sm te  xt-black dark:text-white">
               Apakah Anda yakin ingin menghapus data ini?
             </p>
-            <p className="text-sm text-black dark:text-white">
-              
-            </p>
+            <p className="text-sm text-black dark:text-white"></p>
           </div>
 
           <br></br>

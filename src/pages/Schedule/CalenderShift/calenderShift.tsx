@@ -69,7 +69,7 @@ interface Petugas {
   schedule_id: any;
   nama: any;
   status_izin: any;
-  status_kehadiran: any;
+  status_kehadiran: number;
   status_pengganti: any;
   grup_petugas_id: any;
   nama_grup_petugas: any;
@@ -210,9 +210,15 @@ const shiftJaga = () => {
         token,
       );
       const grupPetugas = await apiReadAllGrupPetugas(filterFetch, token);
-      const Petugas = await apiReadAllPetugasShift(filterSchedule, token);
+      const Petugas = await apiReadAllPetugasShift(
+        filterSchedule.filter,
+        token,
+      );
       const staff = await apiReadAllStaff(filterStaff, token);
-      const petugasShift = await apiReadAllPetugasShift(filter1bln, token);
+      const petugasShift = await apiReadAllPetugasShift(
+        filter1bln.filter,
+        token,
+      );
       console.log(filterSchedule.filter, 'filter  222');
       setDataExcel(petugasShift.data.records);
       setGrupPetugas(grupPetugas.data.records);
@@ -560,6 +566,11 @@ const shiftJaga = () => {
               setLoadSchedule(!loadSchedule);
             }, 1000);
           }
+        } else if (AddDataSchedule.data.status === 'NO') {
+          Alerts.fire({
+            icon: 'error',
+            title: 'Data Sudah Tersedia',
+          });
         } else {
           Alerts.fire({
             icon: 'error',
@@ -619,29 +630,84 @@ const shiftJaga = () => {
   //     });
   //   }
   // };
+  const handleAddPetugasShift = async (data: any) => {
+    try {
+      const response = await apiCretePetugasShift(data, token);
+      if (response.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil menambah data',
+        });
+        setModalAddOpen(!modalAddOpen);
+        setTimeout(() => {
+          setLoadSchedule(!loadSchedule);
+        }, 500);
+      }
+      fetchData();
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        navigate('/auth/signin', {
+          state: { forceLogout: true, lastPage: location.pathname },
+        });
+      }
+      Alerts.fire({
+        icon: e.response.status === 403 ? 'warning' : 'error',
+        title: e.response.status === 403 ? Error403Message : e.message,
+      });
+    }
+  };
 
   //Edit Petugas ShiftGrup
-  const handleEditPetugasShiftGrup = async (data: any) => {
-    let alertShown = false;
+  // const handleEditPetugasShiftGrup = async (data: any) => {
+  //   let alertShown = false;
+  //   try {
+  //     for (let i = 0; i < data.length; i++) {
+  //       const singleData = data[i];
+  //       const addPetugasShift = await apiEditPetugasShift(singleData, token);
+  //       if (addPetugasShift.data.status === 'OK') {
+  //         if (!alertShown) {
+  //           Alerts.fire({
+  //             icon: 'success',
+  //             title: 'Berhasil mengubah data',
+  //           });
+  //           alertShown = true; // Set alertShown menjadi true
+  //           handleCloseModal();
+  //           setTimeout(() => {
+  //             setLoadSchedule(!loadSchedule);
+  //           }, 1000);
+  //         }
+  //       }
+  //     }
+  //   } catch (e: any) {
+  //     if (e.response.status === 403) {
+  //       navigate('/auth/signin', {
+  //         state: { forceLogout: true, lastPage: location.pathname },
+  //       });
+  //     }
+  //     Alerts.fire({
+  //       icon: e.response.status === 403 ? 'warning' : 'error',
+  //       title: e.response.status === 403 ? Error403Message : e.message,
+  //     });
+  //   }
+  // };
+
+  const handleEditPetugasShiftGrup = async (data) => {
     try {
-      for (let i = 0; i < data.length; i++) {
-        const singleData = data[i];
-        const addPetugasShift = await apiEditPetugasShift(singleData, token);
-        if (addPetugasShift.data.status === 'OK') {
-          if (!alertShown) {
-            Alerts.fire({
-              icon: 'success',
-              title: 'Berhasil mengubah data',
-            });
-            alertShown = true; // Set alertShown menjadi true
-            handleCloseModal();
-            setTimeout(() => {
-              setLoadSchedule(!loadSchedule);
-            }, 1000);
-          }
-        }
+      const addPetugasShift = await apiEditPetugasShift(
+        { petugas_shifts: data.petugas_shifts },
+        token,
+      );
+      if (addPetugasShift.data.status === 'OK') {
+        Alerts.fire({
+          icon: 'success',
+          title: 'Berhasil mengubah data',
+        });
+        handleCloseModal();
+        setTimeout(() => {
+          setLoadSchedule(!loadSchedule);
+        }, 1000);
       }
-    } catch (e: any) {
+    } catch (e) {
       if (e.response.status === 403) {
         navigate('/auth/signin', {
           state: { forceLogout: true, lastPage: location.pathname },
@@ -690,27 +756,20 @@ const shiftJaga = () => {
   const handleDeleteSchedule = async (data: any) => {
     let alertShown = false;
     try {
-      const promises = data.map(async (singleData: any) => {
-        const deletePetugasShift = await apiDeleteScheduleShift(
-          singleData,
-          token,
-        );
-        if (deletePetugasShift.data.status === 'OK') {
-          if (!alertShown) {
-            Alerts.fire({
-              icon: 'success',
-              title: 'Berhasil menghapus data',
-            });
-            alertShown = true; // Set alertShown menjadi true
-            setTimeout(() => {
-              setLoadSchedule(!loadSchedule);
-            }, 1000);
-            handleCloseModal();
-          }
+      const deletePetugasShift = await apiDeleteScheduleShift(data, token);
+      if (deletePetugasShift.data.status === 'OK') {
+        if (!alertShown) {
+          Alerts.fire({
+            icon: 'success',
+            title: 'Berhasil menghapus data',
+          });
+          alertShown = true; // Set alertShown menjadi true
+          setTimeout(() => {
+            setLoadSchedule(!loadSchedule);
+          }, 1000);
+          handleCloseModal();
         }
-      });
-
-      await Promise.all(promises);
+      }
       fetchData();
     } catch (e: any) {
       if (e.response.status === 403) {
@@ -1745,8 +1804,8 @@ const shiftJaga = () => {
                                 .join(':')}`;
                               break;
                             default:
-                              shiftBackgroundColor = 'bg-red-600';
-                              shiftBgList = 'bg-red-700';
+                              shiftBackgroundColor = 'bg-yellow-300';
+                              shiftBgList = 'bg-yellow-700';
                               break;
                           }
                         }

@@ -75,7 +75,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
       saksi: [],
       pengacara: [],
       wbp_profile: [],
-      nama: [],
+      // nama: [],
       // hakim_id: [],
       // role_ketua_hakim: '',
       oditur_penuntut_id: [],
@@ -112,7 +112,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   const [pengacaraField, setPengacaraField] = useState('');
   const [filter, setFilter] = useState('');
   const [file, setFile] = useState(null);
-  const [pdfUrl, setPdftUrl] = useState(`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`);
+  const [pdfUrl, setPdftUrl] = useState(
+    `https://dev.transforme.co.id${formState.link_dokumen_persidangan}`,
+  );
 
   console.log(formState.wbpHolder, 'testing');
 
@@ -167,11 +169,13 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         key !== 'perubahan_jadwal_sidang' &&
         key !== 'waktu_mulai_sidang' &&
         key !== 'waktu_selesai_sidang' &&
-        // key !== 'hasil_keputusan_sidang' &&
+        key !== 'nama_dokumen_persidangan' &&
+        key !== 'link_dokumen_persidangan' &&
         key !== 'provinsi_id' &&
         key !== 'nama_provinsi' &&
         key !== 'nama_kota' &&
-        key !== 'nama_pengadilan_militer'
+        key !== 'nama_pengadilan_militer' &&
+        key !== 'link_dokumen_persidangan'
 
         // Tidak melakukan pemeriksaan pada lokasi_lemasmil_id
         // || key === 'saksi' && Array.isArray(value) && value.length === 0
@@ -211,8 +215,12 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     setFormState({ ...formState, role_ketua_oditur: e?.value });
   };
 
-  const handleSelectKetuaJaksa = (e: any) => {
-    setFormState({ ...formState, role_ketua_oditur: e?.value });
+  const handleSelectKetuaJaksa = (e) => {
+    setFormState({
+      ...formState,
+      role_ketua_oditur: e.value,
+      // oditur_penuntut_id: e?.value,
+    });
   };
 
   const handleSelectHakim = (e: any) => {
@@ -407,13 +415,21 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
 
   const handleSelectJaksa = (e: any) => {
     console.log('jaksa', e);
-    let arrayTemp: any = [];
+    let arrayTemp = [];
     for (let i = 0; i < e.length; i++) {
       arrayTemp.push(e[i].value);
     }
 
     setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
   };
+
+  // const handleSelectJaksa = (selectedOptions) => {
+  //   console.log('jaksa', selectedOptions);
+  //   const arrayTemp = selectedOptions
+  //     ? selectedOptions.map((option) => option.value)
+  //     : [];
+  //   setFormState({ ...formState, oditur_penuntut_id: arrayTemp });
+  // };
 
   useEffect(() => {
     // checkFileType(formState.link_dokumen_persidangan);
@@ -469,7 +485,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         wbp_profile: wbpValues,
       }));
     }
-  }, [getSaksi, getWbp]);
+  }, []);
 
   const handleSelectWbp = (e: any) => {
     const selectedValues = e.map((item: any) => ({
@@ -638,17 +654,17 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     const file = e.target.files[0];
 
     if (file) {
-      const reader = new FileReader();
+      // const reader = new FileReader();
 
-      reader.onloadend = () => {
-        setFormState({ ...formState, link_dokumen_persidangan: reader.result});
-        console.log('Preview:', reader.result);
-        setPdftUrl(reader.result as string);
-      };
+      // reader.onloadend = () => {
+      //   setFormState({ ...formState, link_dokumen_persidangan: reader.result});
+      //   console.log('Preview:', reader.result);
+      //   setPdftUrl(reader.result as string);
+      // };
 
-      reader.readAsDataURL(file);
+      // reader.readAsDataURL(file);
 
-      // setFormState({ ...formState, link_dokumen_persidangan: file });
+      setFormState({ ...formState, link_dokumen_persidangan: file });
     }
   };
   const handleRemoveDoc = () => {
@@ -693,64 +709,133 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
   //     setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
   //   }
   // };
+  // const handleKasus = async (selectedOption: any) => {
+  //   if (selectedOption) {
+  //     setFormState({ ...formState, kasus_id: selectedOption.value });
+  //     const saksiFilter = kasus.filter(
+  //       (item: any) => item.kasus_id === selectedOption.value,
+  //     )[0];
+
+  //     const wbpFilter = kasus.filter(
+  //       (item: any) => item.kasus_id === selectedOption.value,
+  //     )[0];
+
+  //     console.log(saksiFilter, 'saksiFilter');
+  //     console.log(wbpFilter, 'wbp filter');
+
+  //     if (saksiFilter) {
+  //       console.log('saksiFilter.saksi:', saksiFilter);
+  //       const saksiMap = saksiFilter.saksi.map((item: any) => ({
+  //         label: item.nama_saksi,
+  //         value: item.saksi_id,
+  //       }));
+  //       setGetSaksi(saksiMap);
+
+  //       setFormState({
+  //         ...formState,
+  //         nomor_kasus: saksiFilter.nomor_kasus,
+  //         kasus_id: saksiFilter.kasus_id,
+  //         nama_kasus: saksiFilter.nama_kasus,
+  //       });
+
+  //       console.log('getSaksi', getSaksi);
+  //     } else {
+  //       setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
+  //     }
+
+  //     if (wbpFilter) {
+  //       const wbpMap = wbpFilter.wbp_profile.map((item: any) => ({
+  //         label: item.nama,
+  //         value: item.wbp_profile_id,
+  //       }));
+  //       console.log('wbpsMap', wbpMap);
+  //       setGetWbp(wbpMap);
+
+  //       setFormState({
+  //         ...formState,
+  //         nomor_kasus: wbpFilter.nomor_kasus,
+  //         kasus_id: wbpFilter.kasus_id,
+  //         nama_kasus: wbpFilter.nama_kasus,
+  //       });
+
+  //       console.log('getWbp', getWbp);
+  //     } else {
+  //       setGetWbp([]);
+  //     }
+  //   } else {
+  //     setFormState({ ...formState, kasus_id: '' });
+  //     setGetSaksi([]);
+  //     setGetWbp([]);
+  //   }
+  // };
+
   const handleKasus = async (selectedOption: any) => {
     if (selectedOption) {
-      setFormState({ ...formState, kasus_id: selectedOption.value });
-      const saksiFilter = kasus.filter(
-        (item: any) => item.kasus_id === selectedOption.value,
-      )[0];
+      const selectedKasusId = selectedOption.value;
+      setFormState((prevFormState) => ({
+        ...prevFormState,
+        kasus_id: selectedKasusId,
+      }));
 
-      const wbpFilter = kasus.filter(
-        (item: any) => item.kasus_id === selectedOption.value,
-      )[0];
+      const selectedKasus = kasus.find(
+        (item: any) => item.kasus_id === selectedKasusId,
+      );
 
-      console.log(saksiFilter, 'saksiFilter');
-      console.log(wbpFilter, 'wbp filter');
-
-      if (saksiFilter) {
-        const saksiMap = saksiFilter.saksi.map((item: any) => ({
+      if (selectedKasus) {
+        const saksiMap = selectedKasus.saksi.map((item: any) => ({
           label: item.nama_saksi,
           value: item.saksi_id,
         }));
         setGetSaksi(saksiMap);
 
-        setFormState({
-          ...formState,
-          nomor_kasus: saksiFilter.nomor_kasus,
-          kasus_id: saksiFilter.kasus_id,
-          nama_kasus: saksiFilter.nama_kasus,
-        });
-
-        console.log('getSaksi', getSaksi);
-      } else {
-        setGetSaksi([]); // Set getSaksi to an empty array if no matching kasus is found
-      }
-
-      if (wbpFilter) {
-        const wbpMap = wbpFilter.wbp_profile.map((item: any) => ({
+        const wbpMap = selectedKasus.wbp_profile.map((item: any) => ({
           label: item.nama,
           value: item.wbp_profile_id,
         }));
-        console.log('wbpsMap', wbpMap);
         setGetWbp(wbpMap);
 
-        setFormState({
-          ...formState,
-          nomor_kasus: wbpFilter.nomor_kasus,
-          kasus_id: wbpFilter.kasus_id,
-          nama_kasus: wbpFilter.nama_kasus,
-        });
+        setFormState((prevFormState) => ({
+          ...prevFormState,
+          nomor_kasus: selectedKasus.nomor_kasus,
+          kasus_id: selectedKasus.kasus_id,
+          nama_kasus: selectedKasus.nama_kasus,
+          saksi: saksiMap.map((saksi: any) => saksi.value),
+          wbp_profile: wbpMap.map((wbp: any) => wbp.value),
+        }));
 
-        console.log('getWbp', getWbp);
+        console.log('saksiMap', saksiMap);
+        console.log('wbpMap', wbpMap);
       } else {
+        setGetSaksi([]);
         setGetWbp([]);
+        setFormState((prevFormState) => ({
+          ...prevFormState,
+          nomor_kasus: '',
+          nama_kasus: '',
+          saksi: [],
+          wbp_profile: [],
+        }));
       }
     } else {
-      setFormState({ ...formState, kasus_id: '' });
+      setFormState((prevFormState) => ({
+        ...prevFormState,
+        kasus_id: '',
+      }));
       setGetSaksi([]);
       setGetWbp([]);
     }
   };
+
+  // Use effect to log changes in getSaksi
+  useEffect(() => {
+    console.log('getSaksi updated:', getSaksi);
+  }, [getSaksi]);
+
+  // Use effect to log changes in getWbp
+  useEffect(() => {
+    console.log('getWbp updated:', getWbp);
+  }, [getWbp]);
+
   console.log(getWbp, 'get wbp');
 
   const handleJadwalSidang = (e: any) => {
@@ -905,7 +990,7 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
     };
     try {
       const response = await apiJenisSidangRead(params, token);
-      console.log(response, 'jenis sidang')
+      console.log(response, 'jenis sidang');
       const data = response.data.records;
       const uniqueData: any[] = [];
       const trackedNames: any[] = [];
@@ -1156,10 +1241,10 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
         backgroundColor: isDisabled
           ? undefined
           : isSelected
-          ? ''
-          : isFocused
-          ? 'rgb(51, 133, 255)'
-          : undefined,
+            ? ''
+            : isFocused
+              ? 'rgb(51, 133, 255)'
+              : undefined,
 
         ':active': {
           ...styles[':active'],
@@ -1311,8 +1396,8 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                     {isDetail
                       ? 'Detail Data Sidang'
                       : isEdit
-                      ? 'Edit Data Sidang'
-                      : 'Tambah Data Sidang'}
+                        ? 'Edit Data Sidang'
+                        : 'Tambah Data Sidang'}
                   </h3>
                 </div>
 
@@ -1481,7 +1566,9 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         value: item.oditur_penuntut_id,
                         label: item.nama_oditur,
                       }))}
-                      onChange={handleSelectJaksa}
+                      onChange={
+                        handleSelectJaksa
+                        }
                     />
                     <p className="error-text">
                       {errors.map((item) =>
@@ -1606,17 +1693,16 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                         name="oditur_penuntut_id"
                         styles={customStyles}
                         options={jaksa
-                          .filter(
-                            (item) =>
-                              formState?.oditur_penuntut_id?.includes(
-                                item.oditur_penuntut_id,
-                              ),
+                          .filter((item) =>
+                            formState?.oditur_penuntut_id?.includes(
+                              item.oditur_penuntut_id,
+                            ),
                           )
                           .map((item: any) => ({
                             value: item.oditur_penuntut_id,
                             label: item.nama_oditur,
                           }))}
-                        onChange={handleSelectKetuaHakim}
+                        onChange={handleSelectKetuaJaksa}
                       />
                       {/* <Select
                           className="basic-select"
@@ -2520,26 +2606,27 @@ export const AddSidangModal: React.FC<AddSidangModalProps> = ({
                                 {/* PDF */}
                                 {file && (
                                   <div className="">
-                                    {file === 'pdf' ? (
-                                      <iframe
-                                        // src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
-                                        src={pdfUrl}
-                                        title="pdf"
-                                        width="100%"
-                                        height="600px"
-                                        className="border-0 text-center justify-center"
-                                      />
-                                    ) : file === 'docx' || file === 'doc' ? (
-                                      <iframe
-                                        src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
-                                        title="docx"
-                                        width="100%"
-                                        height="600px"
-                                      />
-                                    ) : null
-                                    // : (
-                                    //   <p>Ekstensi file tidak didukung</p>
-                                    // )
+                                    {
+                                      file === 'pdf' ? (
+                                        <iframe
+                                          // src={`https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                          src={pdfUrl}
+                                          title="pdf"
+                                          width="100%"
+                                          height="600px"
+                                          className="border-0 text-center justify-center"
+                                        />
+                                      ) : file === 'docx' || file === 'doc' ? (
+                                        <iframe
+                                          src={`https://view.officeapps.live.com/op/embed.aspx?src=https://dev.transforme.co.id${formState.link_dokumen_persidangan}`}
+                                          title="docx"
+                                          width="100%"
+                                          height="600px"
+                                        />
+                                      ) : null
+                                      // : (
+                                      //   <p>Ekstensi file tidak didukung</p>
+                                      // )
                                     }
                                   </div>
                                 )}

@@ -144,7 +144,7 @@ const SidangList = () => {
       (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.role_ketua === '1',
+      (item: any) => item.role_ketua_oditur === '1',
     );
 
     const detailItem: any = {
@@ -286,7 +286,7 @@ const SidangList = () => {
       (item: any) => item.ketua_hakim === '1',
     );
     const jaksaKetua = item?.sidang_oditur.find(
-      (item: any) => item.role_ketua === '1',
+      (item: any) => item.role_ketua_oditur === '1',
     );
     // console.log('HAKIM KETUA', hakimKetua);
 
@@ -511,31 +511,43 @@ const SidangList = () => {
       filter: '',
       pageSize: 1000,
     };
+
     try {
       const response = await apiJenisSidangRead(params, token);
-      console.log('JENIS SIDANG', response.data.data);
-      const data = response.data.data;
-      const uniqueData: any[] = [];
-      const trackedNames: any[] = [];
+      console.log('Response from API:', response);
 
-      data.forEach((item: any) => {
-        if (!trackedNames.includes(item.nama_jenis_persidangan)) {
-          trackedNames.push(item.nama_jenis_persidangan);
-          uniqueData.push(item);
-        }
-      });
+      if (response.data && response.data.records) {
+        const data = response.data.records;
+        console.log('JENIS SIDANG', data);
 
-      console.log('uniqueData', uniqueData);
-      setJenisSidang(uniqueData);
-    } catch (e: any) {
-      if (e.response.status === 403) {
+        const uniqueData = [];
+        const trackedNames = [];
+
+        data.forEach((item) => {
+          if (!trackedNames.includes(item.nama_jenis_persidangan)) {
+            trackedNames.push(item.nama_jenis_persidangan);
+            uniqueData.push(item);
+          }
+        });
+
+        console.log('uniqueData', uniqueData);
+        setJenisSidang(uniqueData);
+      } else {
+        console.error('Response does not contain records:', response.data);
+      }
+    } catch (e) {
+      if (e.response && e.response.status === 403) {
         navigate('/auth/signin', {
           state: { forceLogout: true, lastPage: location.pathname },
         });
+      } else {
+        console.error('Error fetching data:', e);
       }
+
       Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
+        icon: e.response && e.response.status === 403 ? 'warning' : 'error',
+        title:
+          e.response && e.response.status === 403 ? Error403Message : e.message,
       });
     }
   };
@@ -597,10 +609,10 @@ const SidangList = () => {
     // console.log('searchData', searchData);
     try {
       let params = {
-        filter: {
-          nama_sidang: searchData.namaSidang,
-          nama_jenis_persidangan: searchData.jenisSidang,
-        },
+        // filter: {
+        nama_sidang: searchData.namaSidang,
+        nama_jenis_persidangan: searchData.jenisSidang,
+        // },
         currentPage: currentPage,
         pageSize: 10,
       };
@@ -637,9 +649,15 @@ const SidangList = () => {
     }
   };
 
-  const formatDate = (dateString:any) => {
+  const formatDate = (dateString: any) => {
     const date = new Date(dateString);
-    const options = {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'};
+    const options = {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
     return date.toLocaleDateString('en-GB', options);
   };
 
@@ -780,7 +798,7 @@ const SidangList = () => {
               </div>
 
               <div className="p-2.5 xl:p-5">
-                <h5 className="text-sm font-medium uppercase xsm:text-base">  
+                <h5 className="text-sm font-medium uppercase xsm:text-base">
                   Jenis Sidang
                 </h5>
               </div>
@@ -856,7 +874,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.role_ketua === 1,
+                                  (item: any) => item.role_ketua_oditur === '1',
                                 )?.nama_oditur || ''
                               : ''}
                           </p>
@@ -908,7 +926,7 @@ const SidangList = () => {
                             {item?.sidang_oditur &&
                             item.sidang_oditur.length > 0
                               ? item?.sidang_oditur?.find(
-                                  (item: any) => item.role_ketua === 1,
+                                  (oditur: any) => oditur.role_ketua_oditur === '1',
                                 )?.nama_oditur || ''
                               : ''}
                           </p>

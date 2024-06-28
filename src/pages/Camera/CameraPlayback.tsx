@@ -290,8 +290,10 @@ const CameraPlayback = () => {
 
   let fetchData = async () => {
     try {
+      // console.log('userLocation', userLocation);
       let dataLocal = localStorage.getItem('dataUser');
       let dataUser = JSON.parse(dataLocal!);
+      const token = JSON.parse(localStorage.getItem('token')!).token;
       dataUser = {
         lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
         lokasi_otmil_id: dataUser.lokasi_otmil_id,
@@ -300,7 +302,7 @@ const CameraPlayback = () => {
       };
       console.log('data user', dataUser);
 
-      const response = await apiBuilding(dataUser);
+      const response = await apiBuilding(dataUser, token);
       console.log('response_building', response);
 
       if (response.data.status === 'OK') {
