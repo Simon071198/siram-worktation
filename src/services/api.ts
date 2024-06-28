@@ -4,12 +4,14 @@ import { get } from 'react-hook-form';
 // export const webserviceurl = 'https://dev.transforme.co.id/';
 
 // export const newWebservice = 'https://dev.transforme.co.id/siram_admin_api/';
-export const newwebserviceurl = 'https://dev-siram-workstation.transforme.co.id/';
+export const newwebserviceurl =
+  'https://dev-siram-workstation.transforme.co.id/';
 
 export const webserviceurl = 'https://dev-siram-workstation.transforme.co.id/';
 const newBaseUrl: string = 'https://dev-siram-workstation.transforme.co.id/api';
 
-export const newWebservice = 'hthttps://dev-siram-workstation.transforme.co.id/api/';
+export const newWebservice =
+  'https://dev-siram-workstation.transforme.co.id/api/';
 // export const newwebserviceurl = 'http://localhost:8000/api/';
 
 function getUrl(params) {
@@ -1883,9 +1885,9 @@ export async function apiEditShift(params, token) {
 export async function apiReadAllGrupPetugas(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/grup_petugas_read.php',
-      data: params,
+      method: 'GET',
+      url: `${newBaseUrl}/grup_petugas`,
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -1905,7 +1907,7 @@ export async function apiCreatGrupPetugas(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newwebserviceurl + 'siram_api/grup_petugas_insert.php',
+      url: `${newBaseUrl}/grup_petugas`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1923,8 +1925,8 @@ export async function apiCreatGrupPetugas(params, token) {
 export async function apiUpdateGrupPetugas(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/grup_petugas_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/grup_petugas`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -1942,8 +1944,8 @@ export async function apiUpdateGrupPetugas(params, token) {
 export async function apiDeleteGrupPetugas(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newwebserviceurl + 'siram_api/grup_petugas_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/grup_petugas`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2021,7 +2023,7 @@ export async function apiCretePetugasShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_insert.php',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2039,8 +2041,8 @@ export async function apiCretePetugasShift(params, token) {
 export async function apiEditPetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_update.php',
+      method: 'PUT',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2058,8 +2060,8 @@ export async function apiEditPetugasShift(params, token) {
 export async function apiDeletePetugasShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/petugas_shift_delete.php',
+      method: 'DELETE',
+      url: `${newBaseUrl}/petugas_shift`,
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2078,9 +2080,9 @@ export async function apiDeletePetugasShift(params, token) {
 export async function apiReadAllScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_read.php',
-      data: params,
+      method: 'GET',
+      url: newwebserviceurl + '/schedule',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2098,7 +2100,7 @@ export async function apiCreateScheduleShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/schedule_insert.php',
+      url: newwebserviceurl + '/schedule',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2116,8 +2118,8 @@ export async function apiCreateScheduleShift(params, token) {
 export async function apiDeleteScheduleShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/schedule_delete.php',
+      method: 'DELETE',
+      url: newwebserviceurl + '/schedule',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2136,9 +2138,9 @@ export async function apiDeleteScheduleShift(params, token) {
 export async function apiReadAllPenugasanShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/penugasan_read.php',
-      data: params,
+      method: 'GET',
+      url: newwebserviceurl + '/penugasan',
+      params,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -2155,7 +2157,7 @@ export async function apiCreatePenugasanShift(params, token) {
   try {
     const response = await axios({
       method: 'POST',
-      url: newWebservice + 'siram_api/penugasan_insert.php',
+      url: newwebserviceurl + '/penugasan',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2172,8 +2174,8 @@ export async function apiCreatePenugasanShift(params, token) {
 export async function apiEditPenugasanShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/penugasan_update.php',
+      method: 'PUT',
+      url: newwebserviceurl + '/penugasan',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2191,8 +2193,8 @@ export async function apiEditPenugasanShift(params, token) {
 export async function apiDeletePenugasanShift(params, token) {
   try {
     const response = await axios({
-      method: 'POST',
-      url: newWebservice + 'siram_api/penugasan_delete.php',
+      method: 'DELETE',
+      url: newwebserviceurl + '/penugasan',
       data: params,
       headers: {
         'Content-Type': 'application/json',
@@ -2618,12 +2620,12 @@ export async function apiVisitorWNAList(params) {
       filters: {
         must: params.name
           ? [
-            {
-              match: {
-                name: params.name,
+              {
+                match: {
+                  name: params.name,
+                },
               },
-            },
-          ]
+            ]
           : [],
         must_not: [
           {
@@ -2788,7 +2790,7 @@ export async function apiLocationDeviceStatusTotalSummaryByLocation(params) {
       url:
         webserviceurl +
         gema_admin_api /
-        'location/locationDeviceStatusTotalSummaryByLocation.php',
+          'location/locationDeviceStatusTotalSummaryByLocation.php',
       data: params,
     });
     console.log(response.data.data);
