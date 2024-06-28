@@ -15,9 +15,9 @@ interface Building {
 }
 const CameraListSave = () => {
   const [data, setData] = useState<any>([]);
-  const tokenItem = localStorage.getItem('token');
-  const dataToken = tokenItem ? JSON.parse(tokenItem) : null;
-  const token = dataToken.token;
+  let getToken = localStorage.getItem('token');
+  const token = JSON.parse(getToken);
+  console.log(token, 'token');
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [buildings, setBuilding] = useState<Building[]>([]);
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -38,24 +38,26 @@ const CameraListSave = () => {
     console.log('ini params', params);
     console.log(params, 'params');
     try {
-      const response = await apiReadKameraTersimpan(params, token);
+      const response = await apiReadKameraTersimpan(params, token?.token);
       setData(response.data.records);
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(data, 'data');
+
   const fetchDataGedung = async () => {
     try {
       let dataLocal = localStorage.getItem('dataUser');
+      console.log(dataLocal, 'data local');
       let dataUser = JSON.parse(dataLocal!);
       dataUser = {
         lokasi_lemasmil_id: dataUser.lokasi_lemasmil_id,
         lokasi_otmil_id: dataUser.lokasi_otmil_id,
-        nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
-        nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
+        // nama_lokasi_lemasmil: dataUser.nama_lokasi_lemasmil,
+        // nama_lokasi_otmil: dataUser.nama_lokasi_otmil,
       };
-      const response = await apiBuilding(dataUser, token);
+      const response = await apiBuilding(dataUser, token?.token);
+      console.log(response, 'response');
       if (response.data.status === 'OK') {
         setBuilding(response.data);
       } else {
@@ -278,10 +280,6 @@ const CameraListSave = () => {
   const { startPage, endPage } = getPageNumbers();
 
   console.log(totalCameras, 'totalCameras');
-  console.log(
-    currentCameras[0]?.map((kamera) => kamera.nama_kamera),
-    'currentCameras',
-  );
 
   const renderPaginationCameraOnline = () => {
     const pageNumbers = [];
@@ -322,6 +320,8 @@ const CameraListSave = () => {
       />
     );
   };
+
+  // console.log(buildings, 'buildings');
   const renderCameraOnlineList = () => {
     const onlineCamera = buildings?.records?.gedung.flatMap((gedung) =>
       gedung.lantai.flatMap((lantai) =>
@@ -331,13 +331,13 @@ const CameraListSave = () => {
       ),
     );
     console.log(onlineCamera, 'on cam');
-    if (onlineCamera.length === 0) {
-      return (
-        <div className="flex justify-center items-center bg-graydark w-11/12 h-5/6">
-          <h1 className="font-semibold text-lg">Tidak ada kamera yang aktif</h1>
-        </div>
-      );
-    }
+    // if (onlineCamera.length === 0) {
+    //   return (
+    //     <div className="flex justify-center items-center bg-graydark w-11/12 h-5/6">
+    //       <h1 className="font-semibold text-lg">Tidak ada kamera yang aktif</h1>
+    //     </div>
+    //   );
+    // }
 
     return (
       <div
