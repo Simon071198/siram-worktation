@@ -81,7 +81,7 @@ const InmateList = () => {
     item?.akses_ruangan_otmil.map((item: any) =>
       newAksesRuangOtmil.push({
         id: item?.ruangan_otmil_id,
-        isPermitted: item?.isPermitted,
+        isPermitted: item?.is_permitted,
       }),
     );
     console.log(item, 'item edit');
@@ -321,6 +321,7 @@ const InmateList = () => {
       const responseRead = await apiReadAllWBP(params, token);
       if (responseRead.data.status === 'OK') {
         let temp = responseRead.data.records;
+        console.log('dataReadWBp', temp);
         temp.forEach((obj: any) => {
           obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
             (item: any) => item.ruangan_otmil_id,
@@ -419,12 +420,14 @@ const InmateList = () => {
       const responseRead = await apiReadAllWBP(params, token);
       if (responseRead.data.status === 'OK') {
         let temp = responseRead.data.records;
+        console.log('dataReadWBp', temp);
         temp.forEach((obj: any) => {
           obj.akses_ruangan_otmil_id = obj.akses_ruangan_otmil.map(
             (item: any) => item.ruangan_otmil_id,
           );
         });
         setData(temp);
+        console.log('dataReadWBp', temp);
         setPages(responseRead.data.pagination.totalPages);
         setRows(responseRead.data.pagination.totalRecords);
         setIsLoading(false);

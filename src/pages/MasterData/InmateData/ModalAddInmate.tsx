@@ -102,7 +102,7 @@ export const AddInmateModal = ({
   token,
   dataWbp,
 }: any) => {
-  console.log(defaultValue, 'defaultValue');
+  console.log(defaultValue, 'aksesRuangan');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -124,6 +124,8 @@ export const AddInmateModal = ({
   const [statusWbp, setStatusWbp] = useState([]);
   const [kasusData, setKasusData] = useState<KasusData[]>([]);
   const [buatKasusBaru, setBuatKasusBaru] = useState('false');
+
+  console.log('isEdit', isEdit);
 
   // console.log(kasusData[0], 'ISI DATA ID WBP');
   const [formState, setFormState] = useState(
@@ -147,7 +149,7 @@ export const AddInmateModal = ({
       tempat_lahir: '',
       status_kawin_id: '',
       pendidikan_id: '',
-      is_sick: '',
+      is_sick: null,
       wbp_sickness: '',
       nama_status_wbp_kasus: '',
       // jenis_perkara_id: '',
@@ -197,6 +199,8 @@ export const AddInmateModal = ({
       zona_waktu: '',
     },
   );
+
+  console.log('formStateSaatIni', formState);
 
   const [errors, setErrors] = useState<string[]>([]);
   const [zona, setZona]: any = useState([]);
@@ -294,6 +298,10 @@ export const AddInmateModal = ({
       zona_waktu: zonaWaktu,
     });
   };
+
+  useEffect(() => {
+    console.log(defaultValue, 'defaultValueSaatIini');
+  }, []);
 
   //Set Waktu Kejadian dan Waktu Pelaporan Kasus
   // useEffect(() => {
@@ -711,9 +719,11 @@ export const AddInmateModal = ({
 
     for (const [key, value] of Object.entries(formState)) {
       if (key !== 'lokasi_otmil_id')
-        if (formState.is_sick === '0') {
+        if (formState.is_sick === '0' || formState.is_sick === 0) {
+          console.log('iniMungking', key, value);
           if (key === 'wbp_sickness') {
             if (!value) {
+              console.log('iniMungking');
               continue;
             }
           }
@@ -821,8 +831,14 @@ export const AddInmateModal = ({
         }
       }
 
-      if (!value) {
+      if (
+        !value &&
+        key !== 'is_sick' &&
+        key !== 'is_isolated' &&
+        key !== 'residivis'
+      ) {
         errorFields.push(key);
+        console.log('errorFieldstaktau', value, key);
       }
     }
     console.log(errorFields, 'errorFields');
@@ -851,7 +867,7 @@ export const AddInmateModal = ({
         e.target.value === '0' ? '' : formState.wbp_sickness;
       setFormState({
         ...formState,
-        is_sick: e.target.value,
+        is_sick: parseInt(e.target.value),
         wbp_sickness: newWbpSickness,
       });
     } else {
@@ -972,9 +988,8 @@ export const AddInmateModal = ({
 
     if (formState.akses_ruangan_otmil_id.includes(zonaId)) {
       // Check if the "zona" is already added to any input
-
       // If it's already added, show an error or handle it as needed
-      setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
+      // setErrors([...errors, `Zona ${zonaId} is already assigned.`]);
     } else {
       // If it's not added to any input, assign it to the specified input
       let objectZona = {};
@@ -1080,8 +1095,7 @@ export const AddInmateModal = ({
       token,
     )
       .then((res) => {
-        console.log(res.data.records, 'res');
-
+        console.log(res.data.records, 'resDataRuangan');
         setZona(res.data.records);
         setAutocompleteDataZona(res.data.records);
       })
@@ -1097,6 +1111,23 @@ export const AddInmateModal = ({
         });
       });
   };
+
+  const getNamaRuanganById = (id: any) => {
+    // const ruangan = zona.find((item: any) => item.lokasi_otmil_id === id);
+    // console.log(ruangan, 'ruanganTestingZona');
+    console.log('ruanganTestingZonaParams', id);
+    console.log(zona, 'ruanganTestingZona2');
+    const ruangan = zona.find((item: any) => item.ruangan_otmil_id === id);
+    return ruangan
+      ? ruangan.nama_ruangan_otmil
+      : 'Nama ruangan tidak ditemukan';
+    // console.log(ruangan.nama_ruangan_otmil, 'ruanganTestingZona');
+    // return ruangan ? ruangan.nama_ruangan : 'Nama ruangan tidak ditemukan';
+  };
+
+  // useEffect(() => {
+  //   getNamaRuanganById('9c547936-6033-4ae6-a352-b8f49cf8734d');
+  // }, []);
 
   const getAllKategoriPerkara = async () => {
     let params = {};
@@ -1787,7 +1818,7 @@ export const AddInmateModal = ({
 
     // Kondisi Status Penyakit Tersangka
 
-    if (formState.is_sick === '1') {
+    if (formState.is_sick === '1' || formState.is_sick === 1) {
       steps.splice(31, 0, {
         element: '.f-nama-penyakit',
         popover: {
@@ -1875,10 +1906,11 @@ export const AddInmateModal = ({
     // }
 
     if (
-      formState.is_sick === '1' &&
-      tanggalElement &&
-      tanggalTitle &&
-      tanggalDescription
+      formState.is_sick === '1' ||
+      (formState.is_sick === 1 &&
+        tanggalElement &&
+        tanggalTitle &&
+        tanggalDescription)
     ) {
       steps.splice(30, 0, {
         element: tanggalElement,
@@ -4026,7 +4058,8 @@ export const AddInmateModal = ({
                             </div>
 
                             {formState.is_sick === '0' ||
-                            formState.is_sick === '' ? null : (
+                            formState.is_sick === '' ||
+                            defaultValue.is_sick === 0 ? null : (
                               <>
                                 <div className="f-nama-penyakit form-group w-full flex flex-col">
                                   <label
@@ -4267,6 +4300,24 @@ export const AddInmateModal = ({
                         </h3>
 
                         <div className="border-green-500 min-h-[10rem] flex gap-2 p-2 border flex-col rounded-lg items-stretch justify-start">
+                          {/* {isEdit &&
+                            formState.akses_ruangan_otmil_id.map(
+                              (zona: any, index: any) => (
+                                <div
+                                  key={index}
+                                  className="w-full [word-wrap: break-word] flex cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-red-500 hover:!shadow-none dark:text-neutral-200"
+                                  data-te-ripple-color="dark"
+                                >
+                                  <p className="capitalize text-center">
+                                  {getNamaRuanganById(zona.id)}
+                                  </p>
+                                </div>
+                              ),
+                            )} */}
+                          {(() => {
+                            console.log(defaultValue, 'aksesRuangan2');
+                            return null; // or some JSX to render if needed
+                          })()}
                           {!isDetail &&
                             formState.akses_ruangan_otmil_id
                               ?.filter((data) => data.isPermitted == 1)
@@ -4312,54 +4363,9 @@ export const AddInmateModal = ({
                                   </span>
                                 </div>
                               ))}
-                          {/* {isEdit &&
-                            formState.akses_ruangan_otmil_id?.filter(data => data.isPermitted == 1).map(
-                                (zonaId: any) => (
-                                  <div
-                                    key={zonaId}
-                                    className=" w-full [word-wrap: break-word] flex  cursor-default items-center justify-between rounded-[16px] border border-green-400 bg-[#eceff1] bg-[transparent] px-[12px] py-0 text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none transition-[opacity] duration-300 ease-linear hover:border-green-500 hover:!shadow-none dark:text-neutral-200"
-                                    data-te-ripple-color="dark"
-                                  >
-                                    <p className="capitalize text-center">
-                                      {
-                                        zona.find(
-                                          (zonaItem: any) =>
-                                            zonaItem.ruangan_otmil_id ==
-                                            isEdit ? zonaId : zonaId.id,
-                                        )?.nama_ruangan_otmil
-                                      }
-                                    </p>
-                                    <span
-                                      data-te-chip-close
-                                      onClick={() =>
-                                        handleRemoveZona(
-                                          zonaId.id,
-                                          'akses_ruangan_otmil_id',
-                                        )
-                                      }
-                                      className="float-right w-4 cursor-pointer pl-[8px] text-[16px] text-[#afafaf] opacity-[.53] transition-all duration-200 ease-in-out hover:text-[#8b8b8b] dark:text-neutral-400 dark:hover:text-neutral-100"
-                                    >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="currentColor"
-                                        className="h-3 w-3"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          d="M6 18L18 6M6 6l12 12"
-                                        />
-                                      </svg>
-                                    </span>
-                                  </div>
-                                ),
-                              )} */}
                           {isDetail &&
                             formState.akses_ruangan_otmil
-                              ?.filter((data: any) => data.isPermitted == 1)
+                              ?.filter((data: any) => data.is_permitted == 1)
                               .map((zona: any, index: number) => (
                                 <div
                                   key={index}
@@ -4423,7 +4429,7 @@ export const AddInmateModal = ({
                               ))}
                           {isDetail &&
                             formState.akses_ruangan_otmil
-                              ?.filter((data: any) => data.isPermitted == 0)
+                              ?.filter((data: any) => data.is_permitted == 0)
                               .map((zona: any, index: number) => (
                                 <div
                                   key={index}

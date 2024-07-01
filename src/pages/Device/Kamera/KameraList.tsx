@@ -222,23 +222,24 @@ const KameraList = () => {
       setRows(response.data.pagination.totalRecords);
       setIsLoading(false);
     } catch (e: any) {
-      if (e.response.status === 403) {
-        navigate('/auth/signin', {
-          state: { forceLogout: true, lastPage: location.pathname },
-        });
-      }
-      Alerts.fire({
-        icon: e.response.status === 403 ? 'warning' : 'error',
-        title: e.response.status === 403 ? Error403Message : e.message,
-      });
+      console.log(e);
+      //   if (e.response.status === 403) {
+      //     navigate('/auth/signin', {
+      //       state: { forceLogout: true, lastPage: location.pathname },
+      //     });
+      //   }
+      //   Alerts.fire({
+      //     icon: e.response.status === 403 ? 'warning' : 'error',
+      //     title: e.response.status === 403 ? Error403Message : e.message,
+      //   });
     }
   };
   const errorTimeoutRef: any = useRef(null);
-  const client = useRef(new W3CWebSocket('wss://192.168.100.111:5000'));
+  const client = useRef(new W3CWebSocket('ws://192.168.1.111:5000'));
   const sendRequest = (method, params) => {
     client.current.send(JSON.stringify({ method: method, params: params }));
   };
-  client.current = new WebSocket('wss://192.168.100.111:5000');
+  client.current = new WebSocket('ws://192.168.1.111:5000');
 
   client.current.onopen = () => {
     console.log('WebSocket Client Connected');
@@ -431,14 +432,14 @@ const KameraList = () => {
       ],
       ...data.map((item: any) => [
         item.nama_kamera,
-        item.urlRTSP,
-        item.ip_address,
-        item.status_kamera === 'offline' ? 'offline' : item.status_kamera,
-        item.merk,
-        item.model,
-        item.nama_lokasi_otmil,
-        item.nama_ruangan_otmil,
-        item.status_zona_ruangan_otmil,
+        item?.urlRTSP,
+        item?.ip_address,
+        item?.status_kamera === 'offline' ? 'offline' : item?.status_kamera,
+        item?.merk,
+        item?.model,
+        item?.nama_lokasi_otmil,
+        item?.nama_ruangan_otmil,
+        item?.status_zona_ruangan_otmil,
       ]),
     ];
 
